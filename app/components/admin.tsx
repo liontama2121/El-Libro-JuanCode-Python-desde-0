@@ -7,6 +7,7 @@ const TABS = [
 	{ to: "/admin", label: "📊 Dashboard", end: true },
 	{ to: "/admin/estudiantes", label: "🎓 Estudiantes", end: false },
 	{ to: "/admin/capitulos", label: "📚 Capítulos", end: false },
+	{ to: "/admin/banco", label: "🏦 Banco", end: false },
 ];
 
 export function AdminShell({

@@ -148,6 +148,13 @@ export default function AdminEjercicios({
 								{ej.title}
 							</Link>
 							<BadgeDificultad nivel={ej.difficulty} />
+							<Link
+								to={`/admin/ejercicio/${ej.id}`}
+								title="Tests y código inicial"
+								className="jc-btn jc-btn-sm jc-btn-ghost"
+							>
+								🧪
+							</Link>
 							<Form
 								method="post"
 								onSubmit={(ev) => {

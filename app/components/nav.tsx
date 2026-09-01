@@ -32,6 +32,7 @@ export function Nav({ user }: { user: SessionUser }) {
 
 				<nav className="ml-2 hidden items-center gap-1 sm:flex">
 					<NavItem to="/libro">📚 El libro</NavItem>
+					<NavItem to="/practica">🎮 Práctica</NavItem>
 					{esProfe && <NavItem to="/admin">🧑‍🏫 Panel</NavItem>}
 				</nav>
 

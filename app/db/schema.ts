@@ -129,6 +129,10 @@ export const exercises = sqliteTable(
 		statementHtml: text("statement_html").notNull().default(""),
 		hintHtml: text("hint_html").notNull().default(""),
 		solutionHtml: text("solution_html").notNull().default(""),
+		/** [{ stdin, expected_output }] para el Modo Codigo. null = sin tests */
+		testsJson: text("tests_json"),
+		/** Codigo inicial que aparece en el editor */
+		starterCode: text("starter_code"),
 	},
 	(t) => [index("exercises_chapter_idx").on(t.chapterId)],
 );
@@ -218,6 +222,72 @@ export const unlocks = sqliteTable(
 	(t) => [uniqueIndex("unlocks_user_chapter_unique").on(t.userId, t.chapterId)],
 );
 
+/* -------------------------------------------------------------------------- */
+/*  BANCO DE PREGUNTAS                                                         */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Una pregunta reutilizable. El quiz del capitulo, los simulacros y el arcade
+ * beben todos de aqui.
+ *
+ *  mcq             data_json {options:[{id,text}]}      correct_json {option_id}
+ *  predict_output  igual que mcq + code_snippet obligatorio
+ *  find_bug        data_json {lines:[texto,...]}        correct_json {line_number}
+ *  parsons         data_json {lines:[{id,text,indent}]} correct_json {order:[ids]}
+ *                  (las lineas se entregan DESORDENADAS al estudiante)
+ */
+export const questionBank = sqliteTable(
+	"question_bank",
+	{
+		id: integer("id").primaryKey({ autoIncrement: true }),
+		chapterId: integer("chapter_id")
+			.notNull()
+			.references(() => chapters.id, { onDelete: "cascade" }),
+		/** 'mcq' | 'predict_output' | 'find_bug' | 'parsons' */
+		type: text("type").notNull().default("mcq"),
+		/** 'facil' | 'medio' | 'dificil' */
+		difficulty: text("difficulty").notNull().default("facil"),
+		prompt: text("prompt").notNull(),
+		codeSnippet: text("code_snippet"),
+		dataJson: text("data_json").notNull().default("{}"),
+		/** NUNCA viaja al cliente antes de responder */
+		correctJson: text("correct_json").notNull().default("{}"),
+		explanation: text("explanation").notNull().default(""),
+		active: integer("active", { mode: "boolean" }).notNull().default(true),
+	},
+	(t) => [
+		index("question_bank_chapter_idx").on(t.chapterId, t.type, t.difficulty),
+		index("question_bank_active_idx").on(t.active),
+	],
+);
+
+/** Todo lo que NO es el quiz oficial: simulacros, arcade y reto del dia. */
+export const practiceAttempts = sqliteTable(
+	"practice_attempts",
+	{
+		id: integer("id").primaryKey({ autoIncrement: true }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		/**
+		 * 'simulacro_quiz' | 'simulacro_parcial' | 'arcade_relampago' |
+		 * 'arcade_detective' | 'arcade_puzzle' | 'arcade_sorpresa' |
+		 * 'arcade_codigo' | 'reto_dia'
+		 */
+		mode: text("mode").notNull(),
+		configJson: text("config_json").notNull().default("{}"),
+		score: integer("score").notNull().default(0),
+		total: integer("total").notNull().default(0),
+		xpEarned: integer("xp_earned").notNull().default(0),
+		durationSeconds: integer("duration_seconds").notNull().default(0),
+		detailJson: text("detail_json").notNull().default("{}"),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`),
+	},
+	(t) => [index("practice_attempts_user_idx").on(t.userId, t.mode)],
+);
+
 export type User = typeof users.$inferSelect;
 export type Part = typeof parts.$inferSelect;
 export type Chapter = typeof chapters.$inferSelect;
@@ -227,3 +297,17 @@ export type Question = typeof questions.$inferSelect;
 export type Option = typeof options.$inferSelect;
 export type QuizAttempt = typeof quizAttempts.$inferSelect;
 export type Unlock = typeof unlocks.$inferSelect;
+export type BankQuestion = typeof questionBank.$inferSelect;
+export type PracticeAttempt = typeof practiceAttempts.$inferSelect;
+
+/** Tipos de pregunta soportados por el banco. */
+export const TIPOS_PREGUNTA = [
+	"mcq",
+	"predict_output",
+	"find_bug",
+	"parsons",
+] as const;
+export type TipoPregunta = (typeof TIPOS_PREGUNTA)[number];
+
+export const DIFICULTADES = ["facil", "medio", "dificil"] as const;
+export type Dificultad = (typeof DIFICULTADES)[number];

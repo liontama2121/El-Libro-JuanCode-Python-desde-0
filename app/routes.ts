@@ -12,11 +12,19 @@ export default [
 	route("libro/capitulo/:number", "routes/capitulo.tsx"),
 	route("libro/capitulo/:number/quiz", "routes/quiz.tsx"),
 
+	// Práctica (no desbloquea capítulos)
+	route("practica", "routes/practica.tsx"),
+	route("practica/simulacro-quiz", "routes/practica.simulacro-quiz.tsx"),
+	route("practica/simulacro-parcial", "routes/practica.simulacro-parcial.tsx"),
+
 	// Profesor
 	route("admin", "routes/admin.tsx"),
 	route("admin/estudiantes", "routes/admin.estudiantes.tsx"),
 	route("admin/estudiante/:id", "routes/admin.estudiante.tsx"),
 	route("admin/capitulos", "routes/admin.capitulos.tsx"),
+	route("admin/banco", "routes/admin.banco.tsx"),
+	route("admin/banco/export", "routes/admin.banco.export.tsx"),
+	route("admin/ejercicio/:id", "routes/admin.ejercicio.tsx"),
 	route("admin/capitulo/:id/ejercicios", "routes/admin.ejercicios.tsx"),
 	route("admin/capitulo/:id/quiz", "routes/admin.quiz.tsx"),
 ] satisfies RouteConfig;

@@ -1,17 +1,20 @@
-import { asc, eq, inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { Link, redirect, useFetcher } from "react-router";
 import { Nav } from "~/components/nav";
-import {
-	BarraProgreso,
-	BloqueCodigo,
-	Confetti,
-	ScoreAnimado,
-	Toast,
-} from "~/components/ui";
+import { Pregunta, type CorreccionUI } from "~/components/pregunta";
+import { BarraProgreso, Confetti, ScoreAnimado, Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import { requireUser } from "~/lib/auth.server";
+import {
+	aPublica,
+	calificar,
+	elegirPreguntas,
+	type PreguntaPublica,
+	type Respuesta,
+} from "~/lib/bank.server";
 import { cargarLibro, otorgarDesbloqueo } from "~/lib/progress.server";
+import { firmar, verificar } from "~/lib/sign.server";
 import type { Route } from "./+types/quiz";
 
 export const meta: Route.MetaFunction = ({ data }) => [
@@ -22,15 +25,13 @@ export const meta: Route.MetaFunction = ({ data }) => [
 	},
 ];
 
-type PreguntaPublica = {
-	id: number;
-	prompt: string;
-	codeSnippet: string | null;
-	opciones: { id: number; label: string; text: string }[];
-};
+/** Cuántas preguntas trae cada intento del quiz oficial. */
+const PREGUNTAS_POR_QUIZ = 5;
+
+type Sobre = { quizId: number; chapterId: number; ids: number[] };
 
 /* -------------------------------------------------------------------------- */
-/*  LOADER: nunca envía is_correct al cliente                                  */
+/*  LOADER — arma un quiz distinto en cada intento, sin revelar respuestas     */
 /* -------------------------------------------------------------------------- */
 
 export async function loader({ context, request, params }: Route.LoaderArgs) {
@@ -39,18 +40,12 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 	const db = getDb(env);
 
 	const numero = Number(params.number);
-	const { capitulos } = await cargarLibro(
-		db,
-		user.id,
-		user.role === "teacher",
-	);
+	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
 	const capitulo = capitulos.find((c) => c.number === numero);
 
 	if (!capitulo || capitulo.estado === "bloqueado") {
 		throw redirect(
-			`/libro?toast=${encodeURIComponent(
-				"Aprueba el quiz del capítulo anterior 🔒",
-			)}`,
+			`/libro?toast=${encodeURIComponent("Aprueba el quiz del capítulo anterior 🔒")}`,
 		);
 	}
 
@@ -68,50 +63,39 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 		);
 	}
 
-	const preguntas = await db
-		.select()
-		.from(schema.questions)
-		.where(eq(schema.questions.quizId, quiz.id))
-		.orderBy(asc(schema.questions.orden), asc(schema.questions.id));
+	// 5 preguntas al azar del banco del capítulo: cada intento es distinto.
+	const elegidas = await elegirPreguntas(db, {
+		chapterIds: [capitulo.id],
+		tipos: ["mcq", "predict_output"],
+		limite: PREGUNTAS_POR_QUIZ,
+	});
 
-	const opciones = preguntas.length
-		? await db
-				.select({
-					id: schema.options.id,
-					questionId: schema.options.questionId,
-					label: schema.options.label,
-					text: schema.options.text,
-					// OJO: is_correct NO se selecciona. La calificación es del servidor.
-				})
-				.from(schema.options)
-				.where(
-					inArray(
-						schema.options.questionId,
-						preguntas.map((p) => p.id),
-					),
-				)
-				.orderBy(asc(schema.options.label))
-		: [];
+	const semilla = Date.now() % 100000;
+	const preguntas = elegidas.map((q) => aPublica(q, semilla));
 
-	const publicas: PreguntaPublica[] = preguntas.map((p) => ({
-		id: p.id,
-		prompt: p.prompt,
-		codeSnippet: p.codeSnippet,
-		opciones: opciones.filter((o) => o.questionId === p.id),
-	}));
+	// El action necesita saber qué preguntas se sirvieron. Van firmadas para
+	// que nadie pueda cambiárselas por otras.
+	const sobre: Sobre = {
+		quizId: quiz.id,
+		chapterId: capitulo.id,
+		ids: elegidas.map((q) => q.id),
+	};
 
 	return {
 		user,
 		capitulo,
 		passingScore: quiz.passingScore,
-		preguntas: publicas,
+		preguntas,
+		token: await firmar(env, sobre),
 		siguiente: capitulos.find((c) => c.number === numero + 1) ?? null,
 	};
 }
 
 /* -------------------------------------------------------------------------- */
-/*  ACTION: la calificación y el desbloqueo ocurren SIEMPRE aquí (servidor)    */
+/*  ACTION — la calificación y el desbloqueo ocurren SIEMPRE aquí (servidor)   */
 /* -------------------------------------------------------------------------- */
+
+export type Feedback = CorreccionUI & { questionId: number };
 
 export type ResultadoQuiz = {
 	score: number;
@@ -121,14 +105,6 @@ export type ResultadoQuiz = {
 	passingScore: number;
 	feedback: Feedback[];
 	desbloqueado: number | null;
-};
-
-export type Feedback = {
-	questionId: number;
-	prompt: string;
-	seleccionada: number | null;
-	correcta: number | null;
-	acerto: boolean;
 };
 
 export async function action({ context, request, params }: Route.ActionArgs) {
@@ -142,21 +118,26 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 
 	if (!capitulo || capitulo.estado === "bloqueado") {
 		throw redirect(
-			`/libro?toast=${encodeURIComponent(
-				"Aprueba el quiz del capítulo anterior 🔒",
-			)}`,
+			`/libro?toast=${encodeURIComponent("Aprueba el quiz del capítulo anterior 🔒")}`,
 		);
+	}
+
+	const form = await request.formData();
+	const sobre = await verificar<Sobre>(env, String(form.get("token") || ""));
+
+	// Sin firma válida no se califica: son preguntas que este servidor no sirvió.
+	if (!sobre || sobre.chapterId !== capitulo.id) {
+		throw redirect(`/libro/capitulo/${numero}/quiz`);
 	}
 
 	const [quiz] = await db
 		.select()
 		.from(schema.quizzes)
-		.where(eq(schema.quizzes.chapterId, capitulo.id))
+		.where(eq(schema.quizzes.id, sobre.quizId))
 		.limit(1);
 	if (!quiz) throw redirect(`/libro/capitulo/${numero}`);
 
-	const form = await request.formData();
-	let enviadas: Record<string, number> = {};
+	let enviadas: Record<string, Respuesta> = {};
 	try {
 		enviadas = JSON.parse(String(form.get("respuestas") || "{}"));
 	} catch {
@@ -165,39 +146,19 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 
 	const preguntas = await db
 		.select()
-		.from(schema.questions)
-		.where(eq(schema.questions.quizId, quiz.id))
-		.orderBy(asc(schema.questions.orden), asc(schema.questions.id));
+		.from(schema.questionBank)
+		.where(inArray(schema.questionBank.id, sobre.ids));
 
 	if (preguntas.length === 0) throw redirect(`/libro/capitulo/${numero}`);
 
-	const opciones = await db
-		.select()
-		.from(schema.options)
-		.where(
-			inArray(
-				schema.options.questionId,
-				preguntas.map((p) => p.id),
-			),
-		);
-
-	const feedback: Feedback[] = preguntas.map((p) => {
-		const delGrupo = opciones.filter((o) => o.questionId === p.id);
-		const correcta = delGrupo.find((o) => o.isCorrect) ?? null;
-		const marcada = Number(enviadas[String(p.id)]);
-		const seleccionada = delGrupo.some((o) => o.id === marcada) ? marcada : null;
-
-		return {
-			questionId: p.id,
-			prompt: p.prompt,
-			seleccionada,
-			correcta: correcta?.id ?? null,
-			acerto: correcta != null && seleccionada === correcta.id,
-		};
+	const feedback: Feedback[] = sobre.ids.flatMap((id) => {
+		const q = preguntas.find((p) => p.id === id);
+		if (!q) return [];
+		return [{ questionId: id, ...calificar(q, enviadas[String(id)] ?? null) }];
 	});
 
 	const aciertos = feedback.filter((f) => f.acerto).length;
-	const score = Math.round((aciertos / preguntas.length) * 100);
+	const score = Math.round((aciertos / feedback.length) * 100);
 	const passed = score >= quiz.passingScore;
 
 	await db.insert(schema.quizAttempts).values({
@@ -223,15 +184,16 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 		}
 	}
 
-	return {
+	const resultado: ResultadoQuiz = {
 		score,
 		passed,
 		aciertos,
-		totalPreguntas: preguntas.length,
+		totalPreguntas: feedback.length,
 		passingScore: quiz.passingScore,
 		feedback,
 		desbloqueado,
 	};
+	return resultado;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -239,12 +201,12 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 /* -------------------------------------------------------------------------- */
 
 export default function Quiz({ loaderData }: Route.ComponentProps) {
-	const { user, capitulo, preguntas, passingScore, siguiente } = loaderData;
+	const { user, capitulo, preguntas, passingScore, siguiente, token } = loaderData;
 	const fetcher = useFetcher<typeof action>();
 
 	const [resultado, setResultado] = useState<ResultadoQuiz | null>(null);
 	const [indice, setIndice] = useState(0);
-	const [respuestas, setRespuestas] = useState<Record<number, number>>({});
+	const [respuestas, setRespuestas] = useState<Record<number, Respuesta>>({});
 
 	// El resultado sólo puede venir del action (calificación en servidor).
 	useEffect(() => {
@@ -257,19 +219,13 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 	const pregunta = preguntas[indice];
 	const total = preguntas.length;
 	const enviando = fetcher.state !== "idle";
+	const respondidas = Object.keys(respuestas).length;
 
 	function enviar() {
 		fetcher.submit(
-			{ respuestas: JSON.stringify(respuestas) },
+			{ respuestas: JSON.stringify(respuestas), token },
 			{ method: "post" },
 		);
-	}
-
-	function reiniciar() {
-		setResultado(null);
-		setRespuestas({});
-		setIndice(0);
-		window.scrollTo({ top: 0 });
 	}
 
 	if (resultado) {
@@ -280,10 +236,8 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 				capituloTitulo={capitulo.title}
 				resultado={resultado}
 				preguntas={preguntas}
-				siguienteNumero={
-					resultado.desbloqueado ?? (siguiente ? siguiente.number : null)
-				}
-				onReintentar={reiniciar}
+				respuestas={respuestas}
+				siguienteNumero={resultado.desbloqueado ?? siguiente?.number ?? null}
 			/>
 		);
 	}
@@ -294,12 +248,9 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 				<Nav user={user} />
 				<main className="mx-auto max-w-2xl px-5 py-24 text-center">
 					<p className="text-[var(--color-tinta-2)]">
-						Este quiz todavía no tiene preguntas.
+						El banco de este capítulo todavía no tiene preguntas.
 					</p>
-					<Link
-						to={`/libro/capitulo/${capitulo.number}`}
-						className="jc-btn mt-6"
-					>
+					<Link to={`/libro/capitulo/${capitulo.number}`} className="jc-btn mt-6">
 						Volver al capítulo
 					</Link>
 				</main>
@@ -307,7 +258,6 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 		);
 	}
 
-	const seleccionada = respuestas[pregunta.id];
 	const esUltima = indice === total - 1;
 
 	return (
@@ -315,19 +265,19 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 			<Nav user={user} />
 			<Toast />
 
-			<main className="mx-auto max-w-3xl px-5 py-10">
-				<header className="mb-8">
+			<main className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-10">
+				<header className="mb-7">
 					<Link
 						to={`/libro/capitulo/${capitulo.number}`}
 						className="jc-mono text-xs tracking-[0.18em] text-[var(--color-tinta-2)] uppercase hover:text-[var(--color-cyan)]"
 					>
 						← salir del quiz
 					</Link>
-					<h1 className="jc-display jc-grad mt-4 text-3xl">
+					<h1 className="jc-display jc-grad mt-4 text-2xl sm:text-3xl">
 						🎯 Quiz — {capitulo.title}
 					</h1>
 					<p className="jc-mono mt-2 text-xs text-[var(--color-tinta-2)]">
-						necesitas {passingScore} puntos para aprobar · intentos ilimitados
+						{passingScore} puntos para aprobar · preguntas nuevas en cada intento
 					</p>
 
 					<div className="mt-6">
@@ -339,48 +289,15 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 					</div>
 				</header>
 
-				<section key={pregunta.id} className="jc-anim-slide jc-glass p-7">
-					<h2 className="jc-display text-xl leading-snug">{pregunta.prompt}</h2>
-
-					{pregunta.codeSnippet && (
-						<div className="mt-5">
-							<BloqueCodigo codigo={pregunta.codeSnippet} />
-						</div>
-					)}
-
-					<div className="mt-6 space-y-3">
-						{pregunta.opciones.map((op) => {
-							const activa = seleccionada === op.id;
-							return (
-								<button
-									key={op.id}
-									type="button"
-									onClick={() =>
-										setRespuestas((r) => ({ ...r, [pregunta.id]: op.id }))
-									}
-									className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition ${
-										activa
-											? "border-[rgba(0,229,255,.6)] bg-[rgba(0,229,255,.09)]"
-											: "border-[var(--color-borde)] bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]"
-									}`}
-								>
-									<span
-										className={`jc-mono grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-xs uppercase ${
-											activa
-												? "border-transparent bg-[var(--color-cyan)] text-[#08131a]"
-												: "border-[var(--color-borde)] text-[var(--color-tinta-2)]"
-										}`}
-									>
-										{op.label}
-									</span>
-									<span className="flex-1">{op.text}</span>
-								</button>
-							);
-						})}
-					</div>
+				<section key={pregunta.id} className="jc-anim-slide jc-glass p-5 sm:p-7">
+					<Pregunta
+						pregunta={pregunta}
+						respuesta={respuestas[pregunta.id] ?? null}
+						onRespuesta={(r) => setRespuestas((prev) => ({ ...prev, [pregunta.id]: r }))}
+					/>
 				</section>
 
-				<div className="mt-7 flex items-center justify-between gap-4">
+				<div className="mt-7 flex items-center justify-between gap-3">
 					<button
 						type="button"
 						className="jc-btn jc-btn-ghost"
@@ -395,7 +312,7 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 							type="button"
 							className="jc-btn jc-btn-primary"
 							onClick={enviar}
-							disabled={enviando || Object.keys(respuestas).length !== total}
+							disabled={enviando || respondidas !== total}
 						>
 							{enviando ? "Calificando…" : "Enviar respuestas ✅"}
 						</button>
@@ -404,7 +321,7 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 							type="button"
 							className="jc-btn jc-btn-primary"
 							onClick={() => setIndice((i) => Math.min(total - 1, i + 1))}
-							disabled={seleccionada === undefined}
+							disabled={respuestas[pregunta.id] === undefined}
 						>
 							Siguiente →
 						</button>
@@ -412,7 +329,7 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 				</div>
 
 				<p className="jc-mono mt-5 text-center text-xs text-[var(--color-tinta-2)]">
-					{Object.keys(respuestas).length}/{total} respondidas
+					{respondidas}/{total} respondidas
 				</p>
 			</main>
 		</>
@@ -427,16 +344,16 @@ function Resultado({
 	capituloTitulo,
 	resultado,
 	preguntas,
+	respuestas,
 	siguienteNumero,
-	onReintentar,
 }: {
 	user: Route.ComponentProps["loaderData"]["user"];
 	capituloNumero: number;
 	capituloTitulo: string;
 	resultado: ResultadoQuiz;
 	preguntas: PreguntaPublica[];
+	respuestas: Record<number, Respuesta>;
 	siguienteNumero: number | null;
-	onReintentar: () => void;
 }) {
 	const { score, passed, aciertos, totalPreguntas, feedback } = resultado;
 
@@ -445,11 +362,11 @@ function Resultado({
 			<Nav user={user} />
 			<Confetti activo={passed} />
 
-			<main className="mx-auto max-w-3xl px-5 py-12">
-				<div className="jc-anim-pop jc-glass flex flex-col items-center p-10 text-center">
+			<main className="mx-auto max-w-3xl px-4 py-10 sm:px-5 sm:py-12">
+				<div className="jc-anim-pop jc-glass flex flex-col items-center p-7 text-center sm:p-10">
 					<ScoreAnimado score={score} aprobado={passed} />
 
-					<h1 className="jc-display mt-6 text-4xl">
+					<h1 className="jc-display mt-6 text-3xl sm:text-4xl">
 						{passed ? "¡Aprobaste! 🎉" : "Casi… 💪"}
 					</h1>
 					<p className="mt-3 text-[var(--color-tinta-2)]">
@@ -483,79 +400,44 @@ function Resultado({
 								>
 									📖 Repasar capítulo
 								</Link>
-								<button
-									type="button"
+								{/* Recargar el quiz trae 5 preguntas nuevas del banco */}
+								<a
+									href={`/libro/capitulo/${capituloNumero}/quiz`}
 									className="jc-btn jc-btn-primary"
-									onClick={onReintentar}
 								>
 									🔁 Reintentar quiz
-								</button>
+								</a>
 							</>
 						)}
 					</div>
 				</div>
 
-				{/* Feedback pregunta por pregunta ------------------------------- */}
 				<section className="mt-12">
 					<h2 className="jc-display text-2xl">Revisión</h2>
-					<p className="mt-1 text-sm text-[var(--color-tinta-2)]">
-						{capituloTitulo}
-					</p>
+					<p className="mt-1 text-sm text-[var(--color-tinta-2)]">{capituloTitulo}</p>
 
 					<div className="mt-6 space-y-5">
 						{feedback.map((f, i) => {
 							const pregunta = preguntas.find((p) => p.id === f.questionId);
+							if (!pregunta) return null;
 							return (
 								<article
 									key={f.questionId}
-									className={`rounded-2xl border p-6 ${
+									className={`rounded-2xl border p-5 sm:p-6 ${
 										f.acerto
 											? "border-[rgba(52,224,122,.4)] bg-[rgba(52,224,122,.06)]"
 											: "border-[rgba(255,77,255,.35)] bg-[rgba(255,77,255,.05)]"
 									}`}
 								>
-									<div className="flex items-start gap-3">
-										<span className="text-xl">{f.acerto ? "✅" : "❌"}</span>
-										<h3 className="jc-display flex-1 text-lg leading-snug">
-											{i + 1}. {f.prompt}
-										</h3>
-									</div>
-
-									{pregunta?.codeSnippet && (
-										<div className="mt-4">
-											<BloqueCodigo codigo={pregunta.codeSnippet} />
-										</div>
-									)}
-
-									<ul className="mt-4 space-y-2 text-sm">
-										{pregunta?.opciones.map((op) => {
-											const esCorrecta = op.id === f.correcta;
-											const esTuya = op.id === f.seleccionada;
-											return (
-												<li
-													key={op.id}
-													className={`flex items-start gap-2 rounded-xl border px-3 py-2 ${
-														esCorrecta
-															? "border-[rgba(52,224,122,.5)] text-[var(--color-verde)]"
-															: esTuya
-																? "border-[rgba(255,77,255,.5)] text-[var(--color-magenta)]"
-																: "border-transparent text-[var(--color-tinta-2)]"
-													}`}
-												>
-													<span className="jc-mono w-4 shrink-0 uppercase">
-														{op.label}
-													</span>
-													<span className="flex-1">{op.text}</span>
-													{esCorrecta && (
-														<span className="jc-mono text-xs">correcta</span>
-													)}
-													{esTuya && !esCorrecta && (
-														<span className="jc-mono text-xs">tu elección</span>
-													)}
-												</li>
-											);
-										})}
-									</ul>
+									<p className="jc-mono mb-3 text-xs text-[var(--color-tinta-2)]">
+										Pregunta {i + 1}
+									</p>
+									<Pregunta
+										pregunta={pregunta}
+										respuesta={respuestas[f.questionId] ?? null}
+										onRespuesta={() => {}}
+										correccion={f}
+									/>
 								</article>
 							);
 						})}
