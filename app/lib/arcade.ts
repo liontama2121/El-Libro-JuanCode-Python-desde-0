@@ -70,6 +70,19 @@ export const MODOS: Record<string, ModoArcade> = {
 		segundos: 0,
 		mode: "arcade_sorpresa",
 	},
+	codigo: {
+		slug: "codigo",
+		emoji: "💻",
+		nombre: "Modo código",
+		blurb: "Un ejercicio con tests de verdad. Escribes Python y se ejecuta.",
+		color: "52,224,122",
+		// No sale del banco: sale de los ejercicios con tests.
+		tipos: [],
+		limite: 1,
+		vidas: 0,
+		segundos: 0,
+		mode: "arcade_codigo",
+	},
 	reto: {
 		slug: "reto",
 		emoji: "🗓️",
@@ -84,4 +97,11 @@ export const MODOS: Record<string, ModoArcade> = {
 	},
 };
 
-export const ORDEN_MODOS = ["relampago", "detective", "puzzle", "sorpresa", "reto"];
+export const ORDEN_MODOS = [
+	"relampago",
+	"detective",
+	"puzzle",
+	"sorpresa",
+	"codigo",
+	"reto",
+];

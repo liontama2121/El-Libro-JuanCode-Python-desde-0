@@ -1,0 +1,108 @@
+<p class="jc-gancho">Son las 11 de la noche y tienes que sumar las ventas del día de la tienda: 340 tirillas de papel. A mano son dos horas y un dolor de cabeza. Con seis líneas de Python son dos segundos. La diferencia entre esas dos noches se llama <strong>programar</strong>.</p>
+
+<h2>Programar es dar instrucciones exactas</h2>
+
+<p>Un computador no adivina. No interpreta. No completa lo que falta. Hace <strong>exactamente</strong> lo que le pides, en el orden en que se lo pides, y si algo no cuadra se detiene y te avisa.</p>
+
+<p>Piensa en una receta de arroz con pollo. Si escribes <em>"echar el huevo"</em> sin decir antes <em>"romper el huevo"</em>, terminas con cáscara en la sartén. El computador es igual de literal, pero mucho más rápido y nunca se cansa.</p>
+
+<p>Entonces programar son dos cosas, y la primera es la difícil:</p>
+
+<ol>
+  <li><strong>Pensar</strong> el problema en pasos tan pequeños que una máquina los pueda seguir.</li>
+  <li><strong>Escribir</strong> esos pasos en un idioma que la máquina entienda.</li>
+</ol>
+
+<p>El idioma de este libro es Python. Lo escogimos porque se lee casi como inglés y no estorba mientras aprendes lo primero, que es lo que de verdad cuesta.</p>
+
+<h2>Tu primer programa</h2>
+
+<p>La instrucción <code>print()</code> muestra algo en pantalla. Lo que va entre paréntesis es el <strong>argumento</strong>: el dato con el que trabaja la instrucción.</p>
+
+<pre><code>print("Hola, mundo")
+print("Estoy aprendiendo Python con JuanCode")</code></pre>
+
+<p>Si ejecutas eso, ves dos líneas. Vamos línea por línea, que es como se lee un programa:</p>
+
+<table>
+  <thead>
+    <tr><th>Línea</th><th>Qué hace Python</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Busca la instrucción <code>print</code>, toma el texto <code>"Hola, mundo"</code> y lo escribe en pantalla. Al terminar, baja el cursor a la línea siguiente.</td></tr>
+    <tr><td>2</td><td>Hace lo mismo con el segundo texto. Por eso salen dos renglones y no uno.</td></tr>
+  </tbody>
+</table>
+
+<p>El texto entre comillas se llama <strong>string</strong> (cadena de caracteres). Las comillas no se imprimen: solo le marcan a Python dónde empieza y dónde termina el texto. Sirven las dobles <code>"así"</code> y las sencillas <code>'así'</code>, mientras abras y cierres con la misma.</p>
+
+<h3>Imprimir varias cosas de una vez</h3>
+
+<p>Si le pasas varios argumentos separados por comas, <code>print()</code> los pone en la misma línea y les mete un espacio entre cada uno. Este truco lo vamos a usar durante los primeros capítulos:</p>
+
+<pre><code>print("Total del día:", 340, "tirillas")</code></pre>
+
+<p>Sale: <code>Total del día: 340 tirillas</code>. Fíjate en que <code>340</code> va sin comillas porque es un número, no un texto. En el capítulo 5 aprenderás las f-strings, que son la forma moderna de hacer esto mismo.</p>
+
+<h2>Comentarios: notas para humanos</h2>
+
+<p>Todo lo que va después de <code>#</code> lo ignora Python. Está ahí para que tu yo del futuro entienda qué estabas pensando.</p>
+
+<pre><code># Programa de bienvenida del curso
+# Autor: Ana Gómez
+
+print("Bienvenido al Libro JuanCode")  # esto también es comentario</code></pre>
+
+<p>Un buen comentario no repite lo que ya dice el código. Explica <strong>por qué</strong>:</p>
+
+<pre><code>print("Total:", 340)   # mal: "imprime el total"
+print("Total:", 340)   # bien: el conteo del día lo entrega la caja registradora</code></pre>
+
+<h2>Los errores no son regaños</h2>
+
+<p>Cuando algo no cuadra, Python no se queda callado: te dice en qué línea se rompió y por qué. Leer ese mensaje es la mitad del oficio.</p>
+
+<pre><code>print("Hola"
+</code></pre>
+
+<p>Python responde algo como <code>SyntaxError: unexpected EOF while parsing</code>, que traducido es: <em>"abriste un paréntesis y nunca lo cerraste; se me acabó el archivo esperándolo"</em>. Ningún programador escribe sin errores. Los buenos simplemente los leen rápido.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Escribir <code>Print</code> con mayúscula</h3>
+<pre><code>Print("Hola")   # NameError: name 'Print' is not defined</code></pre>
+<p>Python distingue mayúsculas de minúsculas. <code>print</code>, <code>Print</code> y <code>PRINT</code> son tres nombres distintos y solo el primero existe.</p>
+
+<h3>2. Olvidar los paréntesis</h3>
+<pre><code>print "Hola"    # SyntaxError</code></pre>
+<p>En Python 3 <code>print</code> es una función, y a una función siempre se la llama con paréntesis.</p>
+
+<h3>3. Dejar el texto sin comillas</h3>
+<pre><code>print(Hola)     # NameError: name 'Hola' is not defined</code></pre>
+<p>Sin comillas, Python cree que <code>Hola</code> es el nombre de algo que guardaste antes. Como no existe, se queja.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Escribe lo que quieres que pase, en español, en pasos numerados.</li>
+  <li>Traduce cada paso a una línea de Python.</li>
+  <li>Ejecuta. Si sale error, lee la última línea del mensaje: ahí está el motivo.</li>
+  <li>Arregla una cosa a la vez y vuelve a ejecutar.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>print("texto")</code></td><td>Muestra el texto en pantalla</td></tr>
+    <tr><td><code>print("a", "b")</code></td><td>Muestra <code>a b</code> en la misma línea</td></tr>
+    <tr><td><code>print()</code></td><td>Deja un renglón en blanco</td></tr>
+    <tr><td><code># nota</code></td><td>Comentario: Python lo ignora</td></tr>
+    <tr><td><code>"texto"</code> o <code>'texto'</code></td><td>Un string</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Programar no es memorizar comandos. Es aprender a partir un problema grande en pasos tan pequeños que hasta una máquina los pueda seguir.</blockquote>

@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { Form, Link, useFetcher } from "react-router";
 import { EditorCodigo } from "~/components/editor";
 import { Nav } from "~/components/nav";
+import { ProbarCodigo } from "~/components/probar-codigo";
 import { BadgeDificultad, Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import type { Dificultad } from "~/db/schema";
 import { requireUser } from "~/lib/auth.server";
 import { formatoReloj } from "~/lib/format";
 import { otorgar } from "~/lib/gamification.server";
+import { correrTests, leerTests, modoCodigoActivo } from "~/lib/piston.server";
 import { cargarLibro } from "~/lib/progress.server";
 import { firmar, verificar } from "~/lib/sign.server";
 import type { Route } from "./+types/practica.simulacro-parcial";
@@ -54,6 +56,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		return {
 			user,
 			modo: "config" as const,
+			modoCodigo: modoCodigoActivo(env),
 			capitulos: abiertos.length,
 			disponibles: Number(disponibles) || 0,
 			minutos: MINUTOS,
@@ -98,6 +101,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		user,
 		modo: "parcial" as const,
 		minutos: MINUTOS,
+		modoCodigo: modoCodigoActivo(env),
 		puntos: puntos.map((e) => ({
 			id: e.id,
 			title: e.title,
@@ -105,6 +109,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			statementHtml: e.statementHtml,
 			starterCode: e.starterCode ?? "",
 			capitulo: titulos.get(e.chapterId) ?? "",
+			tieneTests: leerTests(e.testsJson).length > 0,
 		})),
 		token: await firmar(env, { ejercicios: puntos.map((e) => e.id) } satisfies Sobre),
 	};
@@ -116,6 +121,9 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 
 export type EntregaParcial = {
 	attemptId: number;
+	/** Puntos calificados solos por los tests (Modo Código) */
+	automaticos: number;
+	conTests: number;
 	soluciones: {
 		id: number;
 		title: string;
@@ -123,6 +131,9 @@ export type EntregaParcial = {
 		solutionHtml: string;
 		hintHtml: string;
 		codigo: string;
+		/** null = ese punto no tiene tests, se autocalifica */
+		paso: boolean | null;
+		detalle: { n: number; paso: boolean; esperado: string; obtenido: string }[];
 	}[];
 };
 
@@ -182,7 +193,38 @@ export async function action({ context, request }: Route.ActionArgs) {
 		.from(schema.exercises)
 		.where(inArray(schema.exercises.id, sobre.ejercicios));
 
-	// Entregar el parcial cuenta como día activo (la nota la pone el checklist).
+	/* Modo Código: los puntos con tests se califican solos, aquí en el servidor.
+	   Un punto vale si TODOS sus tests quedan en verde. */
+	const automatico = new Map<
+		number,
+		{ paso: boolean; detalle: { n: number; paso: boolean; esperado: string; obtenido: string }[] }
+	>();
+
+	if (modoCodigoActivo(env)) {
+		for (const e of ejercicios) {
+			const tests = leerTests(e.testsJson);
+			if (tests.length === 0) continue;
+			const run = await correrTests(env, db, {
+				userId: user.id,
+				exerciseId: e.id,
+				codigo: codigos[String(e.id)] ?? "",
+				tests,
+			});
+			automatico.set(e.id, {
+				paso: run.passed,
+				detalle: run.resultados.map((r) => ({
+					n: r.n,
+					paso: r.paso,
+					esperado: r.esperado,
+					obtenido: r.obtenido,
+				})),
+			});
+		}
+	}
+
+	const automaticos = [...automatico.values()].filter((a) => a.paso).length;
+
+	// Entregar el parcial cuenta como día activo.
 	await otorgar(db, user.id, {});
 
 	const [creado] = await db
@@ -191,18 +233,24 @@ export async function action({ context, request }: Route.ActionArgs) {
 			userId: user.id,
 			mode: "simulacro_parcial",
 			configJson: JSON.stringify({ ejercicios: sobre.ejercicios, minutos: MINUTOS }),
-			score: 0,
+			score: automaticos,
 			total: sobre.ejercicios.length,
 			xpEarned: 0,
 			durationSeconds: segundos,
 			detailJson: JSON.stringify({
-				puntos: sobre.ejercicios.map((id) => ({ id, codigo: codigos[String(id)] ?? "" })),
+				puntos: sobre.ejercicios.map((id) => ({
+					id,
+					codigo: codigos[String(id)] ?? "",
+					paso: automatico.get(id)?.paso ?? null,
+				})),
 			}),
 		})
 		.returning({ id: schema.practiceAttempts.id });
 
 	const entrega: EntregaParcial = {
 		attemptId: creado.id,
+		automaticos,
+		conTests: automatico.size,
 		soluciones: sobre.ejercicios.flatMap((id) => {
 			const e = ejercicios.find((x) => x.id === id);
 			if (!e) return [];
@@ -214,6 +262,8 @@ export async function action({ context, request }: Route.ActionArgs) {
 					solutionHtml: e.solutionHtml,
 					hintHtml: e.hintHtml,
 					codigo: codigos[String(id)] ?? "",
+					paso: automatico.get(id)?.paso ?? null,
+					detalle: automatico.get(id)?.detalle ?? [],
 				},
 			];
 		}),
@@ -290,7 +340,7 @@ function Portada({ loaderData }: { loaderData: DatosConfig }) {
 }
 
 function Parcial({ loaderData }: { loaderData: DatosParcial }) {
-	const { user, puntos, minutos, token } = loaderData;
+	const { user, puntos, minutos, token, modoCodigo } = loaderData;
 	const fetcher = useFetcher<typeof action>();
 
 	const [codigos, setCodigos] = useState<Record<number, string>>(
@@ -373,11 +423,21 @@ function Parcial({ loaderData }: { loaderData: DatosParcial }) {
 							)}
 
 							<div className="mt-6">
-								<EditorCodigo
-									etiqueta="Tu solución"
-									valor={codigos[p.id] ?? ""}
-									onCambio={(v) => setCodigos((prev) => ({ ...prev, [p.id]: v }))}
-								/>
+								{modoCodigo && p.tieneTests ? (
+									<ProbarCodigo
+										exerciseId={p.id}
+										etiqueta="Tu solución"
+										filas={14}
+										valor={codigos[p.id] ?? ""}
+										onCambio={(v) => setCodigos((prev) => ({ ...prev, [p.id]: v }))}
+									/>
+								) : (
+									<EditorCodigo
+										etiqueta="Tu solución"
+										valor={codigos[p.id] ?? ""}
+										onCambio={(v) => setCodigos((prev) => ({ ...prev, [p.id]: v }))}
+									/>
+								)}
 							</div>
 						</section>
 					))}
@@ -416,8 +476,9 @@ function Revision({
 	const fetcher = useFetcher<typeof action>();
 	const [marcas, setMarcas] = useState<Record<string, boolean>>({});
 
+	// Los puntos con tests ya vienen calificados; los otros los marca el estudiante.
 	const puntosBuenos = entrega.soluciones.filter((s) =>
-		CRITERIOS.every((c) => marcas[`${s.id}-${c.id}`]),
+		s.paso === null ? CRITERIOS.every((c) => marcas[`${s.id}-${c.id}`]) : s.paso,
 	).length;
 
 	const guardar = () =>
@@ -439,10 +500,17 @@ function Revision({
 
 			<main className="mx-auto max-w-3xl px-4 py-10 sm:px-5 sm:py-12">
 				<h1 className="jc-display jc-grad text-3xl">Parcial entregado</h1>
-				<p className="mt-3 text-[var(--color-tinta-2)]">
-					Compara tu código con la solución documentada y márcate cada punto. Cuando el
-					Modo Código esté activo, esto lo calificarán los tests automáticamente.
-				</p>
+				{entrega.conTests > 0 ? (
+					<p className="mt-3 text-[var(--color-tinta-2)]">
+						Los tests calificaron {entrega.conTests} de los {entrega.soluciones.length}{" "}
+						puntos: <strong>{entrega.automaticos} en verde</strong>. Los demás te los
+						calificas tú con el checklist.
+					</p>
+				) : (
+					<p className="mt-3 text-[var(--color-tinta-2)]">
+						Compara tu código con la solución documentada y márcate cada punto.
+					</p>
+				)}
 
 				<div className="mt-8 space-y-8">
 					{entrega.soluciones.map((s, i) => (
@@ -452,6 +520,17 @@ function Revision({
 									Punto {i + 1}
 								</span>
 								<BadgeDificultad nivel={s.difficulty} />
+								{s.paso !== null && (
+									<span
+										className={`jc-badge ${
+											s.paso
+												? "border-[rgba(52,224,122,.45)] text-[var(--color-verde)]"
+												: "border-[rgba(255,77,255,.45)] text-[var(--color-magenta)]"
+										}`}
+									>
+										{s.paso ? "tests en verde" : "tests en rojo"}
+									</span>
+								)}
 							</div>
 							<h2 className="jc-display mt-2 text-lg">{s.title}</h2>
 
@@ -476,6 +555,31 @@ function Revision({
 								</details>
 							)}
 
+							{s.detalle.length > 0 && (
+								<ul className="mt-5 space-y-2">
+									{s.detalle.map((t) => (
+										<li
+											key={t.n}
+											className={`rounded-xl border px-4 py-2 text-sm ${
+												t.paso
+													? "border-[rgba(52,224,122,.35)] text-[var(--color-verde)]"
+													: "border-[rgba(255,77,255,.3)] text-[var(--color-magenta)]"
+											}`}
+										>
+											<span className="jc-mono text-xs">
+												{t.paso ? "✅" : "❌"} Caso {t.n}
+											</span>
+											{!t.paso && (
+												<span className="jc-mono ml-2 text-[0.68rem] text-[var(--color-tinta-2)]">
+													esperaba “{t.esperado}” · salió “{t.obtenido || "nada"}”
+												</span>
+											)}
+										</li>
+									))}
+								</ul>
+							)}
+
+							{s.paso === null && (
 							<fieldset className="mt-6">
 								<legend className="jc-label">Autocalificación</legend>
 								<div className="space-y-2">
@@ -497,6 +601,7 @@ function Revision({
 									})}
 								</div>
 							</fieldset>
+							)}
 						</section>
 					))}
 				</div>

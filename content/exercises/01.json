@@ -1,0 +1,41 @@
+[
+  {
+    "orden": 1,
+    "title": "Ficha de presentación",
+    "difficulty": "facil",
+    "statement_html": "<p>Escriba un programa que muestre en pantalla, en <strong>tres líneas separadas</strong>:</p><ul><li>Su nombre completo.</li><li>Su ciudad.</li><li>Una razón por la que quiere aprender a programar.</li></ul><p><em>Nota:</em> el contenido de los textos es libre, pero deben salir exactamente tres renglones.</p>",
+    "hint_html": "<p>Necesitas tres llamadas a <code>print()</code>, una debajo de la otra. Cada <code>print()</code> baja el cursor a la línea siguiente, así que no hay que hacer nada extra.</p>",
+    "solution_html": "<pre><code># Ficha de presentación del estudiante\nprint(\"Ana Gómez\")\nprint(\"Bogotá\")\nprint(\"Quiero automatizar el inventario de la tienda de mi mamá\")</code></pre><p>Línea por línea:</p><ol><li>Un comentario para que se sepa de qué es el programa. Python lo ignora.</li><li><code>print(\"Ana Gómez\")</code> escribe el nombre y baja de línea.</li><li>Lo mismo con la ciudad.</li><li>Lo mismo con la razón. Tres <code>print()</code>, tres renglones.</li></ol>"
+  },
+  {
+    "orden": 2,
+    "title": "Recibo de la tienda",
+    "difficulty": "facil",
+    "statement_html": "<p>Una tienda vendió hoy <strong>340</strong> unidades. Escriba un programa que muestre exactamente:</p><pre><code>TIENDA LA ESQUINA\nVentas del dia: 340 unidades\nGracias por su compra</code></pre><p><em>Nota:</em> el número debe ir como número, no dentro del texto.</p>",
+    "hint_html": "<p>Para la línea del medio usa <code>print()</code> con tres argumentos separados por comas: el texto de la izquierda, el número y el texto de la derecha. Recuerda que las comas ponen un espacio automático.</p>",
+    "solution_html": "<pre><code># Recibo simple de cierre del día\nprint(\"TIENDA LA ESQUINA\")\nprint(\"Ventas del dia:\", 340, \"unidades\")\nprint(\"Gracias por su compra\")</code></pre><p>La línea 3 es la interesante: <code>print()</code> recibe <strong>tres argumentos</strong> y los une con un espacio entre cada uno. Por eso no hay que escribir el espacio a mano dentro de las comillas. El <code>340</code> va sin comillas porque es un número.</p>",
+    "starter_code": "# Recibo simple de cierre del día\n",
+    "tests": [
+      { "stdin": "", "expected_output": "TIENDA LA ESQUINA\nVentas del dia: 340 unidades\nGracias por su compra" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Caza el error",
+    "difficulty": "medio",
+    "statement_html": "<p>El siguiente programa no ejecuta. Encuentre los <strong>tres</strong> errores, corríjalos y entregue el programa funcionando.</p><pre><code>Print(\"Inicio\")\nprint(\"Mitad\"\nprint(Fin)</code></pre><p><em>Nota:</em> la salida esperada son tres líneas: <code>Inicio</code>, <code>Mitad</code> y <code>Fin</code>.</p>",
+    "hint_html": "<p>Revise tres cosas distintas: cómo se escribe el nombre de la función, si todos los paréntesis se cierran, y si todo texto está entre comillas.</p>",
+    "solution_html": "<pre><code>print(\"Inicio\")\nprint(\"Mitad\")\nprint(\"Fin\")</code></pre><p>Los tres errores eran:</p><ol><li><code>Print</code> con mayúscula: la función se llama <code>print</code>. Da <code>NameError</code>.</li><li>Falta cerrar el paréntesis en la línea 2. Da <code>SyntaxError</code>.</li><li><code>Fin</code> sin comillas: Python cree que es el nombre de un dato guardado y no lo encuentra. Da <code>NameError</code>.</li></ol>",
+    "starter_code": "Print(\"Inicio\")\nprint(\"Mitad\"\nprint(Fin)\n",
+    "tests": [{ "stdin": "", "expected_output": "Inicio\nMitad\nFin" }]
+  },
+  {
+    "orden": 4,
+    "title": "Volante de la panadería",
+    "difficulty": "dificil",
+    "statement_html": "<p>Arme el volante de una panadería. El programa debe mostrar exactamente:</p><pre><code>==============================\n     PANADERIA EL TRIGAL\n==============================\nPan            600\nBunuelo       1500\nAvena         2500\n------------------------------\nAbrimos de 6 a 8</code></pre><p><em>Nota:</em> los precios deben quedar alineados a la derecha y todo el volante debe salir de un solo programa, sin usar variables todavía.</p>",
+    "hint_html": "<p>No hay magia: son ocho <code>print()</code>. Para alinear, cuente los espacios dentro del string y escríbalos a mano. Para las líneas de <code>=</code> puede usar <code>\"=\" * 30</code>, que repite el carácter 30 veces.</p>",
+    "solution_html": "<pre><code># Volante de precios de la panadería\nprint(\"=\" * 30)\nprint(\"     PANADERIA EL TRIGAL\")\nprint(\"=\" * 30)\nprint(\"Pan            600\")\nprint(\"Bunuelo       1500\")\nprint(\"Avena         2500\")\nprint(\"-\" * 30)\nprint(\"Abrimos de 6 a 8\")</code></pre><p>Dos cosas nuevas:</p><ul><li><code>\"=\" * 30</code> repite el carácter treinta veces. Multiplicar un texto por un número lo repite; lo veremos a fondo en el capítulo 5.</li><li>La alineación se logra contando espacios dentro de las comillas. Es incómodo, y por eso en el capítulo 5 aprenderás a alinear de verdad con f-strings.</li></ul>",
+    "starter_code": "# Volante de precios de la panadería\n"
+  }
+]

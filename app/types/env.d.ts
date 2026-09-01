@@ -14,4 +14,10 @@ interface Env {
 	TEACHER_PASSWORD: string;
 	/** Secreto de firma de cookies de Better Auth */
 	BETTER_AUTH_SECRET: string;
+
+	/* --- Modo Código -------------------------------------------------- */
+	/** Motor que ejecuta el Python. Por defecto la instancia pública de Piston. */
+	PISTON_URL?: string;
+	/** "true" para encender el Modo Código */
+	CODE_MODE_ENABLED?: string;
 }

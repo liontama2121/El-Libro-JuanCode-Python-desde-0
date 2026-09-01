@@ -2,3 +2,7 @@
 TEACHER_USERNAME=juancode
 TEACHER_PASSWORD=cambia-esta-clave
 BETTER_AUTH_SECRET=genera-uno-largo-y-aleatorio
+
+# Modo Codigo: ejecuta Python de verdad contra los tests
+CODE_MODE_ENABLED=false
+PISTON_URL=https://emkc.org/api/v2/piston/execute

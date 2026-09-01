@@ -11,12 +11,13 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply libro-juancode-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply libro-juancode-db --remote",
-    "db:seed:local": "wrangler d1 execute libro-juancode-db --local --file=./seeds/seed.sql && wrangler d1 execute libro-juancode-db --local --file=./seeds/banco.sql",
-    "db:seed:remote": "wrangler d1 execute libro-juancode-db --remote --file=./seeds/seed.sql && wrangler d1 execute libro-juancode-db --remote --file=./seeds/banco.sql",
+    "db:seed:local": "npm run content:build && wrangler d1 execute libro-juancode-db --local --file=./seeds/banco.sql && wrangler d1 execute libro-juancode-db --local --file=./seeds/contenido.sql",
+    "db:seed:remote": "npm run content:build && wrangler d1 execute libro-juancode-db --remote --file=./seeds/banco.sql && wrangler d1 execute libro-juancode-db --remote --file=./seeds/contenido.sql",
     "db:studio": "drizzle-kit studio",
     "cf-typegen": "wrangler types && react-router typegen",
     "typecheck": "npm run cf-typegen && tsc -b",
-    "check": "npm run typecheck && react-router build && wrangler deploy --dry-run"
+    "check": "npm run typecheck && react-router build && wrangler deploy --dry-run",
+    "content:build": "node scripts/build-contenido.mjs"
   },
   "dependencies": {
     "better-auth": "^1.7.1",

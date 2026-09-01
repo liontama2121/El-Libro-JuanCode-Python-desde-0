@@ -18,15 +18,23 @@ Toda la interfaz está en español.
 | Base de datos | Cloudflare D1 (binding `DB`) |
 | ORM / migraciones | Drizzle ORM + drizzle-kit |
 | Autenticación | Better Auth (adaptador Drizzle) con cookies de sesión |
+| Modo Código | Piston (ejecuta Python de verdad contra los tests) |
 
 ### 🔐 Regla de oro
 
-**La calificación de quizzes y la creación de desbloqueos ocurren SIEMPRE en el
-servidor.** El loader de `/libro/capitulo/:number/quiz` nunca envía `is_correct`
-al navegador: solo manda el enunciado y los textos de las opciones. El `action`
-del mismo archivo compara contra la base de datos, guarda el intento y, si el
-score alcanza el `passing_score`, crea el `unlock` del capítulo siguiente.
-Ver `app/routes/quiz.tsx`.
+**Calificar, sumar XP y desbloquear ocurre SIEMPRE en el servidor.**
+
+- El loader del quiz manda enunciados y opciones; `correct_json` nunca sale del
+  servidor antes de que el estudiante responda (`lib/bank.server.ts`,
+  función `aPublica`).
+- Como el quiz saca 5 preguntas al azar del banco, el loader firma la lista de
+  ids con HMAC (`lib/sign.server.ts`) y el action solo califica ese juego de
+  preguntas: nadie puede cambiárselas por otras.
+- En el arcade, responder solo corrige. La XP se calcula al terminar,
+  recalificando todo en el servidor y contando cada pregunta una sola vez, para
+  que no se pueda repetir una pregunta y farmear puntos.
+- El Modo Código nunca confía en el cliente: recibe el id del ejercicio y el
+  código, y lee los tests de la base.
 
 ---
 
@@ -41,6 +49,12 @@ app/
 │   ├── auth.server.ts        ← Better Auth, requireUser / requireTeacher
 │   ├── bootstrap.server.ts   ← crea al profe (.dev.vars) y al estudiante demo
 │   ├── progress.server.ts    ← reglas de desbloqueo y estado de capítulos
+│   ├── bank.server.ts        ← banco: selección y calificación de los 4 tipos
+│   ├── sign.server.ts        ← firma HMAC de las preguntas servidas
+│   ├── gamification.server.ts← XP, rachas e insignias (único que escribe stats)
+│   ├── niveles.ts            ← niveles e insignias (puro, va también al cliente)
+│   ├── arcade.ts             ← configuración de los modos del arcade
+│   ├── piston.server.ts      ← Modo Código
 │   └── format.ts
 ├── components/               ← nav, admin shell, UI (confetti, barras, badges)
 ├── routes/
@@ -54,10 +68,26 @@ app/
 │   ├── admin.estudiante.tsx  ← historial + desbloqueos manuales
 │   ├── admin.capitulos.tsx
 │   ├── admin.ejercicios.tsx
-│   └── admin.quiz.tsx
+│   ├── admin.quiz.tsx
+│   ├── admin.banco.tsx       ← banco de preguntas (+ importar / exportar)
+│   ├── admin.ejercicio.tsx   ← tests y código inicial de un ejercicio
+│   ├── practica.tsx          ← hub de práctica
+│   ├── practica.simulacro-quiz.tsx
+│   ├── practica.simulacro-parcial.tsx
+│   ├── practica.arcade.tsx / .modo.tsx / .codigo.tsx
+│   ├── perfil.tsx · ranking.tsx
+│   └── api.probar.tsx        ← ruta de recurso del Modo Código
 └── routes.ts
-drizzle/0000_init.sql         ← migración generada por drizzle-kit
-seeds/seed.sql                ← las 6 partes y los 24 capítulos del libro
+content/                      ← el libro escrito a mano (fuente de verdad)
+├── libro.json                ← partes y ficha de cada capítulo
+├── chapters/NN-slug.html     ← cuerpo del capítulo
+├── bank/NN.json              ← banco de preguntas
+└── exercises/NN.json         ← ejercicios
+scripts/build-contenido.mjs   ← genera seeds/contenido.sql desde content/
+drizzle/                      ← migraciones incrementales de drizzle-kit
+seeds/seed.sql                ← las 6 partes y los 24 capítulos (esqueleto)
+seeds/banco.sql               ← migra las preguntas viejas al banco
+seeds/contenido.sql           ← GENERADO: no editar a mano
 workers/app.ts                ← entrada del Worker
 wrangler.jsonc
 ```
@@ -117,6 +147,10 @@ cp .dev.vars.example .dev.vars
 TEACHER_USERNAME=juancode
 TEACHER_PASSWORD=tu-clave-de-profe
 BETTER_AUTH_SECRET=una-cadena-larga-y-aleatoria
+
+# Modo Código (opcional)
+CODE_MODE_ENABLED=false
+PISTON_URL=https://emkc.org/api/v2/piston/execute
 ```
 
 Para generar el secreto:
@@ -129,8 +163,19 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ```bash
 npm run db:migrate:local     # crea las tablas en la D1 local
-npm run db:seed:local        # inserta las 6 partes y los 24 capítulos
+npm run db:seed:local        # esqueleto + banco viejo + contenido de content/
 ```
+
+`db:seed:local` hace tres cosas seguidas:
+
+1. `npm run content:build` — lee `content/` y genera `seeds/contenido.sql`.
+2. Migra al banco las preguntas que existieran en el formato viejo.
+3. Aplica el contenido.
+
+**Es idempotente**: se puede correr las veces que haga falta. Edita un archivo
+de `content/`, vuelve a seedear y la base queda igual al archivo. Solo se
+reescriben las filas con `source = 'seed'`; lo que el profe escriba desde
+`/admin` queda marcado como `'profe'` y no se toca.
 
 ### 5. Correr
 
@@ -166,6 +211,88 @@ npm run deploy
 ```
 
 `npm run deploy` corre `react-router build` y luego `wrangler deploy`.
+
+---
+
+## 💻 Modo Código (ejecutar Python de verdad)
+
+Con el Modo Código encendido, los ejercicios que tengan casos de prueba muestran
+un botón **▶ Probar mi código**: el estudiante escribe Python, el servidor lo
+ejecuta contra cada test y le muestra qué salió y qué se esperaba.
+
+### Encenderlo
+
+```env
+CODE_MODE_ENABLED=true
+PISTON_URL=https://tu-instancia-de-piston/api/v2/piston/execute
+```
+
+En producción:
+
+```bash
+npx wrangler secret put CODE_MODE_ENABLED   # true
+npx wrangler secret put PISTON_URL
+```
+
+### ⚠️ La instancia pública de Piston ya no sirve
+
+Desde el **15 de febrero de 2026** `https://emkc.org/api/v2/piston/execute`
+responde `401` a quien no esté en su lista blanca. Hay que montar una propia
+(es un `docker run`) y apuntar `PISTON_URL` ahí:
+
+```bash
+docker run -d --name piston -p 2000:2000 --privileged ghcr.io/engineer-man/piston
+# y luego, dentro del contenedor, instalar el runtime de Python
+docker exec piston /piston/cli/index.js ppman install python 3.10.0
+```
+
+`PISTON_URL=http://localhost:2000/api/v2/execute`
+
+Si el motor rechaza la petición, la app **no se rompe**: el estudiante ve un
+aviso explicando que el Modo Código no está disponible y el resto del libro
+sigue funcionando igual. Con `CODE_MODE_ENABLED=false` el botón ni aparece y
+el simulacro de parcial vuelve al checklist de autocalificación.
+
+### Dónde aparece
+
+| Sitio | Qué hace |
+|---|---|
+| Lector del capítulo | `▶ Probar mi código` en cada ejercicio con tests |
+| Simulacro de parcial | Botón por punto; la nota sale sola de los tests |
+| Arcade 💻 Modo código | Un ejercicio al azar con cronómetro y XP por dificultad |
+
+Detalles: timeout de 10 s por ejecución, **20 ejecuciones por minuto y por
+estudiante**, y cada intento queda guardado en la tabla `code_runs`. La salida
+se compara normalizada (se ignoran espacios al final de línea y saltos
+sobrantes), así que un enter de más no reprueba a nadie.
+
+---
+
+## ✍️ Escribir contenido
+
+El libro vive en `content/`, no en la base de datos:
+
+```
+content/libro.json              partes y ficha de cada capítulo
+content/chapters/07-ciclo-while.html
+content/bank/07.json
+content/exercises/07.json
+```
+
+Después de editar cualquiera de esos archivos:
+
+```bash
+npm run db:seed:local     # o :remote
+```
+
+`scripts/build-contenido.mjs` valida el contenido antes de generar el SQL
+(que el `option_id` correcto exista, que `line_number` esté en rango, que cada
+pregunta tenga explicación…) y **no genera nada si algo está mal**, diciendo
+exactamente qué archivo y qué pregunta.
+
+Un capítulo pasa a `published = true` solo cuando tiene las tres cosas: cuerpo,
+banco y ejercicios. Mientras falte una, sigue siendo borrador y los estudiantes
+no lo ven.
 
 ---
 
@@ -206,6 +333,7 @@ Domains & Routes → Add → Custom domain →** `libro.juancode.co`.
 | `npm run db:migrate:remote` | Aplica migraciones a la D1 de Cloudflare |
 | `npm run db:seed:local` | Carga el contenido del libro en local |
 | `npm run db:seed:remote` | Carga el contenido del libro en remoto |
+| `npm run content:build` | Regenera `seeds/contenido.sql` desde `content/` |
 | `npm run cf-typegen` | Regenera los tipos de bindings y de rutas |
 | `npm run typecheck` | Tipos + rutas |
 | `npm run check` | typecheck + build + `wrangler deploy --dry-run` |

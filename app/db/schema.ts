@@ -133,6 +133,11 @@ export const exercises = sqliteTable(
 		testsJson: text("tests_json"),
 		/** Codigo inicial que aparece en el editor */
 		starterCode: text("starter_code"),
+		/**
+		 * 'seed'  -> viene de content/exercises/NN.json (el seed lo reemplaza)
+		 * 'profe' -> lo escribio el profesor en /admin (el seed no lo toca)
+		 */
+		source: text("source").notNull().default("profe"),
 	},
 	(t) => [index("exercises_chapter_idx").on(t.chapterId)],
 );
@@ -254,6 +259,8 @@ export const questionBank = sqliteTable(
 		correctJson: text("correct_json").notNull().default("{}"),
 		explanation: text("explanation").notNull().default(""),
 		active: integer("active", { mode: "boolean" }).notNull().default(true),
+		/** 'seed' (content/bank/NN.json) | 'profe' (escrita en /admin) */
+		source: text("source").notNull().default("profe"),
 	},
 	(t) => [
 		index("question_bank_chapter_idx").on(t.chapterId, t.type, t.difficulty),
@@ -320,6 +327,32 @@ export const settings = sqliteTable("settings", {
 	value: text("value").notNull().default(""),
 });
 
+/* -------------------------------------------------------------------------- */
+/*  MODO CODIGO                                                                */
+/* -------------------------------------------------------------------------- */
+
+/** Cada vez que un estudiante corre su codigo contra los tests de un ejercicio. */
+export const codeRuns = sqliteTable(
+	"code_runs",
+	{
+		id: integer("id").primaryKey({ autoIncrement: true }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		exerciseId: integer("exercise_id").references(() => exercises.id, {
+			onDelete: "set null",
+		}),
+		code: text("code").notNull(),
+		/** true solo si TODOS los tests pasaron */
+		passed: integer("passed", { mode: "boolean" }).notNull().default(false),
+		resultsJson: text("results_json").notNull().default("[]"),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`),
+	},
+	(t) => [index("code_runs_user_idx").on(t.userId, t.createdAt)],
+);
+
 export type User = typeof users.$inferSelect;
 export type Part = typeof parts.$inferSelect;
 export type Chapter = typeof chapters.$inferSelect;
@@ -332,6 +365,7 @@ export type Unlock = typeof unlocks.$inferSelect;
 export type BankQuestion = typeof questionBank.$inferSelect;
 export type PracticeAttempt = typeof practiceAttempts.$inferSelect;
 export type UserStats = typeof userStats.$inferSelect;
+export type CodeRun = typeof codeRuns.$inferSelect;
 
 /** Tipos de pregunta soportados por el banco. */
 export const TIPOS_PREGUNTA = [

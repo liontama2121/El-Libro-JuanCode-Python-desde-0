@@ -22,6 +22,13 @@
       "when": 1788235447585,
       "tag": "0002_gamificacion",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1788236161494,
+      "tag": "0003_modo_codigo",
+      "breakpoints": true
     }
   ]
 }

@@ -17,8 +17,12 @@ export default [
 	route("practica/simulacro-quiz", "routes/practica.simulacro-quiz.tsx"),
 	route("practica/simulacro-parcial", "routes/practica.simulacro-parcial.tsx"),
 	route("practica/arcade", "routes/practica.arcade.tsx"),
+	route("practica/arcade/codigo", "routes/practica.arcade.codigo.tsx"),
 	route("practica/arcade/:modo", "routes/practica.arcade.modo.tsx"),
 	route("perfil", "routes/perfil.tsx"),
+
+	// Modo Código (ruta de recurso)
+	route("api/probar", "routes/api.probar.tsx"),
 	route("ranking", "routes/ranking.tsx"),
 
 	// Profesor

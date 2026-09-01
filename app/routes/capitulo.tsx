@@ -1,10 +1,12 @@
 import { and, asc, eq } from "drizzle-orm";
 import { Link, redirect } from "react-router";
 import { Nav } from "~/components/nav";
+import { ProbarCodigo } from "~/components/probar-codigo";
 import { BadgeDificultad, Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import type { Exercise } from "~/db/schema";
 import { requireUser } from "~/lib/auth.server";
+import { leerTests, modoCodigoActivo } from "~/lib/piston.server";
 import { cargarLibro } from "~/lib/progress.server";
 import type { Route } from "./+types/capitulo";
 
@@ -66,7 +68,13 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 		user,
 		capitulo,
 		capitulos,
-		ejercicios,
+		modoCodigo: modoCodigoActivo(env),
+		ejercicios: ejercicios.map((e) => ({
+			...e,
+			// El cliente sabe si HAY tests, nunca cuáles son.
+			tieneTests: leerTests(e.testsJson).length > 0,
+			testsJson: null,
+		})),
 		tieneQuiz: quiz.length > 0,
 		yaAprobado: Boolean(aprobado),
 		siguiente: capitulos.find((c) => c.number === numero + 1) ?? null,
@@ -82,6 +90,7 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 		tieneQuiz,
 		yaAprobado,
 		siguiente,
+		modoCodigo,
 	} = loaderData;
 
 	return (
@@ -184,7 +193,12 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 							<h2 className="jc-display text-3xl">🏋️ Ejercicios</h2>
 							<div className="mt-6 space-y-5">
 								{ejercicios.map((ej, i) => (
-									<CardEjercicio key={ej.id} ejercicio={ej} indice={i + 1} />
+									<CardEjercicio
+										key={ej.id}
+										ejercicio={ej}
+										indice={i + 1}
+										modoCodigo={modoCodigo}
+									/>
 								))}
 							</div>
 						</section>
@@ -232,12 +246,16 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 	);
 }
 
+type EjercicioLector = Omit<Exercise, "testsJson"> & { tieneTests: boolean };
+
 function CardEjercicio({
 	ejercicio,
 	indice,
+	modoCodigo,
 }: {
-	ejercicio: Exercise;
+	ejercicio: EjercicioLector;
 	indice: number;
+	modoCodigo: boolean;
 }) {
 	return (
 		<article className="jc-glass p-6">
@@ -254,6 +272,21 @@ function CardEjercicio({
 					className="jc-prosa mt-4 text-[1rem]"
 					dangerouslySetInnerHTML={{ __html: ejercicio.statementHtml }}
 				/>
+			)}
+
+			{/* Modo Código: correr el ejercicio contra sus tests */}
+			{modoCodigo && ejercicio.tieneTests && (
+				<details className="mt-5">
+					<summary className="jc-btn jc-btn-sm list-none marker:content-none">
+						▶ Probar mi código
+					</summary>
+					<div className="mt-4">
+						<ProbarCodigo
+							exerciseId={ejercicio.id}
+							codigoInicial={ejercicio.starterCode ?? ""}
+						/>
+					</div>
+				</details>
 			)}
 
 			<div className="mt-5 flex flex-wrap gap-3">

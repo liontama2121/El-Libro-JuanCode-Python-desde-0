@@ -1,0 +1,187 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué es programar, en una frase?",
+    "data": { "options": [
+      { "id": "a", "text": "Escribir instrucciones exactas para que una máquina las ejecute en orden" },
+      { "id": "b", "text": "Memorizar todos los comandos de un lenguaje" },
+      { "id": "c", "text": "Reparar computadores que fallan" },
+      { "id": "d", "text": "Diseñar la parte visual de una página web" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La máquina no adivina: hace exactamente lo que le pides, en el orden en que se lo pides."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Para qué sirven las comillas en print(\"Hola\")?",
+    "data": { "options": [
+      { "id": "a", "text": "Le indican a Python dónde empieza y termina el texto" },
+      { "id": "b", "text": "Hacen que el texto salga en negrilla" },
+      { "id": "c", "text": "Son decorativas, se pueden quitar" },
+      { "id": "d", "text": "Convierten el texto en número" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sin comillas Python cree que Hola es el nombre de un dato guardado y lanza NameError."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué hace Python con una línea que empieza por #?",
+    "data": { "options": [
+      { "id": "a", "text": "La ignora por completo: es un comentario" },
+      { "id": "b", "text": "La imprime en pantalla" },
+      { "id": "c", "text": "La ejecuta más rápido" },
+      { "id": "d", "text": "Lanza un error de sintaxis" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Los comentarios son notas para humanos. Python los salta."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál de estas líneas está escrita correctamente?",
+    "data": { "options": [
+      { "id": "a", "text": "print(\"Hola\")" },
+      { "id": "b", "text": "Print(\"Hola\")" },
+      { "id": "c", "text": "print \"Hola\"" },
+      { "id": "d", "text": "print(Hola)" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "print en minúscula, con paréntesis y con el texto entre comillas. Las otras tres fallan en una de esas tres cosas."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuál de estos comentarios es realmente útil?",
+    "data": { "options": [
+      { "id": "a", "text": "# el conteo del día lo entrega la caja registradora" },
+      { "id": "b", "text": "# imprime el total" },
+      { "id": "c", "text": "# print" },
+      { "id": "d", "text": "# línea 3" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Un buen comentario explica el porqué, no repite lo que el código ya dice."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "El computador ejecuta las instrucciones…",
+    "data": { "options": [
+      { "id": "a", "text": "En el orden en que están escritas, de arriba hacia abajo" },
+      { "id": "b", "text": "En el orden que él considere más rápido" },
+      { "id": "c", "text": "Todas al mismo tiempo" },
+      { "id": "d", "text": "Empezando por la última línea" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El orden importa: por eso hay que romper el huevo antes de echarlo."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(\"Hola\")\nprint(\"JuanCode\")",
+    "data": { "options": [
+      { "id": "a", "text": "Hola\nJuanCode" },
+      { "id": "b", "text": "HolaJuanCode" },
+      { "id": "c", "text": "Hola JuanCode" },
+      { "id": "d", "text": "Solo Hola" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cada print() escribe y baja de línea, así que salen dos renglones."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(\"Total:\", 340, \"unidades\")",
+    "data": { "options": [
+      { "id": "a", "text": "Total: 340 unidades" },
+      { "id": "b", "text": "Total:340unidades" },
+      { "id": "c", "text": "Total: , 340 , unidades" },
+      { "id": "d", "text": "Error: no se puede mezclar texto y número" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las comas de print() separan argumentos y meten un espacio entre cada uno."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "# print(\"Uno\")\nprint(\"Dos\")",
+    "data": { "options": [
+      { "id": "a", "text": "Dos" },
+      { "id": "b", "text": "Uno\nDos" },
+      { "id": "c", "text": "Uno" },
+      { "id": "d", "text": "No imprime nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La primera línea es un comentario: Python la ignora por completo."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(\"A\")\nprint()\nprint(\"B\")",
+    "data": { "options": [
+      { "id": "a", "text": "A, un renglón en blanco, y B" },
+      { "id": "b", "text": "A y B pegados" },
+      { "id": "c", "text": "A B" },
+      { "id": "d", "text": "Error: print() necesita argumentos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "print() sin argumentos solo baja de línea: sirve para separar bloques de salida."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(\"-\" * 5)",
+    "data": { "options": [
+      { "id": "a", "text": "-----" },
+      { "id": "b", "text": "- * 5" },
+      { "id": "c", "text": "-5" },
+      { "id": "d", "text": "Error: no se puede multiplicar texto" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Multiplicar un texto por un número lo repite. Sirve para dibujar separadores."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "Este programa no corre. ¿En qué línea está el error?",
+    "data": { "lines": ["print(\"Inicio\")", "Print(\"Mitad\")", "print(\"Fin\")"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Python distingue mayúsculas: la función es print, no Print. Da NameError."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["print(\"Menu del dia\")", "print(\"Sopa\")", "print(Jugo)", "print(\"Postre\")"] },
+    "correct": { "line_number": 3 },
+    "explanation": "Jugo va sin comillas, así que Python lo busca como un dato guardado y no existe."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["print(\"Cierre de caja\")", "print(\"Total:\", 340", "print(\"Gracias\")"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Falta cerrar el paréntesis. Python sigue leyendo esperando el cierre y termina en SyntaxError."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme el programa que imprime el recibo de la tienda",
+    "data": { "lines": [
+      { "id": "l1", "text": "# Recibo de cierre del día", "indent": 0 },
+      { "id": "l2", "text": "print(\"TIENDA LA ESQUINA\")", "indent": 0 },
+      { "id": "l3", "text": "print(\"Ventas del dia:\", 340, \"unidades\")", "indent": 0 },
+      { "id": "l4", "text": "print(\"Gracias por su compra\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4"] },
+    "explanation": "Primero el comentario que explica el programa, y después las tres líneas del recibo en el orden en que deben salir."
+  }
+]

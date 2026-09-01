@@ -6,6 +6,7 @@ import { getDb, schema } from "~/db";
 import { requireUser } from "~/lib/auth.server";
 import { MODOS, ORDEN_MODOS } from "~/lib/arcade";
 import { cargarStats, listarInsignias, nivelDe } from "~/lib/gamification.server";
+import { leerTests, modoCodigoActivo } from "~/lib/piston.server";
 import { cargarLibro } from "~/lib/progress.server";
 import type { Route } from "./+types/practica.arcade";
 
@@ -38,6 +39,16 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 				.groupBy(schema.questionBank.type)
 		: [];
 
+	// El Modo Código no bebe del banco: necesita ejercicios con tests.
+	const conTests = abiertos.length
+		? (
+				await db
+					.select({ testsJson: schema.exercises.testsJson })
+					.from(schema.exercises)
+					.where(inArray(schema.exercises.chapterId, abiertos))
+			).filter((e) => leerTests(e.testsJson).length > 0).length
+		: 0;
+
 	const stats = await cargarStats(db, user.id);
 
 	// ¿Ya jugó el reto de hoy?
@@ -66,11 +77,14 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			insignias: listarInsignias(stats.badgesJson).filter((i) => i.ganada).length,
 		},
 		retoJugado: Boolean(retoHoy),
+		modoCodigo: modoCodigoActivo(env) && conTests > 0,
+		ejerciciosConTests: conTests,
 	};
 }
 
 export default function Arcade({ loaderData }: Route.ComponentProps) {
-	const { user, disponibles, stats, retoJugado } = loaderData;
+	const { user, disponibles, stats, retoJugado, modoCodigo, ejerciciosConTests } =
+		loaderData;
 
 	return (
 		<>
@@ -115,7 +129,10 @@ export default function Arcade({ loaderData }: Route.ComponentProps) {
 				<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 					{ORDEN_MODOS.map((slug) => {
 						const m = MODOS[slug];
-						const hay = m.tipos.some((t) => (disponibles[t] ?? 0) > 0);
+						const hay =
+							slug === "codigo"
+								? modoCodigo
+								: m.tipos.some((t) => (disponibles[t] ?? 0) > 0);
 						const bloqueado = !hay || (slug === "reto" && retoJugado);
 
 						const contenido = (
@@ -131,11 +148,15 @@ export default function Arcade({ loaderData }: Route.ComponentProps) {
 								<span className="jc-mono mt-4 text-xs text-[var(--color-tinta-2)]">
 									{slug === "reto" && retoJugado
 										? "ya lo jugaste hoy — vuelve mañana"
-										: !hay
-											? "sin preguntas todavía"
-											: `${m.vidas ? `${m.vidas} vidas · ` : ""}${
-													m.segundos ? `${m.segundos}s` : `${m.limite} preguntas`
-												}`}
+										: slug === "codigo"
+											? hay
+												? `${ejerciciosConTests} ejercicios con tests`
+												: "modo código apagado"
+											: !hay
+												? "sin preguntas todavía"
+												: `${m.vidas ? `${m.vidas} vidas · ` : ""}${
+														m.segundos ? `${m.segundos}s` : `${m.limite} preguntas`
+													}`}
 								</span>
 							</>
 						);

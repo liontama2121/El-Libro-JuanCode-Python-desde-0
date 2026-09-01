@@ -1,0 +1,43 @@
+{
+  "titulo": "El Libro JuanCode — Python desde 0",
+  "autor": "JuanCode",
+  "partes": [
+    { "number": 1, "title": "Fundamentos", "emoji": "🌱" },
+    { "number": 2, "title": "Control de flujo", "emoji": "🔀" },
+    { "number": 3, "title": "Estructuras de datos", "emoji": "📚" },
+    { "number": 4, "title": "Código organizado", "emoji": "🧰" },
+    { "number": 5, "title": "Programación orientada a objetos", "emoji": "🏛️" },
+    { "number": 6, "title": "Mundo real", "emoji": "🚀" }
+  ],
+  "capitulos": [
+    { "number": 1, "part": 1, "slug": "que-es-programar", "title": "¿Qué es programar?", "emoji": "🐍", "description": "La idea más importante del libro: darle instrucciones exactas a una máquina." },
+    { "number": 2, "part": 1, "slug": "variables-y-tipos", "title": "Variables y tipos de datos", "emoji": "📦", "description": "Cajas con nombre para guardar información, y los cuatro tipos básicos." },
+    { "number": 3, "part": 1, "slug": "input-y-conversiones", "title": "input() y conversiones", "emoji": "⌨️", "description": "Pedirle datos al usuario y convertirlos al tipo correcto." },
+    { "number": 4, "part": 1, "slug": "operadores", "title": "Operadores", "emoji": "🧮", "description": "Aritméticos, de comparación y lógicos, con su orden de precedencia." },
+    { "number": 5, "part": 1, "slug": "strings-a-fondo", "title": "Strings a fondo", "emoji": "📝", "description": "Indexación, slicing, métodos y f-strings." },
+
+    { "number": 6, "part": 2, "slug": "condicionales", "title": "Condicionales (if / elif / else)", "emoji": "🔀", "description": "Que el programa tome decisiones." },
+    { "number": 7, "part": 2, "slug": "ciclo-while", "title": "Ciclo while", "emoji": "⏳", "description": "Repetir mientras se cumpla una condición, con contadores, sumatorias y banderas." },
+    { "number": 8, "part": 2, "slug": "ciclo-for-y-range", "title": "Ciclo for y range()", "emoji": "🔢", "description": "Recorrer secuencias y contar de forma elegante." },
+    { "number": 9, "part": 2, "slug": "break-continue-anidados", "title": "break, continue y ciclos anidados", "emoji": "🎛️", "description": "Controlar el flujo dentro de los ciclos." },
+
+    { "number": 10, "part": 3, "slug": "listas", "title": "Listas", "emoji": "📋", "description": "La estructura de datos que más vas a usar." },
+    { "number": 11, "part": 3, "slug": "tuplas-y-sets", "title": "Tuplas y sets", "emoji": "🎯", "description": "Datos inmutables y colecciones sin repetidos." },
+    { "number": 12, "part": 3, "slug": "diccionarios", "title": "Diccionarios", "emoji": "🗂️", "description": "Guardar información con clave y valor." },
+    { "number": 13, "part": 3, "slug": "comprehensions", "title": "Comprehensions", "emoji": "⚡", "description": "Crear listas, sets y diccionarios en una sola línea." },
+
+    { "number": 14, "part": 4, "slug": "funciones", "title": "Funciones", "emoji": "🧰", "description": "Empaquetar lógica para reutilizarla." },
+    { "number": 15, "part": 4, "slug": "errores-y-excepciones", "title": "Errores y excepciones", "emoji": "🛡️", "description": "try, except, finally y errores propios." },
+    { "number": 16, "part": 4, "slug": "modulos-pip-entornos", "title": "Módulos, pip y entornos virtuales", "emoji": "📚", "description": "Organizar el proyecto y usar librerías externas." },
+    { "number": 17, "part": 4, "slug": "archivos", "title": "Archivos (txt, csv, json)", "emoji": "📁", "description": "Leer y escribir datos en disco." },
+
+    { "number": 18, "part": 5, "slug": "clases-y-objetos", "title": "Clases y objetos", "emoji": "🏛️", "description": "Modelar el mundo con atributos y métodos." },
+    { "number": 19, "part": 5, "slug": "herencia-y-metodos-especiales", "title": "Herencia y métodos especiales", "emoji": "🧬", "description": "Reutilizar clases y personalizar su comportamiento." },
+
+    { "number": 20, "part": 6, "slug": "proyecto-sistema-bancario", "title": "Proyecto integrador: Sistema Bancario", "emoji": "🏗️", "description": "Todo lo aprendido en una sola aplicación." },
+    { "number": 21, "part": 6, "slug": "sql-desde-cero", "title": "SQL desde cero", "emoji": "🗄️", "description": "Bases de datos relacionales y consultas desde Python." },
+    { "number": 22, "part": 6, "slug": "pandas-y-datos", "title": "Pandas y datos", "emoji": "🐼", "description": "Cargar, limpiar y analizar datos reales." },
+    { "number": 23, "part": 6, "slug": "ia-aplicada", "title": "IA aplicada con Python", "emoji": "🤖", "description": "Consumir modelos y construir algo útil con ellos." },
+    { "number": 24, "part": 6, "slug": "apis-fastapi-y-despliegue", "title": "APIs con FastAPI y despliegue", "emoji": "🚀", "description": "Publicar tu propio backend en internet." }
+  ]
+}
