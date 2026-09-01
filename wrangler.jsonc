@@ -1,0 +1,34 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "libro-juancode",
+	"main": "./workers/app.ts",
+	"compatibility_date": "2025-10-08",
+	"compatibility_flags": ["nodejs_compat"],
+	"observability": {
+		"enabled": true
+	},
+	"upload_source_maps": true,
+
+	// Base de datos D1. Reemplaza database_id con el que devuelve:
+	//   npx wrangler d1 create libro-juancode-db
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "libro-juancode-db",
+			"database_id": "REEMPLAZA_CON_TU_DATABASE_ID",
+			"migrations_dir": "drizzle"
+		}
+	],
+
+	// Los assets estaticos (./build/client) los enlaza automaticamente
+	// @cloudflare/vite-plugin durante el build. No hace falta declararlos aqui.
+
+	"vars": {
+		"APP_NAME": "El Libro JuanCode"
+	}
+
+	// Secretos (NO van aqui):
+	//   TEACHER_USERNAME, TEACHER_PASSWORD, BETTER_AUTH_SECRET
+	// Local  -> archivo .dev.vars
+	// Remoto -> npx wrangler secret put NOMBRE
+}

@@ -1,0 +1,4 @@
+# Copia este archivo a .dev.vars (no se sube al repo)
+TEACHER_USERNAME=juancode
+TEACHER_PASSWORD=cambia-esta-clave
+BETTER_AUTH_SECRET=genera-uno-largo-y-aleatorio
