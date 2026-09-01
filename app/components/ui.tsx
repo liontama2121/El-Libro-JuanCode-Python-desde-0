@@ -35,6 +35,50 @@ export function Toast() {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Toast de insignias ganadas                                                 */
+/* -------------------------------------------------------------------------- */
+
+export type InsigniaGanada = { emoji: string; nombre: string; texto: string };
+
+/**
+ * Aviso flotante cuando el estudiante gana insignias. Se apilan y se van
+ * solas a los 6 segundos.
+ */
+export function ToastInsignias({ insignias }: { insignias: InsigniaGanada[] }) {
+	const [visibles, setVisibles] = useState(insignias);
+
+	useEffect(() => {
+		setVisibles(insignias);
+		if (insignias.length === 0) return;
+		const t = setTimeout(() => setVisibles([]), 6000);
+		return () => clearTimeout(t);
+	}, [insignias]);
+
+	if (visibles.length === 0) return null;
+
+	return (
+		<div className="pointer-events-none fixed inset-x-0 top-20 z-50 flex flex-col items-center gap-3 px-4">
+			{visibles.map((i, k) => (
+				<div
+					key={i.nombre}
+					className="jc-anim-pop w-full max-w-sm rounded-2xl border
+						border-[rgba(255,212,59,.5)] bg-[#15131f]/95 px-5 py-4 text-center shadow-2xl"
+					style={{ animationDelay: `${k * 160}ms` }}
+				>
+					<p className="jc-mono text-[0.62rem] tracking-[0.24em] text-[var(--color-dorado)] uppercase">
+						insignia desbloqueada
+					</p>
+					<p className="jc-display mt-1.5 text-xl">
+						{i.emoji} {i.nombre}
+					</p>
+					<p className="mt-1 text-sm text-[var(--color-tinta-2)]">{i.texto}</p>
+				</div>
+			))}
+		</div>
+	);
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Barra de progreso                                                          */
 /* -------------------------------------------------------------------------- */
 

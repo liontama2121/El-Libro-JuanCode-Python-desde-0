@@ -14,6 +14,7 @@ import {
 	type PreguntaPublica,
 	type Respuesta,
 } from "~/lib/bank.server";
+import { otorgar, XP_POR_CORRECTA_SIMULACRO } from "~/lib/gamification.server";
 import { cargarLibro } from "~/lib/progress.server";
 import { firmar, verificar } from "~/lib/sign.server";
 import type { Route } from "./+types/practica.simulacro-quiz";
@@ -111,6 +112,8 @@ export type ResultadoSimulacro = {
 	feedback: (CorreccionUI & { questionId: number; chapterId: number })[];
 	porCapitulo: { chapterId: number; aciertos: number; total: number }[];
 	falladas: number[];
+	xp: number;
+	insignias: { emoji: string; nombre: string; texto: string }[];
 };
 
 export async function action({ context, request }: Route.ActionArgs) {
@@ -159,14 +162,19 @@ export async function action({ context, request }: Route.ActionArgs) {
 
 	const falladas = feedback.filter((f) => !f.acerto).map((f) => f.questionId);
 
-	// El simulacro NO desbloquea capítulos: solo el quiz oficial lo hace.
+	// XP: 5 por correcta. El simulacro NO desbloquea capítulos.
+	const premio = await otorgar(db, user.id, {
+		xp: aciertos * XP_POR_CORRECTA_SIMULACRO,
+		candidatas: total > 0 && aciertos === total ? ["simulacro_perfecto"] : [],
+	});
+
 	await db.insert(schema.practiceAttempts).values({
 		userId: user.id,
 		mode: "simulacro_quiz",
 		configJson: JSON.stringify({ caps: sobre.caps, crono: sobre.crono, total }),
 		score: aciertos,
 		total,
-		xpEarned: 0, // la XP entra en la Fase B
+		xpEarned: premio.xp,
 		durationSeconds: segundos,
 		detailJson: JSON.stringify({ porCapitulo, falladas }),
 	});
@@ -179,6 +187,12 @@ export async function action({ context, request }: Route.ActionArgs) {
 		feedback,
 		porCapitulo,
 		falladas,
+		xp: premio.xp,
+		insignias: premio.nuevasInsignias.map((i) => ({
+			emoji: i.emoji,
+			nombre: i.nombre,
+			texto: i.texto,
+		})),
 	};
 	return resultado;
 }
@@ -521,6 +535,11 @@ function ResultadoSimulacroVista({
 					<p className="mt-3 text-[var(--color-tinta-2)]">
 						{resultado.aciertos} de {resultado.total} correctas · {formatoReloj(resultado.segundos)}
 					</p>
+					{resultado.xp > 0 && (
+						<p className="jc-mono mt-2 text-sm text-[var(--color-dorado)]">
+							+{resultado.xp} XP
+						</p>
+					)}
 					<p className="jc-mono mt-2 text-xs text-[var(--color-tinta-2)]">
 						esto no desbloquea capítulos — el quiz oficial sí
 					</p>

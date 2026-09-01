@@ -75,7 +75,7 @@ export function Tabla({
 }) {
 	return (
 		<div className="jc-glass overflow-x-auto">
-			<table className="w-full min-w-[640px] text-left text-sm">
+			<table className="w-full min-w-[880px] text-left text-sm">
 				<thead>
 					<tr className="border-b border-[var(--color-borde)]">
 						{cabeceras.map((h) => (

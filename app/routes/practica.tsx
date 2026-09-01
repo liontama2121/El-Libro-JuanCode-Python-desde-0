@@ -4,6 +4,7 @@ import { Nav } from "~/components/nav";
 import { Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import { requireUser } from "~/lib/auth.server";
+import { cargarStats, nivelDe } from "~/lib/gamification.server";
 import { cargarLibro } from "~/lib/progress.server";
 import type { Route } from "./+types/practica";
 
@@ -24,10 +25,19 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		.from(schema.questionBank)
 		.where(sql`${schema.questionBank.active} = 1`);
 
+	const stats = await cargarStats(db, user.id);
+	const nivel = nivelDe(stats.xp);
+
 	return {
 		user,
 		capitulosAbiertos: abiertos.length,
 		preguntas: Number(preguntas) || 0,
+		navStats: {
+			xp: stats.xp,
+			emoji: nivel.actual.emoji,
+			nombre: nivel.actual.nombre,
+			progreso: nivel.progreso,
+		},
 	};
 }
 
@@ -56,11 +66,11 @@ const MODOS = [
 ];
 
 export default function Practica({ loaderData }: Route.ComponentProps) {
-	const { user, capitulosAbiertos, preguntas } = loaderData;
+	const { user, capitulosAbiertos, preguntas, navStats } = loaderData;
 
 	return (
 		<>
-			<Nav user={user} />
+			<Nav user={user} stats={navStats} />
 			<Toast />
 
 			<main className="mx-auto max-w-5xl px-4 pb-24 sm:px-5">

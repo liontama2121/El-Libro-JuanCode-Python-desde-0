@@ -20,7 +20,14 @@ export function Logo({ size = "md" }: { size?: "md" | "lg" }) {
 	);
 }
 
-export function Nav({ user }: { user: SessionUser }) {
+export type NavStats = {
+	xp: number;
+	emoji: string;
+	nombre: string;
+	progreso: number;
+};
+
+export function Nav({ user, stats }: { user: SessionUser; stats?: NavStats }) {
 	const esProfe = user.role === "teacher";
 
 	return (
@@ -33,10 +40,37 @@ export function Nav({ user }: { user: SessionUser }) {
 				<nav className="ml-2 hidden items-center gap-1 sm:flex">
 					<NavItem to="/libro">📚 El libro</NavItem>
 					<NavItem to="/practica">🎮 Práctica</NavItem>
+					{!esProfe && <NavItem to="/ranking">🏆 Ranking</NavItem>}
 					{esProfe && <NavItem to="/admin">🧑‍🏫 Panel</NavItem>}
 				</nav>
 
-				<div className="ml-auto flex items-center gap-3">
+				{/* Nivel y XP del estudiante */}
+				{stats && (
+					<Link
+						to="/perfil"
+						title={`${stats.xp} XP`}
+						className="ml-auto flex min-w-0 items-center gap-2 rounded-full border
+							border-[var(--color-borde)] bg-white/5 px-3 py-1.5 transition hover:bg-white/10"
+					>
+						<span className="text-sm">{stats.emoji}</span>
+						<span className="hidden text-xs font-semibold sm:inline">{stats.nombre}</span>
+						<span className="h-1.5 w-14 overflow-hidden rounded-full bg-black/50">
+							<span
+								className="block h-full rounded-full"
+								style={{
+									width: `${stats.progreso}%`,
+									background:
+										"linear-gradient(92deg, var(--color-cyan), var(--color-magenta))",
+								}}
+							/>
+						</span>
+						<span className="jc-mono text-[0.65rem] text-[var(--color-dorado)]">
+							{stats.xp}
+						</span>
+					</Link>
+				)}
+
+				<div className={`${stats ? "" : "ml-auto"} flex items-center gap-3`}>
 					<span className="hidden text-sm text-[var(--color-tinta-2)] sm:inline">
 						{esProfe ? "👑" : "🎓"} {user.name}
 					</span>

@@ -4,6 +4,7 @@ import { Nav } from "~/components/nav";
 import { BarraProgreso, Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import { requireUser } from "~/lib/auth.server";
+import { cargarStats, nivelDe } from "~/lib/gamification.server";
 import { romano } from "~/lib/format";
 import { cargarLibro, type CapituloConEstado } from "~/lib/progress.server";
 import type { Route } from "./+types/libro";
@@ -28,15 +29,29 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		.flatMap((p) => p.capitulos)
 		.filter((c) => c.estado === "completado").length;
 
-	return { user, partes, total: Number(total) || 0, completados };
+	const stats = await cargarStats(db, user.id);
+	const nivel = nivelDe(stats.xp);
+
+	return {
+		user,
+		partes,
+		total: Number(total) || 0,
+		completados,
+		navStats: {
+			xp: stats.xp,
+			emoji: nivel.actual.emoji,
+			nombre: nivel.actual.nombre,
+			progreso: nivel.progreso,
+		},
+	};
 }
 
 export default function Libro({ loaderData }: Route.ComponentProps) {
-	const { user, partes, total, completados } = loaderData;
+	const { user, partes, total, completados, navStats } = loaderData;
 
 	return (
 		<>
-			<Nav user={user} />
+			<Nav user={user} stats={navStats} />
 			<Toast />
 
 			<main className="mx-auto max-w-5xl px-5 pb-24">

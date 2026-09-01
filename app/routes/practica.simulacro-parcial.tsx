@@ -8,6 +8,7 @@ import { getDb, schema } from "~/db";
 import type { Dificultad } from "~/db/schema";
 import { requireUser } from "~/lib/auth.server";
 import { formatoReloj } from "~/lib/format";
+import { otorgar } from "~/lib/gamification.server";
 import { cargarLibro } from "~/lib/progress.server";
 import { firmar, verificar } from "~/lib/sign.server";
 import type { Route } from "./+types/practica.simulacro-parcial";
@@ -181,6 +182,9 @@ export async function action({ context, request }: Route.ActionArgs) {
 		.from(schema.exercises)
 		.where(inArray(schema.exercises.id, sobre.ejercicios));
 
+	// Entregar el parcial cuenta como día activo (la nota la pone el checklist).
+	await otorgar(db, user.id, {});
+
 	const [creado] = await db
 		.insert(schema.practiceAttempts)
 		.values({
@@ -189,7 +193,7 @@ export async function action({ context, request }: Route.ActionArgs) {
 			configJson: JSON.stringify({ ejercicios: sobre.ejercicios, minutos: MINUTOS }),
 			score: 0,
 			total: sobre.ejercicios.length,
-			xpEarned: 0, // la XP entra en la Fase B
+			xpEarned: 0,
 			durationSeconds: segundos,
 			detailJson: JSON.stringify({
 				puntos: sobre.ejercicios.map((id) => ({ id, codigo: codigos[String(id)] ?? "" })),

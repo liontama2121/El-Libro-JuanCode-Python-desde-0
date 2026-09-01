@@ -288,6 +288,38 @@ export const practiceAttempts = sqliteTable(
 	(t) => [index("practice_attempts_user_idx").on(t.userId, t.mode)],
 );
 
+/* -------------------------------------------------------------------------- */
+/*  GAMIFICACION                                                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * XP, nivel, rachas e insignias de cada estudiante.
+ * Lo escribe SIEMPRE el servidor (lib/gamification.server.ts).
+ */
+export const userStats = sqliteTable("user_stats", {
+	userId: text("user_id")
+		.primaryKey()
+		.references(() => users.id, { onDelete: "cascade" }),
+	xp: integer("xp").notNull().default(0),
+	level: integer("level").notNull().default(0),
+	/** Dias seguidos con actividad. Se pierde al saltarse un dia. */
+	streakDays: integer("streak_days").notNull().default(0),
+	bestStreak: integer("best_streak").notNull().default(0),
+	/** YYYY-MM-DD del ultimo dia con actividad */
+	lastActivityDate: text("last_activity_date"),
+	/** { ganadas: [id], contadores: { find_bug: n, parsons: n, ... } } */
+	badgesJson: text("badges_json").notNull().default("{}"),
+	updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`),
+});
+
+/** Ajustes sueltos del profe (por ahora: mostrar u ocultar el ranking). */
+export const settings = sqliteTable("settings", {
+	key: text("key").primaryKey(),
+	value: text("value").notNull().default(""),
+});
+
 export type User = typeof users.$inferSelect;
 export type Part = typeof parts.$inferSelect;
 export type Chapter = typeof chapters.$inferSelect;
@@ -299,6 +331,7 @@ export type QuizAttempt = typeof quizAttempts.$inferSelect;
 export type Unlock = typeof unlocks.$inferSelect;
 export type BankQuestion = typeof questionBank.$inferSelect;
 export type PracticeAttempt = typeof practiceAttempts.$inferSelect;
+export type UserStats = typeof userStats.$inferSelect;
 
 /** Tipos de pregunta soportados por el banco. */
 export const TIPOS_PREGUNTA = [

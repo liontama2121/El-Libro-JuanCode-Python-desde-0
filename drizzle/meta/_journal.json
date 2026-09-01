@@ -15,6 +15,13 @@
       "when": 1788234454304,
       "tag": "0001_banco_y_practica",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788235447585,
+      "tag": "0002_gamificacion",
+      "breakpoints": true
     }
   ]
 }

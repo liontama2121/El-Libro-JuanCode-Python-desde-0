@@ -1,9 +1,15 @@
-import { asc, eq, sql } from "drizzle-orm";
-import { Link } from "react-router";
+import { and, asc, desc, eq, like, sql } from "drizzle-orm";
+import { Form, Link } from "react-router";
 import { AdminShell, Tabla, Vacio } from "~/components/admin";
 import { BarraProgreso } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import { formatearFecha } from "~/lib/format";
+import {
+	cargarStats,
+	fijarRanking,
+	nivelDe,
+	rankingVisible,
+} from "~/lib/gamification.server";
 import { requireTeacher } from "~/lib/auth.server";
 import { cargarProgreso, ultimoIntento } from "~/lib/progress.server";
 import type { Route } from "./+types/admin";
@@ -43,10 +49,31 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		.from(schema.chapters)
 		.where(eq(schema.chapters.published, true));
 
+	const verRanking = await rankingVisible(db);
+
 	const filas = await Promise.all(
 		estudiantes.map(async (e) => {
 			const progreso = await cargarProgreso(db, e.id);
 			const intento = await ultimoIntento(db, e.id);
+			const stats = await cargarStats(db, e.id);
+
+			// Último rato de arcade (los modos empiezan por "arcade_")
+			const [arcade] = await db
+				.select({
+					mode: schema.practiceAttempts.mode,
+					score: schema.practiceAttempts.score,
+					total: schema.practiceAttempts.total,
+					createdAt: schema.practiceAttempts.createdAt,
+				})
+				.from(schema.practiceAttempts)
+				.where(
+					and(
+						eq(schema.practiceAttempts.userId, e.id),
+						like(schema.practiceAttempts.mode, "arcade_%"),
+					),
+				)
+				.orderBy(desc(schema.practiceAttempts.createdAt))
+				.limit(1);
 
 			// "Capítulo actual" = el mayor desbloqueado/accesible.
 			const accesibles = capitulos.filter(
@@ -61,6 +88,10 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 				completados: progreso.passed.size,
 				actual,
 				intento,
+				xp: stats.xp,
+				nivel: nivelDe(stats.xp).actual,
+				streakDays: stats.streakDays,
+				arcade: arcade ?? null,
 			};
 		}),
 	);
@@ -70,11 +101,33 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		filas,
 		totalCapitulos: Number(totalCapitulos) || 0,
 		publicados: Number(publicados) || 0,
+		verRanking,
 	};
 }
 
+/** Único ajuste por ahora: mostrar u ocultar el ranking al curso. */
+export async function action({ context, request }: Route.ActionArgs) {
+	const env = context.cloudflare.env;
+	await requireTeacher(env, request);
+	const db = getDb(env);
+
+	const form = await request.formData();
+	if (String(form.get("intent")) === "ranking") {
+		await fijarRanking(db, form.get("visible") === "1");
+	}
+	return { ok: true };
+}
+
+const NOMBRE_ARCADE: Record<string, string> = {
+	arcade_relampago: "⚡ Relámpago",
+	arcade_detective: "🕵️ Detective",
+	arcade_puzzle: "🧩 Rompecabezas",
+	arcade_sorpresa: "🎲 Sorpresa",
+	arcade_codigo: "💻 Modo código",
+};
+
 export default function Admin({ loaderData }: Route.ComponentProps) {
-	const { user, filas, totalCapitulos, publicados } = loaderData;
+	const { user, filas, totalCapitulos, publicados, verRanking } = loaderData;
 
 	return (
 		<AdminShell
@@ -82,9 +135,18 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 			titulo="Panel del profe"
 			descripcion={`${filas.length} estudiantes · ${publicados} de ${totalCapitulos} capítulos publicados`}
 			acciones={
-				<Link to="/admin/estudiantes" className="jc-btn jc-btn-primary">
-					+ Nuevo estudiante
-				</Link>
+				<div className="flex flex-wrap items-center gap-3">
+					<Form method="post">
+						<input type="hidden" name="intent" value="ranking" />
+						<input type="hidden" name="visible" value={verRanking ? "0" : "1"} />
+						<button type="submit" className="jc-btn jc-btn-sm jc-btn-ghost">
+							{verRanking ? "🏆 Ranking visible" : "🙈 Ranking oculto"}
+						</button>
+					</Form>
+					<Link to="/admin/estudiantes" className="jc-btn jc-btn-primary">
+						+ Nuevo estudiante
+					</Link>
+				</div>
 			}
 		>
 			{filas.length === 0 ? (
@@ -99,10 +161,12 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 				<Tabla
 					cabeceras={[
 						"Estudiante",
-						"Usuario",
-						"Capítulo actual",
+						"Nivel · XP",
+						"Racha",
+						"Capítulo",
 						"Progreso",
 						"Último quiz",
+						"Último arcade",
 						"",
 					]}
 				>
@@ -119,8 +183,16 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 									</div>
 								)}
 							</td>
-							<td className="jc-mono px-5 py-4 text-[var(--color-tinta-2)]">
-								{f.username}
+							<td className="px-5 py-4">
+								<div className="text-sm">
+									{f.nivel.emoji} {f.nivel.nombre}
+								</div>
+								<div className="jc-mono text-[0.66rem] text-[var(--color-dorado)]">
+									{f.xp} XP
+								</div>
+							</td>
+							<td className="jc-mono px-5 py-4 text-sm">
+								{f.streakDays > 0 ? `🔥 ${f.streakDays}` : "—"}
 							</td>
 							<td className="px-5 py-4">
 								<span className="jc-mono rounded-full border border-[var(--color-borde)] px-3 py-1 text-xs">
@@ -154,6 +226,19 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 									<span className="text-xs text-[var(--color-tinta-2)]">
 										sin intentos
 									</span>
+								)}
+							</td>
+							<td className="px-5 py-4">
+								{f.arcade ? (
+									<div className="text-xs">
+										<div>{NOMBRE_ARCADE[f.arcade.mode] ?? f.arcade.mode}</div>
+										<div className="text-[var(--color-tinta-2)]">
+											{f.arcade.score}/{f.arcade.total} ·{" "}
+											{formatearFecha(f.arcade.createdAt)}
+										</div>
+									</div>
+								) : (
+									<span className="text-xs text-[var(--color-tinta-2)]">—</span>
 								)}
 							</td>
 							<td className="px-5 py-4 text-right">

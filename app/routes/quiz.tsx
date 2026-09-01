@@ -1,9 +1,15 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { Link, redirect, useFetcher } from "react-router";
 import { Nav } from "~/components/nav";
 import { Pregunta, type CorreccionUI } from "~/components/pregunta";
-import { BarraProgreso, Confetti, ScoreAnimado, Toast } from "~/components/ui";
+import {
+	BarraProgreso,
+	Confetti,
+	ScoreAnimado,
+	Toast,
+	ToastInsignias,
+} from "~/components/ui";
 import { getDb, schema } from "~/db";
 import { requireUser } from "~/lib/auth.server";
 import {
@@ -13,6 +19,12 @@ import {
 	type PreguntaPublica,
 	type Respuesta,
 } from "~/lib/bank.server";
+import {
+	capitulosAprobados,
+	insigniasPorCapitulos,
+	otorgar,
+	XP_QUIZ_CAPITULO,
+} from "~/lib/gamification.server";
 import { cargarLibro, otorgarDesbloqueo } from "~/lib/progress.server";
 import { firmar, verificar } from "~/lib/sign.server";
 import type { Route } from "./+types/quiz";
@@ -105,6 +117,8 @@ export type ResultadoQuiz = {
 	passingScore: number;
 	feedback: Feedback[];
 	desbloqueado: number | null;
+	xp: number;
+	insignias: { emoji: string; nombre: string; texto: string }[];
 };
 
 export async function action({ context, request, params }: Route.ActionArgs) {
@@ -161,6 +175,19 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 	const score = Math.round((aciertos / feedback.length) * 100);
 	const passed = score >= quiz.passingScore;
 
+	// ¿Ya lo había aprobado antes? La XP del capítulo se paga una sola vez.
+	const [yaAprobado] = await db
+		.select({ id: schema.quizAttempts.id })
+		.from(schema.quizAttempts)
+		.where(
+			and(
+				eq(schema.quizAttempts.userId, user.id),
+				eq(schema.quizAttempts.quizId, quiz.id),
+				eq(schema.quizAttempts.passed, true),
+			),
+		)
+		.limit(1);
+
 	await db.insert(schema.quizAttempts).values({
 		userId: user.id,
 		quizId: quiz.id,
@@ -184,6 +211,12 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 		}
 	}
 
+	// XP y insignias: siempre en el servidor.
+	const premio = await otorgar(db, user.id, {
+		xp: passed && !yaAprobado ? XP_QUIZ_CAPITULO : 0,
+		candidatas: passed ? insigniasPorCapitulos(await capitulosAprobados(db, user.id)) : [],
+	});
+
 	const resultado: ResultadoQuiz = {
 		score,
 		passed,
@@ -192,6 +225,12 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 		passingScore: quiz.passingScore,
 		feedback,
 		desbloqueado,
+		xp: premio.xp,
+		insignias: premio.nuevasInsignias.map((i) => ({
+			emoji: i.emoji,
+			nombre: i.nombre,
+			texto: i.texto,
+		})),
 	};
 	return resultado;
 }
@@ -361,6 +400,7 @@ function Resultado({
 		<>
 			<Nav user={user} />
 			<Confetti activo={passed} />
+			<ToastInsignias insignias={resultado.insignias} />
 
 			<main className="mx-auto max-w-3xl px-4 py-10 sm:px-5 sm:py-12">
 				<div className="jc-anim-pop jc-glass flex flex-col items-center p-7 text-center sm:p-10">
@@ -377,6 +417,11 @@ function Resultado({
 					{passed && siguienteNumero && (
 						<p className="jc-mono mt-4 text-sm text-[var(--color-verde)]">
 							🔓 Capítulo {siguienteNumero} desbloqueado
+						</p>
+					)}
+					{resultado.xp > 0 && (
+						<p className="jc-mono mt-2 text-sm text-[var(--color-dorado)]">
+							+{resultado.xp} XP
 						</p>
 					)}
 

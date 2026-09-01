@@ -49,13 +49,41 @@
 
 ## Fase B — Arcade + gamificación
 
-- [ ] Esquema `user_stats`
-- [ ] Reglas de XP en el servidor
-- [ ] Niveles e insignias
-- [ ] `/practica/arcade` — Relámpago · Detective · Rompecabezas · Sorpresa · Reto del día
-- [ ] `/perfil`
-- [ ] `/ranking` (ocultable por el profe)
-- [ ] Dashboard del profe con XP, nivel, racha y último arcade
+### Esquema
+- [x] `user_stats` (xp, level, streak_days, best_streak, last_activity_date, badges_json)
+- [x] `settings` (por ahora: mostrar u ocultar el ranking)
+- [x] Migración incremental `drizzle/0002_gamificacion.sql`
+
+### XP y niveles (todo en el servidor, `lib/gamification.server.ts`)
+- [x] +100 al aprobar el quiz de un capítulo, **solo la primera vez**
+- [x] +5 por correcta en el simulacro de quiz
+- [x] +10 / +20 / +30 por acierto en arcade según dificultad
+- [x] +50% mientras la racha de aciertos seguidos sea ≥ 5
+- [x] +25 el primer rato de cada día; la racha diaria se pierde al saltarse un día
+- [x] Niveles 🌱 Novato · 📦 Aprendiz · 💻 Programador · 🧠 Hacker · 🏆 Maestro JuanCode
+- [x] Barra de nivel en el nav
+
+### Insignias
+- [x] Las nueve del plan, con contadores para Cazador de bugs y Arquitecto
+- [x] Toast animado al ganarlas
+
+### Arcade
+- [x] `/practica/arcade` — menú con estado del jugador
+- [x] ⚡ Relámpago (60 s, predict_output, racha)
+- [x] 🕵️ Detective (find_bug, 3 vidas, explicación inmediata)
+- [x] 🧩 Rompecabezas (parsons, arrastrar en escritorio y ↑↓←→ en celular, 3 vidas)
+- [x] 🎲 Sorpresa (mezcla de los tres, 10 preguntas)
+- [x] 🗓️ Reto del día (semilla = fecha, un intento diario, tabla de posiciones)
+- [x] Feedback inmediato, confetti al llevar racha, shake al fallar, sonido con toggle
+- [x] La XP se paga al terminar, recalificando en el servidor: no se puede repetir
+      una pregunta para farmear
+- [x] Solo preguntas de capítulos desbloqueados
+
+### Pantallas
+- [x] `/perfil` — XP, nivel, rachas, insignias, historial y actividad de 30 días
+- [x] `/ranking` — top por XP con el puesto propio resaltado
+- [x] El profe muestra u oculta el ranking desde `/admin`
+- [x] Dashboard del profe con nivel, XP, racha y último arcade
 
 ---
 

@@ -436,6 +436,14 @@ body {
 	}
 }
 
+@keyframes jc-shake {
+	0%, 100% { transform: translateX(0); }
+	20% { transform: translateX(-8px); }
+	40% { transform: translateX(8px); }
+	60% { transform: translateX(-5px); }
+	80% { transform: translateX(5px); }
+}
+
 @keyframes jc-pop {
 	0% {
 		opacity: 0;
@@ -459,11 +467,15 @@ body {
 .jc-anim-pop {
 	animation: jc-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+.jc-anim-shake {
+	animation: jc-shake 0.42s ease both;
+}
 
 @media (prefers-reduced-motion: reduce) {
 	.jc-anim-in,
 	.jc-anim-slide,
-	.jc-anim-pop {
+	.jc-anim-pop,
+	.jc-anim-shake {
 		animation: none;
 	}
 	.jc-cap:hover {

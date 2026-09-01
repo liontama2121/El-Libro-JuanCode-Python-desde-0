@@ -231,9 +231,17 @@ function Parsons({ pregunta, respuesta, onRespuesta, correccion, bloqueada }: Su
 	);
 	const [arrastrando, setArrastrando] = useState<number | null>(null);
 
-	// Al cambiar de pregunta hay que volver a empezar con sus piezas.
+	/* Al cambiar de pregunta se vuelve a empezar con sus piezas. El orden que
+	   se entrega YA es una respuesta válida (mala, pero válida), así que se
+	   reporta de una: si no, el botón de responder nunca se habilitaría para
+	   quien crea que el orden dado es el correcto. */
 	useEffect(() => {
 		setOrden(piezasIniciales);
+		if (!bloqueada) {
+			onRespuesta({
+				order: piezasIniciales.map((p) => ({ id: p.id, indent: p.indent })),
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [pregunta.id]);
 
