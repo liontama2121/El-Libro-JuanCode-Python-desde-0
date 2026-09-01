@@ -1,0 +1,59 @@
+[
+  {
+    "orden": 1,
+    "title": "Tres intentos de clave",
+    "difficulty": "facil",
+    "statement_html": "<p>La clave del cajero es <code>1234</code>. Dar al usuario <strong>tres</strong> intentos. Si acierta, mostrar <code>Bienvenido</code> y terminar de inmediato. Si agota los tres, mostrar <code>Tarjeta bloqueada</code>.</p><pre><code>Clave (intento 1): Clave incorrecta\nClave (intento 2): Bienvenido</code></pre>",
+    "hint_html": "<p>Use <code>break</code> al acertar y el <code>else</code> del <code>for</code> para el caso de que nunca se acertó. Ese <code>else</code> se salta si hubo <code>break</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Tres intentos de clave\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Da tres intentos para escribir la clave del cajero y bloquea\n    la tarjeta si se agotan.\n'''\n\n# Inicio\nCLAVE = \"1234\"\nINTENTOS = 3\n\nfor intento in range(1, INTENTOS + 1):\n    clave = input(f\"Clave (intento {intento}): \").strip()\n\n    if clave == CLAVE:\n        print(\"Bienvenido\")\n        break\n\n    print(\"Clave incorrecta\")\nelse:\n    # Este bloque solo corre si el for termino SIN break\n    print(\"Tarjeta bloqueada\")\n# Fin</code></pre><p>El <code>else</code> del ciclo evita tener que llevar una bandera <code>acerto = False</code>. Es una de las pocas cosas que Python tiene y casi ningún otro lenguaje.</p>",
+    "starter_code": "'''\nPrograma: Tres intentos de clave\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nCLAVE = \"1234\"\nINTENTOS = 3\n\n# Fin\n",
+    "tests": [
+      { "stdin": "0000\n1234\n", "expected_output": "Clave (intento 1): Clave incorrecta\nClave (intento 2): Bienvenido" },
+      { "stdin": "1\n2\n3\n", "expected_output": "Clave (intento 1): Clave incorrecta\nClave (intento 2): Clave incorrecta\nClave (intento 3): Clave incorrecta\nTarjeta bloqueada" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Ventas ignorando inválidas",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar <strong>5</strong> ventas. Si alguna es negativa, avisar y no sumarla. Al final mostrar el total y cuántas se ignoraron:</p><pre><code>Total: 60000\nIgnoradas: 1</code></pre>",
+    "hint_html": "<p>Cuando la venta sea negativa, imprima el aviso, sume al contador de ignoradas y use <code>continue</code> para saltar la suma.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Ventas ignorando invalidas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Suma cinco ventas descartando las que vengan en negativo.\n'''\n\n# Inicio\nCUANTAS = 5\n\ntotal = 0        # sumatoria\nignoradas = 0    # contador\n\nfor n in range(1, CUANTAS + 1):\n    venta = int(input(f\"Venta {n}: \"))\n\n    if venta < 0:\n        print(\"Valor invalido, se ignora\")\n        ignoradas += 1\n        continue    # se salta la suma y pasa a la venta siguiente\n\n    total += venta\n\nprint(f\"Total: {total}\")\nprint(f\"Ignoradas: {ignoradas}\")\n# Fin</code></pre><p><code>continue</code> deja el resto del cuerpo sin ejecutar, así que <code>total += venta</code> ni se toca. Lo mismo se podría hacer con un <code>else</code>, pero cuando el caso raro se descarta de una, <code>continue</code> deja el camino feliz sin indentar de más.</p>",
+    "starter_code": "'''\nPrograma: Ventas ignorando invalidas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nCUANTAS = 5\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "10000\n20000\n-5000\n15000\n15000\n",
+        "expected_output": "Venta 1: Venta 2: Venta 3: Valor invalido, se ignora\nVenta 4: Venta 5: Total: 60000\nIgnoradas: 1"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Tabla de multiplicar completa",
+    "difficulty": "medio",
+    "statement_html": "<p>Mostrar las tablas de multiplicar del <strong>1 al 5</strong>, cada tabla en su propia línea:</p><pre><code>1x1=1  1x2=2  1x3=3  1x4=4  1x5=5\n2x1=2  2x2=4  2x3=6  2x4=8  2x5=10\n3x1=3  3x2=6  3x3=9  3x4=12  3x5=15\n4x1=4  4x2=8  4x3=12  4x4=16  4x5=20\n5x1=5  5x2=10  5x3=15  5x4=20  5x5=25</code></pre><p><em>Nota:</em> cada elemento va separado por dos espacios y no debe quedar salto de línea en medio de una fila.</p>",
+    "hint_html": "<p>Dos <code>for</code> anidados: el de afuera es la tabla (la fila) y el de adentro el multiplicador (la columna). Use <code>end=\"  \"</code> en el <code>print()</code> de adentro y un <code>print()</code> pelado al terminar cada fila.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Tablas de multiplicar del 1 al 5\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra en una cuadricula las tablas de multiplicar\n    del 1 al 5.\n'''\n\n# Inicio\nHASTA = 5\n\nfor tabla in range(1, HASTA + 1):\n    for multiplicador in range(1, HASTA + 1):\n        # end=\"  \" evita el salto de linea: la fila sigue creciendo\n        print(f\"{tabla}x{multiplicador}={tabla * multiplicador}\", end=\"  \")\n\n    # Al terminar la fila si se baja de linea\n    print()\n# Fin</code></pre><p>El ciclo de adentro se ejecuta <strong>completo</strong> en cada vuelta del de afuera: 5 tablas × 5 multiplicadores = 25 vueltas del cuerpo interno.</p><p>La posición del <code>print()</code> pelado es lo que hace la cuadrícula. Está indentado al nivel del <code>for</code> interno (dentro del externo, fuera del interno): por eso corre una vez por fila.</p>",
+    "starter_code": "'''\nPrograma: Tablas de multiplicar del 1 al 5\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nHASTA = 5\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "1x1=1  1x2=2  1x3=3  1x4=4  1x5=5\n2x1=2  2x2=4  2x3=6  2x4=8  2x5=10\n3x1=3  3x2=6  3x3=9  3x4=12  3x5=15\n4x1=4  4x2=8  4x3=12  4x4=16  4x5=20\n5x1=5  5x2=10  5x3=15  5x4=20  5x5=25"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "¿Es primo?",
+    "difficulty": "dificil",
+    "statement_html": "<p>Solicitar un número entero mayor que 1 y decir si es primo. Un número es primo si solo se puede dividir exactamente entre 1 y entre sí mismo.</p><pre><code>El 17 es primo</code></pre><pre><code>El 21 no es primo (divisible entre 3)</code></pre><p><em>Nota:</em> apenas encuentre un divisor debe dejar de buscar. No revise más allá de la mitad del número.</p>",
+    "hint_html": "<p>Recorra los posibles divisores desde 2 hasta la mitad. Si alguno divide exacto (<code>numero % d == 0</code>), guarde ese divisor y use <code>break</code>. Use el <code>else</code> del <code>for</code> para el caso \"no encontré ninguno\".</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Verificador de numeros primos\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Indica si un numero mayor que 1 es primo y, si no lo es,\n    muestra el primer divisor encontrado.\n'''\n\n# Inicio\nnumero = int(input(\"Numero: \"))\n\n# Ningun divisor puede ser mayor que la mitad del numero,\n# asi que ahi se corta la busqueda\nfor divisor in range(2, numero // 2 + 1):\n    if numero % divisor == 0:\n        print(f\"El {numero} no es primo (divisible entre {divisor})\")\n        break\nelse:\n    # Solo llega aqui si el for termino sin encontrar divisores\n    print(f\"El {numero} es primo\")\n# Fin</code></pre><p>Tres ideas que valen para muchos problemas de búsqueda:</p><ul><li><strong><code>break</code> al primer hallazgo.</strong> Con 21, el 3 lo delata en la segunda vuelta; revisar hasta el 10 sería trabajo perdido.</li><li><strong>El <code>else</code> del ciclo es el \"no encontré nada\".</strong> Sin él tocaría una bandera <code>es_primo = True</code> y bajarla dentro del <code>if</code>.</li><li><strong>Cortar en la mitad.</strong> Si <code>numero</code> tuviera un divisor mayor que su mitad, el otro factor sería menor que 2, lo cual es imposible.</li></ul><p>Ojo con el caso del 2 y el 3: <code>range(2, 2)</code> y <code>range(2, 2)</code> quedan vacíos, el ciclo no da vueltas, no hay <code>break</code> y entra por el <code>else</code>. Correcto: 2 y 3 son primos.</p>",
+    "starter_code": "'''\nPrograma: Verificador de numeros primos\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "17\n", "expected_output": "Numero: El 17 es primo" },
+      { "stdin": "21\n", "expected_output": "Numero: El 21 no es primo (divisible entre 3)" },
+      { "stdin": "2\n", "expected_output": "Numero: El 2 es primo" }
+    ]
+  }
+]

@@ -1,0 +1,160 @@
+<p class="jc-gancho">Escribir un <code>while</code> para contar del 1 al 10 son cuatro líneas y tres oportunidades de olvidar el <code>n += 1</code>. Cuando sabes cuántas vueltas quieres, hay algo mejor: <code>for</code>.</p>
+
+<h2><code>for</code>: recorrer, no contar</h2>
+
+<p>Un <code>for</code> toma una colección y va sacando sus elementos uno por uno. Tú no manejas el contador: lo maneja Python.</p>
+
+<pre><code>for letra in "Ana":
+    print(letra)</code></pre>
+
+<p>Sale <code>A</code>, <code>n</code>, <code>a</code>. La variable <code>letra</code> vale algo distinto en cada vuelta, y el ciclo termina solo cuando se acaba el texto. No hay condición que escribir ni contador que actualizar.</p>
+
+<p>La forma general se lee casi en español:</p>
+
+<pre><code>for cada_cosa in la_coleccion:
+    # hacer algo con cada_cosa</code></pre>
+
+<h2><code>range()</code>: la colección de números</h2>
+
+<p>Para repetir un número fijo de veces se usa <code>range()</code>, que genera números.</p>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Genera</th><th>Se lee</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>range(5)</code></td><td>0, 1, 2, 3, 4</td><td>Cinco números empezando en 0</td></tr>
+    <tr><td><code>range(1, 6)</code></td><td>1, 2, 3, 4, 5</td><td>Desde 1 hasta antes de 6</td></tr>
+    <tr><td><code>range(0, 10, 2)</code></td><td>0, 2, 4, 6, 8</td><td>De 2 en 2</td></tr>
+    <tr><td><code>range(5, 0, -1)</code></td><td>5, 4, 3, 2, 1</td><td>Hacia atrás</td></tr>
+  </tbody>
+</table>
+
+<p><strong>El final nunca entra.</strong> Es la misma regla de las rebanadas del capítulo 5: <code>range(1, 6)</code> llega hasta el 5. Se siente raro dos días y después se vuelve cómodo, porque <code>range(5)</code> da exactamente 5 números.</p>
+
+<pre><code>for n in range(1, 6):
+    print(f"Intento {n}")</code></pre>
+
+<p>Comparado con el <code>while</code> del capítulo anterior:</p>
+
+<pre><code># while: tres partes que tú manejas
+n = 1
+while n &lt;= 5:
+    print(f"Intento {n}")
+    n += 1
+
+# for: Python las maneja
+for n in range(1, 6):
+    print(f"Intento {n}")</code></pre>
+
+<h3>¿Cuándo <code>for</code> y cuándo <code>while</code>?</h3>
+
+<table>
+  <thead>
+    <tr><th>Usa</th><th>Cuando…</th><th>Ejemplo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>for</code></td><td>sabes cuántas vueltas o tienes una colección</td><td>5 notas, las letras de un nombre</td></tr>
+    <tr><td><code>while</code></td><td>el final depende de algo que pasa adentro</td><td>hasta que escriba "fin", hasta que acierte</td></tr>
+  </tbody>
+</table>
+
+<h2>Los tres patrones, ahora con <code>for</code></h2>
+
+<p>Contador, sumatoria y bandera funcionan igual: <strong>nacen afuera, se actualizan adentro</strong>. Lo único que cambia es quién lleva la cuenta de las vueltas.</p>
+
+<pre><code>total = 0             # sumatoria
+aprobadas = 0         # contador
+hubo_perfecta = False # bandera
+
+for n in range(1, 6):
+    nota = float(input(f"Nota {n}: "))
+    total += nota
+    if nota &gt;= 3.0:
+        aprobadas += 1
+    if nota == 5.0:
+        hubo_perfecta = True
+
+print(f"Aprobadas: {aprobadas}")
+print(f"Promedio: {total / 5}")</code></pre>
+
+<h2>La película de un <code>for</code></h2>
+
+<p>La tabla de multiplicar del 7, de 1 a 4:</p>
+
+<pre><code>for i in range(1, 5):
+    resultado = 7 * i
+    print(f"7 x {i} = {resultado}")</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>i</code></th><th><code>resultado</code></th><th>Imprime</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td><td>7</td><td>7 x 1 = 7</td></tr>
+    <tr><td>2</td><td>2</td><td>14</td><td>7 x 2 = 14</td></tr>
+    <tr><td>3</td><td>3</td><td>21</td><td>7 x 3 = 21</td></tr>
+    <tr><td>4</td><td>4</td><td>28</td><td>7 x 4 = 28</td></tr>
+    <tr><td>5</td><td>—</td><td>—</td><td>El 5 no entra: se acabó el <code>range</code></td></tr>
+  </tbody>
+</table>
+
+<h2>Recorrer con el índice</h2>
+
+<p>A veces necesitas saber en qué posición vas. Dos formas:</p>
+
+<pre><code>ciudad = "Cali"
+
+# Por posición, usando range con len()
+for i in range(len(ciudad)):
+    print(i, ciudad[i])
+
+# Más limpio: enumerate() entrega posición y valor juntos
+for i, letra in enumerate(ciudad):
+    print(i, letra)</code></pre>
+
+<p><code>enumerate()</code> es la forma preferida. Si solo te importa el valor, recorre directo; si además necesitas la posición, usa <code>enumerate()</code>.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Creer que el final entra</h3>
+<pre><code>for n in range(1, 5):
+    print(n)          # 1, 2, 3, 4 — el 5 NO sale</code></pre>
+<p>Si quieres llegar al 5, escribe <code>range(1, 6)</code>.</p>
+
+<h3>2. Actualizar la variable del <code>for</code></h3>
+<pre><code>for n in range(5):
+    n = n + 10        # no sirve de nada: la próxima vuelta la reemplaza</code></pre>
+<p>Esa variable la controla Python. Si necesitas otra cosa, usa una variable aparte.</p>
+
+<h3>3. Usar <code>for</code> cuando no sabes cuántas vueltas</h3>
+<pre><code># El usuario escribe hasta que quiera: eso es un while
+for i in range(100):
+    dato = input("Producto: ")    # ❌ ¿y si son 3? ¿y si son 200?</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Sabes cuántas vueltas o tienes una colección? <code>for</code>. ¿No? <code>while</code>.</li>
+  <li><code>range(a, b)</code> va de <code>a</code> hasta <code>b - 1</code>. El final nunca entra.</li>
+  <li>Los acumuladores siguen naciendo antes del ciclo.</li>
+  <li>Si necesitas la posición, <code>enumerate()</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>for x in "texto":</code></td><td>Recorre carácter por carácter</td></tr>
+    <tr><td><code>for n in range(5):</code></td><td>0, 1, 2, 3, 4</td></tr>
+    <tr><td><code>for n in range(1, 6):</code></td><td>1, 2, 3, 4, 5</td></tr>
+    <tr><td><code>for n in range(0, 10, 2):</code></td><td>De 2 en 2</td></tr>
+    <tr><td><code>for n in range(5, 0, -1):</code></td><td>Cuenta regresiva</td></tr>
+    <tr><td><code>for i, v in enumerate(x):</code></td><td>Posición y valor a la vez</td></tr>
+  </tbody>
+</table>
+
+<blockquote><code>for</code> cuando sabes cuántas vueltas; <code>while</code> cuando el final lo decide lo que pase adentro. Y en <code>range</code>, el final nunca entra.</blockquote>

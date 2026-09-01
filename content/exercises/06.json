@@ -1,0 +1,62 @@
+[
+  {
+    "orden": 1,
+    "title": "¿Par o impar?",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar un número entero y mostrar si es par o impar:</p><pre><code>El 7 es impar</code></pre><p><em>Nota:</em> use el operador módulo.</p>",
+    "hint_html": "<p>Un número es par cuando <code>numero % 2 == 0</code>. Con eso arma el <code>if</code> y el <code>else</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Par o impar\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide un numero entero e indica si es par o impar.\n'''\n\n# Inicio\nnumero = int(input(\"Numero: \"))\n\n# Un numero es par si al dividirlo entre 2 no sobra nada\nif numero % 2 == 0:\n    print(f\"El {numero} es par\")\nelse:\n    print(f\"El {numero} es impar\")\n# Fin</code></pre><p>Solo hay dos casos posibles y son excluyentes, así que <code>if / else</code> basta: siempre entra por exactamente uno.</p>",
+    "starter_code": "'''\nPrograma: Par o impar\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "7\n", "expected_output": "Numero: El 7 es impar" },
+      { "stdin": "10\n", "expected_output": "Numero: El 10 es par" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Escala de notas",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar una nota entre 0.0 y 5.0 y mostrar su concepto según la escala:</p><table><thead><tr><th>Nota</th><th>Concepto</th></tr></thead><tbody><tr><td>4.5 a 5.0</td><td>Excelente</td></tr><tr><td>4.0 a 4.4</td><td>Muy bien</td></tr><tr><td>3.0 a 3.9</td><td>Aprobado</td></tr><tr><td>menor a 3.0</td><td>Reprobado</td></tr></tbody></table><pre><code>Nota 3.8: Aprobado</code></pre>",
+    "hint_html": "<p>Use <code>elif</code> y ordene las condiciones de la más exigente a la menos exigente. Si empieza por <code>nota >= 3.0</code>, las demás nunca se alcanzan.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Escala de notas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Convierte una nota de 0.0 a 5.0 en su concepto cualitativo.\n'''\n\n# Inicio\nnota = float(input(\"Nota: \"))\n\n# Las condiciones van de la mas exigente a la menos exigente:\n# Python se queda con la primera verdadera\nif nota >= 4.5:\n    concepto = \"Excelente\"\nelif nota >= 4.0:\n    concepto = \"Muy bien\"\nelif nota >= 3.0:\n    concepto = \"Aprobado\"\nelse:\n    concepto = \"Reprobado\"\n\nprint(f\"Nota {nota}: {concepto}\")\n# Fin</code></pre><p>Un detalle de estilo que vale la pena copiar: en vez de poner un <code>print()</code> dentro de cada rama, cada rama solo <strong>guarda</strong> el concepto y el <code>print()</code> va una sola vez al final. Si mañana cambia el formato del mensaje, se toca una línea y no cuatro.</p>",
+    "starter_code": "'''\nPrograma: Escala de notas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "3.8\n", "expected_output": "Nota: Nota 3.8: Aprobado" },
+      { "stdin": "4.7\n", "expected_output": "Nota: Nota 4.7: Excelente" },
+      { "stdin": "2.5\n", "expected_output": "Nota: Nota 2.5: Reprobado" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Retiro en el cajero",
+    "difficulty": "medio",
+    "statement_html": "<p>Un cajero tiene un saldo de <strong>100000</strong> pesos y solo entrega billetes múltiplos de <strong>10000</strong>.</p><p>Solicitar el monto a retirar y mostrar una de tres respuestas:</p><ul><li><code>Retiro aprobado. Nuevo saldo: 50000</code></li><li><code>El cajero solo entrega multiplos de 10000</code></li><li><code>Saldo insuficiente</code></li></ul><p><em>Nota:</em> primero se verifica el saldo y solo después el múltiplo.</p>",
+    "hint_html": "<p>Necesita un <code>if</code> anidado: la pregunta del múltiplo solo tiene sentido si el saldo alcanzó. El <code>else</code> de adentro se alinea con el <code>if</code> de adentro.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Retiro en el cajero\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Valida un retiro contra el saldo disponible y contra la\n    restriccion de billetes de 10000.\n'''\n\n# Inicio\nSALDO_INICIAL = 100000\nBILLETE = 10000\n\nsaldo = SALDO_INICIAL\nmonto = int(input(\"Monto a retirar: \"))\n\nif monto <= saldo:\n    # La pregunta del multiplo solo tiene sentido si el saldo alcanzo\n    if monto % BILLETE == 0:\n        saldo = saldo - monto\n        print(f\"Retiro aprobado. Nuevo saldo: {saldo}\")\n    else:\n        print(f\"El cajero solo entrega multiplos de {BILLETE}\")\nelse:\n    print(\"Saldo insuficiente\")\n# Fin</code></pre><p>Por qué anidado y no dos <code>if</code> sueltos: si el saldo no alcanza, no importa si el monto es múltiplo o no; esa pregunta ni se hace. Anidar refleja exactamente eso.</p><p>La indentación es lo que amarra cada <code>else</code> con su <code>if</code>: el de adentro lleva cuatro espacios y el de afuera ninguno.</p>",
+    "starter_code": "'''\nPrograma: Retiro en el cajero\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nSALDO_INICIAL = 100000\nBILLETE = 10000\n\n# Fin\n",
+    "tests": [
+      { "stdin": "50000\n", "expected_output": "Monto a retirar: Retiro aprobado. Nuevo saldo: 50000" },
+      { "stdin": "35000\n", "expected_output": "Monto a retirar: El cajero solo entrega multiplos de 10000" },
+      { "stdin": "200000\n", "expected_output": "Monto a retirar: Saldo insuficiente" }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Tarifa de servicios públicos",
+    "difficulty": "dificil",
+    "statement_html": "<p>Una empresa cobra la energía por rangos de consumo mensual:</p><table><thead><tr><th>Consumo (kWh)</th><th>Precio por kWh</th></tr></thead><tbody><tr><td>0 a 150</td><td>500</td></tr><tr><td>151 a 300</td><td>700</td></tr><tr><td>más de 300</td><td>900</td></tr></tbody></table><p>Además, si el estrato es 1, 2 o 3 se aplica un <strong>subsidio del 20%</strong> sobre el total.</p><p>Solicitar el consumo y el estrato. Mostrar:</p><pre><code>Consumo: 200 kWh\nTarifa: 700\nSubtotal: 140000\nSubsidio: 28000.0\nTotal a pagar: 112000.0</code></pre><p><em>Nota:</em> el precio se aplica a <strong>todo</strong> el consumo, no por tramos.</p>",
+    "hint_html": "<p>Primero un <code>elif</code> para escoger la tarifa según el consumo, y después un <code>if</code> aparte para el subsidio. Guarde la tarifa en una variable: así el cálculo del subtotal se escribe una sola vez.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Tarifa de servicios publicos\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Calcula la factura de energia segun el rango de consumo y\n    aplica subsidio a los estratos 1, 2 y 3.\n'''\n\n# Inicio\nSUBSIDIO = 0.20\n\nconsumo = int(input(\"Consumo en kWh: \"))\nestrato = int(input(\"Estrato: \"))\n\n# Primero se decide la tarifa segun el rango\nif consumo <= 150:\n    tarifa = 500\nelif consumo <= 300:\n    tarifa = 700\nelse:\n    tarifa = 900\n\nsubtotal = consumo * tarifa\n\n# El subsidio es una decision aparte: depende del estrato, no del consumo\nif estrato <= 3:\n    subsidio = subtotal * SUBSIDIO\nelse:\n    subsidio = 0\n\ntotal = subtotal - subsidio\n\nprint(f\"Consumo: {consumo} kWh\")\nprint(f\"Tarifa: {tarifa}\")\nprint(f\"Subtotal: {subtotal}\")\nprint(f\"Subsidio: {subsidio}\")\nprint(f\"Total a pagar: {total}\")\n# Fin</code></pre><p>Tres decisiones de diseño que valen puntos en un parcial:</p><ul><li><strong>Dos decisiones separadas.</strong> La tarifa depende del consumo; el subsidio, del estrato. Mezclarlas en un solo <code>if</code> gigante daría seis ramas en vez de cinco líneas.</li><li><strong>Las condiciones usan <code>&lt;=</code> en cascada.</strong> Como el <code>elif</code> solo se evalúa si el anterior falló, cuando se llega a <code>consumo &lt;= 300</code> ya se sabe que es mayor que 150. No hay que escribir <code>150 &lt; consumo &lt;= 300</code>.</li><li><strong>Cada rama guarda un valor, no imprime.</strong> Los <code>print()</code> van todos juntos al final.</li></ul>",
+    "starter_code": "'''\nPrograma: Tarifa de servicios publicos\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nSUBSIDIO = 0.20\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "200\n2\n",
+        "expected_output": "Consumo en kWh: Estrato: Consumo: 200 kWh\nTarifa: 700\nSubtotal: 140000\nSubsidio: 28000.0\nTotal a pagar: 112000.0"
+      },
+      {
+        "stdin": "100\n5\n",
+        "expected_output": "Consumo en kWh: Estrato: Consumo: 100 kWh\nTarifa: 500\nSubtotal: 50000\nSubsidio: 0\nTotal a pagar: 50000"
+      }
+    ]
+  }
+]

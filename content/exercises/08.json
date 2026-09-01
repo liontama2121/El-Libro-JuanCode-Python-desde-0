@@ -1,0 +1,66 @@
+[
+  {
+    "orden": 1,
+    "title": "Tabla de multiplicar",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar un número y mostrar su tabla de multiplicar del 1 al 10:</p><pre><code>7 x 1 = 7\n7 x 2 = 14\n...\n7 x 10 = 70</code></pre>",
+    "hint_html": "<p><code>range(1, 11)</code> genera del 1 al 10: recuerde que el final no entra, por eso es 11 y no 10.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Tabla de multiplicar\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra la tabla de multiplicar del numero indicado, del 1 al 10.\n'''\n\n# Inicio\nnumero = int(input(\"Numero: \"))\n\n# range(1, 11) llega hasta 10: el final nunca entra\nfor i in range(1, 11):\n    print(f\"{numero} x {i} = {numero * i}\")\n# Fin</code></pre><p>Aquí no hay contador que actualizar: <code>i</code> la maneja Python. Compárelo con la versión en <code>while</code>, que necesitaría <code>i = 1</code> antes y <code>i += 1</code> adentro.</p>",
+    "starter_code": "'''\nPrograma: Tabla de multiplicar\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "7\n",
+        "expected_output": "Numero: 7 x 1 = 7\n7 x 2 = 14\n7 x 3 = 21\n7 x 4 = 28\n7 x 5 = 35\n7 x 6 = 42\n7 x 7 = 49\n7 x 8 = 56\n7 x 9 = 63\n7 x 10 = 70"
+      }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Contar vocales",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar una palabra o frase y contar cuántas vocales tiene:</p><pre><code>La frase tiene 5 vocales</code></pre><p><em>Nota:</em> deben contarse mayúsculas y minúsculas por igual.</p>",
+    "hint_html": "<p>Recorra el texto con <code>for letra in frase:</code> y use <code>if letra in \"aeiou\"</code>. Normalice con <code>.lower()</code> para que las mayúsculas también cuenten.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Contador de vocales\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Cuenta cuantas vocales tiene una frase, sin distinguir\n    mayusculas de minusculas.\n'''\n\n# Inicio\nVOCALES = \"aeiou\"\n\nfrase = input(\"Frase: \").lower()\n\nvocales = 0     # contador: nace afuera\n\nfor letra in frase:\n    if letra in VOCALES:\n        vocales += 1\n\nprint(f\"La frase tiene {vocales} vocales\")\n# Fin</code></pre><p>Dos cosas útiles:</p><ul><li><code>for letra in frase</code> recorre el texto carácter por carácter sin necesidad de índices.</li><li><code>letra in VOCALES</code> pregunta si ese carácter está dentro del texto <code>\"aeiou\"</code>. El operador <code>in</code> del capítulo 5 sirve para esto.</li></ul>",
+    "starter_code": "'''\nPrograma: Contador de vocales\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nVOCALES = \"aeiou\"\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "Programar es bonito\n",
+        "expected_output": "Frase: La frase tiene 7 vocales"
+      },
+      {
+        "stdin": "AEIOU\n",
+        "expected_output": "Frase: La frase tiene 5 vocales"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Informe de ventas de la semana",
+    "difficulty": "medio",
+    "statement_html": "<p>Solicitar las ventas de los <strong>7</strong> días de la semana. Mostrar al final:</p><pre><code>Total: 700000\nPromedio: 100000.0\nMejor dia: 4 con 250000\nDias sin ventas: 1</code></pre><p><em>Nota:</em> el mejor día se numera de 1 a 7. Si hay empate, gana el primero.</p>",
+    "hint_html": "<p>Cuatro variables nacen antes del ciclo: <code>total</code>, <code>mejor</code>, <code>dia_mejor</code> y <code>sin_ventas</code>. Para el máximo, actualice solo cuando la venta sea <strong>estrictamente mayor</strong>: así el empate lo gana el primero.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Informe de ventas de la semana\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide las ventas de los siete dias de la semana y reporta\n    total, promedio, mejor dia y dias sin ventas.\n'''\n\n# Inicio\nDIAS = 7\n\ntotal = 0          # sumatoria\nmejor = -1         # el maximo visto hasta ahora\ndia_mejor = 0      # en que dia ocurrio\nsin_ventas = 0     # contador\n\nfor dia in range(1, DIAS + 1):\n    venta = int(input(f\"Ventas del dia {dia}: \"))\n\n    total += venta\n\n    # Estrictamente mayor: en un empate se queda el primero\n    if venta > mejor:\n        mejor = venta\n        dia_mejor = dia\n\n    if venta == 0:\n        sin_ventas += 1\n\nprint(f\"Total: {total}\")\nprint(f\"Promedio: {total / DIAS}\")\nprint(f\"Mejor dia: {dia_mejor} con {mejor}\")\nprint(f\"Dias sin ventas: {sin_ventas}\")\n# Fin</code></pre><p>Dos decisiones importantes:</p><ul><li><strong><code>mejor = -1</code> y no 0.</strong> Si todas las ventas fueran 0, con <code>mejor = 0</code> la condición <code>venta > mejor</code> nunca se cumpliría y <code>dia_mejor</code> quedaría en 0. Arrancando por debajo del mínimo posible, la primera vuelta siempre entra.</li><li><strong>El máximo y su posición van juntos.</strong> Cada vez que se actualiza <code>mejor</code> hay que actualizar <code>dia_mejor</code> en la misma vuelta, o quedarían desfasados.</li></ul>",
+    "starter_code": "'''\nPrograma: Informe de ventas de la semana\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nDIAS = 7\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "100000\n50000\n100000\n250000\n100000\n100000\n0\n",
+        "expected_output": "Ventas del dia 1: Ventas del dia 2: Ventas del dia 3: Ventas del dia 4: Ventas del dia 5: Ventas del dia 6: Ventas del dia 7: Total: 700000\nPromedio: 100000.0\nMejor dia: 4 con 250000\nDias sin ventas: 1"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Amortización de un crédito",
+    "difficulty": "dificil",
+    "statement_html": "<p>Un banco presta un monto a una tasa de interés mensual y el cliente abona una cuota fija cada mes.</p><p>Solicitar el monto del préstamo, la tasa mensual (en porcentaje) y la cuota. Mostrar la tabla de los primeros <strong>3</strong> meses y el saldo final:</p><pre><code>Mes 1: interes 20000 abono 80000 saldo 920000\nMes 2: interes 18400 abono 81600 saldo 838400\nMes 3: interes 16768 abono 83232 saldo 755168\nSaldo despues de 3 meses: 755168</code></pre><p><em>Nota:</em> cada mes el interés se calcula sobre el saldo actual, el abono a capital es la cuota menos el interés, y el saldo baja ese abono. Redondee cada valor a entero con <code>round()</code>.</p>",
+    "hint_html": "<p>El saldo nace antes del ciclo con el monto del préstamo. Dentro de cada vuelta, en este orden: interés sobre el saldo, abono = cuota − interés, saldo = saldo − abono.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Amortizacion de un credito\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra la tabla de amortizacion de los primeros meses de un\n    credito de cuota fija, con interes sobre saldo.\n'''\n\n# Inicio\nMESES = 3\n\nmonto = int(input(\"Monto del prestamo: \"))\ntasa = float(input(\"Tasa mensual (%): \"))\ncuota = int(input(\"Cuota mensual: \"))\n\nsaldo = monto     # el saldo nace afuera y va cambiando\n\nfor mes in range(1, MESES + 1):\n    # El interes se cobra sobre lo que se debe HOY, no sobre el monto original\n    interes = round(saldo * (tasa / 100))\n    abono = cuota - interes\n    saldo = saldo - abono\n\n    print(f\"Mes {mes}: interes {interes} abono {abono} saldo {saldo}\")\n\nprint(f\"Saldo despues de {MESES} meses: {saldo}\")\n# Fin</code></pre><p>La película con 1000000, 2% y cuota de 100000:</p><table><thead><tr><th>Mes</th><th>Saldo al entrar</th><th>Interés (2%)</th><th>Abono</th><th>Saldo al salir</th></tr></thead><tbody><tr><td>1</td><td>1000000</td><td>20000</td><td>80000</td><td>920000</td></tr><tr><td>2</td><td>920000</td><td>18400</td><td>81600</td><td>838400</td></tr><tr><td>3</td><td>838400</td><td>16768</td><td>83232</td><td>755168</td></tr></tbody></table><p>Ahí se ve por qué los créditos se sienten pesados al principio: la cuota es la misma, pero al comienzo casi todo se va en intereses y muy poco baja la deuda. A medida que el saldo cae, el interés cae y el abono crece.</p><p><strong>El orden dentro del ciclo no es negociable:</strong> si se descontara el abono antes de calcular el interés, se estaría cobrando interés sobre un saldo que el cliente ya pagó.</p>",
+    "starter_code": "'''\nPrograma: Amortizacion de un credito\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nMESES = 3\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "1000000\n2\n100000\n",
+        "expected_output": "Monto del prestamo: Tasa mensual (%): Cuota mensual: Mes 1: interes 20000 abono 80000 saldo 920000\nMes 2: interes 18400 abono 81600 saldo 838400\nMes 3: interes 16768 abono 83232 saldo 755168\nSaldo despues de 3 meses: 755168"
+      }
+    ]
+  }
+]

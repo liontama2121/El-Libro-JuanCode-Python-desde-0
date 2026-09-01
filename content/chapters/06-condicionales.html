@@ -1,0 +1,161 @@
+<p class="jc-gancho">El cajero automático no le entrega plata a todo el mundo. Antes pregunta: ¿el saldo alcanza? ¿el monto es múltiplo de 10000? ¿la tarjeta está activa? Cada una de esas preguntas es un <code>if</code>, y hasta ahora tus programas no sabían hacer ninguna.</p>
+
+<h2>El torniquete</h2>
+
+<p>Un <code>if</code> es un torniquete: solo deja pasar si la condición es verdadera.</p>
+
+<pre><code>edad = 20
+
+if edad &gt;= 18:
+    print("Puede entrar")</code></pre>
+
+<p>Tres cosas que hay que mirar con lupa:</p>
+
+<ol>
+  <li>La condición va después del <code>if</code> y es una pregunta que da <code>True</code> o <code>False</code>.</li>
+  <li>La línea termina en <strong>dos puntos</strong>. Ese <code>:</code> significa "aquí abre un bloque".</li>
+  <li>Lo que va adentro va <strong>indentado</strong>: cuatro espacios. La indentación no es estética: es lo que le dice a Python qué está adentro y qué está afuera.</li>
+</ol>
+
+<pre><code>if edad &gt;= 18:
+    print("Puede entrar")      # adentro: solo si es mayor
+print("Siguiente en la fila")  # afuera: siempre</code></pre>
+
+<h2><code>else</code>: el otro camino</h2>
+
+<pre><code>saldo = 30000
+retiro = 50000
+
+if retiro &lt;= saldo:
+    saldo = saldo - retiro
+    print("Retiro aprobado")
+else:
+    print("Saldo insuficiente")
+
+print("Saldo actual:", saldo)</code></pre>
+
+<p><code>else</code> no lleva condición: es "en cualquier otro caso". Siempre se ejecuta exactamente uno de los dos bloques, nunca los dos y nunca ninguno.</p>
+
+<h2><code>elif</code>: varios caminos</h2>
+
+<p>Para más de dos casos no se encadenan <code>if</code> sueltos: se usa <code>elif</code> (contracción de <em>else if</em>).</p>
+
+<pre><code>nota = 3.8
+
+if nota &gt;= 4.5:
+    print("Excelente")
+elif nota &gt;= 4.0:
+    print("Muy bien")
+elif nota &gt;= 3.0:
+    print("Aprobado")
+else:
+    print("Reprobado")</code></pre>
+
+<p>Python revisa las condiciones <strong>de arriba hacia abajo y se detiene en la primera verdadera</strong>. Por eso el orden importa muchísimo. Si se escribiera al revés:</p>
+
+<pre><code># ❌ MAL: el orden arruina la lógica
+if nota &gt;= 3.0:
+    print("Aprobado")
+elif nota &gt;= 4.5:
+    print("Excelente")     # nunca se alcanza</code></pre>
+
+<p>Una nota de 4.8 entraría por la primera y diría "Aprobado". La segunda rama es inalcanzable. <strong>Regla: de lo más exigente a lo menos exigente.</strong></p>
+
+<h2>La película de una decisión</h2>
+
+<p>Sigamos <code>nota = 3.8</code> por el <code>elif</code> del ejemplo bueno:</p>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Pregunta</th><th>Respuesta</th><th>Qué hace</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><code>3.8 &gt;= 4.5</code></td><td>False</td><td>Sigue al siguiente <code>elif</code></td></tr>
+    <tr><td>2</td><td><code>3.8 &gt;= 4.0</code></td><td>False</td><td>Sigue al siguiente</td></tr>
+    <tr><td>3</td><td><code>3.8 &gt;= 3.0</code></td><td><strong>True</strong></td><td>Imprime "Aprobado" y <strong>sale de toda la cadena</strong></td></tr>
+    <tr><td>4</td><td>—</td><td>—</td><td>El <code>else</code> ni se mira</td></tr>
+  </tbody>
+</table>
+
+<p>Ese "sale de toda la cadena" es la diferencia entre <code>elif</code> y varios <code>if</code> seguidos. Con <code>if</code> sueltos, Python evalúa <em>todas</em> las condiciones.</p>
+
+<h2>Condiciones compuestas</h2>
+
+<p>Con <code>and</code>, <code>or</code> y <code>not</code> del capítulo 4:</p>
+
+<pre><code>edad = 20
+tiene_cedula = True
+saldo = 80000
+
+if edad &gt;= 18 and tiene_cedula:
+    print("Puede abrir cuenta")
+
+if saldo &lt; 50000 or not tiene_cedula:
+    print("Necesita ir a la sucursal")</code></pre>
+
+<p>Y si una condición se pone larga, guárdala en una variable con nombre. El programa se lee solo:</p>
+
+<pre><code>es_cliente_nuevo = edad &gt;= 18 and tiene_cedula and saldo &gt;= 50000
+
+if es_cliente_nuevo:
+    print("Bienvenido al banco")</code></pre>
+
+<h2><code>if</code> anidados: cuando una pregunta depende de otra</h2>
+
+<pre><code>saldo = 100000
+monto = 50000
+
+if monto &lt;= saldo:
+    if monto % 10000 == 0:
+        print("Retiro aprobado")
+    else:
+        print("El cajero solo entrega múltiplos de 10000")
+else:
+    print("Saldo insuficiente")</code></pre>
+
+<p>La segunda pregunta solo tiene sentido si la primera pasó, por eso va adentro. Fíjate en la indentación: el <code>else</code> de adentro está alineado con el <code>if</code> de adentro, y el de afuera con el de afuera. Python usa esa alineación para saber a quién pertenece cada <code>else</code>.</p>
+
+<p>Cuidado con pasarse: más de dos o tres niveles anidados es señal de que el código se puede simplificar, casi siempre uniendo condiciones con <code>and</code>.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar los dos puntos</h3>
+<pre><code>if edad &gt;= 18       # SyntaxError: expected ':'
+    print("Pasa")</code></pre>
+
+<h3>2. Mezclar indentaciones</h3>
+<pre><code>if edad &gt;= 18:
+    print("Pasa")
+      print("Otra cosa")     # IndentationError</code></pre>
+<p>Todas las líneas de un mismo bloque llevan exactamente la misma sangría. Cuatro espacios, siempre cuatro.</p>
+
+<h3>3. Usar <code>=</code> en vez de <code>==</code></h3>
+<pre><code>if nota = 5.0:      # SyntaxError
+if nota == 5.0:     # ✅</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Escribe la pregunta como comparación: algo que dé <code>True</code> o <code>False</code>.</li>
+  <li>Dos puntos, Enter, y todo lo de adentro con cuatro espacios.</li>
+  <li>Si hay varios casos, ordénalos <strong>del más exigente al menos exigente</strong> con <code>elif</code>.</li>
+  <li>Cierra con <code>else</code> para el caso que sobra: así ninguna entrada se queda sin respuesta.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>if cond:</code></td><td>Ejecuta el bloque solo si <code>cond</code> es verdadera</td></tr>
+    <tr><td><code>elif cond2:</code></td><td>Se revisa solo si las anteriores fueron falsas</td></tr>
+    <tr><td><code>else:</code></td><td>En cualquier otro caso</td></tr>
+    <tr><td>Cuatro espacios</td><td>Marcan qué está adentro del bloque</td></tr>
+    <tr><td><code>a and b</code> · <code>a or b</code></td><td>Unir condiciones</td></tr>
+    <tr><td><code>n % 2 == 0</code></td><td>¿Es par?</td></tr>
+  </tbody>
+</table>
+
+<blockquote>En un <code>elif</code>, Python se queda con la primera condición verdadera y no mira las demás. Por eso las condiciones van de la más exigente a la menos exigente.</blockquote>

@@ -1,0 +1,192 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué hace break dentro de un ciclo?",
+    "data": { "options": [
+      { "id": "a", "text": "Sale del ciclo de inmediato" },
+      { "id": "b", "text": "Salta a la siguiente vuelta" },
+      { "id": "c", "text": "Reinicia el ciclo desde el principio" },
+      { "id": "d", "text": "Termina el programa" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "break corta el ciclo en seco: ni termina la vuelta ni vuelve a revisar la condición."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué hace continue?",
+    "data": { "options": [
+      { "id": "a", "text": "Se salta lo que falta de esta vuelta y pasa a la siguiente" },
+      { "id": "b", "text": "Sale del ciclo" },
+      { "id": "c", "text": "Repite la misma vuelta otra vez" },
+      { "id": "d", "text": "Continúa con la siguiente línea del programa" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El ciclo sigue vivo: solo se descarta el resto del cuerpo de esa vuelta."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuándo se ejecuta el else de un ciclo for?",
+    "data": { "options": [
+      { "id": "a", "text": "Solo si el ciclo terminó sin haber pasado por un break" },
+      { "id": "b", "text": "Siempre al terminar el ciclo" },
+      { "id": "c", "text": "Cuando la colección está vacía" },
+      { "id": "d", "text": "Cada vez que la condición del if falla" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es el bloque del \"no lo encontré\": evita tener que llevar una bandera."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En dos ciclos anidados, ¿de cuál sale un break que está en el interno?",
+    "data": { "options": [
+      { "id": "a", "text": "Solo del interno: el externo sigue dando vueltas" },
+      { "id": "b", "text": "De los dos" },
+      { "id": "c", "text": "Solo del externo" },
+      { "id": "d", "text": "Del programa entero" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "break rompe únicamente el ciclo que lo contiene. Para salir de los dos hace falta una bandera o una función."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Para qué sirve end=\"  \" en un print()?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que no baje de línea y deje dos espacios en su lugar" },
+      { "id": "b", "text": "Para terminar el programa" },
+      { "id": "c", "text": "Para poner dos espacios al principio" },
+      { "id": "d", "text": "Para cerrar el ciclo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Por defecto print termina en salto de línea. Con end se cambia por lo que uno quiera."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for n in range(5):\n    if n == 2:\n        break\n    print(n)",
+    "data": { "options": [
+      { "id": "a", "text": "0\n1" },
+      { "id": "b", "text": "0\n1\n3\n4" },
+      { "id": "c", "text": "0\n1\n2" },
+      { "id": "d", "text": "0\n1\n2\n3\n4" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Al llegar al 2 sale del ciclo, así que el 3 y el 4 ni se miran."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for n in range(5):\n    if n == 2:\n        continue\n    print(n)",
+    "data": { "options": [
+      { "id": "a", "text": "0\n1\n3\n4" },
+      { "id": "b", "text": "0\n1" },
+      { "id": "c", "text": "0\n1\n2\n3\n4" },
+      { "id": "d", "text": "2" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Solo se salta la vuelta del 2: las demás siguen normales."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for n in range(3):\n    print(n)\nelse:\n    print(\"listo\")",
+    "data": { "options": [
+      { "id": "a", "text": "0\n1\n2\nlisto" },
+      { "id": "b", "text": "0\n1\n2" },
+      { "id": "c", "text": "listo" },
+      { "id": "d", "text": "SyntaxError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "No hubo break, así que el else del ciclo sí corre."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for n in range(3):\n    if n == 1:\n        break\nelse:\n    print(\"sin break\")\nprint(\"fin\")",
+    "data": { "options": [
+      { "id": "a", "text": "fin" },
+      { "id": "b", "text": "sin break\nfin" },
+      { "id": "c", "text": "fin\nsin break" },
+      { "id": "d", "text": "No imprime nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Hubo break, así que el else se salta. El print de afuera sí corre."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for fila in range(1, 4):\n    for col in range(1, 4):\n        if col == 2:\n            break\n        print(fila, col)",
+    "data": { "options": [
+      { "id": "a", "text": "1 1\n2 1\n3 1" },
+      { "id": "b", "text": "1 1" },
+      { "id": "c", "text": "1 1\n1 2\n1 3" },
+      { "id": "d", "text": "No imprime nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El break corta solo el ciclo de las columnas; el de las filas sigue y vuelve a entrar tres veces."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este ciclo se queda pegado. ¿En qué línea está el problema?",
+    "data": { "lines": ["n = 0", "while n < 5:", "    if n == 2:", "        continue", "    n += 1"] },
+    "correct": { "line_number": 4 },
+    "explanation": "El continue salta el n += 1, así que n se queda en 2 para siempre. En un while hay que avanzar antes del continue."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El programa debe saltarse los negativos pero suma mal. ¿En qué línea está el error?",
+    "data": { "lines": ["total = 0", "for n in range(3):", "    venta = int(input())", "    if venta < 0:", "        break", "    total += venta", "print(total)"] },
+    "correct": { "line_number": 5 },
+    "explanation": "Ahí va continue, no break: con break el primer negativo acaba el ciclo y las ventas siguientes se pierden."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "La cuadrícula sale toda en una sola línea. ¿En qué línea está el error?",
+    "data": { "lines": ["for fila in range(1, 4):", "    for col in range(1, 4):", "        print(fila, col, end=\"  \")", "        print()"] },
+    "correct": { "line_number": 4 },
+    "explanation": "El print() que baja de línea quedó dentro del ciclo interno: debe estar al nivel del for interno, no adentro."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme el programa de los tres intentos de clave",
+    "data": { "lines": [
+      { "id": "l1", "text": "CLAVE = \"1234\"", "indent": 0 },
+      { "id": "l2", "text": "for intento in range(1, 4):", "indent": 0 },
+      { "id": "l3", "text": "clave = input(f\"Clave (intento {intento}): \")", "indent": 1 },
+      { "id": "l4", "text": "if clave == CLAVE:", "indent": 1 },
+      { "id": "l5", "text": "print(\"Bienvenido\")", "indent": 2 },
+      { "id": "l6", "text": "break", "indent": 2 },
+      { "id": "l7", "text": "print(\"Clave incorrecta\")", "indent": 1 },
+      { "id": "l8", "text": "else:", "indent": 0 },
+      { "id": "l9", "text": "print(\"Tarjeta bloqueada\")", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9"] },
+    "explanation": "El else del ciclo se alinea con el for, no con el if: por eso solo corre si nunca hubo break."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme la cuadrícula de tablas de multiplicar",
+    "data": { "lines": [
+      { "id": "l1", "text": "for tabla in range(1, 6):", "indent": 0 },
+      { "id": "l2", "text": "for mult in range(1, 6):", "indent": 1 },
+      { "id": "l3", "text": "print(f\"{tabla}x{mult}={tabla * mult}\", end=\"  \")", "indent": 2 },
+      { "id": "l4", "text": "print()", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4"] },
+    "explanation": "El print() que baja de línea va al nivel del for interno: corre una vez por fila, cuando el ciclo de columnas ya terminó."
+  }
+]

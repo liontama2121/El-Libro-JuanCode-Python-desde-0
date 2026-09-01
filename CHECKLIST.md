@@ -109,6 +109,8 @@
 - [x] Un capítulo se publica solo cuando tiene cuerpo, banco y ejercicios
 - [x] `/admin/capitulo/:id/quiz` explica que el quiz sale del banco (las tablas
       `questions` / `options` quedaron como legado)
+- [x] `npm run content:verificar` corre cada solución documentada contra sus
+      propios tests: es el control de calidad del contenido
 
 ### Los 24 capítulos
 - [x] 1 🐍 ¿Qué es programar?
@@ -116,10 +118,10 @@
 - [x] 3 ⌨️ input() y conversiones
 - [x] 4 🧮 Operadores
 - [x] 5 📝 Strings a fondo
-- [ ] 6 🔀 Condicionales
-- [ ] 7 ⏳ while (contadores, sumatorias y banderas)
-- [ ] 8 🔢 for y range()
-- [ ] 9 🎛️ break, continue y anidados
+- [x] 6 🔀 Condicionales
+- [x] 7 ⏳ while (contadores, sumatorias y banderas)
+- [x] 8 🔢 for y range()
+- [x] 9 🎛️ break, continue y anidados
 - [ ] 10 📋 Listas
 - [ ] 11 🎯 Tuplas y sets
 - [ ] 12 🗂️ Diccionarios

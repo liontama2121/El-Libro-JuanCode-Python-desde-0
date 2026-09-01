@@ -1,0 +1,65 @@
+[
+  {
+    "orden": 1,
+    "title": "Cuenta regresiva",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar un número entero positivo y mostrar la cuenta regresiva hasta 1, y luego la palabra <code>Ya!</code>:</p><pre><code>5\n4\n3\n2\n1\nYa!</code></pre>",
+    "hint_html": "<p>La variable arranca en el número que dio el usuario, la condición es <code>n >= 1</code> y adentro se resta uno con <code>n -= 1</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Cuenta regresiva\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra una cuenta regresiva desde el numero indicado hasta 1.\n'''\n\n# Inicio\nn = int(input(\"Desde: \"))\n\nwhile n >= 1:\n    print(n)\n    n -= 1        # avanzar: sin esta linea el ciclo es infinito\n\nprint(\"Ya!\")\n# Fin</code></pre><p>Las tres partes están todas: preparar (<code>n</code> viene del input), preguntar (<code>n >= 1</code>) y avanzar (<code>n -= 1</code>). El <code>print(\"Ya!\")</code> va fuera del ciclo, sin indentar, porque solo debe salir una vez al final.</p>",
+    "starter_code": "'''\nPrograma: Cuenta regresiva\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [{ "stdin": "5\n", "expected_output": "Desde: 5\n4\n3\n2\n1\nYa!" }]
+  },
+  {
+    "orden": 2,
+    "title": "Ventas del día",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar <strong>5</strong> ventas del día. Al final mostrar el total y el promedio:</p><pre><code>Total: 250000\nPromedio: 50000.0</code></pre><p><em>Nota:</em> use el patrón de sumatoria.</p>",
+    "hint_html": "<p><code>total</code> nace en 0 <strong>antes</strong> del ciclo y adentro crece con <code>total += venta</code>. El promedio se calcula después, cuando el total ya está completo.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Ventas del dia\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide cinco ventas y muestra el total y el promedio.\n'''\n\n# Inicio\nCUANTAS = 5\n\ntotal = 0     # sumatoria: nace afuera, en cero\nn = 1\n\nwhile n <= CUANTAS:\n    venta = int(input(f\"Venta {n}: \"))\n    total += venta      # se actualiza adentro\n    n += 1\n\n# El promedio se calcula al final, con la suma ya completa\nprint(f\"Total: {total}\")\nprint(f\"Promedio: {total / CUANTAS}\")\n# Fin</code></pre><p>Si <code>total = 0</code> estuviera dentro del ciclo, cada vuelta lo pondría en cero otra vez y al final valdría solo la última venta. Por eso nace afuera.</p>",
+    "starter_code": "'''\nPrograma: Ventas del dia\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nCUANTAS = 5\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "50000\n50000\n50000\n50000\n50000\n",
+        "expected_output": "Venta 1: Venta 2: Venta 3: Venta 4: Venta 5: Total: 250000\nPromedio: 50000.0"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Informe de notas",
+    "difficulty": "medio",
+    "statement_html": "<p>Solicitar <strong>5</strong> notas de un estudiante (de 0.0 a 5.0). Mostrar al final:</p><ul><li>cuántas aprobaron (nota mayor o igual a 3.0),</li><li>el promedio del curso,</li><li>y un aviso si hubo <strong>al menos una</strong> nota perfecta (5.0).</li></ul><pre><code>Aprobadas: 3\nPromedio: 3.5\nHubo al menos un 5.0</code></pre><p><em>Nota:</em> use los tres patrones: contador, sumatoria y bandera.</p>",
+    "hint_html": "<p>Tres variables nacen antes del ciclo: <code>aprobadas = 0</code>, <code>suma = 0.0</code> y <code>hubo_perfecta = False</code>. La bandera se levanta y no se vuelve a bajar: nada de <code>else</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Informe de notas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide cinco notas y reporta cuantas aprobaron, el promedio\n    y si hubo alguna nota perfecta.\n'''\n\n# Inicio\nCUANTAS = 5\nMINIMA_APROBATORIA = 3.0\n\naprobadas = 0            # contador\nsuma = 0.0               # sumatoria\nhubo_perfecta = False    # bandera\n\nn = 1\nwhile n <= CUANTAS:\n    nota = float(input(f\"Nota {n}: \"))\n\n    suma += nota\n    if nota >= MINIMA_APROBATORIA:\n        aprobadas += 1\n    if nota == 5.0:\n        # La bandera se levanta y se queda levantada:\n        # no lleva else que la vuelva a bajar\n        hubo_perfecta = True\n\n    n += 1\n\nprint(f\"Aprobadas: {aprobadas}\")\nprint(f\"Promedio: {suma / CUANTAS}\")\n\nif hubo_perfecta:\n    print(\"Hubo al menos un 5.0\")\n# Fin</code></pre><p>Los tres patrones conviviendo, cada uno con su regla:</p><table><thead><tr><th>Variable</th><th>Nace en</th><th>Se actualiza</th></tr></thead><tbody><tr><td><code>aprobadas</code></td><td>0</td><td><code>+= 1</code> cuando se cumple la condición</td></tr><tr><td><code>suma</code></td><td>0.0</td><td><code>+= nota</code> en todas las vueltas</td></tr><tr><td><code>hubo_perfecta</code></td><td>False</td><td><code>= True</code> una vez y nunca vuelve atrás</td></tr></tbody></table>",
+    "starter_code": "'''\nPrograma: Informe de notas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nCUANTAS = 5\nMINIMA_APROBATORIA = 3.0\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "5.0\n4.0\n3.0\n2.0\n3.5\n",
+        "expected_output": "Nota 1: Nota 2: Nota 3: Nota 4: Nota 5: Aprobadas: 4\nPromedio: 3.5\nHubo al menos un 5.0"
+      },
+      {
+        "stdin": "2.0\n2.0\n2.0\n2.0\n2.0\n",
+        "expected_output": "Nota 1: Nota 2: Nota 3: Nota 4: Nota 5: Aprobadas: 0\nPromedio: 2.0"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Caja de la tienda",
+    "difficulty": "dificil",
+    "statement_html": "<p>Simular la caja de una tienda. Se piden productos y precios <strong>hasta que el usuario escriba <code>fin</code></strong> como nombre del producto.</p><p>Al terminar mostrar:</p><pre><code>Productos: 3\nTotal: 27000\nEl mas caro costo 15000</code></pre><p>Si no se registró ningún producto, mostrar únicamente:</p><pre><code>No se registro ninguna compra</code></pre><p><em>Nota:</em> use lectura anticipada.</p>",
+    "hint_html": "<p>El primer <code>input()</code> del producto va <strong>antes</strong> del <code>while</code>, y el último dentro del ciclo, de último. Para el más caro, guarde <code>mayor = 0</code> y actualícelo cuando el precio lo supere.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Caja de la tienda\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Registra productos y precios hasta que el usuario escriba\n    fin, y reporta cantidad, total y el producto mas caro.\n'''\n\n# Inicio\ncantidad = 0    # contador\ntotal = 0       # sumatoria\nmayor = 0       # el precio mas alto visto hasta ahora\n\n# Lectura anticipada: este primer dato alimenta la primera\n# pregunta del while\nproducto = input(\"Producto (o fin): \").strip().lower()\n\nwhile producto != \"fin\":\n    precio = int(input(\"Precio: \"))\n\n    cantidad += 1\n    total += precio\n    if precio > mayor:\n        mayor = precio\n\n    # Esta lectura prepara la vuelta siguiente:\n    # sin ella el ciclo seria infinito\n    producto = input(\"Producto (o fin): \").strip().lower()\n\nif cantidad == 0:\n    print(\"No se registro ninguna compra\")\nelse:\n    print(f\"Productos: {cantidad}\")\n    print(f\"Total: {total}\")\n    print(f\"El mas caro costo {mayor}\")\n# Fin</code></pre><p>Tres ideas que se repiten toda la vida programando:</p><ul><li><strong>Lectura anticipada.</strong> Dos <code>input()</code> del mismo dato: uno antes del ciclo y otro al final del cuerpo. El de afuera arranca; el de adentro mantiene.</li><li><strong>El máximo se busca comparando.</strong> <code>mayor</code> nace en 0 y se reemplaza cada vez que aparece algo más grande. Es otro acumulador, solo que en vez de sumar, se queda con el mejor.</li><li><strong>El caso vacío.</strong> Si el usuario escribe <code>fin</code> de una, el ciclo no da ni una vuelta. Preguntarlo evita dividir entre cero o mostrar un informe sin datos.</li></ul>",
+    "starter_code": "'''\nPrograma: Caja de la tienda\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "Pan\n5000\nLeche\n7000\nQueso\n15000\nfin\n",
+        "expected_output": "Producto (o fin): Precio: Producto (o fin): Precio: Producto (o fin): Precio: Producto (o fin): Productos: 3\nTotal: 27000\nEl mas caro costo 15000"
+      },
+      {
+        "stdin": "fin\n",
+        "expected_output": "Producto (o fin): No se registro ninguna compra"
+      }
+    ]
+  }
+]

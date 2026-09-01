@@ -1,0 +1,189 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué le dice a Python que una línea está dentro de un if?",
+    "data": { "options": [
+      { "id": "a", "text": "La indentación: cuatro espacios al principio" },
+      { "id": "b", "text": "Las llaves { }" },
+      { "id": "c", "text": "Un punto y coma al final" },
+      { "id": "d", "text": "La palabra end" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "En Python el bloque ES la indentación. Sin sangría, la línea queda fuera del if."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué falta al final de la línea del if?",
+    "data": { "options": [
+      { "id": "a", "text": "Dos puntos" },
+      { "id": "b", "text": "Punto y coma" },
+      { "id": "c", "text": "Una coma" },
+      { "id": "d", "text": "Nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Los dos puntos anuncian que abre un bloque. Sin ellos, SyntaxError."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En una cadena if / elif / elif / else, ¿cuántos bloques se ejecutan?",
+    "data": { "options": [
+      { "id": "a", "text": "Exactamente uno: el primero cuya condición sea verdadera" },
+      { "id": "b", "text": "Todos los que tengan condición verdadera" },
+      { "id": "c", "text": "Siempre el else también" },
+      { "id": "d", "text": "Ninguno si la primera condición falla" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Python se queda con la primera verdadera y sale de toda la cadena. Con if sueltos sí se evaluarían todas."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué las condiciones de una escala de notas van de mayor a menor?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque Python toma la primera verdadera, y si empieza por la menos exigente las demás nunca se alcanzan" },
+      { "id": "b", "text": "Por estética, da igual el orden" },
+      { "id": "c", "text": "Porque elif solo acepta el operador >=" },
+      { "id": "d", "text": "Porque else debe ir siempre de primero" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con nota >= 3.0 de primera, un 4.8 entraría por ahí y diría Aprobado."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Cuándo conviene anidar un if dentro de otro?",
+    "data": { "options": [
+      { "id": "a", "text": "Cuando la segunda pregunta solo tiene sentido si la primera pasó" },
+      { "id": "b", "text": "Siempre que haya dos condiciones" },
+      { "id": "c", "text": "Cuando se quiere ahorrar líneas" },
+      { "id": "d", "text": "Nunca: anidar está prohibido" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Si el saldo no alcanza, ni vale la pena preguntar si el monto es múltiplo. Si las dos preguntas son independientes, se unen con and."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "edad = 15\nif edad >= 18:\n    print(\"Pasa\")\nprint(\"Siguiente\")",
+    "data": { "options": [
+      { "id": "a", "text": "Siguiente" },
+      { "id": "b", "text": "Pasa\nSiguiente" },
+      { "id": "c", "text": "Pasa" },
+      { "id": "d", "text": "No imprime nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La condición es falsa, así que el bloque indentado se salta. El último print está afuera y siempre corre."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "nota = 4.8\nif nota >= 3.0:\n    print(\"Aprobado\")\nelif nota >= 4.5:\n    print(\"Excelente\")",
+    "data": { "options": [
+      { "id": "a", "text": "Aprobado" },
+      { "id": "b", "text": "Excelente" },
+      { "id": "c", "text": "Aprobado\nExcelente" },
+      { "id": "d", "text": "No imprime nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El orden está al revés: la primera condición ya es verdadera, así que el elif nunca se alcanza."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "saldo = 30000\nretiro = 50000\nif retiro <= saldo:\n    saldo = saldo - retiro\n    print(\"Aprobado\")\nelse:\n    print(\"Insuficiente\")\nprint(saldo)",
+    "data": { "options": [
+      { "id": "a", "text": "Insuficiente\n30000" },
+      { "id": "b", "text": "Aprobado\n-20000" },
+      { "id": "c", "text": "Insuficiente\n-20000" },
+      { "id": "d", "text": "Aprobado\n30000" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La condición es falsa, así que el saldo no se toca y entra por el else."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "n = 12\nif n % 2 == 0:\n    print(\"par\")\nif n % 3 == 0:\n    print(\"multiplo de 3\")",
+    "data": { "options": [
+      { "id": "a", "text": "par\nmultiplo de 3" },
+      { "id": "b", "text": "par" },
+      { "id": "c", "text": "multiplo de 3" },
+      { "id": "d", "text": "No imprime nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Son dos if independientes, no una cadena: se evalúan los dos y los dos son verdaderos."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "consumo = 200\nif consumo <= 150:\n    tarifa = 500\nelif consumo <= 300:\n    tarifa = 700\nelse:\n    tarifa = 900\nprint(consumo * tarifa)",
+    "data": { "options": [
+      { "id": "a", "text": "140000" },
+      { "id": "b", "text": "100000" },
+      { "id": "c", "text": "180000" },
+      { "id": "d", "text": "700" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "200 no es <= 150 pero sí <= 300, así que la tarifa queda en 700: 200 * 700 = 140000."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "saldo = 100000\nmonto = 35000\nif monto <= saldo:\n    if monto % 10000 == 0:\n        print(\"Aprobado\")\n    else:\n        print(\"Solo multiplos de 10000\")\nelse:\n    print(\"Insuficiente\")",
+    "data": { "options": [
+      { "id": "a", "text": "Solo multiplos de 10000" },
+      { "id": "b", "text": "Aprobado" },
+      { "id": "c", "text": "Insuficiente" },
+      { "id": "d", "text": "No imprime nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El saldo alcanza, así que entra al if de adentro; 35000 % 10000 da 5000, no cero, y cae en el else interno."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["edad = int(input(\"Edad: \"))", "if edad >= 18", "    print(\"Mayor de edad\")"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Falta los dos puntos al final de la condición."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["nota = 4.0", "if nota = 5.0:", "    print(\"Perfecto\")"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Dentro de un if se compara con ==. Un solo = es asignación y da SyntaxError."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El else debería atender el caso contrario. ¿En qué línea está el error?",
+    "data": { "lines": ["saldo = 100000", "monto = 50000", "if monto <= saldo:", "print(\"Aprobado\")", "else:", "    print(\"Insuficiente\")"] },
+    "correct": { "line_number": 4 },
+    "explanation": "El print del bloque no está indentado: Python espera al menos una línea con sangría después de los dos puntos."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme el programa que dice si un número es par o impar",
+    "data": { "lines": [
+      { "id": "l1", "text": "numero = int(input(\"Numero: \"))", "indent": 0 },
+      { "id": "l2", "text": "if numero % 2 == 0:", "indent": 0 },
+      { "id": "l3", "text": "print(f\"El {numero} es par\")", "indent": 1 },
+      { "id": "l4", "text": "else:", "indent": 0 },
+      { "id": "l5", "text": "print(f\"El {numero} es impar\")", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5"] },
+    "explanation": "Los print van indentados dentro de su rama, y el else se alinea con el if."
+  }
+]

@@ -8,7 +8,10 @@
     "solution_html": "<pre><code># Ficha basica del estudiante\nnombre = \"Ana\"\nedad = 17\nestatura = 1.62\n\nprint(nombre, \"tiene\", edad, \"anios y mide\", estatura, \"metros\")</code></pre><p>Las tres primeras líneas crean las cajas. La última las usa: <code>print()</code> recibe seis argumentos y los pega con un espacio entre cada uno. Si hubieras usado <code>+</code> tendrías que convertir <code>edad</code> y <code>estatura</code> con <code>str()</code>.</p>",
     "starter_code": "# Ficha basica del estudiante\n",
     "tests": [
-      { "stdin": "", "expected_output": "Ana tiene 17 anios y mide 1.62 metros" }
+      {
+        "stdin": "",
+        "expected_output": "Ana tiene 17 anios y mide 1.62 metros"
+      }
     ]
   },
   {
@@ -20,7 +23,10 @@
     "solution_html": "<pre><code># Movimientos de una cuenta de ahorros\nsaldo = 250000\nprint(\"Saldo inicial:\", saldo)\n\nsaldo = saldo - 80000     # retiro\nprint(\"Despues del retiro:\", saldo)\n\nsaldo = saldo + 30000     # consignacion\nprint(\"Saldo final:\", saldo)</code></pre><p>La clave es que la caja <code>saldo</code> es siempre la misma; lo que cambia es su contenido. Python primero resuelve el lado derecho (<code>250000 - 80000</code>) y después guarda el resultado en la misma variable.</p>",
     "starter_code": "# Movimientos de una cuenta de ahorros\nsaldo = 250000\n",
     "tests": [
-      { "stdin": "", "expected_output": "Saldo inicial: 250000\nDespues del retiro: 170000\nSaldo final: 200000" }
+      {
+        "stdin": "",
+        "expected_output": "Saldo inicial: 250000\nDespues del retiro: 170000\nSaldo final: 200000"
+      }
     ]
   },
   {
@@ -29,9 +35,14 @@
     "difficulty": "medio",
     "statement_html": "<p>Este programa debería sumar dos números pero imprime <code>1020</code> en vez de <code>30</code>:</p><pre><code>a = \"10\"\nb = \"20\"\nprint(a + b)</code></pre><p>Explique por qué pasa y entregue el programa corregido, que debe imprimir:</p><pre><code>30</code></pre>",
     "hint_html": "<p>Mire las comillas. Con dos <code>str</code>, el operador <code>+</code> no suma: pega. Hay dos formas de arreglarlo y ambas son válidas.</p>",
-    "solution_html": "<p><code>a</code> y <code>b</code> son <code>str</code>, no <code>int</code>. Con textos, <code>+</code> concatena: <code>\"10\" + \"20\"</code> da <code>\"1020\"</code>.</p><pre><code># Opcion 1: que sean numeros desde el principio\na = 10\nb = 20\nprint(a + b)          # 30\n\n# Opcion 2: convertirlos al usarlos\na = \"10\"\nb = \"20\"\nprint(int(a) + int(b))  # 30</code></pre><p>La opción 1 es mejor cuando el dato siempre es número. La opción 2 es la que vas a usar en el capítulo 3, cuando el dato venga de <code>input()</code>, que siempre entrega texto.</p>",
+    "solution_html": "<p><code>a</code> y <code>b</code> son <code>str</code>, no <code>int</code>. Con textos, <code>+</code> concatena: <code>\"10\" + \"20\"</code> da <code>\"1020\"</code>.</p><pre><code># Los datos son numeros desde el principio: se quitan las comillas\na = 10\nb = 20\nprint(a + b)          # 30</code></pre><p>Hay una segunda forma, igual de válida, para cuando el dato <em>tiene</em> que llegar como texto:</p><pre><code>a = \"10\"\nb = \"20\"\nprint(int(a) + int(b))   # 30</code></pre><p>La primera es mejor cuando el dato siempre es número. La segunda es la que vas a usar en el capítulo 3, cuando el dato venga de <code>input()</code>, que siempre entrega texto.</p>",
     "starter_code": "a = \"10\"\nb = \"20\"\nprint(a + b)\n",
-    "tests": [{ "stdin": "", "expected_output": "30" }]
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "30"
+      }
+    ]
   },
   {
     "orden": 4,

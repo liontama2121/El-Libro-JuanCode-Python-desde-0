@@ -1,0 +1,190 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuándo conviene usar for en vez de while?",
+    "data": { "options": [
+      { "id": "a", "text": "Cuando se sabe cuántas vueltas serán o se recorre una colección" },
+      { "id": "b", "text": "Siempre: while quedó obsoleto" },
+      { "id": "c", "text": "Solo cuando hay que contar hacia atrás" },
+      { "id": "d", "text": "Cuando el final depende de lo que escriba el usuario" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Si el final lo decide algo que pasa adentro (como escribir fin), eso es un while."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué genera range(1, 6)?",
+    "data": { "options": [
+      { "id": "a", "text": "1, 2, 3, 4, 5" },
+      { "id": "b", "text": "1, 2, 3, 4, 5, 6" },
+      { "id": "c", "text": "0, 1, 2, 3, 4, 5" },
+      { "id": "d", "text": "6, 5, 4, 3, 2, 1" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El final nunca entra: llega hasta el 5. Es la misma regla de las rebanadas de texto."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué hace enumerate() en un for?",
+    "data": { "options": [
+      { "id": "a", "text": "Entrega la posición y el valor de cada elemento a la vez" },
+      { "id": "b", "text": "Cuenta cuántos elementos hay" },
+      { "id": "c", "text": "Ordena la colección" },
+      { "id": "d", "text": "Convierte la colección en números" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "for i, letra in enumerate(texto) evita tener que escribir range(len(texto))."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En un for, ¿quién actualiza la variable del ciclo?",
+    "data": { "options": [
+      { "id": "a", "text": "Python: por eso no hay que escribir n += 1" },
+      { "id": "b", "text": "El programador, igual que en el while" },
+      { "id": "c", "text": "Nadie: se queda en el primer valor" },
+      { "id": "d", "text": "El range solo la actualiza si se le pide" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Esa es la ventaja del for: elimina la parte de avanzar, que es donde más se olvida uno."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Qué pasa si dentro de un for se hace n = n + 10 sobre la variable del ciclo?",
+    "data": { "options": [
+      { "id": "a", "text": "Nada útil: la siguiente vuelta la reemplaza con el próximo valor del range" },
+      { "id": "b", "text": "El ciclo salta diez posiciones" },
+      { "id": "c", "text": "El ciclo se vuelve infinito" },
+      { "id": "d", "text": "Da un error de sintaxis" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La variable la controla el for. Si se necesita otro valor, se usa una variable aparte."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for n in range(3):\n    print(n)",
+    "data": { "options": [
+      { "id": "a", "text": "0\n1\n2" },
+      { "id": "b", "text": "1\n2\n3" },
+      { "id": "c", "text": "0\n1\n2\n3" },
+      { "id": "d", "text": "3" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "range con un solo argumento arranca en 0 y da esa cantidad de números."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for letra in \"Ana\":\n    print(letra)",
+    "data": { "options": [
+      { "id": "a", "text": "A\nn\na" },
+      { "id": "b", "text": "Ana" },
+      { "id": "c", "text": "0\n1\n2" },
+      { "id": "d", "text": "A n a" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Un for sobre un texto lo recorre carácter por carácter."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "total = 0\nfor n in range(1, 5):\n    total += n\nprint(total)",
+    "data": { "options": [
+      { "id": "a", "text": "10" },
+      { "id": "b", "text": "15" },
+      { "id": "c", "text": "4" },
+      { "id": "d", "text": "0" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Suma 1 + 2 + 3 + 4. El 5 no entra porque el final del range queda por fuera."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for n in range(5, 0, -1):\n    print(n, end=\" \")",
+    "data": { "options": [
+      { "id": "a", "text": "5 4 3 2 1" },
+      { "id": "b", "text": "5 4 3 2 1 0" },
+      { "id": "c", "text": "0 1 2 3 4 5" },
+      { "id": "d", "text": "No imprime nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El tercer argumento es el paso. Con -1 cuenta hacia atrás, y el 0 del final no entra."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "for i, letra in enumerate(\"Cali\"):\n    if i == 2:\n        print(letra)",
+    "data": { "options": [
+      { "id": "a", "text": "l" },
+      { "id": "b", "text": "a" },
+      { "id": "c", "text": "i" },
+      { "id": "d", "text": "C" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las posiciones son 0:C, 1:a, 2:l, 3:i. La posición 2 es la l."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Cuántas líneas imprime este programa?",
+    "code_snippet": "for a in range(3):\n    for b in range(4):\n        print(a, b)",
+    "data": { "options": [
+      { "id": "a", "text": "12" },
+      { "id": "b", "text": "7" },
+      { "id": "c", "text": "3" },
+      { "id": "d", "text": "4" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El ciclo interno corre completo en cada vuelta del externo: 3 × 4 = 12."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El programa debe imprimir del 1 al 5. ¿En qué línea está el error?",
+    "data": { "lines": ["for n in range(1, 5):", "    print(n)"] },
+    "correct": { "line_number": 1 },
+    "explanation": "range(1, 5) llega hasta el 4. Para incluir el 5 hay que escribir range(1, 6)."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El programa debe sumar cinco números. ¿En qué línea está el error?",
+    "data": { "lines": ["for n in range(1, 6):", "    total = 0", "    total += n", "print(total)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "La sumatoria nace dentro del ciclo: cada vuelta la reinicia. Esa línea va antes del for."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["numero = int(input(\"Numero: \"))", "for i in range(1, 11)", "    print(numero * i)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Falta los dos puntos al final de la línea del for."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme el programa que cuenta las vocales de una frase",
+    "data": { "lines": [
+      { "id": "l1", "text": "frase = input(\"Frase: \").lower()", "indent": 0 },
+      { "id": "l2", "text": "vocales = 0", "indent": 0 },
+      { "id": "l3", "text": "for letra in frase:", "indent": 0 },
+      { "id": "l4", "text": "if letra in \"aeiou\":", "indent": 1 },
+      { "id": "l5", "text": "vocales += 1", "indent": 2 },
+      { "id": "l6", "text": "print(f\"Tiene {vocales} vocales\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6"] },
+    "explanation": "El contador nace antes del ciclo; el if va dentro del for y el incremento dentro del if, cada uno con su nivel de indentación."
+  }
+]

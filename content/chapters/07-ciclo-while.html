@@ -1,0 +1,200 @@
+<p class="jc-gancho">El cajero no te pregunta la clave una vez y se rinde: te deja intentar hasta tres veces. La caja de la tienda no cobra un producto: cobra hasta que digas "ya". Eso es repetir <em>mientras</em> algo se cumpla, y para eso está <code>while</code>.</p>
+
+<h2>La alarma del despertador</h2>
+
+<p><code>while</code> repite un bloque <strong>mientras</strong> su condición sea verdadera. Es una alarma: suena, revisa si ya te levantaste, y si no, vuelve a sonar.</p>
+
+<pre><code>contador = 1
+
+while contador &lt;= 3:
+    print("Intento", contador)
+    contador = contador + 1
+
+print("Se acabaron los intentos")</code></pre>
+
+<p>Las tres partes de todo <code>while</code>, y si falta una el programa se rompe:</p>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Dónde va</th><th>En el ejemplo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Preparar</strong></td><td>Antes del ciclo</td><td><code>contador = 1</code></td></tr>
+    <tr><td><strong>Preguntar</strong></td><td>En el <code>while</code></td><td><code>contador &lt;= 3</code></td></tr>
+    <tr><td><strong>Avanzar</strong></td><td>Adentro del ciclo</td><td><code>contador = contador + 1</code></td></tr>
+  </tbody>
+</table>
+
+<p>Si olvidas <em>avanzar</em>, la condición nunca cambia y el programa se queda repitiendo para siempre. Eso es un <strong>ciclo infinito</strong>, y es el error número uno de este capítulo.</p>
+
+<h3>La película, vuelta a vuelta</h3>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>contador</code> al entrar</th><th>¿<code>&lt;= 3</code>?</th><th>Imprime</th><th><code>contador</code> al salir</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td><td>Sí</td><td>Intento 1</td><td>2</td></tr>
+    <tr><td>2</td><td>2</td><td>Sí</td><td>Intento 2</td><td>3</td></tr>
+    <tr><td>3</td><td>3</td><td>Sí</td><td>Intento 3</td><td>4</td></tr>
+    <tr><td>4</td><td>4</td><td><strong>No</strong></td><td>—</td><td>sale del ciclo</td></tr>
+  </tbody>
+</table>
+
+<p>Esa tabla es la herramienta. Cada vez que un ciclo no te dé lo que esperas, hazla en papel con tres o cuatro vueltas. Casi siempre el error salta a la vista en la vuelta 1 o en la última.</p>
+
+<h2>Los tres patrones: contador, sumatoria y bandera</h2>
+
+<p>El 90% de los ciclos que vas a escribir en tu vida son uno de estos tres, o una mezcla. Y todos comparten la misma regla:</p>
+
+<blockquote><strong>Nacen afuera, se actualizan adentro.</strong> La variable se crea <em>antes</em> del ciclo y se modifica <em>dentro</em> del ciclo.</blockquote>
+
+<p>Si la creas adentro, se reinicia en cada vuelta y nunca acumula nada.</p>
+
+<h3>1. Contador: ¿cuántos?</h3>
+
+<p>Nace en <code>0</code> y sube de a uno cuando pasa lo que te interesa.</p>
+
+<pre><code>aprobados = 0                 # nace afuera, en cero
+n = 1
+
+while n &lt;= 5:
+    nota = float(input(f"Nota {n}: "))
+    if nota &gt;= 3.0:
+        aprobados = aprobados + 1     # se actualiza adentro
+    n = n + 1
+
+print("Aprobados:", aprobados)</code></pre>
+
+<h3>2. Sumatoria: ¿cuánto en total?</h3>
+
+<p>Nace en <code>0</code> y se le suma el valor de cada vuelta.</p>
+
+<pre><code>total = 0                     # nace afuera, en cero
+n = 1
+
+while n &lt;= 5:
+    venta = int(input(f"Venta {n}: "))
+    total = total + venta             # se actualiza adentro
+    n = n + 1
+
+print("Total del día:", total)
+print("Promedio:", total / 5)</code></pre>
+
+<p>Fíjate en que el promedio se calcula <strong>después</strong> del ciclo, con la suma ya completa. Calcularlo adentro sería promediar datos incompletos.</p>
+
+<h3>3. Bandera: ¿pasó al menos una vez?</h3>
+
+<p>Nace en <code>False</code> y se pone en <code>True</code> apenas ocurre lo que buscabas. Nunca vuelve atrás.</p>
+
+<pre><code>hubo_perdida = False          # nace afuera, en False
+n = 1
+
+while n &lt;= 5:
+    venta = int(input(f"Venta {n}: "))
+    if venta &lt; 0:
+        hubo_perdida = True           # se actualiza adentro
+    n = n + 1
+
+if hubo_perdida:
+    print("Ojo: hubo al menos una venta negativa")</code></pre>
+
+<p>El error clásico con banderas es usar <code>else: hubo_perdida = False</code>. Eso borra el hallazgo en la siguiente vuelta. Una bandera se levanta y se queda levantada.</p>
+
+<h3>Los tres juntos</h3>
+
+<pre><code>total = 0             # sumatoria
+cuantas = 0           # contador
+hubo_grande = False   # bandera
+
+n = 1
+while n &lt;= 3:
+    venta = int(input(f"Venta {n}: "))
+    total = total + venta
+    cuantas = cuantas + 1
+    if venta &gt; 100000:
+        hubo_grande = True
+    n = n + 1
+
+print(f"{cuantas} ventas, total {total}")
+if hubo_grande:
+    print("Hubo al menos una venta grande")</code></pre>
+
+<h2>Atajos de actualización</h2>
+
+<p>Escribir <code>total = total + venta</code> se vuelve cansón. Python tiene atajos:</p>
+
+<table>
+  <thead>
+    <tr><th>Atajo</th><th>Es lo mismo que</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>n += 1</code></td><td><code>n = n + 1</code></td></tr>
+    <tr><td><code>total += venta</code></td><td><code>total = total + venta</code></td></tr>
+    <tr><td><code>saldo -= retiro</code></td><td><code>saldo = saldo - retiro</code></td></tr>
+    <tr><td><code>precio *= 2</code></td><td><code>precio = precio * 2</code></td></tr>
+  </tbody>
+</table>
+
+<h2>Ciclos que no saben cuántas vueltas darán</h2>
+
+<p>Hasta aquí contábamos vueltas. Pero <code>while</code> brilla cuando el final depende del usuario:</p>
+
+<pre><code>total = 0
+producto = input("Producto (o 'fin' para terminar): ")
+
+while producto != "fin":
+    precio = int(input("Precio: "))
+    total += precio
+    producto = input("Producto (o 'fin' para terminar): ")
+
+print("Total de la compra:", total)</code></pre>
+
+<p>Ese <code>input()</code> repetido —uno antes del ciclo y otro al final del cuerpo— se llama <strong>lectura anticipada</strong>. El primero da el dato para la primera pregunta del <code>while</code>; el segundo prepara la vuelta siguiente. Sin el de adentro, el ciclo sería infinito.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar avanzar (ciclo infinito)</h3>
+<pre><code>n = 1
+while n &lt;= 3:
+    print(n)      # imprime 1 para siempre</code></pre>
+<p>Si tu programa se queda pegado, es esto. Detenlo con Ctrl+C y busca la línea que debía cambiar la variable de la condición.</p>
+
+<h3>2. Crear el acumulador adentro</h3>
+<pre><code>while n &lt;= 3:
+    total = 0        # ❌ se reinicia en cada vuelta
+    total += venta</code></pre>
+<p>Nace afuera. Siempre.</p>
+
+<h3>3. Bajar la bandera</h3>
+<pre><code>if venta &lt; 0:
+    hubo_perdida = True
+else:
+    hubo_perdida = False   # ❌ borra lo que ya se había encontrado</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li><strong>Prepara</strong> antes del ciclo: contadores y sumatorias en <code>0</code>, banderas en <code>False</code>.</li>
+  <li><strong>Pregunta</strong> en el <code>while</code>: la condición que mantiene vivo el ciclo.</li>
+  <li><strong>Avanza</strong> adentro: cambia lo que la condición mira, o el ciclo no termina.</li>
+  <li><strong>Concluye</strong> después: promedios, mensajes y decisiones van fuera, con los datos ya completos.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>while cond:</code></td><td>Repite mientras <code>cond</code> sea verdadera</td></tr>
+    <tr><td><code>contador = 0</code> · <code>contador += 1</code></td><td>Contar cuántas veces</td></tr>
+    <tr><td><code>total = 0</code> · <code>total += valor</code></td><td>Acumular una suma</td></tr>
+    <tr><td><code>bandera = False</code> · <code>bandera = True</code></td><td>Recordar que algo pasó</td></tr>
+    <tr><td><code>while dato != "fin":</code></td><td>Repetir hasta que el usuario diga basta</td></tr>
+    <tr><td>Ctrl+C</td><td>Detener un ciclo infinito</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Contadores, sumatorias y banderas nacen afuera y se actualizan adentro. Si la variable nace adentro, cada vuelta la borra.</blockquote>

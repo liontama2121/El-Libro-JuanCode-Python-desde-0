@@ -435,15 +435,12 @@ saldo = 250000
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'La calculadora que se rompió', 'medio', '<p>Este programa debería sumar dos números pero imprime <code>1020</code> en vez de <code>30</code>:</p><pre><code>a = "10"
 b = "20"
-print(a + b)</code></pre><p>Explique por qué pasa y entregue el programa corregido, que debe imprimir:</p><pre><code>30</code></pre>', '<p>Mire las comillas. Con dos <code>str</code>, el operador <code>+</code> no suma: pega. Hay dos formas de arreglarlo y ambas son válidas.</p>', '<p><code>a</code> y <code>b</code> son <code>str</code>, no <code>int</code>. Con textos, <code>+</code> concatena: <code>"10" + "20"</code> da <code>"1020"</code>.</p><pre><code># Opcion 1: que sean numeros desde el principio
+print(a + b)</code></pre><p>Explique por qué pasa y entregue el programa corregido, que debe imprimir:</p><pre><code>30</code></pre>', '<p>Mire las comillas. Con dos <code>str</code>, el operador <code>+</code> no suma: pega. Hay dos formas de arreglarlo y ambas son válidas.</p>', '<p><code>a</code> y <code>b</code> son <code>str</code>, no <code>int</code>. Con textos, <code>+</code> concatena: <code>"10" + "20"</code> da <code>"1020"</code>.</p><pre><code># Los datos son numeros desde el principio: se quitan las comillas
 a = 10
 b = 20
-print(a + b)          # 30
-
-# Opcion 2: convertirlos al usarlos
-a = "10"
+print(a + b)          # 30</code></pre><p>Hay una segunda forma, igual de válida, para cuando el dato <em>tiene</em> que llegar como texto:</p><pre><code>a = "10"
 b = "20"
-print(int(a) + int(b))  # 30</code></pre><p>La opción 1 es mejor cuando el dato siempre es número. La opción 2 es la que vas a usar en el capítulo 3, cuando el dato venga de <code>input()</code>, que siempre entrega texto.</p>', '[{"stdin":"","expected_output":"30"}]', 'a = "10"
+print(int(a) + int(b))   # 30</code></pre><p>La primera es mejor cuando el dato siempre es número. La segunda es la que vas a usar en el capítulo 3, cuando el dato venga de <code>input()</code>, que siempre entrega texto.</p>', '[{"stdin":"","expected_output":"30"}]', 'a = "10"
 b = "20"
 print(a + b)
 ', 'seed'
@@ -1657,9 +1654,169 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
   SELECT id, 'parsons', 'medio', 'Arme el programa que separa un correo en usuario y dominio', NULL, '{"lines":[{"id":"l1","text":"crudo = input(\"Correo: \")","indent":0},{"id":"l2","text":"correo = crudo.strip().lower()","indent":0},{"id":"l3","text":"partes = correo.split(\"@\")","indent":0},{"id":"l4","text":"print(f\"Usuario: {partes[0]}\")","indent":0},{"id":"l5","text":"print(f\"Dominio: {partes[-1]}\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Primero se pide, después se normaliza, luego se parte y al final se muestran los pedazos.', 1, 'seed'
     FROM chapters WHERE number = 5;
 
--- ── Capítulo 6: Condicionales (if / elif / else) (borrador)
+-- ── Capítulo 6: Condicionales (if / elif / else) (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 6, 'Condicionales (if / elif / else)', '🔀', 'Que el programa tome decisiones.', '', 0
+  SELECT p.id, 6, 'Condicionales (if / elif / else)', '🔀', 'Que el programa tome decisiones.', '<p class="jc-gancho">El cajero automático no le entrega plata a todo el mundo. Antes pregunta: ¿el saldo alcanza? ¿el monto es múltiplo de 10000? ¿la tarjeta está activa? Cada una de esas preguntas es un <code>if</code>, y hasta ahora tus programas no sabían hacer ninguna.</p>
+
+<h2>El torniquete</h2>
+
+<p>Un <code>if</code> es un torniquete: solo deja pasar si la condición es verdadera.</p>
+
+<pre><code>edad = 20
+
+if edad &gt;= 18:
+    print("Puede entrar")</code></pre>
+
+<p>Tres cosas que hay que mirar con lupa:</p>
+
+<ol>
+  <li>La condición va después del <code>if</code> y es una pregunta que da <code>True</code> o <code>False</code>.</li>
+  <li>La línea termina en <strong>dos puntos</strong>. Ese <code>:</code> significa "aquí abre un bloque".</li>
+  <li>Lo que va adentro va <strong>indentado</strong>: cuatro espacios. La indentación no es estética: es lo que le dice a Python qué está adentro y qué está afuera.</li>
+</ol>
+
+<pre><code>if edad &gt;= 18:
+    print("Puede entrar")      # adentro: solo si es mayor
+print("Siguiente en la fila")  # afuera: siempre</code></pre>
+
+<h2><code>else</code>: el otro camino</h2>
+
+<pre><code>saldo = 30000
+retiro = 50000
+
+if retiro &lt;= saldo:
+    saldo = saldo - retiro
+    print("Retiro aprobado")
+else:
+    print("Saldo insuficiente")
+
+print("Saldo actual:", saldo)</code></pre>
+
+<p><code>else</code> no lleva condición: es "en cualquier otro caso". Siempre se ejecuta exactamente uno de los dos bloques, nunca los dos y nunca ninguno.</p>
+
+<h2><code>elif</code>: varios caminos</h2>
+
+<p>Para más de dos casos no se encadenan <code>if</code> sueltos: se usa <code>elif</code> (contracción de <em>else if</em>).</p>
+
+<pre><code>nota = 3.8
+
+if nota &gt;= 4.5:
+    print("Excelente")
+elif nota &gt;= 4.0:
+    print("Muy bien")
+elif nota &gt;= 3.0:
+    print("Aprobado")
+else:
+    print("Reprobado")</code></pre>
+
+<p>Python revisa las condiciones <strong>de arriba hacia abajo y se detiene en la primera verdadera</strong>. Por eso el orden importa muchísimo. Si se escribiera al revés:</p>
+
+<pre><code># ❌ MAL: el orden arruina la lógica
+if nota &gt;= 3.0:
+    print("Aprobado")
+elif nota &gt;= 4.5:
+    print("Excelente")     # nunca se alcanza</code></pre>
+
+<p>Una nota de 4.8 entraría por la primera y diría "Aprobado". La segunda rama es inalcanzable. <strong>Regla: de lo más exigente a lo menos exigente.</strong></p>
+
+<h2>La película de una decisión</h2>
+
+<p>Sigamos <code>nota = 3.8</code> por el <code>elif</code> del ejemplo bueno:</p>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Pregunta</th><th>Respuesta</th><th>Qué hace</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><code>3.8 &gt;= 4.5</code></td><td>False</td><td>Sigue al siguiente <code>elif</code></td></tr>
+    <tr><td>2</td><td><code>3.8 &gt;= 4.0</code></td><td>False</td><td>Sigue al siguiente</td></tr>
+    <tr><td>3</td><td><code>3.8 &gt;= 3.0</code></td><td><strong>True</strong></td><td>Imprime "Aprobado" y <strong>sale de toda la cadena</strong></td></tr>
+    <tr><td>4</td><td>—</td><td>—</td><td>El <code>else</code> ni se mira</td></tr>
+  </tbody>
+</table>
+
+<p>Ese "sale de toda la cadena" es la diferencia entre <code>elif</code> y varios <code>if</code> seguidos. Con <code>if</code> sueltos, Python evalúa <em>todas</em> las condiciones.</p>
+
+<h2>Condiciones compuestas</h2>
+
+<p>Con <code>and</code>, <code>or</code> y <code>not</code> del capítulo 4:</p>
+
+<pre><code>edad = 20
+tiene_cedula = True
+saldo = 80000
+
+if edad &gt;= 18 and tiene_cedula:
+    print("Puede abrir cuenta")
+
+if saldo &lt; 50000 or not tiene_cedula:
+    print("Necesita ir a la sucursal")</code></pre>
+
+<p>Y si una condición se pone larga, guárdala en una variable con nombre. El programa se lee solo:</p>
+
+<pre><code>es_cliente_nuevo = edad &gt;= 18 and tiene_cedula and saldo &gt;= 50000
+
+if es_cliente_nuevo:
+    print("Bienvenido al banco")</code></pre>
+
+<h2><code>if</code> anidados: cuando una pregunta depende de otra</h2>
+
+<pre><code>saldo = 100000
+monto = 50000
+
+if monto &lt;= saldo:
+    if monto % 10000 == 0:
+        print("Retiro aprobado")
+    else:
+        print("El cajero solo entrega múltiplos de 10000")
+else:
+    print("Saldo insuficiente")</code></pre>
+
+<p>La segunda pregunta solo tiene sentido si la primera pasó, por eso va adentro. Fíjate en la indentación: el <code>else</code> de adentro está alineado con el <code>if</code> de adentro, y el de afuera con el de afuera. Python usa esa alineación para saber a quién pertenece cada <code>else</code>.</p>
+
+<p>Cuidado con pasarse: más de dos o tres niveles anidados es señal de que el código se puede simplificar, casi siempre uniendo condiciones con <code>and</code>.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar los dos puntos</h3>
+<pre><code>if edad &gt;= 18       # SyntaxError: expected '':''
+    print("Pasa")</code></pre>
+
+<h3>2. Mezclar indentaciones</h3>
+<pre><code>if edad &gt;= 18:
+    print("Pasa")
+      print("Otra cosa")     # IndentationError</code></pre>
+<p>Todas las líneas de un mismo bloque llevan exactamente la misma sangría. Cuatro espacios, siempre cuatro.</p>
+
+<h3>3. Usar <code>=</code> en vez de <code>==</code></h3>
+<pre><code>if nota = 5.0:      # SyntaxError
+if nota == 5.0:     # ✅</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Escribe la pregunta como comparación: algo que dé <code>True</code> o <code>False</code>.</li>
+  <li>Dos puntos, Enter, y todo lo de adentro con cuatro espacios.</li>
+  <li>Si hay varios casos, ordénalos <strong>del más exigente al menos exigente</strong> con <code>elif</code>.</li>
+  <li>Cierra con <code>else</code> para el caso que sobra: así ninguna entrada se queda sin respuesta.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>if cond:</code></td><td>Ejecuta el bloque solo si <code>cond</code> es verdadera</td></tr>
+    <tr><td><code>elif cond2:</code></td><td>Se revisa solo si las anteriores fueron falsas</td></tr>
+    <tr><td><code>else:</code></td><td>En cualquier otro caso</td></tr>
+    <tr><td>Cuatro espacios</td><td>Marcan qué está adentro del bloque</td></tr>
+    <tr><td><code>a and b</code> · <code>a or b</code></td><td>Unir condiciones</td></tr>
+    <tr><td><code>n % 2 == 0</code></td><td>¿Es par?</td></tr>
+  </tbody>
+</table>
+
+<blockquote>En un <code>elif</code>, Python se queda con la primera condición verdadera y no mira las demás. Por eso las condiciones van de la más exigente a la menos exigente.</blockquote>', 1
     FROM parts p WHERE p.number = 2
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -1671,11 +1828,449 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 6
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 6);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 6);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, '¿Par o impar?', 'facil', '<p>Solicitar un número entero y mostrar si es par o impar:</p><pre><code>El 7 es impar</code></pre><p><em>Nota:</em> use el operador módulo.</p>', '<p>Un número es par cuando <code>numero % 2 == 0</code>. Con eso arma el <code>if</code> y el <code>else</code>.</p>', '<pre><code>''''''
+Programa: Par o impar
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Pide un numero entero e indica si es par o impar.
+''''''
 
--- ── Capítulo 7: Ciclo while (borrador)
+# Inicio
+numero = int(input("Numero: "))
+
+# Un numero es par si al dividirlo entre 2 no sobra nada
+if numero % 2 == 0:
+    print(f"El {numero} es par")
+else:
+    print(f"El {numero} es impar")
+# Fin</code></pre><p>Solo hay dos casos posibles y son excluyentes, así que <code>if / else</code> basta: siempre entra por exactamente uno.</p>', '[{"stdin":"7\n","expected_output":"Numero: El 7 es impar"},{"stdin":"10\n","expected_output":"Numero: El 10 es par"}]', '''''''
+Programa: Par o impar
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Escala de notas', 'facil', '<p>Solicitar una nota entre 0.0 y 5.0 y mostrar su concepto según la escala:</p><table><thead><tr><th>Nota</th><th>Concepto</th></tr></thead><tbody><tr><td>4.5 a 5.0</td><td>Excelente</td></tr><tr><td>4.0 a 4.4</td><td>Muy bien</td></tr><tr><td>3.0 a 3.9</td><td>Aprobado</td></tr><tr><td>menor a 3.0</td><td>Reprobado</td></tr></tbody></table><pre><code>Nota 3.8: Aprobado</code></pre>', '<p>Use <code>elif</code> y ordene las condiciones de la más exigente a la menos exigente. Si empieza por <code>nota >= 3.0</code>, las demás nunca se alcanzan.</p>', '<pre><code>''''''
+Programa: Escala de notas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Convierte una nota de 0.0 a 5.0 en su concepto cualitativo.
+''''''
+
+# Inicio
+nota = float(input("Nota: "))
+
+# Las condiciones van de la mas exigente a la menos exigente:
+# Python se queda con la primera verdadera
+if nota >= 4.5:
+    concepto = "Excelente"
+elif nota >= 4.0:
+    concepto = "Muy bien"
+elif nota >= 3.0:
+    concepto = "Aprobado"
+else:
+    concepto = "Reprobado"
+
+print(f"Nota {nota}: {concepto}")
+# Fin</code></pre><p>Un detalle de estilo que vale la pena copiar: en vez de poner un <code>print()</code> dentro de cada rama, cada rama solo <strong>guarda</strong> el concepto y el <code>print()</code> va una sola vez al final. Si mañana cambia el formato del mensaje, se toca una línea y no cuatro.</p>', '[{"stdin":"3.8\n","expected_output":"Nota: Nota 3.8: Aprobado"},{"stdin":"4.7\n","expected_output":"Nota: Nota 4.7: Excelente"},{"stdin":"2.5\n","expected_output":"Nota: Nota 2.5: Reprobado"}]', '''''''
+Programa: Escala de notas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Retiro en el cajero', 'medio', '<p>Un cajero tiene un saldo de <strong>100000</strong> pesos y solo entrega billetes múltiplos de <strong>10000</strong>.</p><p>Solicitar el monto a retirar y mostrar una de tres respuestas:</p><ul><li><code>Retiro aprobado. Nuevo saldo: 50000</code></li><li><code>El cajero solo entrega multiplos de 10000</code></li><li><code>Saldo insuficiente</code></li></ul><p><em>Nota:</em> primero se verifica el saldo y solo después el múltiplo.</p>', '<p>Necesita un <code>if</code> anidado: la pregunta del múltiplo solo tiene sentido si el saldo alcanzó. El <code>else</code> de adentro se alinea con el <code>if</code> de adentro.</p>', '<pre><code>''''''
+Programa: Retiro en el cajero
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Valida un retiro contra el saldo disponible y contra la
+    restriccion de billetes de 10000.
+''''''
+
+# Inicio
+SALDO_INICIAL = 100000
+BILLETE = 10000
+
+saldo = SALDO_INICIAL
+monto = int(input("Monto a retirar: "))
+
+if monto <= saldo:
+    # La pregunta del multiplo solo tiene sentido si el saldo alcanzo
+    if monto % BILLETE == 0:
+        saldo = saldo - monto
+        print(f"Retiro aprobado. Nuevo saldo: {saldo}")
+    else:
+        print(f"El cajero solo entrega multiplos de {BILLETE}")
+else:
+    print("Saldo insuficiente")
+# Fin</code></pre><p>Por qué anidado y no dos <code>if</code> sueltos: si el saldo no alcanza, no importa si el monto es múltiplo o no; esa pregunta ni se hace. Anidar refleja exactamente eso.</p><p>La indentación es lo que amarra cada <code>else</code> con su <code>if</code>: el de adentro lleva cuatro espacios y el de afuera ninguno.</p>', '[{"stdin":"50000\n","expected_output":"Monto a retirar: Retiro aprobado. Nuevo saldo: 50000"},{"stdin":"35000\n","expected_output":"Monto a retirar: El cajero solo entrega multiplos de 10000"},{"stdin":"200000\n","expected_output":"Monto a retirar: Saldo insuficiente"}]', '''''''
+Programa: Retiro en el cajero
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+SALDO_INICIAL = 100000
+BILLETE = 10000
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Tarifa de servicios públicos', 'dificil', '<p>Una empresa cobra la energía por rangos de consumo mensual:</p><table><thead><tr><th>Consumo (kWh)</th><th>Precio por kWh</th></tr></thead><tbody><tr><td>0 a 150</td><td>500</td></tr><tr><td>151 a 300</td><td>700</td></tr><tr><td>más de 300</td><td>900</td></tr></tbody></table><p>Además, si el estrato es 1, 2 o 3 se aplica un <strong>subsidio del 20%</strong> sobre el total.</p><p>Solicitar el consumo y el estrato. Mostrar:</p><pre><code>Consumo: 200 kWh
+Tarifa: 700
+Subtotal: 140000
+Subsidio: 28000.0
+Total a pagar: 112000.0</code></pre><p><em>Nota:</em> el precio se aplica a <strong>todo</strong> el consumo, no por tramos.</p>', '<p>Primero un <code>elif</code> para escoger la tarifa según el consumo, y después un <code>if</code> aparte para el subsidio. Guarde la tarifa en una variable: así el cálculo del subtotal se escribe una sola vez.</p>', '<pre><code>''''''
+Programa: Tarifa de servicios publicos
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Calcula la factura de energia segun el rango de consumo y
+    aplica subsidio a los estratos 1, 2 y 3.
+''''''
+
+# Inicio
+SUBSIDIO = 0.20
+
+consumo = int(input("Consumo en kWh: "))
+estrato = int(input("Estrato: "))
+
+# Primero se decide la tarifa segun el rango
+if consumo <= 150:
+    tarifa = 500
+elif consumo <= 300:
+    tarifa = 700
+else:
+    tarifa = 900
+
+subtotal = consumo * tarifa
+
+# El subsidio es una decision aparte: depende del estrato, no del consumo
+if estrato <= 3:
+    subsidio = subtotal * SUBSIDIO
+else:
+    subsidio = 0
+
+total = subtotal - subsidio
+
+print(f"Consumo: {consumo} kWh")
+print(f"Tarifa: {tarifa}")
+print(f"Subtotal: {subtotal}")
+print(f"Subsidio: {subsidio}")
+print(f"Total a pagar: {total}")
+# Fin</code></pre><p>Tres decisiones de diseño que valen puntos en un parcial:</p><ul><li><strong>Dos decisiones separadas.</strong> La tarifa depende del consumo; el subsidio, del estrato. Mezclarlas en un solo <code>if</code> gigante daría seis ramas en vez de cinco líneas.</li><li><strong>Las condiciones usan <code>&lt;=</code> en cascada.</strong> Como el <code>elif</code> solo se evalúa si el anterior falló, cuando se llega a <code>consumo &lt;= 300</code> ya se sabe que es mayor que 150. No hay que escribir <code>150 &lt; consumo &lt;= 300</code>.</li><li><strong>Cada rama guarda un valor, no imprime.</strong> Los <code>print()</code> van todos juntos al final.</li></ul>', '[{"stdin":"200\n2\n","expected_output":"Consumo en kWh: Estrato: Consumo: 200 kWh\nTarifa: 700\nSubtotal: 140000\nSubsidio: 28000.0\nTotal a pagar: 112000.0"},{"stdin":"100\n5\n","expected_output":"Consumo en kWh: Estrato: Consumo: 100 kWh\nTarifa: 500\nSubtotal: 50000\nSubsidio: 0\nTotal a pagar: 50000"}]', '''''''
+Programa: Tarifa de servicios publicos
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+SUBSIDIO = 0.20
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 6;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 6);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué le dice a Python que una línea está dentro de un if?', NULL, '{"options":[{"id":"a","text":"La indentación: cuatro espacios al principio"},{"id":"b","text":"Las llaves { }"},{"id":"c","text":"Un punto y coma al final"},{"id":"d","text":"La palabra end"}]}', '{"option_id":"a"}', 'En Python el bloque ES la indentación. Sin sangría, la línea queda fuera del if.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué falta al final de la línea del if?', NULL, '{"options":[{"id":"a","text":"Dos puntos"},{"id":"b","text":"Punto y coma"},{"id":"c","text":"Una coma"},{"id":"d","text":"Nada"}]}', '{"option_id":"a"}', 'Los dos puntos anuncian que abre un bloque. Sin ellos, SyntaxError.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', 'En una cadena if / elif / elif / else, ¿cuántos bloques se ejecutan?', NULL, '{"options":[{"id":"a","text":"Exactamente uno: el primero cuya condición sea verdadera"},{"id":"b","text":"Todos los que tengan condición verdadera"},{"id":"c","text":"Siempre el else también"},{"id":"d","text":"Ninguno si la primera condición falla"}]}', '{"option_id":"a"}', 'Python se queda con la primera verdadera y sale de toda la cadena. Con if sueltos sí se evaluarían todas.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Por qué las condiciones de una escala de notas van de mayor a menor?', NULL, '{"options":[{"id":"a","text":"Porque Python toma la primera verdadera, y si empieza por la menos exigente las demás nunca se alcanzan"},{"id":"b","text":"Por estética, da igual el orden"},{"id":"c","text":"Porque elif solo acepta el operador >="},{"id":"d","text":"Porque else debe ir siempre de primero"}]}', '{"option_id":"a"}', 'Con nota >= 3.0 de primera, un 4.8 entraría por ahí y diría Aprobado.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Cuándo conviene anidar un if dentro de otro?', NULL, '{"options":[{"id":"a","text":"Cuando la segunda pregunta solo tiene sentido si la primera pasó"},{"id":"b","text":"Siempre que haya dos condiciones"},{"id":"c","text":"Cuando se quiere ahorrar líneas"},{"id":"d","text":"Nunca: anidar está prohibido"}]}', '{"option_id":"a"}', 'Si el saldo no alcanza, ni vale la pena preguntar si el monto es múltiplo. Si las dos preguntas son independientes, se unen con and.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'edad = 15
+if edad >= 18:
+    print("Pasa")
+print("Siguiente")', '{"options":[{"id":"a","text":"Siguiente"},{"id":"b","text":"Pasa\nSiguiente"},{"id":"c","text":"Pasa"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'La condición es falsa, así que el bloque indentado se salta. El último print está afuera y siempre corre.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'nota = 4.8
+if nota >= 3.0:
+    print("Aprobado")
+elif nota >= 4.5:
+    print("Excelente")', '{"options":[{"id":"a","text":"Aprobado"},{"id":"b","text":"Excelente"},{"id":"c","text":"Aprobado\nExcelente"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'El orden está al revés: la primera condición ya es verdadera, así que el elif nunca se alcanza.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'saldo = 30000
+retiro = 50000
+if retiro <= saldo:
+    saldo = saldo - retiro
+    print("Aprobado")
+else:
+    print("Insuficiente")
+print(saldo)', '{"options":[{"id":"a","text":"Insuficiente\n30000"},{"id":"b","text":"Aprobado\n-20000"},{"id":"c","text":"Insuficiente\n-20000"},{"id":"d","text":"Aprobado\n30000"}]}', '{"option_id":"a"}', 'La condición es falsa, así que el saldo no se toca y entra por el else.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'n = 12
+if n % 2 == 0:
+    print("par")
+if n % 3 == 0:
+    print("multiplo de 3")', '{"options":[{"id":"a","text":"par\nmultiplo de 3"},{"id":"b","text":"par"},{"id":"c","text":"multiplo de 3"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'Son dos if independientes, no una cadena: se evalúan los dos y los dos son verdaderos.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'consumo = 200
+if consumo <= 150:
+    tarifa = 500
+elif consumo <= 300:
+    tarifa = 700
+else:
+    tarifa = 900
+print(consumo * tarifa)', '{"options":[{"id":"a","text":"140000"},{"id":"b","text":"100000"},{"id":"c","text":"180000"},{"id":"d","text":"700"}]}', '{"option_id":"a"}', '200 no es <= 150 pero sí <= 300, así que la tarifa queda en 700: 200 * 700 = 140000.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'saldo = 100000
+monto = 35000
+if monto <= saldo:
+    if monto % 10000 == 0:
+        print("Aprobado")
+    else:
+        print("Solo multiplos de 10000")
+else:
+    print("Insuficiente")', '{"options":[{"id":"a","text":"Solo multiplos de 10000"},{"id":"b","text":"Aprobado"},{"id":"c","text":"Insuficiente"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'El saldo alcanza, así que entra al if de adentro; 35000 % 10000 da 5000, no cero, y cae en el else interno.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', '¿En qué línea está el error?', NULL, '{"lines":["edad = int(input(\"Edad: \"))","if edad >= 18","    print(\"Mayor de edad\")"]}', '{"line_number":2}', 'Falta los dos puntos al final de la condición.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["nota = 4.0","if nota = 5.0:","    print(\"Perfecto\")"]}', '{"line_number":2}', 'Dentro de un if se compara con ==. Un solo = es asignación y da SyntaxError.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El else debería atender el caso contrario. ¿En qué línea está el error?', NULL, '{"lines":["saldo = 100000","monto = 50000","if monto <= saldo:","print(\"Aprobado\")","else:","    print(\"Insuficiente\")"]}', '{"line_number":4}', 'El print del bloque no está indentado: Python espera al menos una línea con sangría después de los dos puntos.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'medio', 'Arme el programa que dice si un número es par o impar', NULL, '{"lines":[{"id":"l1","text":"numero = int(input(\"Numero: \"))","indent":0},{"id":"l2","text":"if numero % 2 == 0:","indent":0},{"id":"l3","text":"print(f\"El {numero} es par\")","indent":1},{"id":"l4","text":"else:","indent":0},{"id":"l5","text":"print(f\"El {numero} es impar\")","indent":1}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Los print van indentados dentro de su rama, y el else se alinea con el if.', 1, 'seed'
+    FROM chapters WHERE number = 6;
+
+-- ── Capítulo 7: Ciclo while (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 7, 'Ciclo while', '⏳', 'Repetir mientras se cumpla una condición, con contadores, sumatorias y banderas.', '', 0
+  SELECT p.id, 7, 'Ciclo while', '⏳', 'Repetir mientras se cumpla una condición, con contadores, sumatorias y banderas.', '<p class="jc-gancho">El cajero no te pregunta la clave una vez y se rinde: te deja intentar hasta tres veces. La caja de la tienda no cobra un producto: cobra hasta que digas "ya". Eso es repetir <em>mientras</em> algo se cumpla, y para eso está <code>while</code>.</p>
+
+<h2>La alarma del despertador</h2>
+
+<p><code>while</code> repite un bloque <strong>mientras</strong> su condición sea verdadera. Es una alarma: suena, revisa si ya te levantaste, y si no, vuelve a sonar.</p>
+
+<pre><code>contador = 1
+
+while contador &lt;= 3:
+    print("Intento", contador)
+    contador = contador + 1
+
+print("Se acabaron los intentos")</code></pre>
+
+<p>Las tres partes de todo <code>while</code>, y si falta una el programa se rompe:</p>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Dónde va</th><th>En el ejemplo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Preparar</strong></td><td>Antes del ciclo</td><td><code>contador = 1</code></td></tr>
+    <tr><td><strong>Preguntar</strong></td><td>En el <code>while</code></td><td><code>contador &lt;= 3</code></td></tr>
+    <tr><td><strong>Avanzar</strong></td><td>Adentro del ciclo</td><td><code>contador = contador + 1</code></td></tr>
+  </tbody>
+</table>
+
+<p>Si olvidas <em>avanzar</em>, la condición nunca cambia y el programa se queda repitiendo para siempre. Eso es un <strong>ciclo infinito</strong>, y es el error número uno de este capítulo.</p>
+
+<h3>La película, vuelta a vuelta</h3>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>contador</code> al entrar</th><th>¿<code>&lt;= 3</code>?</th><th>Imprime</th><th><code>contador</code> al salir</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td><td>Sí</td><td>Intento 1</td><td>2</td></tr>
+    <tr><td>2</td><td>2</td><td>Sí</td><td>Intento 2</td><td>3</td></tr>
+    <tr><td>3</td><td>3</td><td>Sí</td><td>Intento 3</td><td>4</td></tr>
+    <tr><td>4</td><td>4</td><td><strong>No</strong></td><td>—</td><td>sale del ciclo</td></tr>
+  </tbody>
+</table>
+
+<p>Esa tabla es la herramienta. Cada vez que un ciclo no te dé lo que esperas, hazla en papel con tres o cuatro vueltas. Casi siempre el error salta a la vista en la vuelta 1 o en la última.</p>
+
+<h2>Los tres patrones: contador, sumatoria y bandera</h2>
+
+<p>El 90% de los ciclos que vas a escribir en tu vida son uno de estos tres, o una mezcla. Y todos comparten la misma regla:</p>
+
+<blockquote><strong>Nacen afuera, se actualizan adentro.</strong> La variable se crea <em>antes</em> del ciclo y se modifica <em>dentro</em> del ciclo.</blockquote>
+
+<p>Si la creas adentro, se reinicia en cada vuelta y nunca acumula nada.</p>
+
+<h3>1. Contador: ¿cuántos?</h3>
+
+<p>Nace en <code>0</code> y sube de a uno cuando pasa lo que te interesa.</p>
+
+<pre><code>aprobados = 0                 # nace afuera, en cero
+n = 1
+
+while n &lt;= 5:
+    nota = float(input(f"Nota {n}: "))
+    if nota &gt;= 3.0:
+        aprobados = aprobados + 1     # se actualiza adentro
+    n = n + 1
+
+print("Aprobados:", aprobados)</code></pre>
+
+<h3>2. Sumatoria: ¿cuánto en total?</h3>
+
+<p>Nace en <code>0</code> y se le suma el valor de cada vuelta.</p>
+
+<pre><code>total = 0                     # nace afuera, en cero
+n = 1
+
+while n &lt;= 5:
+    venta = int(input(f"Venta {n}: "))
+    total = total + venta             # se actualiza adentro
+    n = n + 1
+
+print("Total del día:", total)
+print("Promedio:", total / 5)</code></pre>
+
+<p>Fíjate en que el promedio se calcula <strong>después</strong> del ciclo, con la suma ya completa. Calcularlo adentro sería promediar datos incompletos.</p>
+
+<h3>3. Bandera: ¿pasó al menos una vez?</h3>
+
+<p>Nace en <code>False</code> y se pone en <code>True</code> apenas ocurre lo que buscabas. Nunca vuelve atrás.</p>
+
+<pre><code>hubo_perdida = False          # nace afuera, en False
+n = 1
+
+while n &lt;= 5:
+    venta = int(input(f"Venta {n}: "))
+    if venta &lt; 0:
+        hubo_perdida = True           # se actualiza adentro
+    n = n + 1
+
+if hubo_perdida:
+    print("Ojo: hubo al menos una venta negativa")</code></pre>
+
+<p>El error clásico con banderas es usar <code>else: hubo_perdida = False</code>. Eso borra el hallazgo en la siguiente vuelta. Una bandera se levanta y se queda levantada.</p>
+
+<h3>Los tres juntos</h3>
+
+<pre><code>total = 0             # sumatoria
+cuantas = 0           # contador
+hubo_grande = False   # bandera
+
+n = 1
+while n &lt;= 3:
+    venta = int(input(f"Venta {n}: "))
+    total = total + venta
+    cuantas = cuantas + 1
+    if venta &gt; 100000:
+        hubo_grande = True
+    n = n + 1
+
+print(f"{cuantas} ventas, total {total}")
+if hubo_grande:
+    print("Hubo al menos una venta grande")</code></pre>
+
+<h2>Atajos de actualización</h2>
+
+<p>Escribir <code>total = total + venta</code> se vuelve cansón. Python tiene atajos:</p>
+
+<table>
+  <thead>
+    <tr><th>Atajo</th><th>Es lo mismo que</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>n += 1</code></td><td><code>n = n + 1</code></td></tr>
+    <tr><td><code>total += venta</code></td><td><code>total = total + venta</code></td></tr>
+    <tr><td><code>saldo -= retiro</code></td><td><code>saldo = saldo - retiro</code></td></tr>
+    <tr><td><code>precio *= 2</code></td><td><code>precio = precio * 2</code></td></tr>
+  </tbody>
+</table>
+
+<h2>Ciclos que no saben cuántas vueltas darán</h2>
+
+<p>Hasta aquí contábamos vueltas. Pero <code>while</code> brilla cuando el final depende del usuario:</p>
+
+<pre><code>total = 0
+producto = input("Producto (o ''fin'' para terminar): ")
+
+while producto != "fin":
+    precio = int(input("Precio: "))
+    total += precio
+    producto = input("Producto (o ''fin'' para terminar): ")
+
+print("Total de la compra:", total)</code></pre>
+
+<p>Ese <code>input()</code> repetido —uno antes del ciclo y otro al final del cuerpo— se llama <strong>lectura anticipada</strong>. El primero da el dato para la primera pregunta del <code>while</code>; el segundo prepara la vuelta siguiente. Sin el de adentro, el ciclo sería infinito.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar avanzar (ciclo infinito)</h3>
+<pre><code>n = 1
+while n &lt;= 3:
+    print(n)      # imprime 1 para siempre</code></pre>
+<p>Si tu programa se queda pegado, es esto. Detenlo con Ctrl+C y busca la línea que debía cambiar la variable de la condición.</p>
+
+<h3>2. Crear el acumulador adentro</h3>
+<pre><code>while n &lt;= 3:
+    total = 0        # ❌ se reinicia en cada vuelta
+    total += venta</code></pre>
+<p>Nace afuera. Siempre.</p>
+
+<h3>3. Bajar la bandera</h3>
+<pre><code>if venta &lt; 0:
+    hubo_perdida = True
+else:
+    hubo_perdida = False   # ❌ borra lo que ya se había encontrado</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li><strong>Prepara</strong> antes del ciclo: contadores y sumatorias en <code>0</code>, banderas en <code>False</code>.</li>
+  <li><strong>Pregunta</strong> en el <code>while</code>: la condición que mantiene vivo el ciclo.</li>
+  <li><strong>Avanza</strong> adentro: cambia lo que la condición mira, o el ciclo no termina.</li>
+  <li><strong>Concluye</strong> después: promedios, mensajes y decisiones van fuera, con los datos ya completos.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>while cond:</code></td><td>Repite mientras <code>cond</code> sea verdadera</td></tr>
+    <tr><td><code>contador = 0</code> · <code>contador += 1</code></td><td>Contar cuántas veces</td></tr>
+    <tr><td><code>total = 0</code> · <code>total += valor</code></td><td>Acumular una suma</td></tr>
+    <tr><td><code>bandera = False</code> · <code>bandera = True</code></td><td>Recordar que algo pasó</td></tr>
+    <tr><td><code>while dato != "fin":</code></td><td>Repetir hasta que el usuario diga basta</td></tr>
+    <tr><td>Ctrl+C</td><td>Detener un ciclo infinito</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Contadores, sumatorias y banderas nacen afuera y se actualizan adentro. Si la variable nace adentro, cada vuelta la borra.</blockquote>', 1
     FROM parts p WHERE p.number = 2
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -1687,11 +2282,416 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 7
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 7);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 7);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Cuenta regresiva', 'facil', '<p>Solicitar un número entero positivo y mostrar la cuenta regresiva hasta 1, y luego la palabra <code>Ya!</code>:</p><pre><code>5
+4
+3
+2
+1
+Ya!</code></pre>', '<p>La variable arranca en el número que dio el usuario, la condición es <code>n >= 1</code> y adentro se resta uno con <code>n -= 1</code>.</p>', '<pre><code>''''''
+Programa: Cuenta regresiva
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Muestra una cuenta regresiva desde el numero indicado hasta 1.
+''''''
 
--- ── Capítulo 8: Ciclo for y range() (borrador)
+# Inicio
+n = int(input("Desde: "))
+
+while n >= 1:
+    print(n)
+    n -= 1        # avanzar: sin esta linea el ciclo es infinito
+
+print("Ya!")
+# Fin</code></pre><p>Las tres partes están todas: preparar (<code>n</code> viene del input), preguntar (<code>n >= 1</code>) y avanzar (<code>n -= 1</code>). El <code>print("Ya!")</code> va fuera del ciclo, sin indentar, porque solo debe salir una vez al final.</p>', '[{"stdin":"5\n","expected_output":"Desde: 5\n4\n3\n2\n1\nYa!"}]', '''''''
+Programa: Cuenta regresiva
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Ventas del día', 'facil', '<p>Solicitar <strong>5</strong> ventas del día. Al final mostrar el total y el promedio:</p><pre><code>Total: 250000
+Promedio: 50000.0</code></pre><p><em>Nota:</em> use el patrón de sumatoria.</p>', '<p><code>total</code> nace en 0 <strong>antes</strong> del ciclo y adentro crece con <code>total += venta</code>. El promedio se calcula después, cuando el total ya está completo.</p>', '<pre><code>''''''
+Programa: Ventas del dia
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Pide cinco ventas y muestra el total y el promedio.
+''''''
+
+# Inicio
+CUANTAS = 5
+
+total = 0     # sumatoria: nace afuera, en cero
+n = 1
+
+while n <= CUANTAS:
+    venta = int(input(f"Venta {n}: "))
+    total += venta      # se actualiza adentro
+    n += 1
+
+# El promedio se calcula al final, con la suma ya completa
+print(f"Total: {total}")
+print(f"Promedio: {total / CUANTAS}")
+# Fin</code></pre><p>Si <code>total = 0</code> estuviera dentro del ciclo, cada vuelta lo pondría en cero otra vez y al final valdría solo la última venta. Por eso nace afuera.</p>', '[{"stdin":"50000\n50000\n50000\n50000\n50000\n","expected_output":"Venta 1: Venta 2: Venta 3: Venta 4: Venta 5: Total: 250000\nPromedio: 50000.0"}]', '''''''
+Programa: Ventas del dia
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+CUANTAS = 5
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Informe de notas', 'medio', '<p>Solicitar <strong>5</strong> notas de un estudiante (de 0.0 a 5.0). Mostrar al final:</p><ul><li>cuántas aprobaron (nota mayor o igual a 3.0),</li><li>el promedio del curso,</li><li>y un aviso si hubo <strong>al menos una</strong> nota perfecta (5.0).</li></ul><pre><code>Aprobadas: 3
+Promedio: 3.5
+Hubo al menos un 5.0</code></pre><p><em>Nota:</em> use los tres patrones: contador, sumatoria y bandera.</p>', '<p>Tres variables nacen antes del ciclo: <code>aprobadas = 0</code>, <code>suma = 0.0</code> y <code>hubo_perfecta = False</code>. La bandera se levanta y no se vuelve a bajar: nada de <code>else</code>.</p>', '<pre><code>''''''
+Programa: Informe de notas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Pide cinco notas y reporta cuantas aprobaron, el promedio
+    y si hubo alguna nota perfecta.
+''''''
+
+# Inicio
+CUANTAS = 5
+MINIMA_APROBATORIA = 3.0
+
+aprobadas = 0            # contador
+suma = 0.0               # sumatoria
+hubo_perfecta = False    # bandera
+
+n = 1
+while n <= CUANTAS:
+    nota = float(input(f"Nota {n}: "))
+
+    suma += nota
+    if nota >= MINIMA_APROBATORIA:
+        aprobadas += 1
+    if nota == 5.0:
+        # La bandera se levanta y se queda levantada:
+        # no lleva else que la vuelva a bajar
+        hubo_perfecta = True
+
+    n += 1
+
+print(f"Aprobadas: {aprobadas}")
+print(f"Promedio: {suma / CUANTAS}")
+
+if hubo_perfecta:
+    print("Hubo al menos un 5.0")
+# Fin</code></pre><p>Los tres patrones conviviendo, cada uno con su regla:</p><table><thead><tr><th>Variable</th><th>Nace en</th><th>Se actualiza</th></tr></thead><tbody><tr><td><code>aprobadas</code></td><td>0</td><td><code>+= 1</code> cuando se cumple la condición</td></tr><tr><td><code>suma</code></td><td>0.0</td><td><code>+= nota</code> en todas las vueltas</td></tr><tr><td><code>hubo_perfecta</code></td><td>False</td><td><code>= True</code> una vez y nunca vuelve atrás</td></tr></tbody></table>', '[{"stdin":"5.0\n4.0\n3.0\n2.0\n3.5\n","expected_output":"Nota 1: Nota 2: Nota 3: Nota 4: Nota 5: Aprobadas: 4\nPromedio: 3.5\nHubo al menos un 5.0"},{"stdin":"2.0\n2.0\n2.0\n2.0\n2.0\n","expected_output":"Nota 1: Nota 2: Nota 3: Nota 4: Nota 5: Aprobadas: 0\nPromedio: 2.0"}]', '''''''
+Programa: Informe de notas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+CUANTAS = 5
+MINIMA_APROBATORIA = 3.0
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Caja de la tienda', 'dificil', '<p>Simular la caja de una tienda. Se piden productos y precios <strong>hasta que el usuario escriba <code>fin</code></strong> como nombre del producto.</p><p>Al terminar mostrar:</p><pre><code>Productos: 3
+Total: 27000
+El mas caro costo 15000</code></pre><p>Si no se registró ningún producto, mostrar únicamente:</p><pre><code>No se registro ninguna compra</code></pre><p><em>Nota:</em> use lectura anticipada.</p>', '<p>El primer <code>input()</code> del producto va <strong>antes</strong> del <code>while</code>, y el último dentro del ciclo, de último. Para el más caro, guarde <code>mayor = 0</code> y actualícelo cuando el precio lo supere.</p>', '<pre><code>''''''
+Programa: Caja de la tienda
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Registra productos y precios hasta que el usuario escriba
+    fin, y reporta cantidad, total y el producto mas caro.
+''''''
+
+# Inicio
+cantidad = 0    # contador
+total = 0       # sumatoria
+mayor = 0       # el precio mas alto visto hasta ahora
+
+# Lectura anticipada: este primer dato alimenta la primera
+# pregunta del while
+producto = input("Producto (o fin): ").strip().lower()
+
+while producto != "fin":
+    precio = int(input("Precio: "))
+
+    cantidad += 1
+    total += precio
+    if precio > mayor:
+        mayor = precio
+
+    # Esta lectura prepara la vuelta siguiente:
+    # sin ella el ciclo seria infinito
+    producto = input("Producto (o fin): ").strip().lower()
+
+if cantidad == 0:
+    print("No se registro ninguna compra")
+else:
+    print(f"Productos: {cantidad}")
+    print(f"Total: {total}")
+    print(f"El mas caro costo {mayor}")
+# Fin</code></pre><p>Tres ideas que se repiten toda la vida programando:</p><ul><li><strong>Lectura anticipada.</strong> Dos <code>input()</code> del mismo dato: uno antes del ciclo y otro al final del cuerpo. El de afuera arranca; el de adentro mantiene.</li><li><strong>El máximo se busca comparando.</strong> <code>mayor</code> nace en 0 y se reemplaza cada vez que aparece algo más grande. Es otro acumulador, solo que en vez de sumar, se queda con el mejor.</li><li><strong>El caso vacío.</strong> Si el usuario escribe <code>fin</code> de una, el ciclo no da ni una vuelta. Preguntarlo evita dividir entre cero o mostrar un informe sin datos.</li></ul>', '[{"stdin":"Pan\n5000\nLeche\n7000\nQueso\n15000\nfin\n","expected_output":"Producto (o fin): Precio: Producto (o fin): Precio: Producto (o fin): Precio: Producto (o fin): Productos: 3\nTotal: 27000\nEl mas caro costo 15000"},{"stdin":"fin\n","expected_output":"Producto (o fin): No se registro ninguna compra"}]', '''''''
+Programa: Caja de la tienda
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 7;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 7);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cuáles son las tres partes de todo ciclo while?', NULL, '{"options":[{"id":"a","text":"Preparar antes, preguntar en el while y avanzar adentro"},{"id":"b","text":"Abrir, cerrar y contar"},{"id":"c","text":"if, elif y else"},{"id":"d","text":"Inicio, cuerpo y return"}]}', '{"option_id":"a"}', 'Si falta avanzar, la condición nunca cambia y el ciclo es infinito.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Dónde nace un contador o una sumatoria?', NULL, '{"options":[{"id":"a","text":"Antes del ciclo, y se actualiza adentro"},{"id":"b","text":"Dentro del ciclo, para que se reinicie"},{"id":"c","text":"Después del ciclo"},{"id":"d","text":"Dentro del if"}]}', '{"option_id":"a"}', 'Nacen afuera, se actualizan adentro. Si nacen adentro, cada vuelta los borra.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿En qué valor nace una bandera?', NULL, '{"options":[{"id":"a","text":"En False, y se pone en True cuando ocurre lo que se busca"},{"id":"b","text":"En 0, y se suma de a uno"},{"id":"c","text":"En True, para poder bajarla"},{"id":"d","text":"En una cadena vacía"}]}', '{"option_id":"a"}', 'Una bandera se levanta y se queda levantada. Ponerle un else que la baje borra el hallazgo.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué es la lectura anticipada?', NULL, '{"options":[{"id":"a","text":"Pedir el dato una vez antes del while y otra al final del cuerpo"},{"id":"b","text":"Leer todos los datos de una vez al principio"},{"id":"c","text":"Usar input() dentro de la condición del while"},{"id":"d","text":"Adivinar el dato antes de pedirlo"}]}', '{"option_id":"a"}', 'El primer input alimenta la primera pregunta del while; el de adentro prepara la vuelta siguiente.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Por qué el promedio se calcula después del ciclo y no adentro?', NULL, '{"options":[{"id":"a","text":"Porque adentro la suma todavía está incompleta"},{"id":"b","text":"Porque dentro del while no se puede dividir"},{"id":"c","text":"Porque el promedio necesita un if"},{"id":"d","text":"Da igual, es cuestión de gusto"}]}', '{"option_id":"a"}', 'En la vuelta 3 la suma solo tiene tres datos. El promedio se saca cuando el acumulador ya terminó.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'n = 1
+while n <= 3:
+    print(n)
+    n += 1', '{"options":[{"id":"a","text":"1\n2\n3"},{"id":"b","text":"1\n2\n3\n4"},{"id":"c","text":"1 para siempre"},{"id":"d","text":"0\n1\n2"}]}', '{"option_id":"a"}', 'En la vuelta cuatro n vale 4, la condición falla y el ciclo termina sin imprimir.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'total = 0
+n = 1
+while n <= 4:
+    total += n
+    n += 1
+print(total)', '{"options":[{"id":"a","text":"10"},{"id":"b","text":"4"},{"id":"c","text":"6"},{"id":"d","text":"0"}]}', '{"option_id":"a"}', 'Va sumando 1 + 2 + 3 + 4 = 10. Es el patrón de sumatoria.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'n = 1
+while n <= 3:
+    total = 0
+    total += n
+    n += 1
+print(total)', '{"options":[{"id":"a","text":"3"},{"id":"b","text":"6"},{"id":"c","text":"0"},{"id":"d","text":"1"}]}', '{"option_id":"a"}', 'total nace dentro del ciclo, así que cada vuelta lo pone en cero: al final solo guarda el último valor.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'n = 5
+while n > 0:
+    n -= 2
+print(n)', '{"options":[{"id":"a","text":"-1"},{"id":"b","text":"0"},{"id":"c","text":"1"},{"id":"d","text":"5"}]}', '{"option_id":"a"}', 'Va 5, 3, 1 y luego -1. Con -1 la condición falla y sale. Restar de a dos puede saltarse el cero.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'bandera = False
+n = 1
+while n <= 3:
+    if n == 2:
+        bandera = True
+    else:
+        bandera = False
+    n += 1
+print(bandera)', '{"options":[{"id":"a","text":"False"},{"id":"b","text":"True"},{"id":"c","text":"2"},{"id":"d","text":"3"}]}', '{"option_id":"a"}', 'El else baja la bandera en la vuelta 3 y borra el hallazgo de la vuelta 2. Una bandera no lleva else.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Cuántas veces se imprime hola?', 'n = 0
+while n < 3:
+    print("hola")', '{"options":[{"id":"a","text":"Infinitas: nunca cambia n"},{"id":"b","text":"Tres veces"},{"id":"c","text":"Ninguna"},{"id":"d","text":"Una vez"}]}', '{"option_id":"a"}', 'Falta la parte de avanzar. La condición 0 < 3 siempre es verdadera.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'El programa debe sumar cinco ventas. ¿En qué línea está el error?', NULL, '{"lines":["n = 1","while n <= 5:","    total = 0","    total += int(input())","    n += 1","print(total)"]}', '{"line_number":3}', 'La sumatoria nace dentro del ciclo y se reinicia en cada vuelta. Esa línea va antes del while.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Este ciclo nunca termina. ¿En qué línea está el problema?', NULL, '{"lines":["n = 1","while n <= 3:","    print(n)","    n = 1"]}', '{"line_number":4}', 'Debía ser n += 1. Reasignar 1 deja la condición verdadera para siempre.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'dificil', 'El ciclo debe terminar cuando el usuario escriba fin, pero no termina. ¿Qué línea falta arreglar?', NULL, '{"lines":["producto = input(\"Producto: \")","while producto != \"fin\":","    precio = int(input(\"Precio: \"))","    total += precio","print(total)"]}', '{"line_number":4}', 'Falta volver a leer el producto al final del cuerpo: sin esa segunda lectura la condición nunca cambia.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme el programa que suma cinco ventas y muestra el promedio', NULL, '{"lines":[{"id":"l1","text":"total = 0","indent":0},{"id":"l2","text":"n = 1","indent":0},{"id":"l3","text":"while n <= 5:","indent":0},{"id":"l4","text":"venta = int(input(f\"Venta {n}: \"))","indent":1},{"id":"l5","text":"total += venta","indent":1},{"id":"l6","text":"n += 1","indent":1},{"id":"l7","text":"print(f\"Promedio: {total / 5}\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7"]}', 'La sumatoria y el contador nacen afuera, el cuerpo del ciclo va indentado, y el promedio se calcula fuera con la suma completa.', 1, 'seed'
+    FROM chapters WHERE number = 7;
+
+-- ── Capítulo 8: Ciclo for y range() (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 8, 'Ciclo for y range()', '🔢', 'Recorrer secuencias y contar de forma elegante.', '', 0
+  SELECT p.id, 8, 'Ciclo for y range()', '🔢', 'Recorrer secuencias y contar de forma elegante.', '<p class="jc-gancho">Escribir un <code>while</code> para contar del 1 al 10 son cuatro líneas y tres oportunidades de olvidar el <code>n += 1</code>. Cuando sabes cuántas vueltas quieres, hay algo mejor: <code>for</code>.</p>
+
+<h2><code>for</code>: recorrer, no contar</h2>
+
+<p>Un <code>for</code> toma una colección y va sacando sus elementos uno por uno. Tú no manejas el contador: lo maneja Python.</p>
+
+<pre><code>for letra in "Ana":
+    print(letra)</code></pre>
+
+<p>Sale <code>A</code>, <code>n</code>, <code>a</code>. La variable <code>letra</code> vale algo distinto en cada vuelta, y el ciclo termina solo cuando se acaba el texto. No hay condición que escribir ni contador que actualizar.</p>
+
+<p>La forma general se lee casi en español:</p>
+
+<pre><code>for cada_cosa in la_coleccion:
+    # hacer algo con cada_cosa</code></pre>
+
+<h2><code>range()</code>: la colección de números</h2>
+
+<p>Para repetir un número fijo de veces se usa <code>range()</code>, que genera números.</p>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Genera</th><th>Se lee</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>range(5)</code></td><td>0, 1, 2, 3, 4</td><td>Cinco números empezando en 0</td></tr>
+    <tr><td><code>range(1, 6)</code></td><td>1, 2, 3, 4, 5</td><td>Desde 1 hasta antes de 6</td></tr>
+    <tr><td><code>range(0, 10, 2)</code></td><td>0, 2, 4, 6, 8</td><td>De 2 en 2</td></tr>
+    <tr><td><code>range(5, 0, -1)</code></td><td>5, 4, 3, 2, 1</td><td>Hacia atrás</td></tr>
+  </tbody>
+</table>
+
+<p><strong>El final nunca entra.</strong> Es la misma regla de las rebanadas del capítulo 5: <code>range(1, 6)</code> llega hasta el 5. Se siente raro dos días y después se vuelve cómodo, porque <code>range(5)</code> da exactamente 5 números.</p>
+
+<pre><code>for n in range(1, 6):
+    print(f"Intento {n}")</code></pre>
+
+<p>Comparado con el <code>while</code> del capítulo anterior:</p>
+
+<pre><code># while: tres partes que tú manejas
+n = 1
+while n &lt;= 5:
+    print(f"Intento {n}")
+    n += 1
+
+# for: Python las maneja
+for n in range(1, 6):
+    print(f"Intento {n}")</code></pre>
+
+<h3>¿Cuándo <code>for</code> y cuándo <code>while</code>?</h3>
+
+<table>
+  <thead>
+    <tr><th>Usa</th><th>Cuando…</th><th>Ejemplo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>for</code></td><td>sabes cuántas vueltas o tienes una colección</td><td>5 notas, las letras de un nombre</td></tr>
+    <tr><td><code>while</code></td><td>el final depende de algo que pasa adentro</td><td>hasta que escriba "fin", hasta que acierte</td></tr>
+  </tbody>
+</table>
+
+<h2>Los tres patrones, ahora con <code>for</code></h2>
+
+<p>Contador, sumatoria y bandera funcionan igual: <strong>nacen afuera, se actualizan adentro</strong>. Lo único que cambia es quién lleva la cuenta de las vueltas.</p>
+
+<pre><code>total = 0             # sumatoria
+aprobadas = 0         # contador
+hubo_perfecta = False # bandera
+
+for n in range(1, 6):
+    nota = float(input(f"Nota {n}: "))
+    total += nota
+    if nota &gt;= 3.0:
+        aprobadas += 1
+    if nota == 5.0:
+        hubo_perfecta = True
+
+print(f"Aprobadas: {aprobadas}")
+print(f"Promedio: {total / 5}")</code></pre>
+
+<h2>La película de un <code>for</code></h2>
+
+<p>La tabla de multiplicar del 7, de 1 a 4:</p>
+
+<pre><code>for i in range(1, 5):
+    resultado = 7 * i
+    print(f"7 x {i} = {resultado}")</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>i</code></th><th><code>resultado</code></th><th>Imprime</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td><td>7</td><td>7 x 1 = 7</td></tr>
+    <tr><td>2</td><td>2</td><td>14</td><td>7 x 2 = 14</td></tr>
+    <tr><td>3</td><td>3</td><td>21</td><td>7 x 3 = 21</td></tr>
+    <tr><td>4</td><td>4</td><td>28</td><td>7 x 4 = 28</td></tr>
+    <tr><td>5</td><td>—</td><td>—</td><td>El 5 no entra: se acabó el <code>range</code></td></tr>
+  </tbody>
+</table>
+
+<h2>Recorrer con el índice</h2>
+
+<p>A veces necesitas saber en qué posición vas. Dos formas:</p>
+
+<pre><code>ciudad = "Cali"
+
+# Por posición, usando range con len()
+for i in range(len(ciudad)):
+    print(i, ciudad[i])
+
+# Más limpio: enumerate() entrega posición y valor juntos
+for i, letra in enumerate(ciudad):
+    print(i, letra)</code></pre>
+
+<p><code>enumerate()</code> es la forma preferida. Si solo te importa el valor, recorre directo; si además necesitas la posición, usa <code>enumerate()</code>.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Creer que el final entra</h3>
+<pre><code>for n in range(1, 5):
+    print(n)          # 1, 2, 3, 4 — el 5 NO sale</code></pre>
+<p>Si quieres llegar al 5, escribe <code>range(1, 6)</code>.</p>
+
+<h3>2. Actualizar la variable del <code>for</code></h3>
+<pre><code>for n in range(5):
+    n = n + 10        # no sirve de nada: la próxima vuelta la reemplaza</code></pre>
+<p>Esa variable la controla Python. Si necesitas otra cosa, usa una variable aparte.</p>
+
+<h3>3. Usar <code>for</code> cuando no sabes cuántas vueltas</h3>
+<pre><code># El usuario escribe hasta que quiera: eso es un while
+for i in range(100):
+    dato = input("Producto: ")    # ❌ ¿y si son 3? ¿y si son 200?</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Sabes cuántas vueltas o tienes una colección? <code>for</code>. ¿No? <code>while</code>.</li>
+  <li><code>range(a, b)</code> va de <code>a</code> hasta <code>b - 1</code>. El final nunca entra.</li>
+  <li>Los acumuladores siguen naciendo antes del ciclo.</li>
+  <li>Si necesitas la posición, <code>enumerate()</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>for x in "texto":</code></td><td>Recorre carácter por carácter</td></tr>
+    <tr><td><code>for n in range(5):</code></td><td>0, 1, 2, 3, 4</td></tr>
+    <tr><td><code>for n in range(1, 6):</code></td><td>1, 2, 3, 4, 5</td></tr>
+    <tr><td><code>for n in range(0, 10, 2):</code></td><td>De 2 en 2</td></tr>
+    <tr><td><code>for n in range(5, 0, -1):</code></td><td>Cuenta regresiva</td></tr>
+    <tr><td><code>for i, v in enumerate(x):</code></td><td>Posición y valor a la vez</td></tr>
+  </tbody>
+</table>
+
+<blockquote><code>for</code> cuando sabes cuántas vueltas; <code>while</code> cuando el final lo decide lo que pase adentro. Y en <code>range</code>, el final nunca entra.</blockquote>', 1
     FROM parts p WHERE p.number = 2
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -1703,11 +2703,375 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 8
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 8);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 8);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Tabla de multiplicar', 'facil', '<p>Solicitar un número y mostrar su tabla de multiplicar del 1 al 10:</p><pre><code>7 x 1 = 7
+7 x 2 = 14
+...
+7 x 10 = 70</code></pre>', '<p><code>range(1, 11)</code> genera del 1 al 10: recuerde que el final no entra, por eso es 11 y no 10.</p>', '<pre><code>''''''
+Programa: Tabla de multiplicar
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Muestra la tabla de multiplicar del numero indicado, del 1 al 10.
+''''''
 
--- ── Capítulo 9: break, continue y ciclos anidados (borrador)
+# Inicio
+numero = int(input("Numero: "))
+
+# range(1, 11) llega hasta 10: el final nunca entra
+for i in range(1, 11):
+    print(f"{numero} x {i} = {numero * i}")
+# Fin</code></pre><p>Aquí no hay contador que actualizar: <code>i</code> la maneja Python. Compárelo con la versión en <code>while</code>, que necesitaría <code>i = 1</code> antes y <code>i += 1</code> adentro.</p>', '[{"stdin":"7\n","expected_output":"Numero: 7 x 1 = 7\n7 x 2 = 14\n7 x 3 = 21\n7 x 4 = 28\n7 x 5 = 35\n7 x 6 = 42\n7 x 7 = 49\n7 x 8 = 56\n7 x 9 = 63\n7 x 10 = 70"}]', '''''''
+Programa: Tabla de multiplicar
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Contar vocales', 'facil', '<p>Solicitar una palabra o frase y contar cuántas vocales tiene:</p><pre><code>La frase tiene 5 vocales</code></pre><p><em>Nota:</em> deben contarse mayúsculas y minúsculas por igual.</p>', '<p>Recorra el texto con <code>for letra in frase:</code> y use <code>if letra in "aeiou"</code>. Normalice con <code>.lower()</code> para que las mayúsculas también cuenten.</p>', '<pre><code>''''''
+Programa: Contador de vocales
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Cuenta cuantas vocales tiene una frase, sin distinguir
+    mayusculas de minusculas.
+''''''
+
+# Inicio
+VOCALES = "aeiou"
+
+frase = input("Frase: ").lower()
+
+vocales = 0     # contador: nace afuera
+
+for letra in frase:
+    if letra in VOCALES:
+        vocales += 1
+
+print(f"La frase tiene {vocales} vocales")
+# Fin</code></pre><p>Dos cosas útiles:</p><ul><li><code>for letra in frase</code> recorre el texto carácter por carácter sin necesidad de índices.</li><li><code>letra in VOCALES</code> pregunta si ese carácter está dentro del texto <code>"aeiou"</code>. El operador <code>in</code> del capítulo 5 sirve para esto.</li></ul>', '[{"stdin":"Programar es bonito\n","expected_output":"Frase: La frase tiene 7 vocales"},{"stdin":"AEIOU\n","expected_output":"Frase: La frase tiene 5 vocales"}]', '''''''
+Programa: Contador de vocales
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+VOCALES = "aeiou"
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Informe de ventas de la semana', 'medio', '<p>Solicitar las ventas de los <strong>7</strong> días de la semana. Mostrar al final:</p><pre><code>Total: 700000
+Promedio: 100000.0
+Mejor dia: 4 con 250000
+Dias sin ventas: 1</code></pre><p><em>Nota:</em> el mejor día se numera de 1 a 7. Si hay empate, gana el primero.</p>', '<p>Cuatro variables nacen antes del ciclo: <code>total</code>, <code>mejor</code>, <code>dia_mejor</code> y <code>sin_ventas</code>. Para el máximo, actualice solo cuando la venta sea <strong>estrictamente mayor</strong>: así el empate lo gana el primero.</p>', '<pre><code>''''''
+Programa: Informe de ventas de la semana
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Pide las ventas de los siete dias de la semana y reporta
+    total, promedio, mejor dia y dias sin ventas.
+''''''
+
+# Inicio
+DIAS = 7
+
+total = 0          # sumatoria
+mejor = -1         # el maximo visto hasta ahora
+dia_mejor = 0      # en que dia ocurrio
+sin_ventas = 0     # contador
+
+for dia in range(1, DIAS + 1):
+    venta = int(input(f"Ventas del dia {dia}: "))
+
+    total += venta
+
+    # Estrictamente mayor: en un empate se queda el primero
+    if venta > mejor:
+        mejor = venta
+        dia_mejor = dia
+
+    if venta == 0:
+        sin_ventas += 1
+
+print(f"Total: {total}")
+print(f"Promedio: {total / DIAS}")
+print(f"Mejor dia: {dia_mejor} con {mejor}")
+print(f"Dias sin ventas: {sin_ventas}")
+# Fin</code></pre><p>Dos decisiones importantes:</p><ul><li><strong><code>mejor = -1</code> y no 0.</strong> Si todas las ventas fueran 0, con <code>mejor = 0</code> la condición <code>venta > mejor</code> nunca se cumpliría y <code>dia_mejor</code> quedaría en 0. Arrancando por debajo del mínimo posible, la primera vuelta siempre entra.</li><li><strong>El máximo y su posición van juntos.</strong> Cada vez que se actualiza <code>mejor</code> hay que actualizar <code>dia_mejor</code> en la misma vuelta, o quedarían desfasados.</li></ul>', '[{"stdin":"100000\n50000\n100000\n250000\n100000\n100000\n0\n","expected_output":"Ventas del dia 1: Ventas del dia 2: Ventas del dia 3: Ventas del dia 4: Ventas del dia 5: Ventas del dia 6: Ventas del dia 7: Total: 700000\nPromedio: 100000.0\nMejor dia: 4 con 250000\nDias sin ventas: 1"}]', '''''''
+Programa: Informe de ventas de la semana
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+DIAS = 7
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Amortización de un crédito', 'dificil', '<p>Un banco presta un monto a una tasa de interés mensual y el cliente abona una cuota fija cada mes.</p><p>Solicitar el monto del préstamo, la tasa mensual (en porcentaje) y la cuota. Mostrar la tabla de los primeros <strong>3</strong> meses y el saldo final:</p><pre><code>Mes 1: interes 20000 abono 80000 saldo 920000
+Mes 2: interes 18400 abono 81600 saldo 838400
+Mes 3: interes 16768 abono 83232 saldo 755168
+Saldo despues de 3 meses: 755168</code></pre><p><em>Nota:</em> cada mes el interés se calcula sobre el saldo actual, el abono a capital es la cuota menos el interés, y el saldo baja ese abono. Redondee cada valor a entero con <code>round()</code>.</p>', '<p>El saldo nace antes del ciclo con el monto del préstamo. Dentro de cada vuelta, en este orden: interés sobre el saldo, abono = cuota − interés, saldo = saldo − abono.</p>', '<pre><code>''''''
+Programa: Amortizacion de un credito
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Muestra la tabla de amortizacion de los primeros meses de un
+    credito de cuota fija, con interes sobre saldo.
+''''''
+
+# Inicio
+MESES = 3
+
+monto = int(input("Monto del prestamo: "))
+tasa = float(input("Tasa mensual (%): "))
+cuota = int(input("Cuota mensual: "))
+
+saldo = monto     # el saldo nace afuera y va cambiando
+
+for mes in range(1, MESES + 1):
+    # El interes se cobra sobre lo que se debe HOY, no sobre el monto original
+    interes = round(saldo * (tasa / 100))
+    abono = cuota - interes
+    saldo = saldo - abono
+
+    print(f"Mes {mes}: interes {interes} abono {abono} saldo {saldo}")
+
+print(f"Saldo despues de {MESES} meses: {saldo}")
+# Fin</code></pre><p>La película con 1000000, 2% y cuota de 100000:</p><table><thead><tr><th>Mes</th><th>Saldo al entrar</th><th>Interés (2%)</th><th>Abono</th><th>Saldo al salir</th></tr></thead><tbody><tr><td>1</td><td>1000000</td><td>20000</td><td>80000</td><td>920000</td></tr><tr><td>2</td><td>920000</td><td>18400</td><td>81600</td><td>838400</td></tr><tr><td>3</td><td>838400</td><td>16768</td><td>83232</td><td>755168</td></tr></tbody></table><p>Ahí se ve por qué los créditos se sienten pesados al principio: la cuota es la misma, pero al comienzo casi todo se va en intereses y muy poco baja la deuda. A medida que el saldo cae, el interés cae y el abono crece.</p><p><strong>El orden dentro del ciclo no es negociable:</strong> si se descontara el abono antes de calcular el interés, se estaría cobrando interés sobre un saldo que el cliente ya pagó.</p>', '[{"stdin":"1000000\n2\n100000\n","expected_output":"Monto del prestamo: Tasa mensual (%): Cuota mensual: Mes 1: interes 20000 abono 80000 saldo 920000\nMes 2: interes 18400 abono 81600 saldo 838400\nMes 3: interes 16768 abono 83232 saldo 755168\nSaldo despues de 3 meses: 755168"}]', '''''''
+Programa: Amortizacion de un credito
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+MESES = 3
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 8;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 8);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cuándo conviene usar for en vez de while?', NULL, '{"options":[{"id":"a","text":"Cuando se sabe cuántas vueltas serán o se recorre una colección"},{"id":"b","text":"Siempre: while quedó obsoleto"},{"id":"c","text":"Solo cuando hay que contar hacia atrás"},{"id":"d","text":"Cuando el final depende de lo que escriba el usuario"}]}', '{"option_id":"a"}', 'Si el final lo decide algo que pasa adentro (como escribir fin), eso es un while.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué genera range(1, 6)?', NULL, '{"options":[{"id":"a","text":"1, 2, 3, 4, 5"},{"id":"b","text":"1, 2, 3, 4, 5, 6"},{"id":"c","text":"0, 1, 2, 3, 4, 5"},{"id":"d","text":"6, 5, 4, 3, 2, 1"}]}', '{"option_id":"a"}', 'El final nunca entra: llega hasta el 5. Es la misma regla de las rebanadas de texto.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué hace enumerate() en un for?', NULL, '{"options":[{"id":"a","text":"Entrega la posición y el valor de cada elemento a la vez"},{"id":"b","text":"Cuenta cuántos elementos hay"},{"id":"c","text":"Ordena la colección"},{"id":"d","text":"Convierte la colección en números"}]}', '{"option_id":"a"}', 'for i, letra in enumerate(texto) evita tener que escribir range(len(texto)).', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', 'En un for, ¿quién actualiza la variable del ciclo?', NULL, '{"options":[{"id":"a","text":"Python: por eso no hay que escribir n += 1"},{"id":"b","text":"El programador, igual que en el while"},{"id":"c","text":"Nadie: se queda en el primer valor"},{"id":"d","text":"El range solo la actualiza si se le pide"}]}', '{"option_id":"a"}', 'Esa es la ventaja del for: elimina la parte de avanzar, que es donde más se olvida uno.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Qué pasa si dentro de un for se hace n = n + 10 sobre la variable del ciclo?', NULL, '{"options":[{"id":"a","text":"Nada útil: la siguiente vuelta la reemplaza con el próximo valor del range"},{"id":"b","text":"El ciclo salta diez posiciones"},{"id":"c","text":"El ciclo se vuelve infinito"},{"id":"d","text":"Da un error de sintaxis"}]}', '{"option_id":"a"}', 'La variable la controla el for. Si se necesita otro valor, se usa una variable aparte.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'for n in range(3):
+    print(n)', '{"options":[{"id":"a","text":"0\n1\n2"},{"id":"b","text":"1\n2\n3"},{"id":"c","text":"0\n1\n2\n3"},{"id":"d","text":"3"}]}', '{"option_id":"a"}', 'range con un solo argumento arranca en 0 y da esa cantidad de números.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'for letra in "Ana":
+    print(letra)', '{"options":[{"id":"a","text":"A\nn\na"},{"id":"b","text":"Ana"},{"id":"c","text":"0\n1\n2"},{"id":"d","text":"A n a"}]}', '{"option_id":"a"}', 'Un for sobre un texto lo recorre carácter por carácter.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'total = 0
+for n in range(1, 5):
+    total += n
+print(total)', '{"options":[{"id":"a","text":"10"},{"id":"b","text":"15"},{"id":"c","text":"4"},{"id":"d","text":"0"}]}', '{"option_id":"a"}', 'Suma 1 + 2 + 3 + 4. El 5 no entra porque el final del range queda por fuera.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'for n in range(5, 0, -1):
+    print(n, end=" ")', '{"options":[{"id":"a","text":"5 4 3 2 1"},{"id":"b","text":"5 4 3 2 1 0"},{"id":"c","text":"0 1 2 3 4 5"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'El tercer argumento es el paso. Con -1 cuenta hacia atrás, y el 0 del final no entra.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'for i, letra in enumerate("Cali"):
+    if i == 2:
+        print(letra)', '{"options":[{"id":"a","text":"l"},{"id":"b","text":"a"},{"id":"c","text":"i"},{"id":"d","text":"C"}]}', '{"option_id":"a"}', 'Las posiciones son 0:C, 1:a, 2:l, 3:i. La posición 2 es la l.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Cuántas líneas imprime este programa?', 'for a in range(3):
+    for b in range(4):
+        print(a, b)', '{"options":[{"id":"a","text":"12"},{"id":"b","text":"7"},{"id":"c","text":"3"},{"id":"d","text":"4"}]}', '{"option_id":"a"}', 'El ciclo interno corre completo en cada vuelta del externo: 3 × 4 = 12.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'El programa debe imprimir del 1 al 5. ¿En qué línea está el error?', NULL, '{"lines":["for n in range(1, 5):","    print(n)"]}', '{"line_number":1}', 'range(1, 5) llega hasta el 4. Para incluir el 5 hay que escribir range(1, 6).', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El programa debe sumar cinco números. ¿En qué línea está el error?', NULL, '{"lines":["for n in range(1, 6):","    total = 0","    total += n","print(total)"]}', '{"line_number":2}', 'La sumatoria nace dentro del ciclo: cada vuelta la reinicia. Esa línea va antes del for.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["numero = int(input(\"Numero: \"))","for i in range(1, 11)","    print(numero * i)"]}', '{"line_number":2}', 'Falta los dos puntos al final de la línea del for.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'medio', 'Arme el programa que cuenta las vocales de una frase', NULL, '{"lines":[{"id":"l1","text":"frase = input(\"Frase: \").lower()","indent":0},{"id":"l2","text":"vocales = 0","indent":0},{"id":"l3","text":"for letra in frase:","indent":0},{"id":"l4","text":"if letra in \"aeiou\":","indent":1},{"id":"l5","text":"vocales += 1","indent":2},{"id":"l6","text":"print(f\"Tiene {vocales} vocales\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'El contador nace antes del ciclo; el if va dentro del for y el incremento dentro del if, cada uno con su nivel de indentación.', 1, 'seed'
+    FROM chapters WHERE number = 8;
+
+-- ── Capítulo 9: break, continue y ciclos anidados (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 9, 'break, continue y ciclos anidados', '🎛️', 'Controlar el flujo dentro de los ciclos.', '', 0
+  SELECT p.id, 9, 'break, continue y ciclos anidados', '🎛️', 'Controlar el flujo dentro de los ciclos.', '<p class="jc-gancho">Buscas un producto en el inventario y lo encuentras en la posición 3 de 500. ¿Sigues revisando los 497 restantes? El cajero te da tres intentos de clave, pero si aciertas al primero no te pide los otros dos. Eso es <code>break</code>.</p>
+
+<h2><code>break</code>: salir ya</h2>
+
+<p><code>break</code> corta el ciclo en seco. Ni termina la vuelta ni revisa la condición: sale.</p>
+
+<pre><code>CLAVE = "1234"
+
+for intento in range(1, 4):
+    clave = input(f"Clave (intento {intento}): ")
+    if clave == CLAVE:
+        print("Bienvenido")
+        break
+    print("Clave incorrecta")</code></pre>
+
+<p>Si acierta en el primer intento, el <code>break</code> se lleva el programa fuera del <code>for</code> y los intentos 2 y 3 no existen.</p>
+
+<h3><code>else</code> del ciclo: lo que casi nadie sabe</h3>
+
+<p>Un <code>for</code> o un <code>while</code> pueden llevar <code>else</code>. Ese bloque corre <strong>solo si el ciclo terminó sin <code>break</code></strong>. Es perfecto para el "no lo encontré":</p>
+
+<pre><code>for intento in range(1, 4):
+    clave = input(f"Clave (intento {intento}): ")
+    if clave == CLAVE:
+        print("Bienvenido")
+        break
+    print("Clave incorrecta")
+else:
+    print("Tarjeta bloqueada")</code></pre>
+
+<p>Si acertó, hubo <code>break</code> y el <code>else</code> se salta. Si se acabaron los tres intentos, no hubo <code>break</code> y entra el <code>else</code>. Sin esto tocaría una bandera; con esto, nada.</p>
+
+<h2><code>continue</code>: saltar esta vuelta</h2>
+
+<p><code>continue</code> no sale del ciclo: se salta lo que falta de <em>esta</em> vuelta y pasa a la siguiente.</p>
+
+<pre><code>total = 0
+
+for n in range(1, 6):
+    venta = int(input(f"Venta {n}: "))
+    if venta &lt; 0:
+        print("Valor inválido, se ignora")
+        continue          # no suma, pasa a la venta siguiente
+    total += venta
+
+print("Total:", total)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Palabra</th><th>Qué hace</th><th>Se usa para</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>break</code></td><td>Sale del ciclo entero</td><td>Ya encontré lo que buscaba</td></tr>
+    <tr><td><code>continue</code></td><td>Salta a la vuelta siguiente</td><td>Este dato no me sirve, sigo</td></tr>
+  </tbody>
+</table>
+
+<p>Consejo: úsalos con moderación. Un ciclo lleno de <code>continue</code> se vuelve difícil de seguir; muchas veces un <code>if</code> bien puesto es más claro.</p>
+
+<h2>Ciclos anidados: un ciclo dentro de otro</h2>
+
+<p>Cuando cada vuelta del ciclo de afuera necesita su propio ciclo adentro. La imagen mental: el de afuera son las filas, el de adentro las columnas.</p>
+
+<pre><code>for fila in range(1, 4):
+    for columna in range(1, 4):
+        print(f"{fila}x{columna}", end="  ")
+    print()      # baja de línea al terminar la fila</code></pre>
+
+<p>Sale:</p>
+
+<pre><code>1x1  1x2  1x3
+2x1  2x2  2x3
+3x1  3x2  3x3</code></pre>
+
+<p>Lo esencial: <strong>el ciclo de adentro se ejecuta completo en cada vuelta del de afuera</strong>. Tres filas por tres columnas son nueve vueltas del cuerpo interno.</p>
+
+<p>Ese <code>end="  "</code> le dice a <code>print()</code> que en vez de bajar de línea deje dos espacios. El <code>print()</code> pelado del final sí baja, y por eso cada fila queda en su renglón.</p>
+
+<h3>La película de un anidado</h3>
+
+<table>
+  <thead>
+    <tr><th>Vuelta externa</th><th><code>fila</code></th><th>Vueltas internas</th><th>Qué imprime</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td><td><code>columna</code> = 1, 2, 3</td><td>1x1 1x2 1x3, y baja</td></tr>
+    <tr><td>2</td><td>2</td><td><code>columna</code> = 1, 2, 3</td><td>2x1 2x2 2x3, y baja</td></tr>
+    <tr><td>3</td><td>3</td><td><code>columna</code> = 1, 2, 3</td><td>3x1 3x2 3x3, y baja</td></tr>
+  </tbody>
+</table>
+
+<h3><code>break</code> dentro de un anidado</h3>
+
+<p>Cuidado con esto: <code>break</code> sale <strong>solo del ciclo que lo contiene</strong>, no de todos.</p>
+
+<pre><code>for fila in range(1, 4):
+    for columna in range(1, 4):
+        if columna == 2:
+            break          # corta las columnas, NO las filas
+        print(fila, columna)</code></pre>
+
+<p>Imprime <code>1 1</code>, <code>2 1</code> y <code>3 1</code>: en cada fila el ciclo interno se corta en la columna 2, pero el externo sigue tranquilo. Para salir de los dos hace falta una bandera o sacar el bloque a una función (capítulo 14).</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Usar <code>break</code> creyendo que salta la vuelta</h3>
+<pre><code>for n in range(5):
+    if n == 2:
+        break        # ❌ se acabó el ciclo en el 2
+        # continue   # ✅ esto era lo que querías</code></pre>
+
+<h3>2. Poner el <code>continue</code> antes de actualizar en un <code>while</code></h3>
+<pre><code>n = 0
+while n &lt; 5:
+    if n == 2:
+        continue     # ❌ nunca llega al n += 1: ciclo infinito
+    n += 1</code></pre>
+<p>En un <code>for</code> no pasa, porque el contador lo lleva Python. En un <code>while</code>, sí: asegúrate de haber avanzado <em>antes</em> del <code>continue</code>.</p>
+
+<h3>3. Reutilizar la misma variable en los dos ciclos</h3>
+<pre><code>for i in range(3):
+    for i in range(3):    # ❌ el interno pisa al externo
+        print(i)</code></pre>
+<p>Nombres distintos: <code>fila</code> y <code>columna</code>, o <code>i</code> y <code>j</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Ya encontraste lo que buscabas? <code>break</code>.</li>
+  <li>¿Este dato no sirve pero los demás sí? <code>continue</code>.</li>
+  <li>¿Necesitas avisar que <em>no</em> lo encontraste? <code>else</code> del ciclo.</li>
+  <li>En anidados: el de afuera son las filas, el de adentro las columnas, y <code>break</code> solo rompe el suyo.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>break</code></td><td>Sale del ciclo inmediatamente</td></tr>
+    <tr><td><code>continue</code></td><td>Salta a la siguiente vuelta</td></tr>
+    <tr><td><code>for … else:</code></td><td>El <code>else</code> corre solo si no hubo <code>break</code></td></tr>
+    <tr><td><code>print(x, end="  ")</code></td><td>Imprime sin bajar de línea</td></tr>
+    <tr><td><code>print()</code></td><td>Baja de línea</td></tr>
+  </tbody>
+</table>
+
+<blockquote><code>break</code> sale del ciclo que lo contiene y nada más. En un anidado, romper el de adentro deja al de afuera dando vueltas.</blockquote>', 1
     FROM parts p WHERE p.number = 2
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -1719,7 +3083,222 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 9
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 9);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Tres intentos de clave', 'facil', '<p>La clave del cajero es <code>1234</code>. Dar al usuario <strong>tres</strong> intentos. Si acierta, mostrar <code>Bienvenido</code> y terminar de inmediato. Si agota los tres, mostrar <code>Tarjeta bloqueada</code>.</p><pre><code>Clave (intento 1): Clave incorrecta
+Clave (intento 2): Bienvenido</code></pre>', '<p>Use <code>break</code> al acertar y el <code>else</code> del <code>for</code> para el caso de que nunca se acertó. Ese <code>else</code> se salta si hubo <code>break</code>.</p>', '<pre><code>''''''
+Programa: Tres intentos de clave
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Da tres intentos para escribir la clave del cajero y bloquea
+    la tarjeta si se agotan.
+''''''
+
+# Inicio
+CLAVE = "1234"
+INTENTOS = 3
+
+for intento in range(1, INTENTOS + 1):
+    clave = input(f"Clave (intento {intento}): ").strip()
+
+    if clave == CLAVE:
+        print("Bienvenido")
+        break
+
+    print("Clave incorrecta")
+else:
+    # Este bloque solo corre si el for termino SIN break
+    print("Tarjeta bloqueada")
+# Fin</code></pre><p>El <code>else</code> del ciclo evita tener que llevar una bandera <code>acerto = False</code>. Es una de las pocas cosas que Python tiene y casi ningún otro lenguaje.</p>', '[{"stdin":"0000\n1234\n","expected_output":"Clave (intento 1): Clave incorrecta\nClave (intento 2): Bienvenido"},{"stdin":"1\n2\n3\n","expected_output":"Clave (intento 1): Clave incorrecta\nClave (intento 2): Clave incorrecta\nClave (intento 3): Clave incorrecta\nTarjeta bloqueada"}]', '''''''
+Programa: Tres intentos de clave
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+CLAVE = "1234"
+INTENTOS = 3
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Ventas ignorando inválidas', 'facil', '<p>Solicitar <strong>5</strong> ventas. Si alguna es negativa, avisar y no sumarla. Al final mostrar el total y cuántas se ignoraron:</p><pre><code>Total: 60000
+Ignoradas: 1</code></pre>', '<p>Cuando la venta sea negativa, imprima el aviso, sume al contador de ignoradas y use <code>continue</code> para saltar la suma.</p>', '<pre><code>''''''
+Programa: Ventas ignorando invalidas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Suma cinco ventas descartando las que vengan en negativo.
+''''''
+
+# Inicio
+CUANTAS = 5
+
+total = 0        # sumatoria
+ignoradas = 0    # contador
+
+for n in range(1, CUANTAS + 1):
+    venta = int(input(f"Venta {n}: "))
+
+    if venta < 0:
+        print("Valor invalido, se ignora")
+        ignoradas += 1
+        continue    # se salta la suma y pasa a la venta siguiente
+
+    total += venta
+
+print(f"Total: {total}")
+print(f"Ignoradas: {ignoradas}")
+# Fin</code></pre><p><code>continue</code> deja el resto del cuerpo sin ejecutar, así que <code>total += venta</code> ni se toca. Lo mismo se podría hacer con un <code>else</code>, pero cuando el caso raro se descarta de una, <code>continue</code> deja el camino feliz sin indentar de más.</p>', '[{"stdin":"10000\n20000\n-5000\n15000\n15000\n","expected_output":"Venta 1: Venta 2: Venta 3: Valor invalido, se ignora\nVenta 4: Venta 5: Total: 60000\nIgnoradas: 1"}]', '''''''
+Programa: Ventas ignorando invalidas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+CUANTAS = 5
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Tabla de multiplicar completa', 'medio', '<p>Mostrar las tablas de multiplicar del <strong>1 al 5</strong>, cada tabla en su propia línea:</p><pre><code>1x1=1  1x2=2  1x3=3  1x4=4  1x5=5
+2x1=2  2x2=4  2x3=6  2x4=8  2x5=10
+3x1=3  3x2=6  3x3=9  3x4=12  3x5=15
+4x1=4  4x2=8  4x3=12  4x4=16  4x5=20
+5x1=5  5x2=10  5x3=15  5x4=20  5x5=25</code></pre><p><em>Nota:</em> cada elemento va separado por dos espacios y no debe quedar salto de línea en medio de una fila.</p>', '<p>Dos <code>for</code> anidados: el de afuera es la tabla (la fila) y el de adentro el multiplicador (la columna). Use <code>end="  "</code> en el <code>print()</code> de adentro y un <code>print()</code> pelado al terminar cada fila.</p>', '<pre><code>''''''
+Programa: Tablas de multiplicar del 1 al 5
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Muestra en una cuadricula las tablas de multiplicar
+    del 1 al 5.
+''''''
+
+# Inicio
+HASTA = 5
+
+for tabla in range(1, HASTA + 1):
+    for multiplicador in range(1, HASTA + 1):
+        # end="  " evita el salto de linea: la fila sigue creciendo
+        print(f"{tabla}x{multiplicador}={tabla * multiplicador}", end="  ")
+
+    # Al terminar la fila si se baja de linea
+    print()
+# Fin</code></pre><p>El ciclo de adentro se ejecuta <strong>completo</strong> en cada vuelta del de afuera: 5 tablas × 5 multiplicadores = 25 vueltas del cuerpo interno.</p><p>La posición del <code>print()</code> pelado es lo que hace la cuadrícula. Está indentado al nivel del <code>for</code> interno (dentro del externo, fuera del interno): por eso corre una vez por fila.</p>', '[{"stdin":"","expected_output":"1x1=1  1x2=2  1x3=3  1x4=4  1x5=5\n2x1=2  2x2=4  2x3=6  2x4=8  2x5=10\n3x1=3  3x2=6  3x3=9  3x4=12  3x5=15\n4x1=4  4x2=8  4x3=12  4x4=16  4x5=20\n5x1=5  5x2=10  5x3=15  5x4=20  5x5=25"}]', '''''''
+Programa: Tablas de multiplicar del 1 al 5
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+HASTA = 5
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, '¿Es primo?', 'dificil', '<p>Solicitar un número entero mayor que 1 y decir si es primo. Un número es primo si solo se puede dividir exactamente entre 1 y entre sí mismo.</p><pre><code>El 17 es primo</code></pre><pre><code>El 21 no es primo (divisible entre 3)</code></pre><p><em>Nota:</em> apenas encuentre un divisor debe dejar de buscar. No revise más allá de la mitad del número.</p>', '<p>Recorra los posibles divisores desde 2 hasta la mitad. Si alguno divide exacto (<code>numero % d == 0</code>), guarde ese divisor y use <code>break</code>. Use el <code>else</code> del <code>for</code> para el caso "no encontré ninguno".</p>', '<pre><code>''''''
+Programa: Verificador de numeros primos
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Indica si un numero mayor que 1 es primo y, si no lo es,
+    muestra el primer divisor encontrado.
+''''''
+
+# Inicio
+numero = int(input("Numero: "))
+
+# Ningun divisor puede ser mayor que la mitad del numero,
+# asi que ahi se corta la busqueda
+for divisor in range(2, numero // 2 + 1):
+    if numero % divisor == 0:
+        print(f"El {numero} no es primo (divisible entre {divisor})")
+        break
+else:
+    # Solo llega aqui si el for termino sin encontrar divisores
+    print(f"El {numero} es primo")
+# Fin</code></pre><p>Tres ideas que valen para muchos problemas de búsqueda:</p><ul><li><strong><code>break</code> al primer hallazgo.</strong> Con 21, el 3 lo delata en la segunda vuelta; revisar hasta el 10 sería trabajo perdido.</li><li><strong>El <code>else</code> del ciclo es el "no encontré nada".</strong> Sin él tocaría una bandera <code>es_primo = True</code> y bajarla dentro del <code>if</code>.</li><li><strong>Cortar en la mitad.</strong> Si <code>numero</code> tuviera un divisor mayor que su mitad, el otro factor sería menor que 2, lo cual es imposible.</li></ul><p>Ojo con el caso del 2 y el 3: <code>range(2, 2)</code> y <code>range(2, 2)</code> quedan vacíos, el ciclo no da vueltas, no hay <code>break</code> y entra por el <code>else</code>. Correcto: 2 y 3 son primos.</p>', '[{"stdin":"17\n","expected_output":"Numero: El 17 es primo"},{"stdin":"21\n","expected_output":"Numero: El 21 no es primo (divisible entre 3)"},{"stdin":"2\n","expected_output":"Numero: El 2 es primo"}]', '''''''
+Programa: Verificador de numeros primos
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 9;
 DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 9);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué hace break dentro de un ciclo?', NULL, '{"options":[{"id":"a","text":"Sale del ciclo de inmediato"},{"id":"b","text":"Salta a la siguiente vuelta"},{"id":"c","text":"Reinicia el ciclo desde el principio"},{"id":"d","text":"Termina el programa"}]}', '{"option_id":"a"}', 'break corta el ciclo en seco: ni termina la vuelta ni vuelve a revisar la condición.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué hace continue?', NULL, '{"options":[{"id":"a","text":"Se salta lo que falta de esta vuelta y pasa a la siguiente"},{"id":"b","text":"Sale del ciclo"},{"id":"c","text":"Repite la misma vuelta otra vez"},{"id":"d","text":"Continúa con la siguiente línea del programa"}]}', '{"option_id":"a"}', 'El ciclo sigue vivo: solo se descarta el resto del cuerpo de esa vuelta.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Cuándo se ejecuta el else de un ciclo for?', NULL, '{"options":[{"id":"a","text":"Solo si el ciclo terminó sin haber pasado por un break"},{"id":"b","text":"Siempre al terminar el ciclo"},{"id":"c","text":"Cuando la colección está vacía"},{"id":"d","text":"Cada vez que la condición del if falla"}]}', '{"option_id":"a"}', 'Es el bloque del "no lo encontré": evita tener que llevar una bandera.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', 'En dos ciclos anidados, ¿de cuál sale un break que está en el interno?', NULL, '{"options":[{"id":"a","text":"Solo del interno: el externo sigue dando vueltas"},{"id":"b","text":"De los dos"},{"id":"c","text":"Solo del externo"},{"id":"d","text":"Del programa entero"}]}', '{"option_id":"a"}', 'break rompe únicamente el ciclo que lo contiene. Para salir de los dos hace falta una bandera o una función.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Para qué sirve end="  " en un print()?', NULL, '{"options":[{"id":"a","text":"Para que no baje de línea y deje dos espacios en su lugar"},{"id":"b","text":"Para terminar el programa"},{"id":"c","text":"Para poner dos espacios al principio"},{"id":"d","text":"Para cerrar el ciclo"}]}', '{"option_id":"a"}', 'Por defecto print termina en salto de línea. Con end se cambia por lo que uno quiera.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'for n in range(5):
+    if n == 2:
+        break
+    print(n)', '{"options":[{"id":"a","text":"0\n1"},{"id":"b","text":"0\n1\n3\n4"},{"id":"c","text":"0\n1\n2"},{"id":"d","text":"0\n1\n2\n3\n4"}]}', '{"option_id":"a"}', 'Al llegar al 2 sale del ciclo, así que el 3 y el 4 ni se miran.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'for n in range(5):
+    if n == 2:
+        continue
+    print(n)', '{"options":[{"id":"a","text":"0\n1\n3\n4"},{"id":"b","text":"0\n1"},{"id":"c","text":"0\n1\n2\n3\n4"},{"id":"d","text":"2"}]}', '{"option_id":"a"}', 'Solo se salta la vuelta del 2: las demás siguen normales.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'for n in range(3):
+    print(n)
+else:
+    print("listo")', '{"options":[{"id":"a","text":"0\n1\n2\nlisto"},{"id":"b","text":"0\n1\n2"},{"id":"c","text":"listo"},{"id":"d","text":"SyntaxError"}]}', '{"option_id":"a"}', 'No hubo break, así que el else del ciclo sí corre.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'for n in range(3):
+    if n == 1:
+        break
+else:
+    print("sin break")
+print("fin")', '{"options":[{"id":"a","text":"fin"},{"id":"b","text":"sin break\nfin"},{"id":"c","text":"fin\nsin break"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'Hubo break, así que el else se salta. El print de afuera sí corre.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'for fila in range(1, 4):
+    for col in range(1, 4):
+        if col == 2:
+            break
+        print(fila, col)', '{"options":[{"id":"a","text":"1 1\n2 1\n3 1"},{"id":"b","text":"1 1"},{"id":"c","text":"1 1\n1 2\n1 3"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'El break corta solo el ciclo de las columnas; el de las filas sigue y vuelve a entrar tres veces.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Este ciclo se queda pegado. ¿En qué línea está el problema?', NULL, '{"lines":["n = 0","while n < 5:","    if n == 2:","        continue","    n += 1"]}', '{"line_number":4}', 'El continue salta el n += 1, así que n se queda en 2 para siempre. En un while hay que avanzar antes del continue.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El programa debe saltarse los negativos pero suma mal. ¿En qué línea está el error?', NULL, '{"lines":["total = 0","for n in range(3):","    venta = int(input())","    if venta < 0:","        break","    total += venta","print(total)"]}', '{"line_number":5}', 'Ahí va continue, no break: con break el primer negativo acaba el ciclo y las ventas siguientes se pierden.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'dificil', 'La cuadrícula sale toda en una sola línea. ¿En qué línea está el error?', NULL, '{"lines":["for fila in range(1, 4):","    for col in range(1, 4):","        print(fila, col, end=\"  \")","        print()"]}', '{"line_number":4}', 'El print() que baja de línea quedó dentro del ciclo interno: debe estar al nivel del for interno, no adentro.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme el programa de los tres intentos de clave', NULL, '{"lines":[{"id":"l1","text":"CLAVE = \"1234\"","indent":0},{"id":"l2","text":"for intento in range(1, 4):","indent":0},{"id":"l3","text":"clave = input(f\"Clave (intento {intento}): \")","indent":1},{"id":"l4","text":"if clave == CLAVE:","indent":1},{"id":"l5","text":"print(\"Bienvenido\")","indent":2},{"id":"l6","text":"break","indent":2},{"id":"l7","text":"print(\"Clave incorrecta\")","indent":1},{"id":"l8","text":"else:","indent":0},{"id":"l9","text":"print(\"Tarjeta bloqueada\")","indent":1}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8","l9"]}', 'El else del ciclo se alinea con el for, no con el if: por eso solo corre si nunca hubo break.', 1, 'seed'
+    FROM chapters WHERE number = 9;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme la cuadrícula de tablas de multiplicar', NULL, '{"lines":[{"id":"l1","text":"for tabla in range(1, 6):","indent":0},{"id":"l2","text":"for mult in range(1, 6):","indent":1},{"id":"l3","text":"print(f\"{tabla}x{mult}={tabla * mult}\", end=\"  \")","indent":2},{"id":"l4","text":"print()","indent":1}]}', '{"order":["l1","l2","l3","l4"]}', 'El print() que baja de línea va al nivel del for interno: corre una vez por fila, cuando el ciclo de columnas ya terminó.', 1, 'seed'
+    FROM chapters WHERE number = 9;
 
 -- ── Capítulo 10: Listas (borrador)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)

@@ -1,0 +1,191 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuáles son las tres partes de todo ciclo while?",
+    "data": { "options": [
+      { "id": "a", "text": "Preparar antes, preguntar en el while y avanzar adentro" },
+      { "id": "b", "text": "Abrir, cerrar y contar" },
+      { "id": "c", "text": "if, elif y else" },
+      { "id": "d", "text": "Inicio, cuerpo y return" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Si falta avanzar, la condición nunca cambia y el ciclo es infinito."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Dónde nace un contador o una sumatoria?",
+    "data": { "options": [
+      { "id": "a", "text": "Antes del ciclo, y se actualiza adentro" },
+      { "id": "b", "text": "Dentro del ciclo, para que se reinicie" },
+      { "id": "c", "text": "Después del ciclo" },
+      { "id": "d", "text": "Dentro del if" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Nacen afuera, se actualizan adentro. Si nacen adentro, cada vuelta los borra."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿En qué valor nace una bandera?",
+    "data": { "options": [
+      { "id": "a", "text": "En False, y se pone en True cuando ocurre lo que se busca" },
+      { "id": "b", "text": "En 0, y se suma de a uno" },
+      { "id": "c", "text": "En True, para poder bajarla" },
+      { "id": "d", "text": "En una cadena vacía" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Una bandera se levanta y se queda levantada. Ponerle un else que la baje borra el hallazgo."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué es la lectura anticipada?",
+    "data": { "options": [
+      { "id": "a", "text": "Pedir el dato una vez antes del while y otra al final del cuerpo" },
+      { "id": "b", "text": "Leer todos los datos de una vez al principio" },
+      { "id": "c", "text": "Usar input() dentro de la condición del while" },
+      { "id": "d", "text": "Adivinar el dato antes de pedirlo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El primer input alimenta la primera pregunta del while; el de adentro prepara la vuelta siguiente."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué el promedio se calcula después del ciclo y no adentro?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque adentro la suma todavía está incompleta" },
+      { "id": "b", "text": "Porque dentro del while no se puede dividir" },
+      { "id": "c", "text": "Porque el promedio necesita un if" },
+      { "id": "d", "text": "Da igual, es cuestión de gusto" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "En la vuelta 3 la suma solo tiene tres datos. El promedio se saca cuando el acumulador ya terminó."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "n = 1\nwhile n <= 3:\n    print(n)\n    n += 1",
+    "data": { "options": [
+      { "id": "a", "text": "1\n2\n3" },
+      { "id": "b", "text": "1\n2\n3\n4" },
+      { "id": "c", "text": "1 para siempre" },
+      { "id": "d", "text": "0\n1\n2" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "En la vuelta cuatro n vale 4, la condición falla y el ciclo termina sin imprimir."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "total = 0\nn = 1\nwhile n <= 4:\n    total += n\n    n += 1\nprint(total)",
+    "data": { "options": [
+      { "id": "a", "text": "10" },
+      { "id": "b", "text": "4" },
+      { "id": "c", "text": "6" },
+      { "id": "d", "text": "0" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Va sumando 1 + 2 + 3 + 4 = 10. Es el patrón de sumatoria."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "n = 1\nwhile n <= 3:\n    total = 0\n    total += n\n    n += 1\nprint(total)",
+    "data": { "options": [
+      { "id": "a", "text": "3" },
+      { "id": "b", "text": "6" },
+      { "id": "c", "text": "0" },
+      { "id": "d", "text": "1" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "total nace dentro del ciclo, así que cada vuelta lo pone en cero: al final solo guarda el último valor."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "n = 5\nwhile n > 0:\n    n -= 2\nprint(n)",
+    "data": { "options": [
+      { "id": "a", "text": "-1" },
+      { "id": "b", "text": "0" },
+      { "id": "c", "text": "1" },
+      { "id": "d", "text": "5" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Va 5, 3, 1 y luego -1. Con -1 la condición falla y sale. Restar de a dos puede saltarse el cero."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "bandera = False\nn = 1\nwhile n <= 3:\n    if n == 2:\n        bandera = True\n    else:\n        bandera = False\n    n += 1\nprint(bandera)",
+    "data": { "options": [
+      { "id": "a", "text": "False" },
+      { "id": "b", "text": "True" },
+      { "id": "c", "text": "2" },
+      { "id": "d", "text": "3" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El else baja la bandera en la vuelta 3 y borra el hallazgo de la vuelta 2. Una bandera no lleva else."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Cuántas veces se imprime hola?",
+    "code_snippet": "n = 0\nwhile n < 3:\n    print(\"hola\")",
+    "data": { "options": [
+      { "id": "a", "text": "Infinitas: nunca cambia n" },
+      { "id": "b", "text": "Tres veces" },
+      { "id": "c", "text": "Ninguna" },
+      { "id": "d", "text": "Una vez" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Falta la parte de avanzar. La condición 0 < 3 siempre es verdadera."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El programa debe sumar cinco ventas. ¿En qué línea está el error?",
+    "data": { "lines": ["n = 1", "while n <= 5:", "    total = 0", "    total += int(input())", "    n += 1", "print(total)"] },
+    "correct": { "line_number": 3 },
+    "explanation": "La sumatoria nace dentro del ciclo y se reinicia en cada vuelta. Esa línea va antes del while."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este ciclo nunca termina. ¿En qué línea está el problema?",
+    "data": { "lines": ["n = 1", "while n <= 3:", "    print(n)", "    n = 1"] },
+    "correct": { "line_number": 4 },
+    "explanation": "Debía ser n += 1. Reasignar 1 deja la condición verdadera para siempre."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "El ciclo debe terminar cuando el usuario escriba fin, pero no termina. ¿Qué línea falta arreglar?",
+    "data": { "lines": ["producto = input(\"Producto: \")", "while producto != \"fin\":", "    precio = int(input(\"Precio: \"))", "    total += precio", "print(total)"] },
+    "correct": { "line_number": 4 },
+    "explanation": "Falta volver a leer el producto al final del cuerpo: sin esa segunda lectura la condición nunca cambia."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme el programa que suma cinco ventas y muestra el promedio",
+    "data": { "lines": [
+      { "id": "l1", "text": "total = 0", "indent": 0 },
+      { "id": "l2", "text": "n = 1", "indent": 0 },
+      { "id": "l3", "text": "while n <= 5:", "indent": 0 },
+      { "id": "l4", "text": "venta = int(input(f\"Venta {n}: \"))", "indent": 1 },
+      { "id": "l5", "text": "total += venta", "indent": 1 },
+      { "id": "l6", "text": "n += 1", "indent": 1 },
+      { "id": "l7", "text": "print(f\"Promedio: {total / 5}\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7"] },
+    "explanation": "La sumatoria y el contador nacen afuera, el cuerpo del ciclo va indentado, y el promedio se calcula fuera con la suma completa."
+  }
+]

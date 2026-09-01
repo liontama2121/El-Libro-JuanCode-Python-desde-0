@@ -1,0 +1,150 @@
+<p class="jc-gancho">Buscas un producto en el inventario y lo encuentras en la posición 3 de 500. ¿Sigues revisando los 497 restantes? El cajero te da tres intentos de clave, pero si aciertas al primero no te pide los otros dos. Eso es <code>break</code>.</p>
+
+<h2><code>break</code>: salir ya</h2>
+
+<p><code>break</code> corta el ciclo en seco. Ni termina la vuelta ni revisa la condición: sale.</p>
+
+<pre><code>CLAVE = "1234"
+
+for intento in range(1, 4):
+    clave = input(f"Clave (intento {intento}): ")
+    if clave == CLAVE:
+        print("Bienvenido")
+        break
+    print("Clave incorrecta")</code></pre>
+
+<p>Si acierta en el primer intento, el <code>break</code> se lleva el programa fuera del <code>for</code> y los intentos 2 y 3 no existen.</p>
+
+<h3><code>else</code> del ciclo: lo que casi nadie sabe</h3>
+
+<p>Un <code>for</code> o un <code>while</code> pueden llevar <code>else</code>. Ese bloque corre <strong>solo si el ciclo terminó sin <code>break</code></strong>. Es perfecto para el "no lo encontré":</p>
+
+<pre><code>for intento in range(1, 4):
+    clave = input(f"Clave (intento {intento}): ")
+    if clave == CLAVE:
+        print("Bienvenido")
+        break
+    print("Clave incorrecta")
+else:
+    print("Tarjeta bloqueada")</code></pre>
+
+<p>Si acertó, hubo <code>break</code> y el <code>else</code> se salta. Si se acabaron los tres intentos, no hubo <code>break</code> y entra el <code>else</code>. Sin esto tocaría una bandera; con esto, nada.</p>
+
+<h2><code>continue</code>: saltar esta vuelta</h2>
+
+<p><code>continue</code> no sale del ciclo: se salta lo que falta de <em>esta</em> vuelta y pasa a la siguiente.</p>
+
+<pre><code>total = 0
+
+for n in range(1, 6):
+    venta = int(input(f"Venta {n}: "))
+    if venta &lt; 0:
+        print("Valor inválido, se ignora")
+        continue          # no suma, pasa a la venta siguiente
+    total += venta
+
+print("Total:", total)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Palabra</th><th>Qué hace</th><th>Se usa para</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>break</code></td><td>Sale del ciclo entero</td><td>Ya encontré lo que buscaba</td></tr>
+    <tr><td><code>continue</code></td><td>Salta a la vuelta siguiente</td><td>Este dato no me sirve, sigo</td></tr>
+  </tbody>
+</table>
+
+<p>Consejo: úsalos con moderación. Un ciclo lleno de <code>continue</code> se vuelve difícil de seguir; muchas veces un <code>if</code> bien puesto es más claro.</p>
+
+<h2>Ciclos anidados: un ciclo dentro de otro</h2>
+
+<p>Cuando cada vuelta del ciclo de afuera necesita su propio ciclo adentro. La imagen mental: el de afuera son las filas, el de adentro las columnas.</p>
+
+<pre><code>for fila in range(1, 4):
+    for columna in range(1, 4):
+        print(f"{fila}x{columna}", end="  ")
+    print()      # baja de línea al terminar la fila</code></pre>
+
+<p>Sale:</p>
+
+<pre><code>1x1  1x2  1x3
+2x1  2x2  2x3
+3x1  3x2  3x3</code></pre>
+
+<p>Lo esencial: <strong>el ciclo de adentro se ejecuta completo en cada vuelta del de afuera</strong>. Tres filas por tres columnas son nueve vueltas del cuerpo interno.</p>
+
+<p>Ese <code>end="  "</code> le dice a <code>print()</code> que en vez de bajar de línea deje dos espacios. El <code>print()</code> pelado del final sí baja, y por eso cada fila queda en su renglón.</p>
+
+<h3>La película de un anidado</h3>
+
+<table>
+  <thead>
+    <tr><th>Vuelta externa</th><th><code>fila</code></th><th>Vueltas internas</th><th>Qué imprime</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td><td><code>columna</code> = 1, 2, 3</td><td>1x1 1x2 1x3, y baja</td></tr>
+    <tr><td>2</td><td>2</td><td><code>columna</code> = 1, 2, 3</td><td>2x1 2x2 2x3, y baja</td></tr>
+    <tr><td>3</td><td>3</td><td><code>columna</code> = 1, 2, 3</td><td>3x1 3x2 3x3, y baja</td></tr>
+  </tbody>
+</table>
+
+<h3><code>break</code> dentro de un anidado</h3>
+
+<p>Cuidado con esto: <code>break</code> sale <strong>solo del ciclo que lo contiene</strong>, no de todos.</p>
+
+<pre><code>for fila in range(1, 4):
+    for columna in range(1, 4):
+        if columna == 2:
+            break          # corta las columnas, NO las filas
+        print(fila, columna)</code></pre>
+
+<p>Imprime <code>1 1</code>, <code>2 1</code> y <code>3 1</code>: en cada fila el ciclo interno se corta en la columna 2, pero el externo sigue tranquilo. Para salir de los dos hace falta una bandera o sacar el bloque a una función (capítulo 14).</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Usar <code>break</code> creyendo que salta la vuelta</h3>
+<pre><code>for n in range(5):
+    if n == 2:
+        break        # ❌ se acabó el ciclo en el 2
+        # continue   # ✅ esto era lo que querías</code></pre>
+
+<h3>2. Poner el <code>continue</code> antes de actualizar en un <code>while</code></h3>
+<pre><code>n = 0
+while n &lt; 5:
+    if n == 2:
+        continue     # ❌ nunca llega al n += 1: ciclo infinito
+    n += 1</code></pre>
+<p>En un <code>for</code> no pasa, porque el contador lo lleva Python. En un <code>while</code>, sí: asegúrate de haber avanzado <em>antes</em> del <code>continue</code>.</p>
+
+<h3>3. Reutilizar la misma variable en los dos ciclos</h3>
+<pre><code>for i in range(3):
+    for i in range(3):    # ❌ el interno pisa al externo
+        print(i)</code></pre>
+<p>Nombres distintos: <code>fila</code> y <code>columna</code>, o <code>i</code> y <code>j</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Ya encontraste lo que buscabas? <code>break</code>.</li>
+  <li>¿Este dato no sirve pero los demás sí? <code>continue</code>.</li>
+  <li>¿Necesitas avisar que <em>no</em> lo encontraste? <code>else</code> del ciclo.</li>
+  <li>En anidados: el de afuera son las filas, el de adentro las columnas, y <code>break</code> solo rompe el suyo.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>break</code></td><td>Sale del ciclo inmediatamente</td></tr>
+    <tr><td><code>continue</code></td><td>Salta a la siguiente vuelta</td></tr>
+    <tr><td><code>for … else:</code></td><td>El <code>else</code> corre solo si no hubo <code>break</code></td></tr>
+    <tr><td><code>print(x, end="  ")</code></td><td>Imprime sin bajar de línea</td></tr>
+    <tr><td><code>print()</code></td><td>Baja de línea</td></tr>
+  </tbody>
+</table>
+
+<blockquote><code>break</code> sale del ciclo que lo contiene y nada más. En un anidado, romper el de adentro deja al de afuera dando vueltas.</blockquote>
