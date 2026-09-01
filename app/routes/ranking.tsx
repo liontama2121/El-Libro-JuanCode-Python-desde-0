@@ -4,7 +4,8 @@ import { Nav } from "~/components/nav";
 import { Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import { requireUser } from "~/lib/auth.server";
-import { nivelDe, rankingVisible } from "~/lib/gamification.server";
+import { rankingVisible } from "~/lib/gamification.server";
+import { nivelDe } from "~/lib/niveles";
 import type { Route } from "./+types/ranking";
 
 export const meta: Route.MetaFunction = () => [

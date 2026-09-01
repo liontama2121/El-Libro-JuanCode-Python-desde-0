@@ -2,32 +2,10 @@ import { and, eq, sql } from "drizzle-orm";
 import { type Db, schema } from "~/db";
 import type { Dificultad, UserStats } from "~/db/schema";
 import { hoyISO } from "./bank.server";
+import { INSIGNIAS, type IdInsignia, nivelDe } from "./niveles";
 
-/* -------------------------------------------------------------------------- */
-/*  Niveles                                                                    */
-/* -------------------------------------------------------------------------- */
-
-export const NIVELES = [
-	{ nivel: 0, desde: 0, nombre: "Novato", emoji: "🌱" },
-	{ nivel: 1, desde: 300, nombre: "Aprendiz", emoji: "📦" },
-	{ nivel: 2, desde: 800, nombre: "Programador", emoji: "💻" },
-	{ nivel: 3, desde: 1500, nombre: "Hacker", emoji: "🧠" },
-	{ nivel: 4, desde: 3000, nombre: "Maestro JuanCode", emoji: "🏆" },
-] as const;
-
-export type Nivel = (typeof NIVELES)[number];
-
-export function nivelDe(xp: number) {
-	let actual: Nivel = NIVELES[0];
-	for (const n of NIVELES) if (xp >= n.desde) actual = n;
-	const siguiente = NIVELES.find((n) => n.desde > xp) ?? null;
-
-	const base = actual.desde;
-	const techo = siguiente?.desde ?? actual.desde;
-	const progreso = siguiente ? Math.round(((xp - base) / (techo - base)) * 100) : 100;
-
-	return { actual, siguiente, progreso, faltan: siguiente ? siguiente.desde - xp : 0 };
-}
+export { INSIGNIAS, NIVELES, nivelDe } from "./niveles";
+export type { IdInsignia, Nivel } from "./niveles";
 
 /* -------------------------------------------------------------------------- */
 /*  XP                                                                         */
@@ -77,19 +55,6 @@ export function xpDeArcade(
 /*  Insignias                                                                  */
 /* -------------------------------------------------------------------------- */
 
-export const INSIGNIAS = [
-	{ id: "primer_capitulo", emoji: "🌱", nombre: "Primer capítulo", texto: "Aprobaste tu primer quiz de capítulo." },
-	{ id: "cinco_capitulos", emoji: "🖐️", nombre: "Cinco capítulos", texto: "Cinco capítulos aprobados." },
-	{ id: "medio_libro", emoji: "📖", nombre: "Medio libro", texto: "Doce capítulos aprobados." },
-	{ id: "libro_completo", emoji: "🏁", nombre: "Libro completo", texto: "Los 24 capítulos aprobados." },
-	{ id: "racha_7", emoji: "🔥", nombre: "Racha de 7 días", texto: "Siete días seguidos practicando." },
-	{ id: "simulacro_perfecto", emoji: "💯", nombre: "Simulacro perfecto", texto: "100% en un simulacro de quiz." },
-	{ id: "cazador_bugs", emoji: "🕵️", nombre: "Cazador de bugs", texto: "20 bugs encontrados." },
-	{ id: "arquitecto", emoji: "🧩", nombre: "Arquitecto", texto: "20 rompecabezas armados." },
-	{ id: "relampago", emoji: "⚡", nombre: "Relámpago", texto: "10 aciertos seguidos en modo relámpago." },
-] as const;
-
-export type IdInsignia = (typeof INSIGNIAS)[number]["id"];
 
 type Bolsa = {
 	ganadas: string[];
