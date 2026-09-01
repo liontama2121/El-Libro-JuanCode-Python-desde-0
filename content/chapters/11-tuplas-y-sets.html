@@ -1,0 +1,163 @@
+<p class="jc-gancho">Las coordenadas de una sucursal no deberían poder cambiarse por accidente. Y la lista de cédulas que entraron hoy no debería tener repetidos. Las listas no resuelven ninguna de las dos: para eso están las tuplas y los sets.</p>
+
+<h2>Tuplas: listas que no se pueden tocar</h2>
+
+<p>Una tupla se escribe con paréntesis y funciona igual que una lista… salvo que <strong>no se puede modificar</strong>.</p>
+
+<pre><code>punto = (4.6, -74.1)          # latitud y longitud de Bogotá
+colores = ("rojo", "azul")
+
+print(punto[0])               # 4.6
+print(len(colores))           # 2
+
+punto[0] = 10                 # TypeError: 'tuple' object does not support item assignment</code></pre>
+
+<p>Eso que parece una limitación es la gracia: si un dato no debe cambiar, una tupla lo garantiza. Nadie va a borrarlo por error tres funciones más adelante.</p>
+
+<table>
+  <thead>
+    <tr><th></th><th>Lista</th><th>Tupla</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Se escribe</td><td><code>[1, 2, 3]</code></td><td><code>(1, 2, 3)</code></td></tr>
+    <tr><td>¿Se puede cambiar?</td><td>Sí</td><td>No</td></tr>
+    <tr><td>Se usa para</td><td>Cosas que crecen y se filtran</td><td>Datos fijos que van juntos</td></tr>
+    <tr><td>Ejemplo</td><td>Las notas del curso</td><td>Una coordenada, una fecha</td></tr>
+  </tbody>
+</table>
+
+<h3>Desempaquetado: la razón por la que se usan tanto</h3>
+
+<pre><code>persona = ("Ana", 17, "Bogotá")
+
+nombre, edad, ciudad = persona     # tres variables de un tirón
+print(nombre)   # Ana
+print(ciudad)   # Bogotá</code></pre>
+
+<p>Funciona también con listas y es lo que permite el truco más elegante de Python:</p>
+
+<pre><code>a = 1
+b = 2
+a, b = b, a      # intercambiar sin variable temporal
+print(a, b)      # 2 1</code></pre>
+
+<p>Y es lo que hace que <code>enumerate()</code> se vea tan bien: entrega tuplas de dos, y el <code>for</code> las desempaqueta.</p>
+
+<pre><code>for i, letra in enumerate("Cali"):
+    print(i, letra)</code></pre>
+
+<p>Una tupla de un solo elemento necesita una coma final, o Python cree que es solo un paréntesis:</p>
+
+<pre><code>uno = (5,)     # tupla de un elemento
+no_es = (5)    # esto es el número 5, no una tupla</code></pre>
+
+<h2>Sets: colecciones sin repetidos</h2>
+
+<p>Un set se escribe con llaves y tiene dos superpoderes: <strong>no admite duplicados</strong> y <strong>busca instantáneamente</strong>.</p>
+
+<pre><code>cedulas = {"1023", "1045", "1023", "1088"}
+print(cedulas)         # {'1023', '1045', '1088'} — el repetido desapareció
+print(len(cedulas))    # 3</code></pre>
+
+<p>El uso más común es quitarle los repetidos a una lista:</p>
+
+<pre><code>visitas = ["1023", "1045", "1023", "1088", "1045"]
+unicas = set(visitas)
+
+print(f"{len(visitas)} visitas de {len(unicas)} personas distintas")</code></pre>
+
+<p>Métodos principales:</p>
+
+<pre><code>s = {"pan", "leche"}
+
+s.add("queso")        # agrega (si ya está, no hace nada)
+s.discard("pan")      # quita sin quejarse si no está
+print("leche" in s)   # True — y esta búsqueda es MUY rápida</code></pre>
+
+<p>Dos advertencias importantes:</p>
+
+<ul>
+  <li><strong>Un set no tiene orden.</strong> No existe <code>s[0]</code>. Si necesitas orden, conviértelo: <code>sorted(s)</code>.</li>
+  <li><strong>El set vacío es <code>set()</code>, no <code>{}</code></strong>. Las llaves vacías son un diccionario (capítulo 12).</li>
+</ul>
+
+<h3>Operaciones de conjuntos</h3>
+
+<p>Esto es lo que en el colegio dibujaban con círculos:</p>
+
+<pre><code>lunes = {"ana", "juan", "sofia"}
+martes = {"juan", "sofia", "pedro"}
+
+print(lunes | martes)   # unión: todos            {ana, juan, sofia, pedro}
+print(lunes &amp; martes)   # intersección: los dos días  {juan, sofia}
+print(lunes - martes)   # solo el lunes           {ana}</code></pre>
+
+<p>Resolver "quiénes vinieron los dos días" con listas serían dos ciclos anidados. Con sets es un símbolo.</p>
+
+<h2>La película de una deduplicación</h2>
+
+<pre><code>visitas = ["1023", "1045", "1023", "1088"]
+vistas = set()          # nace afuera, vacío
+repetidas = 0
+
+for cedula in visitas:
+    if cedula in vistas:
+        repetidas += 1
+    else:
+        vistas.add(cedula)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>cedula</code></th><th>¿ya estaba?</th><th><code>vistas</code></th><th><code>repetidas</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1023</td><td>No</td><td>{1023}</td><td>0</td></tr>
+    <tr><td>2</td><td>1045</td><td>No</td><td>{1023, 1045}</td><td>0</td></tr>
+    <tr><td>3</td><td>1023</td><td><strong>Sí</strong></td><td>{1023, 1045}</td><td>1</td></tr>
+    <tr><td>4</td><td>1088</td><td>No</td><td>{1023, 1045, 1088}</td><td>1</td></tr>
+  </tbody>
+</table>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Intentar modificar una tupla</h3>
+<pre><code>punto = (4.6, -74.1)
+punto[0] = 5      # TypeError</code></pre>
+<p>Si el dato tiene que cambiar, era una lista desde el principio.</p>
+
+<h3>2. Creer que <code>{}</code> es un set vacío</h3>
+<pre><code>s = {}            # ❌ esto es un diccionario
+s = set()         # ✅</code></pre>
+
+<h3>3. Pedirle una posición a un set</h3>
+<pre><code>s = {"a", "b"}
+print(s[0])       # TypeError: 'set' object is not subscriptable</code></pre>
+<p>Los sets no tienen orden. Si lo necesitas: <code>sorted(s)[0]</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿El dato va a cambiar? Lista. ¿Es fijo y va junto? Tupla.</li>
+  <li>¿Te importan los repetidos o buscas mucho? Set.</li>
+  <li>Para quitar duplicados: <code>set(mi_lista)</code>, y <code>sorted()</code> si quieres orden.</li>
+  <li>Comparar dos grupos: <code>|</code>, <code>&amp;</code>, <code>-</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>t = (1, 2)</code></td><td>Tupla: no se puede cambiar</td></tr>
+    <tr><td><code>a, b = t</code></td><td>Desempaqueta en dos variables</td></tr>
+    <tr><td><code>a, b = b, a</code></td><td>Intercambia sin variable extra</td></tr>
+    <tr><td><code>s = set()</code></td><td>Set vacío (¡no <code>{}</code>!)</td></tr>
+    <tr><td><code>set(lista)</code></td><td>Quita los repetidos</td></tr>
+    <tr><td><code>s.add(x)</code> · <code>s.discard(x)</code></td><td>Agregar · quitar</td></tr>
+    <tr><td><code>a | b</code> · <code>a &amp; b</code> · <code>a - b</code></td><td>Unión · comunes · solo en a</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Lista si va a cambiar, tupla si es fija, set si no quieres repetidos. Escoger bien la estructura resuelve la mitad del problema antes de escribir el primer ciclo.</blockquote>

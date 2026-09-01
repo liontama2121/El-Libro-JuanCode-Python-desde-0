@@ -1,0 +1,146 @@
+<p class="jc-gancho">Filtrar las notas aprobadas te toma cuatro líneas: crear la lista, el <code>for</code>, el <code>if</code> y el <code>append</code>. Python tiene una forma de escribir eso mismo en una sola línea que se lee igual de bien. Se llama <em>comprehension</em>.</p>
+
+<h2>De cuatro líneas a una</h2>
+
+<p>El patrón del capítulo 10, tal como lo escribiste:</p>
+
+<pre><code>aprobadas = []
+for nota in notas:
+    if nota &gt;= 3.0:
+        aprobadas.append(nota)</code></pre>
+
+<p>Lo mismo, en una línea:</p>
+
+<pre><code>aprobadas = [nota for nota in notas if nota &gt;= 3.0]</code></pre>
+
+<p>Se lee de izquierda a derecha en tres partes:</p>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>En el ejemplo</th><th>Qué dice</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>qué guardo</strong></td><td><code>nota</code></td><td>lo que va a quedar en la lista nueva</td></tr>
+    <tr><td><strong>de dónde</strong></td><td><code>for nota in notas</code></td><td>qué colección recorro</td></tr>
+    <tr><td><strong>con qué filtro</strong></td><td><code>if nota &gt;= 3.0</code></td><td>opcional: cuáles dejo pasar</td></tr>
+  </tbody>
+</table>
+
+<p>El <code>if</code> es opcional. Sin él, se transforma todo:</p>
+
+<pre><code>precios = [5000, 7000, 15000]
+
+con_iva = [p * 1.19 for p in precios]        # transformar
+caros = [p for p in precios if p &gt; 10000]    # filtrar
+nombres = [n.upper() for n in ["ana", "juan"]]   # ambos mundos
+
+# Las dos cosas a la vez
+caros_con_iva = [p * 1.19 for p in precios if p &gt; 10000]</code></pre>
+
+<h2>La película: cómo la lee Python</h2>
+
+<p>Aunque se escriba en una línea, por dentro es el mismo ciclo. Con <code>notas = [4.0, 2.5, 3.8]</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>nota</code></th><th>¿pasa el <code>if</code>?</th><th>Lista que se va armando</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>4.0</td><td>Sí</td><td><code>[4.0]</code></td></tr>
+    <tr><td>2</td><td>2.5</td><td>No</td><td><code>[4.0]</code></td></tr>
+    <tr><td>3</td><td>3.8</td><td>Sí</td><td><code>[4.0, 3.8]</code></td></tr>
+  </tbody>
+</table>
+
+<p>Truco para escribirlas: <strong>primero escribe el ciclo normal</strong> y después lo comprimes. Con la práctica sale directo, pero al principio es más seguro así.</p>
+
+<h2>También hay de diccionario y de set</h2>
+
+<pre><code>productos = ["pan", "leche"]
+precios = [5000, 7000]
+
+# Diccionario: usa llaves y una pareja clave: valor
+inventario = {p: v for p, v in zip(productos, precios)}
+print(inventario)     # {'pan': 5000, 'leche': 7000}
+
+# Set: llaves, sin pareja
+iniciales = {p[0] for p in productos}
+print(iniciales)      # {'p', 'l'}</code></pre>
+
+<p><code>zip()</code> une dos listas en parejas: es la forma limpia de convertir dos listas paralelas en un diccionario.</p>
+
+<pre><code>duplicar = {p: v * 2 for p, v in inventario.items()}
+baratos = {p: v for p, v in inventario.items() if v &lt; 6000}</code></pre>
+
+<h2>El if-else que va adelante</h2>
+
+<p>Hay dos <code>if</code> distintos y confundirlos es normal:</p>
+
+<pre><code># FILTRAR: el if va al final, sin else
+aprobadas = [n for n in notas if n &gt;= 3.0]
+
+# TRANSFORMAR: el if-else va ADELANTE, y es obligatorio el else
+estados = ["aprobado" if n &gt;= 3.0 else "reprobado" for n in notas]</code></pre>
+
+<p>La regla: si vas a <strong>dejar por fuera</strong> elementos, el <code>if</code> va al final. Si vas a <strong>escoger entre dos valores</strong> para cada elemento, el <code>if-else</code> va adelante.</p>
+
+<h2>Cuándo NO usarlas</h2>
+
+<p>Una comprehension es mejor cuando cabe cómoda en una línea y se lee de un vistazo. Cuando no, el ciclo normal gana:</p>
+
+<pre><code># ❌ ilegible
+r = [x*2 if x&gt;0 else -x for y in datos for x in y if x!=0 and x&lt;100]
+
+# ✅ un ciclo normal, que cualquiera entiende
+r = []
+for fila in datos:
+    for x in fila:
+        if x == 0 or x &gt;= 100:
+            continue
+        r.append(x * 2 if x &gt; 0 else -x)</code></pre>
+
+<p>Y si adentro necesitas varias líneas, <code>print()</code>, o llevar contadores aparte, no es trabajo para una comprehension.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Poner el <code>if-else</code> al final</h3>
+<pre><code>[n for n in notas if n &gt;= 3.0 else 0]     # ❌ SyntaxError
+["ok" if n &gt;= 3.0 else "no" for n in notas]  # ✅</code></pre>
+
+<h3>2. Usarla solo para imprimir</h3>
+<pre><code>[print(n) for n in notas]     # ❌ crea una lista de None que nadie usa
+
+for n in notas:               # ✅
+    print(n)</code></pre>
+
+<h3>3. Olvidar que crea una lista NUEVA</h3>
+<pre><code>[n * 2 for n in notas]     # ❌ el resultado se pierde
+dobles = [n * 2 for n in notas]   # ✅</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Escribe primero el ciclo con <code>append</code>; después compríme si mejora.</li>
+  <li>Filtrar → <code>if</code> al final. Escoger entre dos valores → <code>if-else</code> adelante.</li>
+  <li>Guarda el resultado: la comprehension no modifica nada, crea algo nuevo.</li>
+  <li>Si no cabe cómoda en una línea, déjala como ciclo.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>[x for x in lista]</code></td><td>Copia la lista</td></tr>
+    <tr><td><code>[x * 2 for x in lista]</code></td><td>Transforma cada elemento</td></tr>
+    <tr><td><code>[x for x in lista if x &gt; 0]</code></td><td>Filtra</td></tr>
+    <tr><td><code>["a" if x else "b" for x in l]</code></td><td>Escoge entre dos valores</td></tr>
+    <tr><td><code>{k: v for k, v in d.items()}</code></td><td>Comprehension de diccionario</td></tr>
+    <tr><td><code>{x for x in lista}</code></td><td>Comprehension de set (sin repetidos)</td></tr>
+    <tr><td><code>zip(a, b)</code></td><td>Une dos listas en parejas</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Una comprehension no hace nada que un ciclo no pueda. Se usa cuando hace el código <em>más</em> fácil de leer, nunca para presumir.</blockquote>

@@ -1,0 +1,62 @@
+[
+  {
+    "orden": 1,
+    "title": "Precios con IVA",
+    "difficulty": "facil",
+    "statement_html": "<p>Dada la lista <code>precios = [5000, 7000, 15000, 12000]</code>, crear con una comprehension una lista nueva con el precio más el 19% de IVA, redondeado a entero. Mostrar las dos listas:</p><pre><code>Sin IVA: [5000, 7000, 15000, 12000]\nCon IVA: [5950, 8330, 17850, 14280]</code></pre>",
+    "hint_html": "<p>La forma es <code>[round(p * 1.19) for p in precios]</code>. Como es una transformación y no un filtro, no lleva <code>if</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Precios con IVA\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Calcula el precio con IVA de una lista de productos usando\n    una comprehension.\n'''\n\n# Inicio\nIVA = 1.19\n\nprecios = [5000, 7000, 15000, 12000]\n\n# Transformar cada elemento: sin if, porque no se descarta ninguno\ncon_iva = [round(p * IVA) for p in precios]\n\nprint(f\"Sin IVA: {precios}\")\nprint(f\"Con IVA: {con_iva}\")\n# Fin</code></pre><p>El ciclo equivalente serían tres líneas: crear la lista vacía, el <code>for</code> y el <code>append</code>. Aquí cabe cómodo en una y se lee igual de claro, que es justo cuando conviene usar una comprehension.</p>",
+    "starter_code": "'''\nPrograma: Precios con IVA\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nIVA = 1.19\nprecios = [5000, 7000, 15000, 12000]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Sin IVA: [5000, 7000, 15000, 12000]\nCon IVA: [5950, 8330, 17850, 14280]"
+      }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Filtrar y etiquetar notas",
+    "difficulty": "facil",
+    "statement_html": "<p>Dada la lista <code>notas = [4.5, 2.8, 3.0, 1.9, 5.0]</code>, usar comprehensions para obtener:</p><ul><li>solo las aprobadas (mayor o igual a 3.0),</li><li>y una lista de etiquetas <code>APROBADO</code> / <code>REPROBADO</code> para todas.</li></ul><pre><code>Aprobadas: [4.5, 3.0, 5.0]\nEstados: ['APROBADO', 'REPROBADO', 'APROBADO', 'REPROBADO', 'APROBADO']</code></pre>",
+    "hint_html": "<p>Filtrar → el <code>if</code> va al final y no lleva <code>else</code>. Escoger entre dos valores → el <code>if-else</code> va adelante y el <code>else</code> es obligatorio.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Filtrar y etiquetar notas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra las notas aprobadas y la etiqueta de cada nota\n    usando los dos tipos de comprehension.\n'''\n\n# Inicio\nMINIMA = 3.0\n\nnotas = [4.5, 2.8, 3.0, 1.9, 5.0]\n\n# FILTRAR: el if va al final, sin else\naprobadas = [n for n in notas if n >= MINIMA]\n\n# ESCOGER entre dos valores: el if-else va adelante\nestados = [\"APROBADO\" if n >= MINIMA else \"REPROBADO\" for n in notas]\n\nprint(f\"Aprobadas: {aprobadas}\")\nprint(f\"Estados: {estados}\")\n# Fin</code></pre><p>La diferencia entre las dos líneas es la que más confunde:</p><table><thead><tr><th>Quiero</th><th>Dónde va el if</th><th>¿Lleva else?</th><th>Tamaño del resultado</th></tr></thead><tbody><tr><td>Dejar por fuera algunos</td><td>al final</td><td>no</td><td>menor o igual</td></tr><tr><td>Escoger entre dos valores</td><td>adelante</td><td>sí, obligatorio</td><td>igual al original</td></tr></tbody></table>",
+    "starter_code": "'''\nPrograma: Filtrar y etiquetar notas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nMINIMA = 3.0\nnotas = [4.5, 2.8, 3.0, 1.9, 5.0]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Aprobadas: [4.5, 3.0, 5.0]\nEstados: ['APROBADO', 'REPROBADO', 'APROBADO', 'REPROBADO', 'APROBADO']"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Inventario desde dos listas",
+    "difficulty": "medio",
+    "statement_html": "<p>Se tienen dos listas paralelas:</p><pre><code>productos = [\"pan\", \"leche\", \"queso\", \"cafe\"]\nprecios = [5000, 7000, 15000, 12000]</code></pre><p>Con comprehensions, construir:</p><ul><li>el inventario como diccionario,</li><li>un diccionario solo con los que cuestan más de 10000,</li><li>y el set de las iniciales de todos los productos.</li></ul><pre><code>Inventario: {'pan': 5000, 'leche': 7000, 'queso': 15000, 'cafe': 12000}\nCaros: {'queso': 15000, 'cafe': 12000}\nIniciales: ['c', 'l', 'p', 'q']</code></pre><p><em>Nota:</em> las iniciales se muestran ordenadas.</p>",
+    "hint_html": "<p><code>zip(productos, precios)</code> entrega parejas. Una comprehension de diccionario se escribe con llaves y <code>clave: valor</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Inventario desde dos listas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Convierte dos listas paralelas en un diccionario y arma\n    subconjuntos con comprehensions.\n'''\n\n# Inicio\nCARO = 10000\n\nproductos = [\"pan\", \"leche\", \"queso\", \"cafe\"]\nprecios = [5000, 7000, 15000, 12000]\n\n# zip une las dos listas en parejas (producto, precio)\ninventario = {p: v for p, v in zip(productos, precios)}\n\n# Comprehension de diccionario con filtro\ncaros = {p: v for p, v in inventario.items() if v > CARO}\n\n# Comprehension de set: sin repetidos por definicion\niniciales = {p[0] for p in productos}\n\nprint(f\"Inventario: {inventario}\")\nprint(f\"Caros: {caros}\")\nprint(f\"Iniciales: {sorted(iniciales)}\")\n# Fin</code></pre><p><code>zip()</code> es la forma limpia de pasar de dos listas paralelas a un diccionario, que es justo la estructura que el capítulo 12 recomienda para este caso.</p><p>El set de iniciales se imprime con <code>sorted()</code> porque un set no tiene orden: mostrarlo directo daría un resultado impredecible.</p>",
+    "starter_code": "'''\nPrograma: Inventario desde dos listas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nCARO = 10000\nproductos = [\"pan\", \"leche\", \"queso\", \"cafe\"]\nprecios = [5000, 7000, 15000, 12000]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Inventario: {'pan': 5000, 'leche': 7000, 'queso': 15000, 'cafe': 12000}\nCaros: {'queso': 15000, 'cafe': 12000}\nIniciales: ['c', 'l', 'p', 'q']"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Reporte del curso en tres líneas",
+    "difficulty": "dificil",
+    "statement_html": "<p>Dado el curso:</p><pre><code>curso = {\n    \"Ana\": [4.5, 3.8, 5.0],\n    \"Juan\": [2.5, 3.0, 2.8],\n    \"Sofia\": [3.5, 4.0, 3.9],\n}</code></pre><p>Usando comprehensions, obtener y mostrar:</p><pre><code>Promedios: {'Ana': 4.43, 'Juan': 2.77, 'Sofia': 3.8}\nAprobados: ['Ana', 'Sofia']\nEn riesgo: ['Juan']\nPromedio del curso: 3.67</code></pre><p><em>Nota:</em> los promedios se redondean a dos decimales. Aprueba con 3.0 o más.</p>",
+    "hint_html": "<p>Primero un diccionario de promedios con <code>{nombre: round(sum(n)/len(n), 2) for nombre, n in curso.items()}</code>. Sobre ese diccionario ya salen las dos listas con comprehensions filtradas.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Reporte del curso con comprehensions\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Calcula el promedio de cada estudiante y separa aprobados\n    de estudiantes en riesgo.\n'''\n\n# Inicio\nMINIMA = 3.0\n\ncurso = {\n    \"Ana\": [4.5, 3.8, 5.0],\n    \"Juan\": [2.5, 3.0, 2.8],\n    \"Sofia\": [3.5, 4.0, 3.9],\n}\n\n# Un diccionario nuevo a partir de otro: nombre -> promedio\npromedios = {\n    nombre: round(sum(notas) / len(notas), 2)\n    for nombre, notas in curso.items()\n}\n\n# Sobre los promedios ya calculados, dos filtros\naprobados = [n for n, p in promedios.items() if p >= MINIMA]\nen_riesgo = [n for n, p in promedios.items() if p < MINIMA]\n\nprint(f\"Promedios: {promedios}\")\nprint(f\"Aprobados: {aprobados}\")\nprint(f\"En riesgo: {en_riesgo}\")\nprint(f\"Promedio del curso: {round(sum(promedios.values()) / len(promedios), 2)}\")\n# Fin</code></pre><p>Compare con el mismo reporte del capítulo 12: allá eran unas quince líneas con un <code>for</code>, un <code>if / else</code> y un contador. Aquí son cuatro, y cada una dice exactamente qué produce.</p><p>Fíjese en que la comprehension del diccionario está partida en tres renglones. Cuando una comprehension se pone larga, <strong>partirla no es hacer trampa</strong>: se dejan la salida, el <code>for</code> y el <code>if</code> cada uno en su línea y se sigue leyendo perfecto.</p><p>La clave del ejercicio es el orden: <code>promedios</code> se calcula <strong>una vez</strong> y las tres líneas siguientes trabajan sobre él. Recalcular el promedio dentro de cada filtro sería hacer el mismo trabajo tres veces.</p>",
+    "starter_code": "'''\nPrograma: Reporte del curso con comprehensions\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nMINIMA = 3.0\n\ncurso = {\n    \"Ana\": [4.5, 3.8, 5.0],\n    \"Juan\": [2.5, 3.0, 2.8],\n    \"Sofia\": [3.5, 4.0, 3.9],\n}\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Promedios: {'Ana': 4.43, 'Juan': 2.77, 'Sofia': 3.8}\nAprobados: ['Ana', 'Sofia']\nEn riesgo: ['Juan']\nPromedio del curso: 3.67"
+      }
+    ]
+  }
+]

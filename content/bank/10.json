@@ -1,0 +1,195 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cómo se crea una lista vacía?",
+    "data": { "options": [
+      { "id": "a", "text": "lista = []" },
+      { "id": "b", "text": "lista = ()" },
+      { "id": "c", "text": "lista = {}" },
+      { "id": "d", "text": "lista = \"\"" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Los corchetes son de listas. Los paréntesis hacen una tupla y las llaves un diccionario."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué método agrega un elemento al final de una lista?",
+    "data": { "options": [
+      { "id": "a", "text": ".append(x)" },
+      { "id": "b", "text": ".add(x)" },
+      { "id": "c", "text": ".insert(x)" },
+      { "id": "d", "text": ".push(x)" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "append es el método más usado de todos. insert existe pero necesita también la posición."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuál es la diferencia entre lista.sort() y sorted(lista)?",
+    "data": { "options": [
+      { "id": "a", "text": "sort() ordena la lista original; sorted() devuelve una copia ordenada" },
+      { "id": "b", "text": "Son idénticos" },
+      { "id": "c", "text": "sort() solo funciona con números" },
+      { "id": "d", "text": "sorted() ordena al revés" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "sort() modifica en el sitio y devuelve None. Si necesitas conservar el original, usa sorted()."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué no se debe borrar elementos mientras se recorre una lista?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque al quitar uno, los de atrás se corren y el ciclo se salta elementos" },
+      { "id": "b", "text": "Porque Python lanza un error de sintaxis" },
+      { "id": "c", "text": "Porque las listas no se pueden modificar" },
+      { "id": "d", "text": "Porque el ciclo se vuelve infinito" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Lo correcto es construir una lista nueva con los elementos que sí se quieren conservar."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Se quieren guardar ventas y saber después quién vendió cada una, pero hay que ordenarlas. ¿Qué conviene?",
+    "data": { "options": [
+      { "id": "a", "text": "Guardar parejas [venta, vendedor] y ordenar esa lista" },
+      { "id": "b", "text": "Ordenar solo las ventas y recordar el orden de memoria" },
+      { "id": "c", "text": "Usar dos listas y ordenar las dos por separado" },
+      { "id": "d", "text": "No se puede: hay que dejarlas sin ordenar" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Ordenar dos listas por separado las desincroniza. Si el dato va a moverse, su identidad tiene que viajar con él."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "notas = [4.0, 3.5, 2.8]\nprint(notas[0], notas[-1])",
+    "data": { "options": [
+      { "id": "a", "text": "4.0 2.8" },
+      { "id": "b", "text": "4.0 3.5" },
+      { "id": "c", "text": "3.5 2.8" },
+      { "id": "d", "text": "IndexError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Igual que en los textos: [0] es el primero y [-1] el último."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "notas = [4.0, 3.0, 5.0]\nprint(sum(notas) / len(notas))",
+    "data": { "options": [
+      { "id": "a", "text": "4.0" },
+      { "id": "b", "text": "12.0" },
+      { "id": "c", "text": "3.0" },
+      { "id": "d", "text": "5.0" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "12.0 dividido entre 3 da 4.0: es el promedio en una sola línea."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "notas = [3.0, 1.0, 2.0]\nnotas = notas.sort()\nprint(notas)",
+    "data": { "options": [
+      { "id": "a", "text": "None" },
+      { "id": "b", "text": "[1.0, 2.0, 3.0]" },
+      { "id": "c", "text": "[3.0, 1.0, 2.0]" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "sort() ordena en el sitio y devuelve None. Al reasignar, se pierde la lista."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "productos = [\"pan\", \"leche\"]\nproductos.append(\"queso\")\nproductos.insert(0, \"cafe\")\nprint(productos)",
+    "data": { "options": [
+      { "id": "a", "text": "['cafe', 'pan', 'leche', 'queso']" },
+      { "id": "b", "text": "['pan', 'leche', 'queso', 'cafe']" },
+      { "id": "c", "text": "['cafe', 'queso', 'pan', 'leche']" },
+      { "id": "d", "text": "['pan', 'leche', 'cafe', 'queso']" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "append pone al final; insert(0, x) mete al principio y corre todo lo demás."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "notas = [4.0, 2.5, 3.8]\nbuenas = []\nfor nota in notas:\n    if nota >= 3.0:\n        buenas.append(nota)\nprint(buenas)",
+    "data": { "options": [
+      { "id": "a", "text": "[4.0, 3.8]" },
+      { "id": "b", "text": "[4.0, 2.5, 3.8]" },
+      { "id": "c", "text": "[2.5]" },
+      { "id": "d", "text": "[]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es el patrón de filtrado: lista vacía afuera y append adentro solo cuando se cumple la condición."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "parejas = [[100, 1], [300, 2], [200, 3]]\nparejas.sort(reverse=True)\nprint(parejas[0])",
+    "data": { "options": [
+      { "id": "a", "text": "[300, 2]" },
+      { "id": "b", "text": "[100, 1]" },
+      { "id": "c", "text": "[200, 3]" },
+      { "id": "d", "text": "[3, 300]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Al ordenar listas de listas, Python compara primero el primer elemento. Con reverse=True queda de mayor a menor."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "notas = [1.0, 2.0, 3.0, 4.0]\nfor nota in notas:\n    if nota < 3.0:\n        notas.remove(nota)\nprint(notas)",
+    "data": { "options": [
+      { "id": "a", "text": "[2.0, 3.0, 4.0]" },
+      { "id": "b", "text": "[3.0, 4.0]" },
+      { "id": "c", "text": "[1.0, 2.0, 3.0, 4.0]" },
+      { "id": "d", "text": "[]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Al borrar el 1.0 todo se corre y el ciclo salta el 2.0. Por eso nunca se borra mientras se recorre."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El programa debe llenar la lista con cinco notas. ¿En qué línea está el error?",
+    "data": { "lines": ["for n in range(5):", "    notas = []", "    notas.append(float(input()))", "print(notas)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "La lista nace dentro del ciclo y cada vuelta la vacía. Esa línea va antes del for."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El programa debe mostrar la lista ordenada. ¿En qué línea está el error?",
+    "data": { "lines": ["notas = [3.0, 1.0, 2.0]", "notas = notas.sort()", "print(notas)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "sort() devuelve None. Basta con escribir notas.sort() sin asignar."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme el programa que guarda cinco notas y muestra el promedio",
+    "data": { "lines": [
+      { "id": "l1", "text": "notas = []", "indent": 0 },
+      { "id": "l2", "text": "for n in range(1, 6):", "indent": 0 },
+      { "id": "l3", "text": "nota = float(input(f\"Nota {n}: \"))", "indent": 1 },
+      { "id": "l4", "text": "notas.append(nota)", "indent": 1 },
+      { "id": "l5", "text": "print(f\"Promedio: {sum(notas) / len(notas)}\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5"] },
+    "explanation": "La lista nace vacía antes del ciclo, se llena adentro, y el promedio se calcula al final con la lista completa."
+  }
+]

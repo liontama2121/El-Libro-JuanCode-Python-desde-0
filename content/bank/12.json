@@ -1,0 +1,154 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuándo conviene un diccionario en vez de una lista?",
+    "data": { "options": [
+      { "id": "a", "text": "Cuando se busca por nombre, código o cédula en vez de por posición" },
+      { "id": "b", "text": "Cuando hay muchos datos" },
+      { "id": "c", "text": "Cuando los datos son números" },
+      { "id": "d", "text": "Cuando el orden importa" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "En una agenda uno no busca el contacto número 47: busca a Ana."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué pasa si se asigna un valor a una clave que ya existe?",
+    "data": { "options": [
+      { "id": "a", "text": "Se reemplaza el valor anterior" },
+      { "id": "b", "text": "Se crea una segunda entrada con la misma clave" },
+      { "id": "c", "text": "Lanza KeyError" },
+      { "id": "d", "text": "No hace nada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las claves nunca se repiten: volver a asignar es actualizar."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué hace d.get(\"arroz\", 0) si la clave no existe?",
+    "data": { "options": [
+      { "id": "a", "text": "Devuelve 0 sin lanzar error" },
+      { "id": "b", "text": "Lanza KeyError" },
+      { "id": "c", "text": "Crea la clave con valor 0" },
+      { "id": "d", "text": "Devuelve None" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El segundo argumento es el valor por defecto. Sin él devolvería None, y con corchetes sería KeyError."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué recorre un for x in mi_diccionario?",
+    "data": { "options": [
+      { "id": "a", "text": "Las claves" },
+      { "id": "b", "text": "Los valores" },
+      { "id": "c", "text": "Las parejas clave-valor" },
+      { "id": "d", "text": "Las posiciones" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Para los valores está .values() y para las parejas .items()."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué una lista no puede ser clave de un diccionario?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque las claves deben ser inmutables, y una lista puede cambiar" },
+      { "id": "b", "text": "Porque las listas ocupan mucha memoria" },
+      { "id": "c", "text": "Porque las claves solo pueden ser texto" },
+      { "id": "d", "text": "Sí puede: es un error del enunciado" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Una tupla sí sirve como clave, porque no puede cambiar. Es otra razón para que existan las tuplas."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "precios = {\"pan\": 5000, \"leche\": 7000}\nprint(sum(precios.values()))",
+    "data": { "options": [
+      { "id": "a", "text": "12000" },
+      { "id": "b", "text": "2" },
+      { "id": "c", "text": "['pan', 'leche']" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": ".values() entrega los precios y sum() los suma."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "conteo = {}\nfor p in [\"pan\", \"pan\", \"leche\"]:\n    conteo[p] = conteo.get(p, 0) + 1\nprint(conteo)",
+    "data": { "options": [
+      { "id": "a", "text": "{'pan': 2, 'leche': 1}" },
+      { "id": "b", "text": "{'pan': 1, 'leche': 1}" },
+      { "id": "c", "text": "{'pan': 3}" },
+      { "id": "d", "text": "KeyError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es el patrón de conteo: get devuelve 0 la primera vez y el acumulado las siguientes."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "d = {\"a\": 1}\nd[\"a\"] = 2\nd[\"b\"] = 3\nprint(len(d))",
+    "data": { "options": [
+      { "id": "a", "text": "2" },
+      { "id": "b", "text": "3" },
+      { "id": "c", "text": "1" },
+      { "id": "d", "text": "4" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Reasignar la clave a no agrega una entrada nueva: la reemplaza. Solo hay dos claves."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "conteo = {\"pan\": 3, \"leche\": 2, \"queso\": 5}\nprint(max(conteo, key=conteo.get))",
+    "data": { "options": [
+      { "id": "a", "text": "queso" },
+      { "id": "b", "text": "pan" },
+      { "id": "c", "text": "5" },
+      { "id": "d", "text": "leche" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con key=conteo.get, max compara por el valor pero devuelve la clave. Sin el key compararía los nombres alfabéticamente."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El programa se cae cuando el producto no está. ¿En qué línea está el error?",
+    "data": { "lines": ["precios = {\"pan\": 5000}", "print(precios[\"arroz\"])"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Leer con corchetes una clave inexistente da KeyError. Ahí va precios.get(\"arroz\", 0)."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El programa debe imprimir los precios, no los nombres. ¿En qué línea está el error?",
+    "data": { "lines": ["precios = {\"pan\": 5000, \"leche\": 7000}", "for x in precios:", "    print(x)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Recorrer un diccionario da las claves. Para los precios habría que usar precios.values()."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme el programa que cuenta los productos vendidos",
+    "data": { "lines": [
+      { "id": "l1", "text": "ventas = [\"pan\", \"leche\", \"pan\"]", "indent": 0 },
+      { "id": "l2", "text": "conteo = {}", "indent": 0 },
+      { "id": "l3", "text": "for producto in ventas:", "indent": 0 },
+      { "id": "l4", "text": "conteo[producto] = conteo.get(producto, 0) + 1", "indent": 1 },
+      { "id": "l5", "text": "for producto, veces in conteo.items():", "indent": 0 },
+      { "id": "l6", "text": "print(f\"{producto}: {veces}\")", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6"] },
+    "explanation": "Primero se cuenta en un ciclo y después se muestra en otro: mezclarlos imprimiría conteos parciales."
+  }
+]

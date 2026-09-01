@@ -1,0 +1,62 @@
+[
+  {
+    "orden": 1,
+    "title": "Estadísticas de notas",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar <strong>5</strong> notas y guardarlas en una lista. Mostrar:</p><pre><code>Notas: [4.0, 3.5, 2.8, 5.0, 3.2]\nPromedio: 3.7\nMayor: 5.0\nMenor: 2.8</code></pre><p><em>Nota:</em> use las funciones de lista, no ciclos para sumar.</p>",
+    "hint_html": "<p>La lista nace vacía antes del ciclo y crece con <code>.append()</code>. Después, <code>sum()</code>, <code>max()</code> y <code>min()</code> hacen el resto.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Estadisticas de notas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Guarda cinco notas en una lista y muestra promedio,\n    nota mayor y nota menor.\n'''\n\n# Inicio\nCUANTAS = 5\n\nnotas = []     # nace afuera, vacia\n\nfor n in range(1, CUANTAS + 1):\n    nota = float(input(f\"Nota {n}: \"))\n    notas.append(nota)     # se llena adentro\n\nprint(f\"Notas: {notas}\")\nprint(f\"Promedio: {sum(notas) / len(notas)}\")\nprint(f\"Mayor: {max(notas)}\")\nprint(f\"Menor: {min(notas)}\")\n# Fin</code></pre><p>Compare con el capítulo 7: allá había que llevar la sumatoria a mano y buscar el máximo comparando vuelta a vuelta. Con una lista, <code>sum()</code> y <code>max()</code> lo hacen en una línea. El ciclo ahora solo sirve para <strong>llenar</strong> la lista.</p>",
+    "starter_code": "'''\nPrograma: Estadisticas de notas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nCUANTAS = 5\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "4.0\n3.5\n2.8\n5.0\n3.2\n",
+        "expected_output": "Nota 1: Nota 2: Nota 3: Nota 4: Nota 5: Notas: [4.0, 3.5, 2.8, 5.0, 3.2]\nPromedio: 3.7\nMayor: 5.0\nMenor: 2.8"
+      }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Filtrar aprobadas",
+    "difficulty": "facil",
+    "statement_html": "<p>Dada la lista de notas <code>[4.0, 2.5, 3.8, 1.9, 5.0]</code>, construir dos listas nuevas: una con las aprobadas (nota mayor o igual a 3.0) y otra con las reprobadas. Mostrar:</p><pre><code>Aprobadas: [4.0, 3.8, 5.0]\nReprobadas: [2.5, 1.9]\n3 de 5 aprobaron</code></pre><p><em>Nota:</em> no modifique la lista original.</p>",
+    "hint_html": "<p>Dos listas vacías antes del ciclo. Dentro, un <code>if / else</code> decide a cuál se hace <code>.append()</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Filtro de notas aprobadas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Separa una lista de notas en aprobadas y reprobadas sin\n    modificar la lista original.\n'''\n\n# Inicio\nMINIMA = 3.0\n\nnotas = [4.0, 2.5, 3.8, 1.9, 5.0]\n\naprobadas = []\nreprobadas = []\n\nfor nota in notas:\n    if nota >= MINIMA:\n        aprobadas.append(nota)\n    else:\n        reprobadas.append(nota)\n\nprint(f\"Aprobadas: {aprobadas}\")\nprint(f\"Reprobadas: {reprobadas}\")\nprint(f\"{len(aprobadas)} de {len(notas)} aprobaron\")\n# Fin</code></pre><p>Construir listas nuevas en vez de borrar de la original es la forma correcta de filtrar. Si dentro del <code>for</code> se hiciera <code>notas.remove(nota)</code>, al quitar un elemento los de atrás se corren y el ciclo se saltaría uno.</p>",
+    "starter_code": "'''\nPrograma: Filtro de notas aprobadas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nMINIMA = 3.0\nnotas = [4.0, 2.5, 3.8, 1.9, 5.0]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Aprobadas: [4.0, 3.8, 5.0]\nReprobadas: [2.5, 1.9]\n3 de 5 aprobaron"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Inventario de la tienda",
+    "difficulty": "medio",
+    "statement_html": "<p>Se tienen dos listas en paralelo:</p><pre><code>productos = [\"pan\", \"leche\", \"queso\", \"cafe\"]\nprecios = [5000, 7000, 15000, 12000]</code></pre><p>Mostrar el inventario numerado, el total y cuáles cuestan más de 10000:</p><pre><code>1. pan            5,000\n2. leche          7,000\n3. queso         15,000\n4. cafe          12,000\nTotal: 39,000\nCaros: ['queso', 'cafe']</code></pre><p><em>Nota:</em> el nombre va alineado a la izquierda en 12 espacios y el precio a la derecha en 8, con separador de miles.</p>",
+    "hint_html": "<p>Dos listas en paralelo se recorren con <code>enumerate()</code> o con <code>range(len(...))</code>: la posición <code>i</code> sirve para las dos.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Inventario de la tienda\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra el inventario con precios alineados, el total y\n    la lista de productos que cuestan mas de 10000.\n'''\n\n# Inicio\nCARO = 10000\n\nproductos = [\"pan\", \"leche\", \"queso\", \"cafe\"]\nprecios = [5000, 7000, 15000, 12000]\n\ncaros = []\n\n# Dos listas en paralelo: la misma posicion i sirve para las dos\nfor i, producto in enumerate(productos):\n    precio = precios[i]\n    print(f\"{i + 1}. {producto:<12}{precio:>8,}\")\n\n    if precio > CARO:\n        caros.append(producto)\n\nprint(f\"Total: {sum(precios):,}\")\nprint(f\"Caros: {caros}\")\n# Fin</code></pre><p>Dos listas en paralelo funcionan mientras se mantengan sincronizadas: el producto de la posición 2 va con el precio de la posición 2. Es frágil —si alguien agrega un producto y olvida el precio, todo se desalinea— y por eso en el capítulo 12 aparecen los diccionarios, que guardan la pareja junta.</p>",
+    "starter_code": "'''\nPrograma: Inventario de la tienda\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nCARO = 10000\nproductos = [\"pan\", \"leche\", \"queso\", \"cafe\"]\nprecios = [5000, 7000, 15000, 12000]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "1. pan            5,000\n2. leche          7,000\n3. queso         15,000\n4. cafe          12,000\nTotal: 39,000\nCaros: ['queso', 'cafe']"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Podio de ventas",
+    "difficulty": "dificil",
+    "statement_html": "<p>Solicitar las ventas de <strong>7</strong> vendedores (una por línea). Mostrar el podio de los tres mejores, con su número de vendedor original:</p><pre><code>1. Vendedor 4 - 250,000\n2. Vendedor 1 - 180,000\n3. Vendedor 6 - 150,000\nTotal del equipo: 800,000\nSobre el promedio: 3 vendedores</code></pre><p><em>Nota:</em> el número de vendedor es su posición original (de 1 a 7), aunque la lista se ordene.</p>",
+    "hint_html": "<p>Si ordena la lista de ventas pierde quién era quién. Guarde parejas: una lista de listas <code>[venta, numero]</code>. Al ordenarla, Python compara primero el primer elemento de cada pareja.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Podio de ventas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide las ventas de siete vendedores y muestra el podio de\n    los tres mejores, el total del equipo y cuantos estan sobre\n    el promedio.\n'''\n\n# Inicio\nVENDEDORES = 7\nPODIO = 3\n\nventas = []      # solo los numeros, para las cuentas\nparejas = []     # [venta, numero de vendedor], para el podio\n\nfor n in range(1, VENDEDORES + 1):\n    venta = int(input(f\"Ventas del vendedor {n}: \"))\n    ventas.append(venta)\n    parejas.append([venta, n])\n\n# Al ordenar parejas, Python compara primero la venta.\n# reverse=True deja de mayor a menor.\nparejas.sort(reverse=True)\n\nfor puesto in range(PODIO):\n    venta, numero = parejas[puesto]\n    print(f\"{puesto + 1}. Vendedor {numero} - {venta:,}\")\n\ntotal = sum(ventas)\npromedio = total / VENDEDORES\n\nsobre_promedio = 0\nfor venta in ventas:\n    if venta > promedio:\n        sobre_promedio += 1\n\nprint(f\"Total del equipo: {total:,}\")\nprint(f\"Sobre el promedio: {sobre_promedio} vendedores\")\n# Fin</code></pre><p>La idea clave: <strong>si vas a ordenar, guarda el dato junto con su identidad</strong>. Ordenar solo las ventas destruye la información de quién vendió qué.</p><p><code>venta, numero = parejas[puesto]</code> es <em>desempaquetado</em>: una lista de dos elementos se reparte en dos variables de una sola línea. Se usa muchísimo y vuelve a aparecer en el capítulo 11.</p><p>Y ojo con el orden: el promedio necesita el total completo, así que la comparación va <strong>después</strong> del ciclo que llena la lista, no adentro.</p>",
+    "starter_code": "'''\nPrograma: Podio de ventas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nVENDEDORES = 7\nPODIO = 3\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "180000\n90000\n50000\n250000\n30000\n150000\n50000\n",
+        "expected_output": "Ventas del vendedor 1: Ventas del vendedor 2: Ventas del vendedor 3: Ventas del vendedor 4: Ventas del vendedor 5: Ventas del vendedor 6: Ventas del vendedor 7: 1. Vendedor 4 - 250,000\n2. Vendedor 1 - 180,000\n3. Vendedor 6 - 150,000\nTotal del equipo: 800,000\nSobre el promedio: 3 vendedores"
+      }
+    ]
+  }
+]

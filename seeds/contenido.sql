@@ -3300,9 +3300,188 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
   SELECT id, 'parsons', 'dificil', 'Arme la cuadrícula de tablas de multiplicar', NULL, '{"lines":[{"id":"l1","text":"for tabla in range(1, 6):","indent":0},{"id":"l2","text":"for mult in range(1, 6):","indent":1},{"id":"l3","text":"print(f\"{tabla}x{mult}={tabla * mult}\", end=\"  \")","indent":2},{"id":"l4","text":"print()","indent":1}]}', '{"order":["l1","l2","l3","l4"]}', 'El print() que baja de línea va al nivel del for interno: corre una vez por fila, cuando el ciclo de columnas ya terminó.', 1, 'seed'
     FROM chapters WHERE number = 9;
 
--- ── Capítulo 10: Listas (borrador)
+-- ── Capítulo 10: Listas (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 10, 'Listas', '📋', 'La estructura de datos que más vas a usar.', '', 0
+  SELECT p.id, 10, 'Listas', '📋', 'La estructura de datos que más vas a usar.', '<p class="jc-gancho">Hasta ahora, para guardar cinco notas necesitabas cinco variables. ¿Y si son cuarenta estudiantes? ¿Y si no sabes cuántos son hasta que el usuario termine de escribir? Para eso existen las listas: <strong>una sola variable que guarda muchas cosas</strong>.</p>
+
+<h2>Una lista es una fila de cajas numeradas</h2>
+
+<pre><code>notas = [4.0, 3.5, 2.8, 5.0, 3.2]
+
+print(notas)         # [4.0, 3.5, 2.8, 5.0, 3.2]
+print(len(notas))    # 5
+print(notas[0])      # 4.0   la primera
+print(notas[-1])     # 3.2   la última</code></pre>
+
+<p>Se indexa igual que un texto: desde cero, y con negativos desde atrás. También se rebana:</p>
+
+<pre><code>print(notas[1:3])    # [3.5, 2.8]
+print(notas[:2])     # [4.0, 3.5]
+print(notas[-2:])    # [5.0, 3.2]</code></pre>
+
+<p>Una lista puede tener de todo, aunque en la práctica casi siempre guarda cosas del mismo tipo:</p>
+
+<pre><code>productos = ["pan", "leche", "queso"]
+precios = [5000, 7000, 15000]
+vacia = []</code></pre>
+
+<h2>La diferencia grande: las listas SÍ cambian</h2>
+
+<p>Los textos son inmutables: <code>nombre.upper()</code> devuelve uno nuevo. Las listas no: se modifican <strong>en el sitio</strong>.</p>
+
+<pre><code>notas = [4.0, 3.5, 2.8]
+
+notas[2] = 3.0          # cambiar una posición
+notas.append(4.5)       # agregar al final
+notas.insert(0, 5.0)    # meter en una posición
+notas.remove(3.5)       # quitar por VALOR (el primero que encuentre)
+ultima = notas.pop()    # sacar la última y quedársela
+
+print(notas)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Método</th><th>Qué hace</th><th>Ojo con…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>.append(x)</code></td><td>Agrega al final</td><td>El más usado de todos</td></tr>
+    <tr><td><code>.insert(i, x)</code></td><td>Mete en la posición <code>i</code></td><td>Corre todo lo demás</td></tr>
+    <tr><td><code>.remove(x)</code></td><td>Quita por valor</td><td><code>ValueError</code> si no está</td></tr>
+    <tr><td><code>.pop()</code></td><td>Saca la última y la devuelve</td><td><code>.pop(0)</code> saca la primera</td></tr>
+    <tr><td><code>.sort()</code></td><td>Ordena la lista</td><td>Cambia el original, no devuelve nada</td></tr>
+    <tr><td><code>.reverse()</code></td><td>Le da vuelta</td><td>También en el sitio</td></tr>
+    <tr><td><code>.count(x)</code></td><td>Cuántas veces aparece</td><td></td></tr>
+    <tr><td><code>.index(x)</code></td><td>En qué posición está</td><td><code>ValueError</code> si no está</td></tr>
+  </tbody>
+</table>
+
+<p>Esa diferencia con los textos es la trampa número uno:</p>
+
+<pre><code>nombre = "ana"
+nombre.upper()          # ❌ no cambia nada, hay que guardar
+
+notas = [3.0, 1.0]
+notas.sort()            # ✅ la lista YA quedó ordenada
+notas = notas.sort()    # ❌ ahora notas vale None</code></pre>
+
+<h2>Las funciones que resuelven media tarea</h2>
+
+<pre><code>notas = [4.0, 3.5, 2.8, 5.0, 3.2]
+
+print(len(notas))        # 5      cuántas hay
+print(sum(notas))        # 18.5   la suma
+print(max(notas))        # 5.0    la mayor
+print(min(notas))        # 2.8    la menor
+print(sum(notas) / len(notas))   # 3.7  el promedio</code></pre>
+
+<p>Todo lo que en el capítulo 7 hacías con sumatorias y máximos a mano, aquí es una línea. Los ciclos siguen sirviendo cuando la condición es más complicada.</p>
+
+<h2>Recorrer una lista</h2>
+
+<pre><code>productos = ["pan", "leche", "queso"]
+precios = [5000, 7000, 15000]
+
+# Solo los valores
+for producto in productos:
+    print(producto)
+
+# Con la posición, cuando hay dos listas en paralelo
+for i in range(len(productos)):
+    print(f"{productos[i]}: {precios[i]}")
+
+# Con enumerate, más limpio
+for i, producto in enumerate(productos):
+    print(f"{i + 1}. {producto} — {precios[i]}")</code></pre>
+
+<p>Y el patrón de siempre —contador, sumatoria, bandera— sigue igual:</p>
+
+<pre><code>caros = 0
+total = 0
+
+for precio in precios:
+    total += precio
+    if precio &gt; 10000:
+        caros += 1
+
+print(f"Total: {total}, caros: {caros}")</code></pre>
+
+<h2>La película de una lista que crece</h2>
+
+<p>Este es el patrón que vas a usar toda la vida: una lista vacía que se va llenando.</p>
+
+<pre><code>aprobadas = []                        # nace afuera, vacía
+notas = [4.0, 2.5, 3.8, 1.9, 5.0]
+
+for nota in notas:
+    if nota &gt;= 3.0:
+        aprobadas.append(nota)        # se actualiza adentro
+
+print(aprobadas)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>nota</code></th><th>¿≥ 3.0?</th><th><code>aprobadas</code> al terminar</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>4.0</td><td>Sí</td><td><code>[4.0]</code></td></tr>
+    <tr><td>2</td><td>2.5</td><td>No</td><td><code>[4.0]</code></td></tr>
+    <tr><td>3</td><td>3.8</td><td>Sí</td><td><code>[4.0, 3.8]</code></td></tr>
+    <tr><td>4</td><td>1.9</td><td>No</td><td><code>[4.0, 3.8]</code></td></tr>
+    <tr><td>5</td><td>5.0</td><td>Sí</td><td><code>[4.0, 3.8, 5.0]</code></td></tr>
+  </tbody>
+</table>
+
+<p>Es la misma regla del capítulo 7: <strong>la lista nace afuera y se llena adentro</strong>. Si <code>aprobadas = []</code> estuviera dentro del <code>for</code>, cada vuelta la vaciaría.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Guardar el resultado de <code>.sort()</code></h3>
+<pre><code>notas = notas.sort()   # ❌ notas queda en None
+notas.sort()           # ✅</code></pre>
+<p>Los métodos que modifican la lista devuelven <code>None</code>. Si necesitas una copia ordenada sin tocar el original, usa <code>sorted(notas)</code>.</p>
+
+<h3>2. Pasarse de índice</h3>
+<pre><code>notas = [4.0, 3.5, 2.8]   # posiciones 0, 1, 2
+print(notas[3])           # IndexError: list index out of range</code></pre>
+
+<h3>3. Borrar mientras se recorre</h3>
+<pre><code>for nota in notas:
+    if nota &lt; 3.0:
+        notas.remove(nota)   # ❌ se salta elementos</code></pre>
+<p>Al quitar un elemento, los de atrás se corren y el ciclo salta uno. Lo correcto es construir una lista nueva con las que sí quieres:</p>
+<pre><code>buenas = []
+for nota in notas:
+    if nota &gt;= 3.0:
+        buenas.append(nota)</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Lista vacía antes del ciclo, <code>.append()</code> adentro.</li>
+  <li>Para totales rápidos: <code>len()</code>, <code>sum()</code>, <code>max()</code>, <code>min()</code>.</li>
+  <li>Si vas a filtrar, construye una lista nueva. Nunca borres mientras recorres.</li>
+  <li><code>.sort()</code> ordena en el sitio; <code>sorted()</code> devuelve una copia.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>lista = []</code></td><td>Lista vacía</td></tr>
+    <tr><td><code>lista.append(x)</code></td><td>Agrega al final</td></tr>
+    <tr><td><code>lista[0]</code> · <code>lista[-1]</code></td><td>Primera · última</td></tr>
+    <tr><td><code>len(lista)</code> · <code>sum(lista)</code></td><td>Cuántas · la suma</td></tr>
+    <tr><td><code>max(lista)</code> · <code>min(lista)</code></td><td>Mayor · menor</td></tr>
+    <tr><td><code>lista.sort()</code></td><td>Ordena en el sitio</td></tr>
+    <tr><td><code>sorted(lista)</code></td><td>Devuelve una copia ordenada</td></tr>
+    <tr><td><code>x in lista</code></td><td><code>True</code> si está</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Las listas se modifican en el sitio; los textos no. Por eso <code>lista.sort()</code> se usa solo, y <code>texto.upper()</code> hay que guardarlo.</blockquote>', 1
     FROM parts p WHERE p.number = 3
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -3314,11 +3493,426 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 10
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 10);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 10);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Estadísticas de notas', 'facil', '<p>Solicitar <strong>5</strong> notas y guardarlas en una lista. Mostrar:</p><pre><code>Notas: [4.0, 3.5, 2.8, 5.0, 3.2]
+Promedio: 3.7
+Mayor: 5.0
+Menor: 2.8</code></pre><p><em>Nota:</em> use las funciones de lista, no ciclos para sumar.</p>', '<p>La lista nace vacía antes del ciclo y crece con <code>.append()</code>. Después, <code>sum()</code>, <code>max()</code> y <code>min()</code> hacen el resto.</p>', '<pre><code>''''''
+Programa: Estadisticas de notas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Guarda cinco notas en una lista y muestra promedio,
+    nota mayor y nota menor.
+''''''
 
--- ── Capítulo 11: Tuplas y sets (borrador)
+# Inicio
+CUANTAS = 5
+
+notas = []     # nace afuera, vacia
+
+for n in range(1, CUANTAS + 1):
+    nota = float(input(f"Nota {n}: "))
+    notas.append(nota)     # se llena adentro
+
+print(f"Notas: {notas}")
+print(f"Promedio: {sum(notas) / len(notas)}")
+print(f"Mayor: {max(notas)}")
+print(f"Menor: {min(notas)}")
+# Fin</code></pre><p>Compare con el capítulo 7: allá había que llevar la sumatoria a mano y buscar el máximo comparando vuelta a vuelta. Con una lista, <code>sum()</code> y <code>max()</code> lo hacen en una línea. El ciclo ahora solo sirve para <strong>llenar</strong> la lista.</p>', '[{"stdin":"4.0\n3.5\n2.8\n5.0\n3.2\n","expected_output":"Nota 1: Nota 2: Nota 3: Nota 4: Nota 5: Notas: [4.0, 3.5, 2.8, 5.0, 3.2]\nPromedio: 3.7\nMayor: 5.0\nMenor: 2.8"}]', '''''''
+Programa: Estadisticas de notas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+CUANTAS = 5
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Filtrar aprobadas', 'facil', '<p>Dada la lista de notas <code>[4.0, 2.5, 3.8, 1.9, 5.0]</code>, construir dos listas nuevas: una con las aprobadas (nota mayor o igual a 3.0) y otra con las reprobadas. Mostrar:</p><pre><code>Aprobadas: [4.0, 3.8, 5.0]
+Reprobadas: [2.5, 1.9]
+3 de 5 aprobaron</code></pre><p><em>Nota:</em> no modifique la lista original.</p>', '<p>Dos listas vacías antes del ciclo. Dentro, un <code>if / else</code> decide a cuál se hace <code>.append()</code>.</p>', '<pre><code>''''''
+Programa: Filtro de notas aprobadas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Separa una lista de notas en aprobadas y reprobadas sin
+    modificar la lista original.
+''''''
+
+# Inicio
+MINIMA = 3.0
+
+notas = [4.0, 2.5, 3.8, 1.9, 5.0]
+
+aprobadas = []
+reprobadas = []
+
+for nota in notas:
+    if nota >= MINIMA:
+        aprobadas.append(nota)
+    else:
+        reprobadas.append(nota)
+
+print(f"Aprobadas: {aprobadas}")
+print(f"Reprobadas: {reprobadas}")
+print(f"{len(aprobadas)} de {len(notas)} aprobaron")
+# Fin</code></pre><p>Construir listas nuevas en vez de borrar de la original es la forma correcta de filtrar. Si dentro del <code>for</code> se hiciera <code>notas.remove(nota)</code>, al quitar un elemento los de atrás se corren y el ciclo se saltaría uno.</p>', '[{"stdin":"","expected_output":"Aprobadas: [4.0, 3.8, 5.0]\nReprobadas: [2.5, 1.9]\n3 de 5 aprobaron"}]', '''''''
+Programa: Filtro de notas aprobadas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+MINIMA = 3.0
+notas = [4.0, 2.5, 3.8, 1.9, 5.0]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Inventario de la tienda', 'medio', '<p>Se tienen dos listas en paralelo:</p><pre><code>productos = ["pan", "leche", "queso", "cafe"]
+precios = [5000, 7000, 15000, 12000]</code></pre><p>Mostrar el inventario numerado, el total y cuáles cuestan más de 10000:</p><pre><code>1. pan            5,000
+2. leche          7,000
+3. queso         15,000
+4. cafe          12,000
+Total: 39,000
+Caros: [''queso'', ''cafe'']</code></pre><p><em>Nota:</em> el nombre va alineado a la izquierda en 12 espacios y el precio a la derecha en 8, con separador de miles.</p>', '<p>Dos listas en paralelo se recorren con <code>enumerate()</code> o con <code>range(len(...))</code>: la posición <code>i</code> sirve para las dos.</p>', '<pre><code>''''''
+Programa: Inventario de la tienda
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Muestra el inventario con precios alineados, el total y
+    la lista de productos que cuestan mas de 10000.
+''''''
+
+# Inicio
+CARO = 10000
+
+productos = ["pan", "leche", "queso", "cafe"]
+precios = [5000, 7000, 15000, 12000]
+
+caros = []
+
+# Dos listas en paralelo: la misma posicion i sirve para las dos
+for i, producto in enumerate(productos):
+    precio = precios[i]
+    print(f"{i + 1}. {producto:<12}{precio:>8,}")
+
+    if precio > CARO:
+        caros.append(producto)
+
+print(f"Total: {sum(precios):,}")
+print(f"Caros: {caros}")
+# Fin</code></pre><p>Dos listas en paralelo funcionan mientras se mantengan sincronizadas: el producto de la posición 2 va con el precio de la posición 2. Es frágil —si alguien agrega un producto y olvida el precio, todo se desalinea— y por eso en el capítulo 12 aparecen los diccionarios, que guardan la pareja junta.</p>', '[{"stdin":"","expected_output":"1. pan            5,000\n2. leche          7,000\n3. queso         15,000\n4. cafe          12,000\nTotal: 39,000\nCaros: [''queso'', ''cafe'']"}]', '''''''
+Programa: Inventario de la tienda
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+CARO = 10000
+productos = ["pan", "leche", "queso", "cafe"]
+precios = [5000, 7000, 15000, 12000]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Podio de ventas', 'dificil', '<p>Solicitar las ventas de <strong>7</strong> vendedores (una por línea). Mostrar el podio de los tres mejores, con su número de vendedor original:</p><pre><code>1. Vendedor 4 - 250,000
+2. Vendedor 1 - 180,000
+3. Vendedor 6 - 150,000
+Total del equipo: 800,000
+Sobre el promedio: 3 vendedores</code></pre><p><em>Nota:</em> el número de vendedor es su posición original (de 1 a 7), aunque la lista se ordene.</p>', '<p>Si ordena la lista de ventas pierde quién era quién. Guarde parejas: una lista de listas <code>[venta, numero]</code>. Al ordenarla, Python compara primero el primer elemento de cada pareja.</p>', '<pre><code>''''''
+Programa: Podio de ventas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Pide las ventas de siete vendedores y muestra el podio de
+    los tres mejores, el total del equipo y cuantos estan sobre
+    el promedio.
+''''''
+
+# Inicio
+VENDEDORES = 7
+PODIO = 3
+
+ventas = []      # solo los numeros, para las cuentas
+parejas = []     # [venta, numero de vendedor], para el podio
+
+for n in range(1, VENDEDORES + 1):
+    venta = int(input(f"Ventas del vendedor {n}: "))
+    ventas.append(venta)
+    parejas.append([venta, n])
+
+# Al ordenar parejas, Python compara primero la venta.
+# reverse=True deja de mayor a menor.
+parejas.sort(reverse=True)
+
+for puesto in range(PODIO):
+    venta, numero = parejas[puesto]
+    print(f"{puesto + 1}. Vendedor {numero} - {venta:,}")
+
+total = sum(ventas)
+promedio = total / VENDEDORES
+
+sobre_promedio = 0
+for venta in ventas:
+    if venta > promedio:
+        sobre_promedio += 1
+
+print(f"Total del equipo: {total:,}")
+print(f"Sobre el promedio: {sobre_promedio} vendedores")
+# Fin</code></pre><p>La idea clave: <strong>si vas a ordenar, guarda el dato junto con su identidad</strong>. Ordenar solo las ventas destruye la información de quién vendió qué.</p><p><code>venta, numero = parejas[puesto]</code> es <em>desempaquetado</em>: una lista de dos elementos se reparte en dos variables de una sola línea. Se usa muchísimo y vuelve a aparecer en el capítulo 11.</p><p>Y ojo con el orden: el promedio necesita el total completo, así que la comparación va <strong>después</strong> del ciclo que llena la lista, no adentro.</p>', '[{"stdin":"180000\n90000\n50000\n250000\n30000\n150000\n50000\n","expected_output":"Ventas del vendedor 1: Ventas del vendedor 2: Ventas del vendedor 3: Ventas del vendedor 4: Ventas del vendedor 5: Ventas del vendedor 6: Ventas del vendedor 7: 1. Vendedor 4 - 250,000\n2. Vendedor 1 - 180,000\n3. Vendedor 6 - 150,000\nTotal del equipo: 800,000\nSobre el promedio: 3 vendedores"}]', '''''''
+Programa: Podio de ventas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+VENDEDORES = 7
+PODIO = 3
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 10;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 10);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cómo se crea una lista vacía?', NULL, '{"options":[{"id":"a","text":"lista = []"},{"id":"b","text":"lista = ()"},{"id":"c","text":"lista = {}"},{"id":"d","text":"lista = \"\""}]}', '{"option_id":"a"}', 'Los corchetes son de listas. Los paréntesis hacen una tupla y las llaves un diccionario.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué método agrega un elemento al final de una lista?', NULL, '{"options":[{"id":"a","text":".append(x)"},{"id":"b","text":".add(x)"},{"id":"c","text":".insert(x)"},{"id":"d","text":".push(x)"}]}', '{"option_id":"a"}', 'append es el método más usado de todos. insert existe pero necesita también la posición.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Cuál es la diferencia entre lista.sort() y sorted(lista)?', NULL, '{"options":[{"id":"a","text":"sort() ordena la lista original; sorted() devuelve una copia ordenada"},{"id":"b","text":"Son idénticos"},{"id":"c","text":"sort() solo funciona con números"},{"id":"d","text":"sorted() ordena al revés"}]}', '{"option_id":"a"}', 'sort() modifica en el sitio y devuelve None. Si necesitas conservar el original, usa sorted().', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Por qué no se debe borrar elementos mientras se recorre una lista?', NULL, '{"options":[{"id":"a","text":"Porque al quitar uno, los de atrás se corren y el ciclo se salta elementos"},{"id":"b","text":"Porque Python lanza un error de sintaxis"},{"id":"c","text":"Porque las listas no se pueden modificar"},{"id":"d","text":"Porque el ciclo se vuelve infinito"}]}', '{"option_id":"a"}', 'Lo correcto es construir una lista nueva con los elementos que sí se quieren conservar.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', 'Se quieren guardar ventas y saber después quién vendió cada una, pero hay que ordenarlas. ¿Qué conviene?', NULL, '{"options":[{"id":"a","text":"Guardar parejas [venta, vendedor] y ordenar esa lista"},{"id":"b","text":"Ordenar solo las ventas y recordar el orden de memoria"},{"id":"c","text":"Usar dos listas y ordenar las dos por separado"},{"id":"d","text":"No se puede: hay que dejarlas sin ordenar"}]}', '{"option_id":"a"}', 'Ordenar dos listas por separado las desincroniza. Si el dato va a moverse, su identidad tiene que viajar con él.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'notas = [4.0, 3.5, 2.8]
+print(notas[0], notas[-1])', '{"options":[{"id":"a","text":"4.0 2.8"},{"id":"b","text":"4.0 3.5"},{"id":"c","text":"3.5 2.8"},{"id":"d","text":"IndexError"}]}', '{"option_id":"a"}', 'Igual que en los textos: [0] es el primero y [-1] el último.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'notas = [4.0, 3.0, 5.0]
+print(sum(notas) / len(notas))', '{"options":[{"id":"a","text":"4.0"},{"id":"b","text":"12.0"},{"id":"c","text":"3.0"},{"id":"d","text":"5.0"}]}', '{"option_id":"a"}', '12.0 dividido entre 3 da 4.0: es el promedio en una sola línea.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'notas = [3.0, 1.0, 2.0]
+notas = notas.sort()
+print(notas)', '{"options":[{"id":"a","text":"None"},{"id":"b","text":"[1.0, 2.0, 3.0]"},{"id":"c","text":"[3.0, 1.0, 2.0]"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'sort() ordena en el sitio y devuelve None. Al reasignar, se pierde la lista.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'productos = ["pan", "leche"]
+productos.append("queso")
+productos.insert(0, "cafe")
+print(productos)', '{"options":[{"id":"a","text":"[''cafe'', ''pan'', ''leche'', ''queso'']"},{"id":"b","text":"[''pan'', ''leche'', ''queso'', ''cafe'']"},{"id":"c","text":"[''cafe'', ''queso'', ''pan'', ''leche'']"},{"id":"d","text":"[''pan'', ''leche'', ''cafe'', ''queso'']"}]}', '{"option_id":"a"}', 'append pone al final; insert(0, x) mete al principio y corre todo lo demás.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'notas = [4.0, 2.5, 3.8]
+buenas = []
+for nota in notas:
+    if nota >= 3.0:
+        buenas.append(nota)
+print(buenas)', '{"options":[{"id":"a","text":"[4.0, 3.8]"},{"id":"b","text":"[4.0, 2.5, 3.8]"},{"id":"c","text":"[2.5]"},{"id":"d","text":"[]"}]}', '{"option_id":"a"}', 'Es el patrón de filtrado: lista vacía afuera y append adentro solo cuando se cumple la condición.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'parejas = [[100, 1], [300, 2], [200, 3]]
+parejas.sort(reverse=True)
+print(parejas[0])', '{"options":[{"id":"a","text":"[300, 2]"},{"id":"b","text":"[100, 1]"},{"id":"c","text":"[200, 3]"},{"id":"d","text":"[3, 300]"}]}', '{"option_id":"a"}', 'Al ordenar listas de listas, Python compara primero el primer elemento. Con reverse=True queda de mayor a menor.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'notas = [1.0, 2.0, 3.0, 4.0]
+for nota in notas:
+    if nota < 3.0:
+        notas.remove(nota)
+print(notas)', '{"options":[{"id":"a","text":"[2.0, 3.0, 4.0]"},{"id":"b","text":"[3.0, 4.0]"},{"id":"c","text":"[1.0, 2.0, 3.0, 4.0]"},{"id":"d","text":"[]"}]}', '{"option_id":"a"}', 'Al borrar el 1.0 todo se corre y el ciclo salta el 2.0. Por eso nunca se borra mientras se recorre.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'El programa debe llenar la lista con cinco notas. ¿En qué línea está el error?', NULL, '{"lines":["for n in range(5):","    notas = []","    notas.append(float(input()))","print(notas)"]}', '{"line_number":2}', 'La lista nace dentro del ciclo y cada vuelta la vacía. Esa línea va antes del for.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El programa debe mostrar la lista ordenada. ¿En qué línea está el error?', NULL, '{"lines":["notas = [3.0, 1.0, 2.0]","notas = notas.sort()","print(notas)"]}', '{"line_number":2}', 'sort() devuelve None. Basta con escribir notas.sort() sin asignar.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'medio', 'Arme el programa que guarda cinco notas y muestra el promedio', NULL, '{"lines":[{"id":"l1","text":"notas = []","indent":0},{"id":"l2","text":"for n in range(1, 6):","indent":0},{"id":"l3","text":"nota = float(input(f\"Nota {n}: \"))","indent":1},{"id":"l4","text":"notas.append(nota)","indent":1},{"id":"l5","text":"print(f\"Promedio: {sum(notas) / len(notas)}\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'La lista nace vacía antes del ciclo, se llena adentro, y el promedio se calcula al final con la lista completa.', 1, 'seed'
+    FROM chapters WHERE number = 10;
+
+-- ── Capítulo 11: Tuplas y sets (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 11, 'Tuplas y sets', '🎯', 'Datos inmutables y colecciones sin repetidos.', '', 0
+  SELECT p.id, 11, 'Tuplas y sets', '🎯', 'Datos inmutables y colecciones sin repetidos.', '<p class="jc-gancho">Las coordenadas de una sucursal no deberían poder cambiarse por accidente. Y la lista de cédulas que entraron hoy no debería tener repetidos. Las listas no resuelven ninguna de las dos: para eso están las tuplas y los sets.</p>
+
+<h2>Tuplas: listas que no se pueden tocar</h2>
+
+<p>Una tupla se escribe con paréntesis y funciona igual que una lista… salvo que <strong>no se puede modificar</strong>.</p>
+
+<pre><code>punto = (4.6, -74.1)          # latitud y longitud de Bogotá
+colores = ("rojo", "azul")
+
+print(punto[0])               # 4.6
+print(len(colores))           # 2
+
+punto[0] = 10                 # TypeError: ''tuple'' object does not support item assignment</code></pre>
+
+<p>Eso que parece una limitación es la gracia: si un dato no debe cambiar, una tupla lo garantiza. Nadie va a borrarlo por error tres funciones más adelante.</p>
+
+<table>
+  <thead>
+    <tr><th></th><th>Lista</th><th>Tupla</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Se escribe</td><td><code>[1, 2, 3]</code></td><td><code>(1, 2, 3)</code></td></tr>
+    <tr><td>¿Se puede cambiar?</td><td>Sí</td><td>No</td></tr>
+    <tr><td>Se usa para</td><td>Cosas que crecen y se filtran</td><td>Datos fijos que van juntos</td></tr>
+    <tr><td>Ejemplo</td><td>Las notas del curso</td><td>Una coordenada, una fecha</td></tr>
+  </tbody>
+</table>
+
+<h3>Desempaquetado: la razón por la que se usan tanto</h3>
+
+<pre><code>persona = ("Ana", 17, "Bogotá")
+
+nombre, edad, ciudad = persona     # tres variables de un tirón
+print(nombre)   # Ana
+print(ciudad)   # Bogotá</code></pre>
+
+<p>Funciona también con listas y es lo que permite el truco más elegante de Python:</p>
+
+<pre><code>a = 1
+b = 2
+a, b = b, a      # intercambiar sin variable temporal
+print(a, b)      # 2 1</code></pre>
+
+<p>Y es lo que hace que <code>enumerate()</code> se vea tan bien: entrega tuplas de dos, y el <code>for</code> las desempaqueta.</p>
+
+<pre><code>for i, letra in enumerate("Cali"):
+    print(i, letra)</code></pre>
+
+<p>Una tupla de un solo elemento necesita una coma final, o Python cree que es solo un paréntesis:</p>
+
+<pre><code>uno = (5,)     # tupla de un elemento
+no_es = (5)    # esto es el número 5, no una tupla</code></pre>
+
+<h2>Sets: colecciones sin repetidos</h2>
+
+<p>Un set se escribe con llaves y tiene dos superpoderes: <strong>no admite duplicados</strong> y <strong>busca instantáneamente</strong>.</p>
+
+<pre><code>cedulas = {"1023", "1045", "1023", "1088"}
+print(cedulas)         # {''1023'', ''1045'', ''1088''} — el repetido desapareció
+print(len(cedulas))    # 3</code></pre>
+
+<p>El uso más común es quitarle los repetidos a una lista:</p>
+
+<pre><code>visitas = ["1023", "1045", "1023", "1088", "1045"]
+unicas = set(visitas)
+
+print(f"{len(visitas)} visitas de {len(unicas)} personas distintas")</code></pre>
+
+<p>Métodos principales:</p>
+
+<pre><code>s = {"pan", "leche"}
+
+s.add("queso")        # agrega (si ya está, no hace nada)
+s.discard("pan")      # quita sin quejarse si no está
+print("leche" in s)   # True — y esta búsqueda es MUY rápida</code></pre>
+
+<p>Dos advertencias importantes:</p>
+
+<ul>
+  <li><strong>Un set no tiene orden.</strong> No existe <code>s[0]</code>. Si necesitas orden, conviértelo: <code>sorted(s)</code>.</li>
+  <li><strong>El set vacío es <code>set()</code>, no <code>{}</code></strong>. Las llaves vacías son un diccionario (capítulo 12).</li>
+</ul>
+
+<h3>Operaciones de conjuntos</h3>
+
+<p>Esto es lo que en el colegio dibujaban con círculos:</p>
+
+<pre><code>lunes = {"ana", "juan", "sofia"}
+martes = {"juan", "sofia", "pedro"}
+
+print(lunes | martes)   # unión: todos            {ana, juan, sofia, pedro}
+print(lunes &amp; martes)   # intersección: los dos días  {juan, sofia}
+print(lunes - martes)   # solo el lunes           {ana}</code></pre>
+
+<p>Resolver "quiénes vinieron los dos días" con listas serían dos ciclos anidados. Con sets es un símbolo.</p>
+
+<h2>La película de una deduplicación</h2>
+
+<pre><code>visitas = ["1023", "1045", "1023", "1088"]
+vistas = set()          # nace afuera, vacío
+repetidas = 0
+
+for cedula in visitas:
+    if cedula in vistas:
+        repetidas += 1
+    else:
+        vistas.add(cedula)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>cedula</code></th><th>¿ya estaba?</th><th><code>vistas</code></th><th><code>repetidas</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1023</td><td>No</td><td>{1023}</td><td>0</td></tr>
+    <tr><td>2</td><td>1045</td><td>No</td><td>{1023, 1045}</td><td>0</td></tr>
+    <tr><td>3</td><td>1023</td><td><strong>Sí</strong></td><td>{1023, 1045}</td><td>1</td></tr>
+    <tr><td>4</td><td>1088</td><td>No</td><td>{1023, 1045, 1088}</td><td>1</td></tr>
+  </tbody>
+</table>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Intentar modificar una tupla</h3>
+<pre><code>punto = (4.6, -74.1)
+punto[0] = 5      # TypeError</code></pre>
+<p>Si el dato tiene que cambiar, era una lista desde el principio.</p>
+
+<h3>2. Creer que <code>{}</code> es un set vacío</h3>
+<pre><code>s = {}            # ❌ esto es un diccionario
+s = set()         # ✅</code></pre>
+
+<h3>3. Pedirle una posición a un set</h3>
+<pre><code>s = {"a", "b"}
+print(s[0])       # TypeError: ''set'' object is not subscriptable</code></pre>
+<p>Los sets no tienen orden. Si lo necesitas: <code>sorted(s)[0]</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿El dato va a cambiar? Lista. ¿Es fijo y va junto? Tupla.</li>
+  <li>¿Te importan los repetidos o buscas mucho? Set.</li>
+  <li>Para quitar duplicados: <code>set(mi_lista)</code>, y <code>sorted()</code> si quieres orden.</li>
+  <li>Comparar dos grupos: <code>|</code>, <code>&amp;</code>, <code>-</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>t = (1, 2)</code></td><td>Tupla: no se puede cambiar</td></tr>
+    <tr><td><code>a, b = t</code></td><td>Desempaqueta en dos variables</td></tr>
+    <tr><td><code>a, b = b, a</code></td><td>Intercambia sin variable extra</td></tr>
+    <tr><td><code>s = set()</code></td><td>Set vacío (¡no <code>{}</code>!)</td></tr>
+    <tr><td><code>set(lista)</code></td><td>Quita los repetidos</td></tr>
+    <tr><td><code>s.add(x)</code> · <code>s.discard(x)</code></td><td>Agregar · quitar</td></tr>
+    <tr><td><code>a | b</code> · <code>a &amp; b</code> · <code>a - b</code></td><td>Unión · comunes · solo en a</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Lista si va a cambiar, tupla si es fija, set si no quieres repetidos. Escoger bien la estructura resuelve la mitad del problema antes de escribir el primer ciclo.</blockquote>', 1
     FROM parts p WHERE p.number = 3
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -3330,11 +3924,385 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 11
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 11);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 11);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Ficha con desempaquetado', 'facil', '<p>Dada la tupla <code>persona = ("Ana", 17, "Bogota")</code>, desempaquetarla en tres variables y mostrar:</p><pre><code>Ana, de 17 anios, vive en Bogota</code></pre><p><em>Nota:</em> no use índices; use desempaquetado.</p>', '<p><code>nombre, edad, ciudad = persona</code> reparte los tres valores en una sola línea. El número de variables debe coincidir con el de elementos.</p>', '<pre><code>''''''
+Programa: Ficha con desempaquetado
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Desempaqueta una tupla con los datos de una persona y los
+    muestra en una frase.
+''''''
 
--- ── Capítulo 12: Diccionarios (borrador)
+# Inicio
+persona = ("Ana", 17, "Bogota")
+
+# Desempaquetado: tres variables de un tiron
+nombre, edad, ciudad = persona
+
+print(f"{nombre}, de {edad} anios, vive en {ciudad}")
+# Fin</code></pre><p>Con índices habría que escribir <code>persona[0]</code>, <code>persona[1]</code> y <code>persona[2]</code>, que no dice nada sobre qué es cada uno. El desempaquetado les pone nombre.</p>', '[{"stdin":"","expected_output":"Ana, de 17 anios, vive en Bogota"}]', '''''''
+Programa: Ficha con desempaquetado
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+persona = ("Ana", 17, "Bogota")
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Visitantes únicos', 'facil', '<p>Dada la lista de cédulas que registró la portería hoy:</p><pre><code>visitas = ["1023", "1045", "1023", "1088", "1045", "1023"]</code></pre><p>Mostrar cuántos registros hubo, cuántas personas distintas entraron y la lista de cédulas ordenada:</p><pre><code>Registros: 6
+Personas distintas: 3
+Cedulas: [''1023'', ''1045'', ''1088'']</code></pre>', '<p><code>set(visitas)</code> elimina los repetidos. Como un set no tiene orden, use <code>sorted()</code> para mostrarlo.</p>', '<pre><code>''''''
+Programa: Visitantes unicos
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Cuenta cuantas personas distintas entraron a partir del
+    registro de la porteria.
+''''''
+
+# Inicio
+visitas = ["1023", "1045", "1023", "1088", "1045", "1023"]
+
+# Un set no admite repetidos: los duplicados desaparecen solos
+unicas = set(visitas)
+
+print(f"Registros: {len(visitas)}")
+print(f"Personas distintas: {len(unicas)}")
+print(f"Cedulas: {sorted(unicas)}")
+# Fin</code></pre><p>Sin sets tocaría un ciclo con una lista auxiliar y un <code>if cedula not in vistas</code>. Con un set es una línea, y además la búsqueda interna es mucho más rápida.</p><p><code>sorted()</code> se usa porque un set <strong>no tiene orden</strong>: imprimirlo directo daría un orden impredecible.</p>', '[{"stdin":"","expected_output":"Registros: 6\nPersonas distintas: 3\nCedulas: [''1023'', ''1045'', ''1088'']"}]', '''''''
+Programa: Visitantes unicos
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+visitas = ["1023", "1045", "1023", "1088", "1045", "1023"]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Asistencia de dos días', 'medio', '<p>Dos listas con los asistentes a un taller:</p><pre><code>lunes = ["ana", "juan", "sofia", "ana"]
+martes = ["juan", "sofia", "pedro"]</code></pre><p>Mostrar, siempre ordenado alfabéticamente:</p><pre><code>Los dos dias: [''juan'', ''sofia'']
+Solo el lunes: [''ana'']
+Solo el martes: [''pedro'']
+En total asistieron: 4 personas</code></pre>', '<p>Convierta las dos listas a sets y use los operadores de conjuntos: <code>&amp;</code> para los comunes, <code>-</code> para la diferencia y <code>|</code> para la unión.</p>', '<pre><code>''''''
+Programa: Asistencia de dos dias
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Compara la asistencia de dos dias de taller usando
+    operaciones de conjuntos.
+''''''
+
+# Inicio
+lunes = ["ana", "juan", "sofia", "ana"]
+martes = ["juan", "sofia", "pedro"]
+
+# Los sets quitan los repetidos y permiten comparar grupos
+grupo_lunes = set(lunes)
+grupo_martes = set(martes)
+
+print(f"Los dos dias: {sorted(grupo_lunes & grupo_martes)}")
+print(f"Solo el lunes: {sorted(grupo_lunes - grupo_martes)}")
+print(f"Solo el martes: {sorted(grupo_martes - grupo_lunes)}")
+print(f"En total asistieron: {len(grupo_lunes | grupo_martes)} personas")
+# Fin</code></pre><p>Los tres operadores en una frase:</p><table><thead><tr><th>Operador</th><th>Pregunta</th></tr></thead><tbody><tr><td><code>&amp;</code></td><td>¿Quiénes están en los dos?</td></tr><tr><td><code>-</code></td><td>¿Quiénes están en el primero pero no en el segundo?</td></tr><tr><td><code>|</code></td><td>¿Quiénes están en alguno de los dos?</td></tr></tbody></table><p>Resolver esto con listas serían tres ciclos anidados y una lista auxiliar por cada pregunta.</p>', '[{"stdin":"","expected_output":"Los dos dias: [''juan'', ''sofia'']\nSolo el lunes: [''ana'']\nSolo el martes: [''pedro'']\nEn total asistieron: 4 personas"}]', '''''''
+Programa: Asistencia de dos dias
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+lunes = ["ana", "juan", "sofia", "ana"]
+martes = ["juan", "sofia", "pedro"]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Auditoría de transacciones', 'dificil', '<p>Un sistema bancario registra transacciones como tuplas <code>(codigo, cliente, monto)</code>. Por un error del servidor, algunas quedaron duplicadas.</p><pre><code>movimientos = [
+    ("T1", "ana", 50000),
+    ("T2", "juan", 120000),
+    ("T1", "ana", 50000),
+    ("T3", "sofia", 80000),
+    ("T2", "juan", 120000),
+]</code></pre><p>Mostrar el informe de auditoría:</p><pre><code>Registros recibidos: 5
+Transacciones validas: 3
+Duplicados descartados: 2
+Total real: 250000
+Clientes: [''ana'', ''juan'', ''sofia'']</code></pre><p><em>Nota:</em> una transacción está duplicada si su código ya apareció antes. Conserve la primera.</p>', '<p>Lleve un set de códigos ya vistos. En cada vuelta, si el código está en el set es duplicado; si no, se procesa y se agrega al set. Es el mismo patrón de bandera, pero con memoria.</p>', '<pre><code>''''''
+Programa: Auditoria de transacciones
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Descarta transacciones duplicadas por codigo y calcula el
+    total real del dia junto con la lista de clientes.
+''''''
+
+# Inicio
+movimientos = [
+    ("T1", "ana", 50000),
+    ("T2", "juan", 120000),
+    ("T1", "ana", 50000),
+    ("T3", "sofia", 80000),
+    ("T2", "juan", 120000),
+]
+
+codigos_vistos = set()   # memoria de lo ya procesado
+clientes = set()         # sin repetidos por definicion
+total = 0                # sumatoria
+duplicados = 0           # contador
+
+for codigo, cliente, monto in movimientos:
+    if codigo in codigos_vistos:
+        # Ya se proceso: se descarta y no se suma
+        duplicados += 1
+        continue
+
+    codigos_vistos.add(codigo)
+    clientes.add(cliente)
+    total += monto
+
+print(f"Registros recibidos: {len(movimientos)}")
+print(f"Transacciones validas: {len(codigos_vistos)}")
+print(f"Duplicados descartados: {duplicados}")
+print(f"Total real: {total}")
+print(f"Clientes: {sorted(clientes)}")
+# Fin</code></pre><p>Tres cosas que se juntan aquí:</p><ul><li><strong>Desempaquetado en el <code>for</code>.</strong> <code>for codigo, cliente, monto in movimientos</code> reparte cada tupla en tres variables con nombre. Mucho más legible que <code>m[0]</code>, <code>m[1]</code>, <code>m[2]</code>.</li><li><strong>El set como memoria.</strong> <code>codigos_vistos</code> recuerda lo ya procesado. Preguntar <code>in</code> sobre un set es rapidísimo, incluso con millones de registros; sobre una lista sería lento.</li><li><strong><code>continue</code> para el caso raro.</strong> El duplicado se descarta de una y el camino feliz queda sin indentar de más.</li></ul>', '[{"stdin":"","expected_output":"Registros recibidos: 5\nTransacciones validas: 3\nDuplicados descartados: 2\nTotal real: 250000\nClientes: [''ana'', ''juan'', ''sofia'']"}]', '''''''
+Programa: Auditoria de transacciones
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+movimientos = [
+    ("T1", "ana", 50000),
+    ("T2", "juan", 120000),
+    ("T1", "ana", 50000),
+    ("T3", "sofia", 80000),
+    ("T2", "juan", 120000),
+]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 11;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 11);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cuál es la diferencia principal entre una lista y una tupla?', NULL, '{"options":[{"id":"a","text":"La tupla no se puede modificar después de creada"},{"id":"b","text":"La tupla solo guarda números"},{"id":"c","text":"La lista no admite repetidos"},{"id":"d","text":"La tupla no tiene índices"}]}', '{"option_id":"a"}', 'Si el dato es fijo (una coordenada, una fecha), la tupla garantiza que nadie lo cambie por accidente.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cómo se crea un set vacío?', NULL, '{"options":[{"id":"a","text":"s = set()"},{"id":"b","text":"s = {}"},{"id":"c","text":"s = []"},{"id":"d","text":"s = ()"}]}', '{"option_id":"a"}', 'Las llaves vacías crean un diccionario, no un set. Es una de las trampas clásicas de Python.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Para qué sirve set(mi_lista)?', NULL, '{"options":[{"id":"a","text":"Para quitar los elementos repetidos"},{"id":"b","text":"Para ordenar la lista"},{"id":"c","text":"Para convertirla en texto"},{"id":"d","text":"Para contar cuántos elementos tiene"}]}', '{"option_id":"a"}', 'Un set no admite duplicados, así que convertir una lista los elimina de una.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué devuelve lunes & martes si ambos son sets?', NULL, '{"options":[{"id":"a","text":"Los elementos que están en los dos"},{"id":"b","text":"Todos los elementos de ambos"},{"id":"c","text":"Los que están solo en lunes"},{"id":"d","text":"True o False"}]}', '{"option_id":"a"}', '& es la intersección. | es la unión y - la diferencia.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Por qué se usa un set como memoria de "lo ya visto" en vez de una lista?', NULL, '{"options":[{"id":"a","text":"Porque preguntar si algo está en un set es muchísimo más rápido"},{"id":"b","text":"Porque las listas no aceptan el operador in"},{"id":"c","text":"Porque los sets se ordenan solos"},{"id":"d","text":"Porque un set ocupa menos memoria siempre"}]}', '{"option_id":"a"}', 'Buscar en una lista obliga a recorrerla entera; en un set es prácticamente instantáneo.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'cedulas = {"1023", "1045", "1023"}
+print(len(cedulas))', '{"options":[{"id":"a","text":"2"},{"id":"b","text":"3"},{"id":"c","text":"1"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'El 1023 repetido desaparece: un set guarda cada valor una sola vez.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'a = 1
+b = 2
+a, b = b, a
+print(a, b)', '{"options":[{"id":"a","text":"2 1"},{"id":"b","text":"1 2"},{"id":"c","text":"2 2"},{"id":"d","text":"1 1"}]}', '{"option_id":"a"}', 'Python arma la tupla del lado derecho primero y después la desempaqueta: intercambia sin variable temporal.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'persona = ("Ana", 17)
+nombre, edad = persona
+print(nombre, edad + 1)', '{"options":[{"id":"a","text":"Ana 18"},{"id":"b","text":"Ana 17"},{"id":"c","text":"(''Ana'', 17) 18"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'El desempaquetado reparte los dos valores; la tupla no cambia, pero sus valores sí se pueden usar.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'a = {"ana", "juan"}
+b = {"juan", "pedro"}
+print(sorted(a - b))', '{"options":[{"id":"a","text":"[''ana'']"},{"id":"b","text":"[''juan'']"},{"id":"c","text":"[''ana'', ''pedro'']"},{"id":"d","text":"[''ana'', ''juan'', ''pedro'']"}]}', '{"option_id":"a"}', 'a - b son los que están en a pero no en b: juan está en los dos, así que sale.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El programa debe crear un set vacío. ¿En qué línea está el error?', NULL, '{"lines":["vistos = {}","vistos.add(\"1023\")","print(vistos)"]}', '{"line_number":1}', '{} crea un diccionario. El set vacío se escribe set().', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["punto = (4.6, -74.1)","punto[0] = 5.0","print(punto)"]}', '{"line_number":2}', 'Las tuplas no se pueden modificar. Si el dato tenía que cambiar, debía ser una lista.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'medio', 'Arme el programa que cuenta visitantes únicos', NULL, '{"lines":[{"id":"l1","text":"visitas = [\"1023\", \"1045\", \"1023\"]","indent":0},{"id":"l2","text":"unicas = set(visitas)","indent":0},{"id":"l3","text":"print(f\"Registros: {len(visitas)}\")","indent":0},{"id":"l4","text":"print(f\"Personas: {len(unicas)}\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'Primero los datos, después la conversión a set que quita repetidos, y al final los dos conteos.', 1, 'seed'
+    FROM chapters WHERE number = 11;
+
+-- ── Capítulo 12: Diccionarios (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 12, 'Diccionarios', '🗂️', 'Guardar información con clave y valor.', '', 0
+  SELECT p.id, 12, 'Diccionarios', '🗂️', 'Guardar información con clave y valor.', '<p class="jc-gancho">En el capítulo 10 guardaste el inventario en dos listas paralelas: productos y precios. Funciona hasta que alguien agrega un producto y olvida el precio, y todo se desalinea. Un diccionario guarda la pareja junta, para siempre.</p>
+
+<h2>Clave y valor: la agenda telefónica</h2>
+
+<p>Un diccionario guarda parejas <strong>clave → valor</strong>. La clave es por lo que buscas; el valor es lo que encuentras.</p>
+
+<pre><code>precios = {
+    "pan": 5000,
+    "leche": 7000,
+    "queso": 15000,
+}
+
+print(precios["leche"])     # 7000
+print(len(precios))         # 3</code></pre>
+
+<p>La diferencia con una lista es que no buscas por <em>posición</em>, sino por <em>nombre</em>. En una agenda no buscas "el contacto número 47": buscas "Ana".</p>
+
+<pre><code># Con listas paralelas (frágil)
+productos = ["pan", "leche"]
+precios_lista = [5000, 7000]
+print(precios_lista[productos.index("leche")])   # incómodo
+
+# Con diccionario (directo)
+print(precios["leche"])</code></pre>
+
+<h2>Crear, leer, cambiar y borrar</h2>
+
+<pre><code>precios = {}                    # vacío
+
+precios["pan"] = 5000           # crear
+precios["leche"] = 7000
+precios["pan"] = 5500           # cambiar (la clave ya existía)
+
+print(precios["pan"])           # leer -> 5500
+del precios["leche"]            # borrar
+
+print(precios)                  # {''pan'': 5500}</code></pre>
+
+<p>Una clave nunca se repite: asignarle un valor otra vez lo reemplaza. Eso es exactamente lo que se quiere en un inventario.</p>
+
+<h3>Leer sin que reviente: <code>.get()</code></h3>
+
+<pre><code>print(precios["arroz"])            # KeyError: ''arroz''
+print(precios.get("arroz"))        # None — no se cae
+print(precios.get("arroz", 0))     # 0 — valor por defecto</code></pre>
+
+<p><code>.get()</code> con valor por defecto es la herramienta que hace elegante el conteo, como verás abajo.</p>
+
+<pre><code>print("pan" in precios)     # True — preguntar antes de leer</code></pre>
+
+<h2>Recorrer un diccionario</h2>
+
+<pre><code>precios = {"pan": 5000, "leche": 7000, "queso": 15000}
+
+for producto in precios:                    # recorre las CLAVES
+    print(producto)
+
+for producto, precio in precios.items():    # clave y valor a la vez
+    print(f"{producto}: {precio}")
+
+print(list(precios.keys()))     # [''pan'', ''leche'', ''queso'']
+print(list(precios.values()))   # [5000, 7000, 15000]
+print(sum(precios.values()))    # 27000</code></pre>
+
+<p><code>.items()</code> entrega tuplas de dos, y el <code>for</code> las desempaqueta —el mismo truco del capítulo 11—. Es la forma normal de recorrer un diccionario.</p>
+
+<h2>El patrón estrella: contar cosas</h2>
+
+<p>Contar cuántas veces aparece cada elemento es el uso más común de un diccionario en la vida real.</p>
+
+<pre><code>ventas = ["pan", "leche", "pan", "queso", "pan"]
+conteo = {}                                  # nace afuera, vacío
+
+for producto in ventas:
+    conteo[producto] = conteo.get(producto, 0) + 1
+
+print(conteo)     # {''pan'': 3, ''leche'': 1, ''queso'': 1}</code></pre>
+
+<p>Esa línea de adentro merece leerse despacio: <em>"toma lo que ya había para este producto (o 0 si es la primera vez), súmale uno y vuélvelo a guardar"</em>.</p>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>producto</code></th><th><code>.get(producto, 0)</code></th><th><code>conteo</code> al terminar</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>pan</td><td>0 (no estaba)</td><td><code>{pan: 1}</code></td></tr>
+    <tr><td>2</td><td>leche</td><td>0</td><td><code>{pan: 1, leche: 1}</code></td></tr>
+    <tr><td>3</td><td>pan</td><td>1</td><td><code>{pan: 2, leche: 1}</code></td></tr>
+    <tr><td>4</td><td>queso</td><td>0</td><td><code>{pan: 2, leche: 1, queso: 1}</code></td></tr>
+    <tr><td>5</td><td>pan</td><td>2</td><td><code>{pan: 3, leche: 1, queso: 1}</code></td></tr>
+  </tbody>
+</table>
+
+<h2>Diccionarios anidados: fichas completas</h2>
+
+<p>El valor de una clave puede ser cualquier cosa: un número, una lista, u otro diccionario.</p>
+
+<pre><code>clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000, "activa": True},
+    "1045": {"nombre": "Juan", "saldo": 80000, "activa": False},
+}
+
+print(clientes["1023"]["nombre"])     # Ana
+
+for cedula, datos in clientes.items():
+    estado = "activa" if datos["activa"] else "bloqueada"
+    print(f"{datos[''nombre'']}: {datos[''saldo'']} ({estado})")</code></pre>
+
+<p>Así es como se ven los datos que vienen de una API o de un archivo JSON (capítulo 17). Un diccionario de diccionarios es la forma normal de representar registros.</p>
+
+<p>Ese <code>"activa" if datos["activa"] else "bloqueada"</code> es un <strong>if en una línea</strong>: sirve cuando solo hay que escoger entre dos valores.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Leer una clave que no existe</h3>
+<pre><code>precios["arroz"]           # KeyError
+precios.get("arroz", 0)    # ✅</code></pre>
+
+<h3>2. Usar una lista como clave</h3>
+<pre><code>d = {[1, 2]: "x"}     # TypeError: unhashable type: ''list''
+d = {(1, 2): "x"}     # ✅ una tupla sí sirve</code></pre>
+<p>Las claves tienen que ser inmutables: textos, números o tuplas. Otra razón para que existan las tuplas.</p>
+
+<h3>3. Creer que <code>for x in diccionario</code> da los valores</h3>
+<pre><code>for x in precios:
+    print(x)          # imprime pan, leche, queso — las CLAVES
+
+for x in precios.values():
+    print(x)          # ahora sí los precios</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Buscas por nombre, código o cédula? Diccionario. ¿Por posición u orden? Lista.</li>
+  <li>Para contar: <code>conteo[x] = conteo.get(x, 0) + 1</code>.</li>
+  <li>Para recorrer parejas: <code>for clave, valor in d.items()</code>.</li>
+  <li>Antes de leer una clave dudosa: <code>.get()</code> con valor por defecto, o <code>in</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>d = {}</code></td><td>Diccionario vacío</td></tr>
+    <tr><td><code>d["k"] = v</code></td><td>Crea o reemplaza</td></tr>
+    <tr><td><code>d["k"]</code></td><td>Lee (<code>KeyError</code> si no está)</td></tr>
+    <tr><td><code>d.get("k", 0)</code></td><td>Lee con valor por defecto</td></tr>
+    <tr><td><code>"k" in d</code></td><td>¿Existe la clave?</td></tr>
+    <tr><td><code>del d["k"]</code></td><td>Borra la pareja</td></tr>
+    <tr><td><code>d.items()</code></td><td>Parejas clave-valor</td></tr>
+    <tr><td><code>d.keys()</code> · <code>d.values()</code></td><td>Solo claves · solo valores</td></tr>
+    <tr><td><code>sum(d.values())</code></td><td>Suma todos los valores</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Lista para lo que va en orden; diccionario para lo que se busca por nombre. Y para contar cualquier cosa: <code>conteo.get(x, 0) + 1</code>.</blockquote>', 1
     FROM parts p WHERE p.number = 3
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -3346,11 +4314,395 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 12
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 12);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 12);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Lista de precios', 'facil', '<p>Dado el diccionario de precios:</p><pre><code>precios = {"pan": 5000, "leche": 7000, "queso": 15000}</code></pre><p>Mostrar cada producto con su precio y el total del inventario:</p><pre><code>pan: 5,000
+leche: 7,000
+queso: 15,000
+Total: 27,000</code></pre>', '<p>Recorra con <code>for producto, precio in precios.items():</code>. Para el total, <code>sum(precios.values())</code>.</p>', '<pre><code>''''''
+Programa: Lista de precios
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Muestra cada producto con su precio y el total del inventario.
+''''''
 
--- ── Capítulo 13: Comprehensions (borrador)
+# Inicio
+precios = {"pan": 5000, "leche": 7000, "queso": 15000}
+
+# .items() entrega tuplas (clave, valor) que el for desempaqueta
+for producto, precio in precios.items():
+    print(f"{producto}: {precio:,}")
+
+print(f"Total: {sum(precios.values()):,}")
+# Fin</code></pre><p>Compare con el ejercicio del inventario del capítulo 10: allá había dos listas paralelas y tocaba usar la posición <code>i</code> para cruzarlas. Aquí la pareja ya viene junta y no hay forma de desalinearla.</p>', '[{"stdin":"","expected_output":"pan: 5,000\nleche: 7,000\nqueso: 15,000\nTotal: 27,000"}]', '''''''
+Programa: Lista de precios
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+precios = {"pan": 5000, "leche": 7000, "queso": 15000}
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Productos más vendidos', 'facil', '<p>Dada la lista de productos vendidos hoy:</p><pre><code>ventas = ["pan", "leche", "pan", "queso", "pan", "leche"]</code></pre><p>Contar cuántas veces se vendió cada uno y mostrarlos ordenados alfabéticamente:</p><pre><code>leche: 2
+pan: 3
+queso: 1
+El mas vendido fue pan con 3</code></pre>', '<p>El patrón de conteo: <code>conteo[producto] = conteo.get(producto, 0) + 1</code>. Para el más vendido, <code>max(conteo, key=conteo.get)</code> devuelve la clave con el valor más alto.</p>', '<pre><code>''''''
+Programa: Productos mas vendidos
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Cuenta cuantas veces se vendio cada producto y determina
+    cual fue el mas vendido.
+''''''
+
+# Inicio
+ventas = ["pan", "leche", "pan", "queso", "pan", "leche"]
+
+conteo = {}    # nace afuera, vacio
+
+for producto in ventas:
+    # Lo que ya habia (o 0 si es la primera vez) mas uno
+    conteo[producto] = conteo.get(producto, 0) + 1
+
+for producto in sorted(conteo):
+    print(f"{producto}: {conteo[producto]}")
+
+# max con key=conteo.get compara por el VALOR y devuelve la CLAVE
+mas_vendido = max(conteo, key=conteo.get)
+print(f"El mas vendido fue {mas_vendido} con {conteo[mas_vendido]}")
+# Fin</code></pre><p>Dos herramientas que valen oro:</p><ul><li><code>conteo.get(producto, 0) + 1</code> evita tener que preguntar <code>if producto in conteo</code> antes de sumar.</li><li><code>max(conteo, key=conteo.get)</code> recorre las claves pero compara por su valor. Sin el <code>key</code>, <code>max()</code> compararía los nombres alfabéticamente y devolvería <code>queso</code>.</li></ul>', '[{"stdin":"","expected_output":"leche: 2\npan: 3\nqueso: 1\nEl mas vendido fue pan con 3"}]', '''''''
+Programa: Productos mas vendidos
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+ventas = ["pan", "leche", "pan", "queso", "pan", "leche"]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Cajero con diccionario', 'medio', '<p>Un banco guarda sus clientes así:</p><pre><code>clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000},
+    "1045": {"nombre": "Juan", "saldo": 80000},
+}</code></pre><p>Solicitar una cédula y un monto a retirar. Mostrar:</p><ul><li>Si la cédula no existe: <code>Cliente no encontrado</code></li><li>Si el saldo no alcanza: <code>Ana, saldo insuficiente (tiene 250000)</code></li><li>Si alcanza: <code>Ana retiro 50000. Nuevo saldo: 200000</code></li></ul>', '<p>Primero verifique con <code>if cedula in clientes</code>. Al modificar el saldo, recuerde que <code>clientes[cedula]["saldo"]</code> es la ruta completa hasta el número.</p>', '<pre><code>''''''
+Programa: Cajero con diccionario
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Busca un cliente por cedula y procesa un retiro validando
+    que el saldo alcance.
+''''''
+
+# Inicio
+clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000},
+    "1045": {"nombre": "Juan", "saldo": 80000},
+}
+
+cedula = input("Cedula: ").strip()
+monto = int(input("Monto a retirar: "))
+
+if cedula not in clientes:
+    print("Cliente no encontrado")
+else:
+    # cliente apunta al MISMO diccionario interno:
+    # modificarlo modifica el original
+    cliente = clientes[cedula]
+
+    if monto > cliente["saldo"]:
+        print(f"{cliente[''nombre'']}, saldo insuficiente (tiene {cliente[''saldo'']})")
+    else:
+        cliente["saldo"] -= monto
+        print(f"{cliente[''nombre'']} retiro {monto}. Nuevo saldo: {cliente[''saldo'']}")
+# Fin</code></pre><p>Lo importante: <code>cliente = clientes[cedula]</code> <strong>no hace una copia</strong>. Es otro nombre para el mismo diccionario interno, así que <code>cliente["saldo"] -= monto</code> actualiza los datos de verdad. Eso ahorra escribir <code>clientes[cedula]["saldo"]</code> cuatro veces.</p><p>Y ojo con las comillas dentro de la f-string: como el texto va con comillas dobles, adentro se usan sencillas: <code>{cliente[''nombre'']}</code>.</p>', '[{"stdin":"1023\n50000\n","expected_output":"Cedula: Monto a retirar: Ana retiro 50000. Nuevo saldo: 200000"},{"stdin":"1045\n90000\n","expected_output":"Cedula: Monto a retirar: Juan, saldo insuficiente (tiene 80000)"},{"stdin":"9999\n1000\n","expected_output":"Cedula: Monto a retirar: Cliente no encontrado"}]', '''''''
+Programa: Cajero con diccionario
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000},
+    "1045": {"nombre": "Juan", "saldo": 80000},
+}
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Boletín de calificaciones', 'dificil', '<p>Un curso guarda las notas así:</p><pre><code>curso = {
+    "Ana": [4.5, 3.8, 5.0],
+    "Juan": [2.5, 3.0, 2.8],
+    "Sofia": [3.5, 4.0, 3.9],
+}</code></pre><p>Mostrar el boletín con el promedio de cada estudiante y su estado, y al final el resumen del curso:</p><pre><code>Ana      4.43  APROBADO
+Juan     2.77  REPROBADO
+Sofia    3.80  APROBADO
+---
+Promedio del curso: 3.67
+Aprobados: 2 de 3
+Mejor promedio: Ana</code></pre><p><em>Nota:</em> aprueba con promedio mayor o igual a 3.0. Los promedios se muestran con dos decimales y el nombre alineado en 8 espacios.</p>', '<p>Recorra con <code>.items()</code>: el valor es una lista, así que <code>sum(notas) / len(notas)</code> da el promedio. Guarde los promedios en otro diccionario para poder sacar el mejor con <code>max(promedios, key=promedios.get)</code>.</p>', '<pre><code>''''''
+Programa: Boletin de calificaciones
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Calcula el promedio de cada estudiante, su estado y el
+    resumen del curso.
+''''''
+
+# Inicio
+MINIMA = 3.0
+
+curso = {
+    "Ana": [4.5, 3.8, 5.0],
+    "Juan": [2.5, 3.0, 2.8],
+    "Sofia": [3.5, 4.0, 3.9],
+}
+
+promedios = {}   # nombre -> promedio, para el resumen
+aprobados = 0    # contador
+
+for estudiante, notas in curso.items():
+    promedio = sum(notas) / len(notas)
+    promedios[estudiante] = promedio
+
+    if promedio >= MINIMA:
+        estado = "APROBADO"
+        aprobados += 1
+    else:
+        estado = "REPROBADO"
+
+    print(f"{estudiante:<8} {promedio:.2f}  {estado}")
+
+print("---")
+
+# El promedio del curso es el promedio de los promedios
+del_curso = sum(promedios.values()) / len(promedios)
+
+print(f"Promedio del curso: {del_curso:.2f}")
+print(f"Aprobados: {aprobados} de {len(curso)}")
+print(f"Mejor promedio: {max(promedios, key=promedios.get)}")
+# Fin</code></pre><p>Tres ideas que se juntan:</p><ul><li><strong>Diccionario de listas.</strong> Cada valor es una lista completa, así que <code>sum()</code> y <code>len()</code> funcionan sobre él directamente.</li><li><strong>Un diccionario para el resumen.</strong> Guardar <code>promedios</code> aparte permite calcular después el mejor y el promedio del curso sin volver a recorrer las notas.</li><li><strong>Formato en la f-string.</strong> <code>{estudiante:&lt;8}</code> alinea el nombre y <code>{promedio:.2f}</code> deja dos decimales. Sin eso, la tabla no queda derecha.</li></ul>', '[{"stdin":"","expected_output":"Ana      4.43  APROBADO\nJuan     2.77  REPROBADO\nSofia    3.80  APROBADO\n---\nPromedio del curso: 3.67\nAprobados: 2 de 3\nMejor promedio: Ana"}]', '''''''
+Programa: Boletin de calificaciones
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+MINIMA = 3.0
+
+curso = {
+    "Ana": [4.5, 3.8, 5.0],
+    "Juan": [2.5, 3.0, 2.8],
+    "Sofia": [3.5, 4.0, 3.9],
+}
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 12;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 12);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cuándo conviene un diccionario en vez de una lista?', NULL, '{"options":[{"id":"a","text":"Cuando se busca por nombre, código o cédula en vez de por posición"},{"id":"b","text":"Cuando hay muchos datos"},{"id":"c","text":"Cuando los datos son números"},{"id":"d","text":"Cuando el orden importa"}]}', '{"option_id":"a"}', 'En una agenda uno no busca el contacto número 47: busca a Ana.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué pasa si se asigna un valor a una clave que ya existe?', NULL, '{"options":[{"id":"a","text":"Se reemplaza el valor anterior"},{"id":"b","text":"Se crea una segunda entrada con la misma clave"},{"id":"c","text":"Lanza KeyError"},{"id":"d","text":"No hace nada"}]}', '{"option_id":"a"}', 'Las claves nunca se repiten: volver a asignar es actualizar.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué hace d.get("arroz", 0) si la clave no existe?', NULL, '{"options":[{"id":"a","text":"Devuelve 0 sin lanzar error"},{"id":"b","text":"Lanza KeyError"},{"id":"c","text":"Crea la clave con valor 0"},{"id":"d","text":"Devuelve None"}]}', '{"option_id":"a"}', 'El segundo argumento es el valor por defecto. Sin él devolvería None, y con corchetes sería KeyError.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué recorre un for x in mi_diccionario?', NULL, '{"options":[{"id":"a","text":"Las claves"},{"id":"b","text":"Los valores"},{"id":"c","text":"Las parejas clave-valor"},{"id":"d","text":"Las posiciones"}]}', '{"option_id":"a"}', 'Para los valores está .values() y para las parejas .items().', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Por qué una lista no puede ser clave de un diccionario?', NULL, '{"options":[{"id":"a","text":"Porque las claves deben ser inmutables, y una lista puede cambiar"},{"id":"b","text":"Porque las listas ocupan mucha memoria"},{"id":"c","text":"Porque las claves solo pueden ser texto"},{"id":"d","text":"Sí puede: es un error del enunciado"}]}', '{"option_id":"a"}', 'Una tupla sí sirve como clave, porque no puede cambiar. Es otra razón para que existan las tuplas.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'precios = {"pan": 5000, "leche": 7000}
+print(sum(precios.values()))', '{"options":[{"id":"a","text":"12000"},{"id":"b","text":"2"},{"id":"c","text":"[''pan'', ''leche'']"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', '.values() entrega los precios y sum() los suma.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'conteo = {}
+for p in ["pan", "pan", "leche"]:
+    conteo[p] = conteo.get(p, 0) + 1
+print(conteo)', '{"options":[{"id":"a","text":"{''pan'': 2, ''leche'': 1}"},{"id":"b","text":"{''pan'': 1, ''leche'': 1}"},{"id":"c","text":"{''pan'': 3}"},{"id":"d","text":"KeyError"}]}', '{"option_id":"a"}', 'Es el patrón de conteo: get devuelve 0 la primera vez y el acumulado las siguientes.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'd = {"a": 1}
+d["a"] = 2
+d["b"] = 3
+print(len(d))', '{"options":[{"id":"a","text":"2"},{"id":"b","text":"3"},{"id":"c","text":"1"},{"id":"d","text":"4"}]}', '{"option_id":"a"}', 'Reasignar la clave a no agrega una entrada nueva: la reemplaza. Solo hay dos claves.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'conteo = {"pan": 3, "leche": 2, "queso": 5}
+print(max(conteo, key=conteo.get))', '{"options":[{"id":"a","text":"queso"},{"id":"b","text":"pan"},{"id":"c","text":"5"},{"id":"d","text":"leche"}]}', '{"option_id":"a"}', 'Con key=conteo.get, max compara por el valor pero devuelve la clave. Sin el key compararía los nombres alfabéticamente.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'El programa se cae cuando el producto no está. ¿En qué línea está el error?', NULL, '{"lines":["precios = {\"pan\": 5000}","print(precios[\"arroz\"])"]}', '{"line_number":2}', 'Leer con corchetes una clave inexistente da KeyError. Ahí va precios.get("arroz", 0).', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El programa debe imprimir los precios, no los nombres. ¿En qué línea está el error?', NULL, '{"lines":["precios = {\"pan\": 5000, \"leche\": 7000}","for x in precios:","    print(x)"]}', '{"line_number":2}', 'Recorrer un diccionario da las claves. Para los precios habría que usar precios.values().', 1, 'seed'
+    FROM chapters WHERE number = 12;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme el programa que cuenta los productos vendidos', NULL, '{"lines":[{"id":"l1","text":"ventas = [\"pan\", \"leche\", \"pan\"]","indent":0},{"id":"l2","text":"conteo = {}","indent":0},{"id":"l3","text":"for producto in ventas:","indent":0},{"id":"l4","text":"conteo[producto] = conteo.get(producto, 0) + 1","indent":1},{"id":"l5","text":"for producto, veces in conteo.items():","indent":0},{"id":"l6","text":"print(f\"{producto}: {veces}\")","indent":1}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'Primero se cuenta en un ciclo y después se muestra en otro: mezclarlos imprimiría conteos parciales.', 1, 'seed'
+    FROM chapters WHERE number = 12;
+
+-- ── Capítulo 13: Comprehensions (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 13, 'Comprehensions', '⚡', 'Crear listas, sets y diccionarios en una sola línea.', '', 0
+  SELECT p.id, 13, 'Comprehensions', '⚡', 'Crear listas, sets y diccionarios en una sola línea.', '<p class="jc-gancho">Filtrar las notas aprobadas te toma cuatro líneas: crear la lista, el <code>for</code>, el <code>if</code> y el <code>append</code>. Python tiene una forma de escribir eso mismo en una sola línea que se lee igual de bien. Se llama <em>comprehension</em>.</p>
+
+<h2>De cuatro líneas a una</h2>
+
+<p>El patrón del capítulo 10, tal como lo escribiste:</p>
+
+<pre><code>aprobadas = []
+for nota in notas:
+    if nota &gt;= 3.0:
+        aprobadas.append(nota)</code></pre>
+
+<p>Lo mismo, en una línea:</p>
+
+<pre><code>aprobadas = [nota for nota in notas if nota &gt;= 3.0]</code></pre>
+
+<p>Se lee de izquierda a derecha en tres partes:</p>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>En el ejemplo</th><th>Qué dice</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>qué guardo</strong></td><td><code>nota</code></td><td>lo que va a quedar en la lista nueva</td></tr>
+    <tr><td><strong>de dónde</strong></td><td><code>for nota in notas</code></td><td>qué colección recorro</td></tr>
+    <tr><td><strong>con qué filtro</strong></td><td><code>if nota &gt;= 3.0</code></td><td>opcional: cuáles dejo pasar</td></tr>
+  </tbody>
+</table>
+
+<p>El <code>if</code> es opcional. Sin él, se transforma todo:</p>
+
+<pre><code>precios = [5000, 7000, 15000]
+
+con_iva = [p * 1.19 for p in precios]        # transformar
+caros = [p for p in precios if p &gt; 10000]    # filtrar
+nombres = [n.upper() for n in ["ana", "juan"]]   # ambos mundos
+
+# Las dos cosas a la vez
+caros_con_iva = [p * 1.19 for p in precios if p &gt; 10000]</code></pre>
+
+<h2>La película: cómo la lee Python</h2>
+
+<p>Aunque se escriba en una línea, por dentro es el mismo ciclo. Con <code>notas = [4.0, 2.5, 3.8]</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>nota</code></th><th>¿pasa el <code>if</code>?</th><th>Lista que se va armando</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>4.0</td><td>Sí</td><td><code>[4.0]</code></td></tr>
+    <tr><td>2</td><td>2.5</td><td>No</td><td><code>[4.0]</code></td></tr>
+    <tr><td>3</td><td>3.8</td><td>Sí</td><td><code>[4.0, 3.8]</code></td></tr>
+  </tbody>
+</table>
+
+<p>Truco para escribirlas: <strong>primero escribe el ciclo normal</strong> y después lo comprimes. Con la práctica sale directo, pero al principio es más seguro así.</p>
+
+<h2>También hay de diccionario y de set</h2>
+
+<pre><code>productos = ["pan", "leche"]
+precios = [5000, 7000]
+
+# Diccionario: usa llaves y una pareja clave: valor
+inventario = {p: v for p, v in zip(productos, precios)}
+print(inventario)     # {''pan'': 5000, ''leche'': 7000}
+
+# Set: llaves, sin pareja
+iniciales = {p[0] for p in productos}
+print(iniciales)      # {''p'', ''l''}</code></pre>
+
+<p><code>zip()</code> une dos listas en parejas: es la forma limpia de convertir dos listas paralelas en un diccionario.</p>
+
+<pre><code>duplicar = {p: v * 2 for p, v in inventario.items()}
+baratos = {p: v for p, v in inventario.items() if v &lt; 6000}</code></pre>
+
+<h2>El if-else que va adelante</h2>
+
+<p>Hay dos <code>if</code> distintos y confundirlos es normal:</p>
+
+<pre><code># FILTRAR: el if va al final, sin else
+aprobadas = [n for n in notas if n &gt;= 3.0]
+
+# TRANSFORMAR: el if-else va ADELANTE, y es obligatorio el else
+estados = ["aprobado" if n &gt;= 3.0 else "reprobado" for n in notas]</code></pre>
+
+<p>La regla: si vas a <strong>dejar por fuera</strong> elementos, el <code>if</code> va al final. Si vas a <strong>escoger entre dos valores</strong> para cada elemento, el <code>if-else</code> va adelante.</p>
+
+<h2>Cuándo NO usarlas</h2>
+
+<p>Una comprehension es mejor cuando cabe cómoda en una línea y se lee de un vistazo. Cuando no, el ciclo normal gana:</p>
+
+<pre><code># ❌ ilegible
+r = [x*2 if x&gt;0 else -x for y in datos for x in y if x!=0 and x&lt;100]
+
+# ✅ un ciclo normal, que cualquiera entiende
+r = []
+for fila in datos:
+    for x in fila:
+        if x == 0 or x &gt;= 100:
+            continue
+        r.append(x * 2 if x &gt; 0 else -x)</code></pre>
+
+<p>Y si adentro necesitas varias líneas, <code>print()</code>, o llevar contadores aparte, no es trabajo para una comprehension.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Poner el <code>if-else</code> al final</h3>
+<pre><code>[n for n in notas if n &gt;= 3.0 else 0]     # ❌ SyntaxError
+["ok" if n &gt;= 3.0 else "no" for n in notas]  # ✅</code></pre>
+
+<h3>2. Usarla solo para imprimir</h3>
+<pre><code>[print(n) for n in notas]     # ❌ crea una lista de None que nadie usa
+
+for n in notas:               # ✅
+    print(n)</code></pre>
+
+<h3>3. Olvidar que crea una lista NUEVA</h3>
+<pre><code>[n * 2 for n in notas]     # ❌ el resultado se pierde
+dobles = [n * 2 for n in notas]   # ✅</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Escribe primero el ciclo con <code>append</code>; después compríme si mejora.</li>
+  <li>Filtrar → <code>if</code> al final. Escoger entre dos valores → <code>if-else</code> adelante.</li>
+  <li>Guarda el resultado: la comprehension no modifica nada, crea algo nuevo.</li>
+  <li>Si no cabe cómoda en una línea, déjala como ciclo.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>[x for x in lista]</code></td><td>Copia la lista</td></tr>
+    <tr><td><code>[x * 2 for x in lista]</code></td><td>Transforma cada elemento</td></tr>
+    <tr><td><code>[x for x in lista if x &gt; 0]</code></td><td>Filtra</td></tr>
+    <tr><td><code>["a" if x else "b" for x in l]</code></td><td>Escoge entre dos valores</td></tr>
+    <tr><td><code>{k: v for k, v in d.items()}</code></td><td>Comprehension de diccionario</td></tr>
+    <tr><td><code>{x for x in lista}</code></td><td>Comprehension de set (sin repetidos)</td></tr>
+    <tr><td><code>zip(a, b)</code></td><td>Une dos listas en parejas</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Una comprehension no hace nada que un ciclo no pueda. Se usa cuando hace el código <em>más</em> fácil de leer, nunca para presumir.</blockquote>', 1
     FROM parts p WHERE p.number = 3
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -3362,7 +4714,222 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 13
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 13);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Precios con IVA', 'facil', '<p>Dada la lista <code>precios = [5000, 7000, 15000, 12000]</code>, crear con una comprehension una lista nueva con el precio más el 19% de IVA, redondeado a entero. Mostrar las dos listas:</p><pre><code>Sin IVA: [5000, 7000, 15000, 12000]
+Con IVA: [5950, 8330, 17850, 14280]</code></pre>', '<p>La forma es <code>[round(p * 1.19) for p in precios]</code>. Como es una transformación y no un filtro, no lleva <code>if</code>.</p>', '<pre><code>''''''
+Programa: Precios con IVA
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Calcula el precio con IVA de una lista de productos usando
+    una comprehension.
+''''''
+
+# Inicio
+IVA = 1.19
+
+precios = [5000, 7000, 15000, 12000]
+
+# Transformar cada elemento: sin if, porque no se descarta ninguno
+con_iva = [round(p * IVA) for p in precios]
+
+print(f"Sin IVA: {precios}")
+print(f"Con IVA: {con_iva}")
+# Fin</code></pre><p>El ciclo equivalente serían tres líneas: crear la lista vacía, el <code>for</code> y el <code>append</code>. Aquí cabe cómodo en una y se lee igual de claro, que es justo cuando conviene usar una comprehension.</p>', '[{"stdin":"","expected_output":"Sin IVA: [5000, 7000, 15000, 12000]\nCon IVA: [5950, 8330, 17850, 14280]"}]', '''''''
+Programa: Precios con IVA
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+IVA = 1.19
+precios = [5000, 7000, 15000, 12000]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Filtrar y etiquetar notas', 'facil', '<p>Dada la lista <code>notas = [4.5, 2.8, 3.0, 1.9, 5.0]</code>, usar comprehensions para obtener:</p><ul><li>solo las aprobadas (mayor o igual a 3.0),</li><li>y una lista de etiquetas <code>APROBADO</code> / <code>REPROBADO</code> para todas.</li></ul><pre><code>Aprobadas: [4.5, 3.0, 5.0]
+Estados: [''APROBADO'', ''REPROBADO'', ''APROBADO'', ''REPROBADO'', ''APROBADO'']</code></pre>', '<p>Filtrar → el <code>if</code> va al final y no lleva <code>else</code>. Escoger entre dos valores → el <code>if-else</code> va adelante y el <code>else</code> es obligatorio.</p>', '<pre><code>''''''
+Programa: Filtrar y etiquetar notas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Muestra las notas aprobadas y la etiqueta de cada nota
+    usando los dos tipos de comprehension.
+''''''
+
+# Inicio
+MINIMA = 3.0
+
+notas = [4.5, 2.8, 3.0, 1.9, 5.0]
+
+# FILTRAR: el if va al final, sin else
+aprobadas = [n for n in notas if n >= MINIMA]
+
+# ESCOGER entre dos valores: el if-else va adelante
+estados = ["APROBADO" if n >= MINIMA else "REPROBADO" for n in notas]
+
+print(f"Aprobadas: {aprobadas}")
+print(f"Estados: {estados}")
+# Fin</code></pre><p>La diferencia entre las dos líneas es la que más confunde:</p><table><thead><tr><th>Quiero</th><th>Dónde va el if</th><th>¿Lleva else?</th><th>Tamaño del resultado</th></tr></thead><tbody><tr><td>Dejar por fuera algunos</td><td>al final</td><td>no</td><td>menor o igual</td></tr><tr><td>Escoger entre dos valores</td><td>adelante</td><td>sí, obligatorio</td><td>igual al original</td></tr></tbody></table>', '[{"stdin":"","expected_output":"Aprobadas: [4.5, 3.0, 5.0]\nEstados: [''APROBADO'', ''REPROBADO'', ''APROBADO'', ''REPROBADO'', ''APROBADO'']"}]', '''''''
+Programa: Filtrar y etiquetar notas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+MINIMA = 3.0
+notas = [4.5, 2.8, 3.0, 1.9, 5.0]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Inventario desde dos listas', 'medio', '<p>Se tienen dos listas paralelas:</p><pre><code>productos = ["pan", "leche", "queso", "cafe"]
+precios = [5000, 7000, 15000, 12000]</code></pre><p>Con comprehensions, construir:</p><ul><li>el inventario como diccionario,</li><li>un diccionario solo con los que cuestan más de 10000,</li><li>y el set de las iniciales de todos los productos.</li></ul><pre><code>Inventario: {''pan'': 5000, ''leche'': 7000, ''queso'': 15000, ''cafe'': 12000}
+Caros: {''queso'': 15000, ''cafe'': 12000}
+Iniciales: [''c'', ''l'', ''p'', ''q'']</code></pre><p><em>Nota:</em> las iniciales se muestran ordenadas.</p>', '<p><code>zip(productos, precios)</code> entrega parejas. Una comprehension de diccionario se escribe con llaves y <code>clave: valor</code>.</p>', '<pre><code>''''''
+Programa: Inventario desde dos listas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Convierte dos listas paralelas en un diccionario y arma
+    subconjuntos con comprehensions.
+''''''
+
+# Inicio
+CARO = 10000
+
+productos = ["pan", "leche", "queso", "cafe"]
+precios = [5000, 7000, 15000, 12000]
+
+# zip une las dos listas en parejas (producto, precio)
+inventario = {p: v for p, v in zip(productos, precios)}
+
+# Comprehension de diccionario con filtro
+caros = {p: v for p, v in inventario.items() if v > CARO}
+
+# Comprehension de set: sin repetidos por definicion
+iniciales = {p[0] for p in productos}
+
+print(f"Inventario: {inventario}")
+print(f"Caros: {caros}")
+print(f"Iniciales: {sorted(iniciales)}")
+# Fin</code></pre><p><code>zip()</code> es la forma limpia de pasar de dos listas paralelas a un diccionario, que es justo la estructura que el capítulo 12 recomienda para este caso.</p><p>El set de iniciales se imprime con <code>sorted()</code> porque un set no tiene orden: mostrarlo directo daría un resultado impredecible.</p>', '[{"stdin":"","expected_output":"Inventario: {''pan'': 5000, ''leche'': 7000, ''queso'': 15000, ''cafe'': 12000}\nCaros: {''queso'': 15000, ''cafe'': 12000}\nIniciales: [''c'', ''l'', ''p'', ''q'']"}]', '''''''
+Programa: Inventario desde dos listas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+CARO = 10000
+productos = ["pan", "leche", "queso", "cafe"]
+precios = [5000, 7000, 15000, 12000]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Reporte del curso en tres líneas', 'dificil', '<p>Dado el curso:</p><pre><code>curso = {
+    "Ana": [4.5, 3.8, 5.0],
+    "Juan": [2.5, 3.0, 2.8],
+    "Sofia": [3.5, 4.0, 3.9],
+}</code></pre><p>Usando comprehensions, obtener y mostrar:</p><pre><code>Promedios: {''Ana'': 4.43, ''Juan'': 2.77, ''Sofia'': 3.8}
+Aprobados: [''Ana'', ''Sofia'']
+En riesgo: [''Juan'']
+Promedio del curso: 3.67</code></pre><p><em>Nota:</em> los promedios se redondean a dos decimales. Aprueba con 3.0 o más.</p>', '<p>Primero un diccionario de promedios con <code>{nombre: round(sum(n)/len(n), 2) for nombre, n in curso.items()}</code>. Sobre ese diccionario ya salen las dos listas con comprehensions filtradas.</p>', '<pre><code>''''''
+Programa: Reporte del curso con comprehensions
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Calcula el promedio de cada estudiante y separa aprobados
+    de estudiantes en riesgo.
+''''''
+
+# Inicio
+MINIMA = 3.0
+
+curso = {
+    "Ana": [4.5, 3.8, 5.0],
+    "Juan": [2.5, 3.0, 2.8],
+    "Sofia": [3.5, 4.0, 3.9],
+}
+
+# Un diccionario nuevo a partir de otro: nombre -> promedio
+promedios = {
+    nombre: round(sum(notas) / len(notas), 2)
+    for nombre, notas in curso.items()
+}
+
+# Sobre los promedios ya calculados, dos filtros
+aprobados = [n for n, p in promedios.items() if p >= MINIMA]
+en_riesgo = [n for n, p in promedios.items() if p < MINIMA]
+
+print(f"Promedios: {promedios}")
+print(f"Aprobados: {aprobados}")
+print(f"En riesgo: {en_riesgo}")
+print(f"Promedio del curso: {round(sum(promedios.values()) / len(promedios), 2)}")
+# Fin</code></pre><p>Compare con el mismo reporte del capítulo 12: allá eran unas quince líneas con un <code>for</code>, un <code>if / else</code> y un contador. Aquí son cuatro, y cada una dice exactamente qué produce.</p><p>Fíjese en que la comprehension del diccionario está partida en tres renglones. Cuando una comprehension se pone larga, <strong>partirla no es hacer trampa</strong>: se dejan la salida, el <code>for</code> y el <code>if</code> cada uno en su línea y se sigue leyendo perfecto.</p><p>La clave del ejercicio es el orden: <code>promedios</code> se calcula <strong>una vez</strong> y las tres líneas siguientes trabajan sobre él. Recalcular el promedio dentro de cada filtro sería hacer el mismo trabajo tres veces.</p>', '[{"stdin":"","expected_output":"Promedios: {''Ana'': 4.43, ''Juan'': 2.77, ''Sofia'': 3.8}\nAprobados: [''Ana'', ''Sofia'']\nEn riesgo: [''Juan'']\nPromedio del curso: 3.67"}]', '''''''
+Programa: Reporte del curso con comprehensions
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+MINIMA = 3.0
+
+curso = {
+    "Ana": [4.5, 3.8, 5.0],
+    "Juan": [2.5, 3.0, 2.8],
+    "Sofia": [3.5, 4.0, 3.9],
+}
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 13;
 DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 13);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué hace [n for n in notas if n >= 3.0]?', NULL, '{"options":[{"id":"a","text":"Crea una lista nueva solo con las notas mayores o iguales a 3.0"},{"id":"b","text":"Modifica la lista notas quitando las bajas"},{"id":"c","text":"Cuenta cuántas notas aprobaron"},{"id":"d","text":"Devuelve True o False"}]}', '{"option_id":"a"}', 'Una comprehension nunca modifica el original: siempre crea algo nuevo, y hay que guardarlo.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Dónde va el if cuando se quiere escoger entre dos valores para cada elemento?', NULL, '{"options":[{"id":"a","text":"Adelante, con else obligatorio"},{"id":"b","text":"Al final, sin else"},{"id":"c","text":"Da igual"},{"id":"d","text":"No se puede hacer en una comprehension"}]}', '{"option_id":"a"}', 'Filtrar → if al final sin else. Escoger entre dos valores → if-else adelante.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué hace zip(productos, precios)?', NULL, '{"options":[{"id":"a","text":"Une las dos listas en parejas, elemento con elemento"},{"id":"b","text":"Comprime las listas para ahorrar memoria"},{"id":"c","text":"Ordena las dos listas a la vez"},{"id":"d","text":"Suma las dos listas"}]}', '{"option_id":"a"}', 'Es la forma limpia de convertir dos listas paralelas en un diccionario.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Cuándo NO conviene usar una comprehension?', NULL, '{"options":[{"id":"a","text":"Cuando no cabe cómoda en una línea o se necesita imprimir y llevar contadores"},{"id":"b","text":"Cuando la lista tiene más de diez elementos"},{"id":"c","text":"Cuando hay que filtrar"},{"id":"d","text":"Nunca: siempre son mejores que un ciclo"}]}', '{"option_id":"a"}', 'Se usan cuando hacen el código más fácil de leer. Si no, el ciclo normal gana.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'precios = [1000, 2000]
+print([p * 2 for p in precios])', '{"options":[{"id":"a","text":"[2000, 4000]"},{"id":"b","text":"[1000, 2000, 1000, 2000]"},{"id":"c","text":"3000"},{"id":"d","text":"[1000, 2000]"}]}', '{"option_id":"a"}', 'Sin if, la comprehension transforma cada elemento y devuelve una lista del mismo tamaño.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'notas = [4.0, 2.0, 3.5]
+print([n for n in notas if n >= 3.0])', '{"options":[{"id":"a","text":"[4.0, 3.5]"},{"id":"b","text":"[4.0, 2.0, 3.5]"},{"id":"c","text":"[2.0]"},{"id":"d","text":"[True, False, True]"}]}', '{"option_id":"a"}', 'El if al final deja pasar solo las que cumplen: la lista resultante es más corta.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'notas = [4.0, 2.0]
+print(["ok" if n >= 3.0 else "no" for n in notas])', '{"options":[{"id":"a","text":"[''ok'', ''no'']"},{"id":"b","text":"[''ok'']"},{"id":"c","text":"[''no'']"},{"id":"d","text":"SyntaxError"}]}', '{"option_id":"a"}', 'Con if-else adelante no se descarta nada: la lista tiene el mismo tamaño que la original.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'd = {"pan": 5000, "queso": 15000}
+print({k: v for k, v in d.items() if v > 10000})', '{"options":[{"id":"a","text":"{''queso'': 15000}"},{"id":"b","text":"{''pan'': 5000}"},{"id":"c","text":"[''queso'']"},{"id":"d","text":"{15000}"}]}', '{"option_id":"a"}', 'Una comprehension de diccionario usa llaves y clave: valor; el if al final filtra las parejas.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["notas = [4.0, 2.0]","print([n for n in notas if n >= 3.0 else 0])"]}', '{"line_number":2}', 'El if del final no admite else. Si se quiere el 0, el if-else va adelante: [n if n >= 3.0 else 0 for n in notas].', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El programa debería mostrar la lista con IVA pero no muestra nada útil. ¿En qué línea está el error?', NULL, '{"lines":["precios = [1000, 2000]","[p * 1.19 for p in precios]","print(precios)"]}', '{"line_number":2}', 'La comprehension crea una lista nueva y nadie la guarda. Falta con_iva = [...] y luego imprimirla.', 1, 'seed'
+    FROM chapters WHERE number = 13;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme el reporte del curso con comprehensions', NULL, '{"lines":[{"id":"l1","text":"curso = {\"Ana\": [4.5, 5.0], \"Juan\": [2.0, 2.5]}","indent":0},{"id":"l2","text":"promedios = {n: sum(v) / len(v) for n, v in curso.items()}","indent":0},{"id":"l3","text":"aprobados = [n for n, p in promedios.items() if p >= 3.0]","indent":0},{"id":"l4","text":"print(f\"Aprobados: {aprobados}\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'Los promedios se calculan una sola vez y las líneas siguientes trabajan sobre ese diccionario.', 1, 'seed'
+    FROM chapters WHERE number = 13;
 
 -- ── Capítulo 14: Funciones (borrador)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)

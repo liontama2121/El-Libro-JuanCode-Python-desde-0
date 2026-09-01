@@ -122,10 +122,10 @@
 - [x] 7 ⏳ while (contadores, sumatorias y banderas)
 - [x] 8 🔢 for y range()
 - [x] 9 🎛️ break, continue y anidados
-- [ ] 10 📋 Listas
-- [ ] 11 🎯 Tuplas y sets
-- [ ] 12 🗂️ Diccionarios
-- [ ] 13 ⚡ Comprehensions
+- [x] 10 📋 Listas
+- [x] 11 🎯 Tuplas y sets
+- [x] 12 🗂️ Diccionarios
+- [x] 13 ⚡ Comprehensions
 - [ ] 14 🧰 Funciones
 - [ ] 15 🛡️ Errores y excepciones
 - [ ] 16 📚 Módulos, pip y entornos

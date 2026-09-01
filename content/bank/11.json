@@ -1,0 +1,152 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es la diferencia principal entre una lista y una tupla?",
+    "data": { "options": [
+      { "id": "a", "text": "La tupla no se puede modificar después de creada" },
+      { "id": "b", "text": "La tupla solo guarda números" },
+      { "id": "c", "text": "La lista no admite repetidos" },
+      { "id": "d", "text": "La tupla no tiene índices" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Si el dato es fijo (una coordenada, una fecha), la tupla garantiza que nadie lo cambie por accidente."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cómo se crea un set vacío?",
+    "data": { "options": [
+      { "id": "a", "text": "s = set()" },
+      { "id": "b", "text": "s = {}" },
+      { "id": "c", "text": "s = []" },
+      { "id": "d", "text": "s = ()" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las llaves vacías crean un diccionario, no un set. Es una de las trampas clásicas de Python."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Para qué sirve set(mi_lista)?",
+    "data": { "options": [
+      { "id": "a", "text": "Para quitar los elementos repetidos" },
+      { "id": "b", "text": "Para ordenar la lista" },
+      { "id": "c", "text": "Para convertirla en texto" },
+      { "id": "d", "text": "Para contar cuántos elementos tiene" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Un set no admite duplicados, así que convertir una lista los elimina de una."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué devuelve lunes & martes si ambos son sets?",
+    "data": { "options": [
+      { "id": "a", "text": "Los elementos que están en los dos" },
+      { "id": "b", "text": "Todos los elementos de ambos" },
+      { "id": "c", "text": "Los que están solo en lunes" },
+      { "id": "d", "text": "True o False" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "& es la intersección. | es la unión y - la diferencia."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué se usa un set como memoria de \"lo ya visto\" en vez de una lista?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque preguntar si algo está en un set es muchísimo más rápido" },
+      { "id": "b", "text": "Porque las listas no aceptan el operador in" },
+      { "id": "c", "text": "Porque los sets se ordenan solos" },
+      { "id": "d", "text": "Porque un set ocupa menos memoria siempre" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Buscar en una lista obliga a recorrerla entera; en un set es prácticamente instantáneo."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "cedulas = {\"1023\", \"1045\", \"1023\"}\nprint(len(cedulas))",
+    "data": { "options": [
+      { "id": "a", "text": "2" },
+      { "id": "b", "text": "3" },
+      { "id": "c", "text": "1" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El 1023 repetido desaparece: un set guarda cada valor una sola vez."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "a = 1\nb = 2\na, b = b, a\nprint(a, b)",
+    "data": { "options": [
+      { "id": "a", "text": "2 1" },
+      { "id": "b", "text": "1 2" },
+      { "id": "c", "text": "2 2" },
+      { "id": "d", "text": "1 1" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Python arma la tupla del lado derecho primero y después la desempaqueta: intercambia sin variable temporal."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "persona = (\"Ana\", 17)\nnombre, edad = persona\nprint(nombre, edad + 1)",
+    "data": { "options": [
+      { "id": "a", "text": "Ana 18" },
+      { "id": "b", "text": "Ana 17" },
+      { "id": "c", "text": "('Ana', 17) 18" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El desempaquetado reparte los dos valores; la tupla no cambia, pero sus valores sí se pueden usar."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "a = {\"ana\", \"juan\"}\nb = {\"juan\", \"pedro\"}\nprint(sorted(a - b))",
+    "data": { "options": [
+      { "id": "a", "text": "['ana']" },
+      { "id": "b", "text": "['juan']" },
+      { "id": "c", "text": "['ana', 'pedro']" },
+      { "id": "d", "text": "['ana', 'juan', 'pedro']" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "a - b son los que están en a pero no en b: juan está en los dos, así que sale."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El programa debe crear un set vacío. ¿En qué línea está el error?",
+    "data": { "lines": ["vistos = {}", "vistos.add(\"1023\")", "print(vistos)"] },
+    "correct": { "line_number": 1 },
+    "explanation": "{} crea un diccionario. El set vacío se escribe set()."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["punto = (4.6, -74.1)", "punto[0] = 5.0", "print(punto)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Las tuplas no se pueden modificar. Si el dato tenía que cambiar, debía ser una lista."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme el programa que cuenta visitantes únicos",
+    "data": { "lines": [
+      { "id": "l1", "text": "visitas = [\"1023\", \"1045\", \"1023\"]", "indent": 0 },
+      { "id": "l2", "text": "unicas = set(visitas)", "indent": 0 },
+      { "id": "l3", "text": "print(f\"Registros: {len(visitas)}\")", "indent": 0 },
+      { "id": "l4", "text": "print(f\"Personas: {len(unicas)}\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4"] },
+    "explanation": "Primero los datos, después la conversión a set que quita repetidos, y al final los dos conteos."
+  }
+]

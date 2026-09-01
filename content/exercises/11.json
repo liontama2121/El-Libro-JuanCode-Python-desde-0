@@ -1,0 +1,57 @@
+[
+  {
+    "orden": 1,
+    "title": "Ficha con desempaquetado",
+    "difficulty": "facil",
+    "statement_html": "<p>Dada la tupla <code>persona = (\"Ana\", 17, \"Bogota\")</code>, desempaquetarla en tres variables y mostrar:</p><pre><code>Ana, de 17 anios, vive en Bogota</code></pre><p><em>Nota:</em> no use índices; use desempaquetado.</p>",
+    "hint_html": "<p><code>nombre, edad, ciudad = persona</code> reparte los tres valores en una sola línea. El número de variables debe coincidir con el de elementos.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Ficha con desempaquetado\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Desempaqueta una tupla con los datos de una persona y los\n    muestra en una frase.\n'''\n\n# Inicio\npersona = (\"Ana\", 17, \"Bogota\")\n\n# Desempaquetado: tres variables de un tiron\nnombre, edad, ciudad = persona\n\nprint(f\"{nombre}, de {edad} anios, vive en {ciudad}\")\n# Fin</code></pre><p>Con índices habría que escribir <code>persona[0]</code>, <code>persona[1]</code> y <code>persona[2]</code>, que no dice nada sobre qué es cada uno. El desempaquetado les pone nombre.</p>",
+    "starter_code": "'''\nPrograma: Ficha con desempaquetado\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\npersona = (\"Ana\", 17, \"Bogota\")\n\n# Fin\n",
+    "tests": [{ "stdin": "", "expected_output": "Ana, de 17 anios, vive en Bogota" }]
+  },
+  {
+    "orden": 2,
+    "title": "Visitantes únicos",
+    "difficulty": "facil",
+    "statement_html": "<p>Dada la lista de cédulas que registró la portería hoy:</p><pre><code>visitas = [\"1023\", \"1045\", \"1023\", \"1088\", \"1045\", \"1023\"]</code></pre><p>Mostrar cuántos registros hubo, cuántas personas distintas entraron y la lista de cédulas ordenada:</p><pre><code>Registros: 6\nPersonas distintas: 3\nCedulas: ['1023', '1045', '1088']</code></pre>",
+    "hint_html": "<p><code>set(visitas)</code> elimina los repetidos. Como un set no tiene orden, use <code>sorted()</code> para mostrarlo.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Visitantes unicos\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Cuenta cuantas personas distintas entraron a partir del\n    registro de la porteria.\n'''\n\n# Inicio\nvisitas = [\"1023\", \"1045\", \"1023\", \"1088\", \"1045\", \"1023\"]\n\n# Un set no admite repetidos: los duplicados desaparecen solos\nunicas = set(visitas)\n\nprint(f\"Registros: {len(visitas)}\")\nprint(f\"Personas distintas: {len(unicas)}\")\nprint(f\"Cedulas: {sorted(unicas)}\")\n# Fin</code></pre><p>Sin sets tocaría un ciclo con una lista auxiliar y un <code>if cedula not in vistas</code>. Con un set es una línea, y además la búsqueda interna es mucho más rápida.</p><p><code>sorted()</code> se usa porque un set <strong>no tiene orden</strong>: imprimirlo directo daría un orden impredecible.</p>",
+    "starter_code": "'''\nPrograma: Visitantes unicos\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nvisitas = [\"1023\", \"1045\", \"1023\", \"1088\", \"1045\", \"1023\"]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Registros: 6\nPersonas distintas: 3\nCedulas: ['1023', '1045', '1088']"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Asistencia de dos días",
+    "difficulty": "medio",
+    "statement_html": "<p>Dos listas con los asistentes a un taller:</p><pre><code>lunes = [\"ana\", \"juan\", \"sofia\", \"ana\"]\nmartes = [\"juan\", \"sofia\", \"pedro\"]</code></pre><p>Mostrar, siempre ordenado alfabéticamente:</p><pre><code>Los dos dias: ['juan', 'sofia']\nSolo el lunes: ['ana']\nSolo el martes: ['pedro']\nEn total asistieron: 4 personas</code></pre>",
+    "hint_html": "<p>Convierta las dos listas a sets y use los operadores de conjuntos: <code>&amp;</code> para los comunes, <code>-</code> para la diferencia y <code>|</code> para la unión.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Asistencia de dos dias\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Compara la asistencia de dos dias de taller usando\n    operaciones de conjuntos.\n'''\n\n# Inicio\nlunes = [\"ana\", \"juan\", \"sofia\", \"ana\"]\nmartes = [\"juan\", \"sofia\", \"pedro\"]\n\n# Los sets quitan los repetidos y permiten comparar grupos\ngrupo_lunes = set(lunes)\ngrupo_martes = set(martes)\n\nprint(f\"Los dos dias: {sorted(grupo_lunes & grupo_martes)}\")\nprint(f\"Solo el lunes: {sorted(grupo_lunes - grupo_martes)}\")\nprint(f\"Solo el martes: {sorted(grupo_martes - grupo_lunes)}\")\nprint(f\"En total asistieron: {len(grupo_lunes | grupo_martes)} personas\")\n# Fin</code></pre><p>Los tres operadores en una frase:</p><table><thead><tr><th>Operador</th><th>Pregunta</th></tr></thead><tbody><tr><td><code>&amp;</code></td><td>¿Quiénes están en los dos?</td></tr><tr><td><code>-</code></td><td>¿Quiénes están en el primero pero no en el segundo?</td></tr><tr><td><code>|</code></td><td>¿Quiénes están en alguno de los dos?</td></tr></tbody></table><p>Resolver esto con listas serían tres ciclos anidados y una lista auxiliar por cada pregunta.</p>",
+    "starter_code": "'''\nPrograma: Asistencia de dos dias\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nlunes = [\"ana\", \"juan\", \"sofia\", \"ana\"]\nmartes = [\"juan\", \"sofia\", \"pedro\"]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Los dos dias: ['juan', 'sofia']\nSolo el lunes: ['ana']\nSolo el martes: ['pedro']\nEn total asistieron: 4 personas"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Auditoría de transacciones",
+    "difficulty": "dificil",
+    "statement_html": "<p>Un sistema bancario registra transacciones como tuplas <code>(codigo, cliente, monto)</code>. Por un error del servidor, algunas quedaron duplicadas.</p><pre><code>movimientos = [\n    (\"T1\", \"ana\", 50000),\n    (\"T2\", \"juan\", 120000),\n    (\"T1\", \"ana\", 50000),\n    (\"T3\", \"sofia\", 80000),\n    (\"T2\", \"juan\", 120000),\n]</code></pre><p>Mostrar el informe de auditoría:</p><pre><code>Registros recibidos: 5\nTransacciones validas: 3\nDuplicados descartados: 2\nTotal real: 250000\nClientes: ['ana', 'juan', 'sofia']</code></pre><p><em>Nota:</em> una transacción está duplicada si su código ya apareció antes. Conserve la primera.</p>",
+    "hint_html": "<p>Lleve un set de códigos ya vistos. En cada vuelta, si el código está en el set es duplicado; si no, se procesa y se agrega al set. Es el mismo patrón de bandera, pero con memoria.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Auditoria de transacciones\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Descarta transacciones duplicadas por codigo y calcula el\n    total real del dia junto con la lista de clientes.\n'''\n\n# Inicio\nmovimientos = [\n    (\"T1\", \"ana\", 50000),\n    (\"T2\", \"juan\", 120000),\n    (\"T1\", \"ana\", 50000),\n    (\"T3\", \"sofia\", 80000),\n    (\"T2\", \"juan\", 120000),\n]\n\ncodigos_vistos = set()   # memoria de lo ya procesado\nclientes = set()         # sin repetidos por definicion\ntotal = 0                # sumatoria\nduplicados = 0           # contador\n\nfor codigo, cliente, monto in movimientos:\n    if codigo in codigos_vistos:\n        # Ya se proceso: se descarta y no se suma\n        duplicados += 1\n        continue\n\n    codigos_vistos.add(codigo)\n    clientes.add(cliente)\n    total += monto\n\nprint(f\"Registros recibidos: {len(movimientos)}\")\nprint(f\"Transacciones validas: {len(codigos_vistos)}\")\nprint(f\"Duplicados descartados: {duplicados}\")\nprint(f\"Total real: {total}\")\nprint(f\"Clientes: {sorted(clientes)}\")\n# Fin</code></pre><p>Tres cosas que se juntan aquí:</p><ul><li><strong>Desempaquetado en el <code>for</code>.</strong> <code>for codigo, cliente, monto in movimientos</code> reparte cada tupla en tres variables con nombre. Mucho más legible que <code>m[0]</code>, <code>m[1]</code>, <code>m[2]</code>.</li><li><strong>El set como memoria.</strong> <code>codigos_vistos</code> recuerda lo ya procesado. Preguntar <code>in</code> sobre un set es rapidísimo, incluso con millones de registros; sobre una lista sería lento.</li><li><strong><code>continue</code> para el caso raro.</strong> El duplicado se descarta de una y el camino feliz queda sin indentar de más.</li></ul>",
+    "starter_code": "'''\nPrograma: Auditoria de transacciones\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nmovimientos = [\n    (\"T1\", \"ana\", 50000),\n    (\"T2\", \"juan\", 120000),\n    (\"T1\", \"ana\", 50000),\n    (\"T3\", \"sofia\", 80000),\n    (\"T2\", \"juan\", 120000),\n]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Registros recibidos: 5\nTransacciones validas: 3\nDuplicados descartados: 2\nTotal real: 250000\nClientes: ['ana', 'juan', 'sofia']"
+      }
+    ]
+  }
+]

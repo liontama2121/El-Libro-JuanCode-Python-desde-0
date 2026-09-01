@@ -1,0 +1,159 @@
+<p class="jc-gancho">En el capítulo 10 guardaste el inventario en dos listas paralelas: productos y precios. Funciona hasta que alguien agrega un producto y olvida el precio, y todo se desalinea. Un diccionario guarda la pareja junta, para siempre.</p>
+
+<h2>Clave y valor: la agenda telefónica</h2>
+
+<p>Un diccionario guarda parejas <strong>clave → valor</strong>. La clave es por lo que buscas; el valor es lo que encuentras.</p>
+
+<pre><code>precios = {
+    "pan": 5000,
+    "leche": 7000,
+    "queso": 15000,
+}
+
+print(precios["leche"])     # 7000
+print(len(precios))         # 3</code></pre>
+
+<p>La diferencia con una lista es que no buscas por <em>posición</em>, sino por <em>nombre</em>. En una agenda no buscas "el contacto número 47": buscas "Ana".</p>
+
+<pre><code># Con listas paralelas (frágil)
+productos = ["pan", "leche"]
+precios_lista = [5000, 7000]
+print(precios_lista[productos.index("leche")])   # incómodo
+
+# Con diccionario (directo)
+print(precios["leche"])</code></pre>
+
+<h2>Crear, leer, cambiar y borrar</h2>
+
+<pre><code>precios = {}                    # vacío
+
+precios["pan"] = 5000           # crear
+precios["leche"] = 7000
+precios["pan"] = 5500           # cambiar (la clave ya existía)
+
+print(precios["pan"])           # leer -> 5500
+del precios["leche"]            # borrar
+
+print(precios)                  # {'pan': 5500}</code></pre>
+
+<p>Una clave nunca se repite: asignarle un valor otra vez lo reemplaza. Eso es exactamente lo que se quiere en un inventario.</p>
+
+<h3>Leer sin que reviente: <code>.get()</code></h3>
+
+<pre><code>print(precios["arroz"])            # KeyError: 'arroz'
+print(precios.get("arroz"))        # None — no se cae
+print(precios.get("arroz", 0))     # 0 — valor por defecto</code></pre>
+
+<p><code>.get()</code> con valor por defecto es la herramienta que hace elegante el conteo, como verás abajo.</p>
+
+<pre><code>print("pan" in precios)     # True — preguntar antes de leer</code></pre>
+
+<h2>Recorrer un diccionario</h2>
+
+<pre><code>precios = {"pan": 5000, "leche": 7000, "queso": 15000}
+
+for producto in precios:                    # recorre las CLAVES
+    print(producto)
+
+for producto, precio in precios.items():    # clave y valor a la vez
+    print(f"{producto}: {precio}")
+
+print(list(precios.keys()))     # ['pan', 'leche', 'queso']
+print(list(precios.values()))   # [5000, 7000, 15000]
+print(sum(precios.values()))    # 27000</code></pre>
+
+<p><code>.items()</code> entrega tuplas de dos, y el <code>for</code> las desempaqueta —el mismo truco del capítulo 11—. Es la forma normal de recorrer un diccionario.</p>
+
+<h2>El patrón estrella: contar cosas</h2>
+
+<p>Contar cuántas veces aparece cada elemento es el uso más común de un diccionario en la vida real.</p>
+
+<pre><code>ventas = ["pan", "leche", "pan", "queso", "pan"]
+conteo = {}                                  # nace afuera, vacío
+
+for producto in ventas:
+    conteo[producto] = conteo.get(producto, 0) + 1
+
+print(conteo)     # {'pan': 3, 'leche': 1, 'queso': 1}</code></pre>
+
+<p>Esa línea de adentro merece leerse despacio: <em>"toma lo que ya había para este producto (o 0 si es la primera vez), súmale uno y vuélvelo a guardar"</em>.</p>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>producto</code></th><th><code>.get(producto, 0)</code></th><th><code>conteo</code> al terminar</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>pan</td><td>0 (no estaba)</td><td><code>{pan: 1}</code></td></tr>
+    <tr><td>2</td><td>leche</td><td>0</td><td><code>{pan: 1, leche: 1}</code></td></tr>
+    <tr><td>3</td><td>pan</td><td>1</td><td><code>{pan: 2, leche: 1}</code></td></tr>
+    <tr><td>4</td><td>queso</td><td>0</td><td><code>{pan: 2, leche: 1, queso: 1}</code></td></tr>
+    <tr><td>5</td><td>pan</td><td>2</td><td><code>{pan: 3, leche: 1, queso: 1}</code></td></tr>
+  </tbody>
+</table>
+
+<h2>Diccionarios anidados: fichas completas</h2>
+
+<p>El valor de una clave puede ser cualquier cosa: un número, una lista, u otro diccionario.</p>
+
+<pre><code>clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000, "activa": True},
+    "1045": {"nombre": "Juan", "saldo": 80000, "activa": False},
+}
+
+print(clientes["1023"]["nombre"])     # Ana
+
+for cedula, datos in clientes.items():
+    estado = "activa" if datos["activa"] else "bloqueada"
+    print(f"{datos['nombre']}: {datos['saldo']} ({estado})")</code></pre>
+
+<p>Así es como se ven los datos que vienen de una API o de un archivo JSON (capítulo 17). Un diccionario de diccionarios es la forma normal de representar registros.</p>
+
+<p>Ese <code>"activa" if datos["activa"] else "bloqueada"</code> es un <strong>if en una línea</strong>: sirve cuando solo hay que escoger entre dos valores.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Leer una clave que no existe</h3>
+<pre><code>precios["arroz"]           # KeyError
+precios.get("arroz", 0)    # ✅</code></pre>
+
+<h3>2. Usar una lista como clave</h3>
+<pre><code>d = {[1, 2]: "x"}     # TypeError: unhashable type: 'list'
+d = {(1, 2): "x"}     # ✅ una tupla sí sirve</code></pre>
+<p>Las claves tienen que ser inmutables: textos, números o tuplas. Otra razón para que existan las tuplas.</p>
+
+<h3>3. Creer que <code>for x in diccionario</code> da los valores</h3>
+<pre><code>for x in precios:
+    print(x)          # imprime pan, leche, queso — las CLAVES
+
+for x in precios.values():
+    print(x)          # ahora sí los precios</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Buscas por nombre, código o cédula? Diccionario. ¿Por posición u orden? Lista.</li>
+  <li>Para contar: <code>conteo[x] = conteo.get(x, 0) + 1</code>.</li>
+  <li>Para recorrer parejas: <code>for clave, valor in d.items()</code>.</li>
+  <li>Antes de leer una clave dudosa: <code>.get()</code> con valor por defecto, o <code>in</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>d = {}</code></td><td>Diccionario vacío</td></tr>
+    <tr><td><code>d["k"] = v</code></td><td>Crea o reemplaza</td></tr>
+    <tr><td><code>d["k"]</code></td><td>Lee (<code>KeyError</code> si no está)</td></tr>
+    <tr><td><code>d.get("k", 0)</code></td><td>Lee con valor por defecto</td></tr>
+    <tr><td><code>"k" in d</code></td><td>¿Existe la clave?</td></tr>
+    <tr><td><code>del d["k"]</code></td><td>Borra la pareja</td></tr>
+    <tr><td><code>d.items()</code></td><td>Parejas clave-valor</td></tr>
+    <tr><td><code>d.keys()</code> · <code>d.values()</code></td><td>Solo claves · solo valores</td></tr>
+    <tr><td><code>sum(d.values())</code></td><td>Suma todos los valores</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Lista para lo que va en orden; diccionario para lo que se busca por nombre. Y para contar cualquier cosa: <code>conteo.get(x, 0) + 1</code>.</blockquote>

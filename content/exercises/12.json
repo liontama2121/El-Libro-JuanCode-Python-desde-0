@@ -1,0 +1,58 @@
+[
+  {
+    "orden": 1,
+    "title": "Lista de precios",
+    "difficulty": "facil",
+    "statement_html": "<p>Dado el diccionario de precios:</p><pre><code>precios = {\"pan\": 5000, \"leche\": 7000, \"queso\": 15000}</code></pre><p>Mostrar cada producto con su precio y el total del inventario:</p><pre><code>pan: 5,000\nleche: 7,000\nqueso: 15,000\nTotal: 27,000</code></pre>",
+    "hint_html": "<p>Recorra con <code>for producto, precio in precios.items():</code>. Para el total, <code>sum(precios.values())</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Lista de precios\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra cada producto con su precio y el total del inventario.\n'''\n\n# Inicio\nprecios = {\"pan\": 5000, \"leche\": 7000, \"queso\": 15000}\n\n# .items() entrega tuplas (clave, valor) que el for desempaqueta\nfor producto, precio in precios.items():\n    print(f\"{producto}: {precio:,}\")\n\nprint(f\"Total: {sum(precios.values()):,}\")\n# Fin</code></pre><p>Compare con el ejercicio del inventario del capítulo 10: allá había dos listas paralelas y tocaba usar la posición <code>i</code> para cruzarlas. Aquí la pareja ya viene junta y no hay forma de desalinearla.</p>",
+    "starter_code": "'''\nPrograma: Lista de precios\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nprecios = {\"pan\": 5000, \"leche\": 7000, \"queso\": 15000}\n\n# Fin\n",
+    "tests": [
+      { "stdin": "", "expected_output": "pan: 5,000\nleche: 7,000\nqueso: 15,000\nTotal: 27,000" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Productos más vendidos",
+    "difficulty": "facil",
+    "statement_html": "<p>Dada la lista de productos vendidos hoy:</p><pre><code>ventas = [\"pan\", \"leche\", \"pan\", \"queso\", \"pan\", \"leche\"]</code></pre><p>Contar cuántas veces se vendió cada uno y mostrarlos ordenados alfabéticamente:</p><pre><code>leche: 2\npan: 3\nqueso: 1\nEl mas vendido fue pan con 3</code></pre>",
+    "hint_html": "<p>El patrón de conteo: <code>conteo[producto] = conteo.get(producto, 0) + 1</code>. Para el más vendido, <code>max(conteo, key=conteo.get)</code> devuelve la clave con el valor más alto.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Productos mas vendidos\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Cuenta cuantas veces se vendio cada producto y determina\n    cual fue el mas vendido.\n'''\n\n# Inicio\nventas = [\"pan\", \"leche\", \"pan\", \"queso\", \"pan\", \"leche\"]\n\nconteo = {}    # nace afuera, vacio\n\nfor producto in ventas:\n    # Lo que ya habia (o 0 si es la primera vez) mas uno\n    conteo[producto] = conteo.get(producto, 0) + 1\n\nfor producto in sorted(conteo):\n    print(f\"{producto}: {conteo[producto]}\")\n\n# max con key=conteo.get compara por el VALOR y devuelve la CLAVE\nmas_vendido = max(conteo, key=conteo.get)\nprint(f\"El mas vendido fue {mas_vendido} con {conteo[mas_vendido]}\")\n# Fin</code></pre><p>Dos herramientas que valen oro:</p><ul><li><code>conteo.get(producto, 0) + 1</code> evita tener que preguntar <code>if producto in conteo</code> antes de sumar.</li><li><code>max(conteo, key=conteo.get)</code> recorre las claves pero compara por su valor. Sin el <code>key</code>, <code>max()</code> compararía los nombres alfabéticamente y devolvería <code>queso</code>.</li></ul>",
+    "starter_code": "'''\nPrograma: Productos mas vendidos\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nventas = [\"pan\", \"leche\", \"pan\", \"queso\", \"pan\", \"leche\"]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "leche: 2\npan: 3\nqueso: 1\nEl mas vendido fue pan con 3"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Cajero con diccionario",
+    "difficulty": "medio",
+    "statement_html": "<p>Un banco guarda sus clientes así:</p><pre><code>clientes = {\n    \"1023\": {\"nombre\": \"Ana\", \"saldo\": 250000},\n    \"1045\": {\"nombre\": \"Juan\", \"saldo\": 80000},\n}</code></pre><p>Solicitar una cédula y un monto a retirar. Mostrar:</p><ul><li>Si la cédula no existe: <code>Cliente no encontrado</code></li><li>Si el saldo no alcanza: <code>Ana, saldo insuficiente (tiene 250000)</code></li><li>Si alcanza: <code>Ana retiro 50000. Nuevo saldo: 200000</code></li></ul>",
+    "hint_html": "<p>Primero verifique con <code>if cedula in clientes</code>. Al modificar el saldo, recuerde que <code>clientes[cedula][\"saldo\"]</code> es la ruta completa hasta el número.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Cajero con diccionario\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Busca un cliente por cedula y procesa un retiro validando\n    que el saldo alcance.\n'''\n\n# Inicio\nclientes = {\n    \"1023\": {\"nombre\": \"Ana\", \"saldo\": 250000},\n    \"1045\": {\"nombre\": \"Juan\", \"saldo\": 80000},\n}\n\ncedula = input(\"Cedula: \").strip()\nmonto = int(input(\"Monto a retirar: \"))\n\nif cedula not in clientes:\n    print(\"Cliente no encontrado\")\nelse:\n    # cliente apunta al MISMO diccionario interno:\n    # modificarlo modifica el original\n    cliente = clientes[cedula]\n\n    if monto > cliente[\"saldo\"]:\n        print(f\"{cliente['nombre']}, saldo insuficiente (tiene {cliente['saldo']})\")\n    else:\n        cliente[\"saldo\"] -= monto\n        print(f\"{cliente['nombre']} retiro {monto}. Nuevo saldo: {cliente['saldo']}\")\n# Fin</code></pre><p>Lo importante: <code>cliente = clientes[cedula]</code> <strong>no hace una copia</strong>. Es otro nombre para el mismo diccionario interno, así que <code>cliente[\"saldo\"] -= monto</code> actualiza los datos de verdad. Eso ahorra escribir <code>clientes[cedula][\"saldo\"]</code> cuatro veces.</p><p>Y ojo con las comillas dentro de la f-string: como el texto va con comillas dobles, adentro se usan sencillas: <code>{cliente['nombre']}</code>.</p>",
+    "starter_code": "'''\nPrograma: Cajero con diccionario\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nclientes = {\n    \"1023\": {\"nombre\": \"Ana\", \"saldo\": 250000},\n    \"1045\": {\"nombre\": \"Juan\", \"saldo\": 80000},\n}\n\n# Fin\n",
+    "tests": [
+      { "stdin": "1023\n50000\n", "expected_output": "Cedula: Monto a retirar: Ana retiro 50000. Nuevo saldo: 200000" },
+      { "stdin": "1045\n90000\n", "expected_output": "Cedula: Monto a retirar: Juan, saldo insuficiente (tiene 80000)" },
+      { "stdin": "9999\n1000\n", "expected_output": "Cedula: Monto a retirar: Cliente no encontrado" }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Boletín de calificaciones",
+    "difficulty": "dificil",
+    "statement_html": "<p>Un curso guarda las notas así:</p><pre><code>curso = {\n    \"Ana\": [4.5, 3.8, 5.0],\n    \"Juan\": [2.5, 3.0, 2.8],\n    \"Sofia\": [3.5, 4.0, 3.9],\n}</code></pre><p>Mostrar el boletín con el promedio de cada estudiante y su estado, y al final el resumen del curso:</p><pre><code>Ana      4.43  APROBADO\nJuan     2.77  REPROBADO\nSofia    3.80  APROBADO\n---\nPromedio del curso: 3.67\nAprobados: 2 de 3\nMejor promedio: Ana</code></pre><p><em>Nota:</em> aprueba con promedio mayor o igual a 3.0. Los promedios se muestran con dos decimales y el nombre alineado en 8 espacios.</p>",
+    "hint_html": "<p>Recorra con <code>.items()</code>: el valor es una lista, así que <code>sum(notas) / len(notas)</code> da el promedio. Guarde los promedios en otro diccionario para poder sacar el mejor con <code>max(promedios, key=promedios.get)</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Boletin de calificaciones\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Calcula el promedio de cada estudiante, su estado y el\n    resumen del curso.\n'''\n\n# Inicio\nMINIMA = 3.0\n\ncurso = {\n    \"Ana\": [4.5, 3.8, 5.0],\n    \"Juan\": [2.5, 3.0, 2.8],\n    \"Sofia\": [3.5, 4.0, 3.9],\n}\n\npromedios = {}   # nombre -> promedio, para el resumen\naprobados = 0    # contador\n\nfor estudiante, notas in curso.items():\n    promedio = sum(notas) / len(notas)\n    promedios[estudiante] = promedio\n\n    if promedio >= MINIMA:\n        estado = \"APROBADO\"\n        aprobados += 1\n    else:\n        estado = \"REPROBADO\"\n\n    print(f\"{estudiante:<8} {promedio:.2f}  {estado}\")\n\nprint(\"---\")\n\n# El promedio del curso es el promedio de los promedios\ndel_curso = sum(promedios.values()) / len(promedios)\n\nprint(f\"Promedio del curso: {del_curso:.2f}\")\nprint(f\"Aprobados: {aprobados} de {len(curso)}\")\nprint(f\"Mejor promedio: {max(promedios, key=promedios.get)}\")\n# Fin</code></pre><p>Tres ideas que se juntan:</p><ul><li><strong>Diccionario de listas.</strong> Cada valor es una lista completa, así que <code>sum()</code> y <code>len()</code> funcionan sobre él directamente.</li><li><strong>Un diccionario para el resumen.</strong> Guardar <code>promedios</code> aparte permite calcular después el mejor y el promedio del curso sin volver a recorrer las notas.</li><li><strong>Formato en la f-string.</strong> <code>{estudiante:&lt;8}</code> alinea el nombre y <code>{promedio:.2f}</code> deja dos decimales. Sin eso, la tabla no queda derecha.</li></ul>",
+    "starter_code": "'''\nPrograma: Boletin de calificaciones\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nMINIMA = 3.0\n\ncurso = {\n    \"Ana\": [4.5, 3.8, 5.0],\n    \"Juan\": [2.5, 3.0, 2.8],\n    \"Sofia\": [3.5, 4.0, 3.9],\n}\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Ana      4.43  APROBADO\nJuan     2.77  REPROBADO\nSofia    3.80  APROBADO\n---\nPromedio del curso: 3.67\nAprobados: 2 de 3\nMejor promedio: Ana"
+      }
+    ]
+  }
+]

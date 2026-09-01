@@ -1,0 +1,139 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué hace [n for n in notas if n >= 3.0]?",
+    "data": { "options": [
+      { "id": "a", "text": "Crea una lista nueva solo con las notas mayores o iguales a 3.0" },
+      { "id": "b", "text": "Modifica la lista notas quitando las bajas" },
+      { "id": "c", "text": "Cuenta cuántas notas aprobaron" },
+      { "id": "d", "text": "Devuelve True o False" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Una comprehension nunca modifica el original: siempre crea algo nuevo, y hay que guardarlo."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Dónde va el if cuando se quiere escoger entre dos valores para cada elemento?",
+    "data": { "options": [
+      { "id": "a", "text": "Adelante, con else obligatorio" },
+      { "id": "b", "text": "Al final, sin else" },
+      { "id": "c", "text": "Da igual" },
+      { "id": "d", "text": "No se puede hacer en una comprehension" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Filtrar → if al final sin else. Escoger entre dos valores → if-else adelante."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué hace zip(productos, precios)?",
+    "data": { "options": [
+      { "id": "a", "text": "Une las dos listas en parejas, elemento con elemento" },
+      { "id": "b", "text": "Comprime las listas para ahorrar memoria" },
+      { "id": "c", "text": "Ordena las dos listas a la vez" },
+      { "id": "d", "text": "Suma las dos listas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es la forma limpia de convertir dos listas paralelas en un diccionario."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Cuándo NO conviene usar una comprehension?",
+    "data": { "options": [
+      { "id": "a", "text": "Cuando no cabe cómoda en una línea o se necesita imprimir y llevar contadores" },
+      { "id": "b", "text": "Cuando la lista tiene más de diez elementos" },
+      { "id": "c", "text": "Cuando hay que filtrar" },
+      { "id": "d", "text": "Nunca: siempre son mejores que un ciclo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Se usan cuando hacen el código más fácil de leer. Si no, el ciclo normal gana."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "precios = [1000, 2000]\nprint([p * 2 for p in precios])",
+    "data": { "options": [
+      { "id": "a", "text": "[2000, 4000]" },
+      { "id": "b", "text": "[1000, 2000, 1000, 2000]" },
+      { "id": "c", "text": "3000" },
+      { "id": "d", "text": "[1000, 2000]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sin if, la comprehension transforma cada elemento y devuelve una lista del mismo tamaño."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "notas = [4.0, 2.0, 3.5]\nprint([n for n in notas if n >= 3.0])",
+    "data": { "options": [
+      { "id": "a", "text": "[4.0, 3.5]" },
+      { "id": "b", "text": "[4.0, 2.0, 3.5]" },
+      { "id": "c", "text": "[2.0]" },
+      { "id": "d", "text": "[True, False, True]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El if al final deja pasar solo las que cumplen: la lista resultante es más corta."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "notas = [4.0, 2.0]\nprint([\"ok\" if n >= 3.0 else \"no\" for n in notas])",
+    "data": { "options": [
+      { "id": "a", "text": "['ok', 'no']" },
+      { "id": "b", "text": "['ok']" },
+      { "id": "c", "text": "['no']" },
+      { "id": "d", "text": "SyntaxError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con if-else adelante no se descarta nada: la lista tiene el mismo tamaño que la original."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "d = {\"pan\": 5000, \"queso\": 15000}\nprint({k: v for k, v in d.items() if v > 10000})",
+    "data": { "options": [
+      { "id": "a", "text": "{'queso': 15000}" },
+      { "id": "b", "text": "{'pan': 5000}" },
+      { "id": "c", "text": "['queso']" },
+      { "id": "d", "text": "{15000}" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Una comprehension de diccionario usa llaves y clave: valor; el if al final filtra las parejas."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["notas = [4.0, 2.0]", "print([n for n in notas if n >= 3.0 else 0])"] },
+    "correct": { "line_number": 2 },
+    "explanation": "El if del final no admite else. Si se quiere el 0, el if-else va adelante: [n if n >= 3.0 else 0 for n in notas]."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El programa debería mostrar la lista con IVA pero no muestra nada útil. ¿En qué línea está el error?",
+    "data": { "lines": ["precios = [1000, 2000]", "[p * 1.19 for p in precios]", "print(precios)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "La comprehension crea una lista nueva y nadie la guarda. Falta con_iva = [...] y luego imprimirla."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme el reporte del curso con comprehensions",
+    "data": { "lines": [
+      { "id": "l1", "text": "curso = {\"Ana\": [4.5, 5.0], \"Juan\": [2.0, 2.5]}", "indent": 0 },
+      { "id": "l2", "text": "promedios = {n: sum(v) / len(v) for n, v in curso.items()}", "indent": 0 },
+      { "id": "l3", "text": "aprobados = [n for n, p in promedios.items() if p >= 3.0]", "indent": 0 },
+      { "id": "l4", "text": "print(f\"Aprobados: {aprobados}\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4"] },
+    "explanation": "Los promedios se calculan una sola vez y las líneas siguientes trabajan sobre ese diccionario."
+  }
+]

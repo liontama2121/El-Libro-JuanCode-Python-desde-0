@@ -1,0 +1,180 @@
+<p class="jc-gancho">Hasta ahora, para guardar cinco notas necesitabas cinco variables. ¿Y si son cuarenta estudiantes? ¿Y si no sabes cuántos son hasta que el usuario termine de escribir? Para eso existen las listas: <strong>una sola variable que guarda muchas cosas</strong>.</p>
+
+<h2>Una lista es una fila de cajas numeradas</h2>
+
+<pre><code>notas = [4.0, 3.5, 2.8, 5.0, 3.2]
+
+print(notas)         # [4.0, 3.5, 2.8, 5.0, 3.2]
+print(len(notas))    # 5
+print(notas[0])      # 4.0   la primera
+print(notas[-1])     # 3.2   la última</code></pre>
+
+<p>Se indexa igual que un texto: desde cero, y con negativos desde atrás. También se rebana:</p>
+
+<pre><code>print(notas[1:3])    # [3.5, 2.8]
+print(notas[:2])     # [4.0, 3.5]
+print(notas[-2:])    # [5.0, 3.2]</code></pre>
+
+<p>Una lista puede tener de todo, aunque en la práctica casi siempre guarda cosas del mismo tipo:</p>
+
+<pre><code>productos = ["pan", "leche", "queso"]
+precios = [5000, 7000, 15000]
+vacia = []</code></pre>
+
+<h2>La diferencia grande: las listas SÍ cambian</h2>
+
+<p>Los textos son inmutables: <code>nombre.upper()</code> devuelve uno nuevo. Las listas no: se modifican <strong>en el sitio</strong>.</p>
+
+<pre><code>notas = [4.0, 3.5, 2.8]
+
+notas[2] = 3.0          # cambiar una posición
+notas.append(4.5)       # agregar al final
+notas.insert(0, 5.0)    # meter en una posición
+notas.remove(3.5)       # quitar por VALOR (el primero que encuentre)
+ultima = notas.pop()    # sacar la última y quedársela
+
+print(notas)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Método</th><th>Qué hace</th><th>Ojo con…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>.append(x)</code></td><td>Agrega al final</td><td>El más usado de todos</td></tr>
+    <tr><td><code>.insert(i, x)</code></td><td>Mete en la posición <code>i</code></td><td>Corre todo lo demás</td></tr>
+    <tr><td><code>.remove(x)</code></td><td>Quita por valor</td><td><code>ValueError</code> si no está</td></tr>
+    <tr><td><code>.pop()</code></td><td>Saca la última y la devuelve</td><td><code>.pop(0)</code> saca la primera</td></tr>
+    <tr><td><code>.sort()</code></td><td>Ordena la lista</td><td>Cambia el original, no devuelve nada</td></tr>
+    <tr><td><code>.reverse()</code></td><td>Le da vuelta</td><td>También en el sitio</td></tr>
+    <tr><td><code>.count(x)</code></td><td>Cuántas veces aparece</td><td></td></tr>
+    <tr><td><code>.index(x)</code></td><td>En qué posición está</td><td><code>ValueError</code> si no está</td></tr>
+  </tbody>
+</table>
+
+<p>Esa diferencia con los textos es la trampa número uno:</p>
+
+<pre><code>nombre = "ana"
+nombre.upper()          # ❌ no cambia nada, hay que guardar
+
+notas = [3.0, 1.0]
+notas.sort()            # ✅ la lista YA quedó ordenada
+notas = notas.sort()    # ❌ ahora notas vale None</code></pre>
+
+<h2>Las funciones que resuelven media tarea</h2>
+
+<pre><code>notas = [4.0, 3.5, 2.8, 5.0, 3.2]
+
+print(len(notas))        # 5      cuántas hay
+print(sum(notas))        # 18.5   la suma
+print(max(notas))        # 5.0    la mayor
+print(min(notas))        # 2.8    la menor
+print(sum(notas) / len(notas))   # 3.7  el promedio</code></pre>
+
+<p>Todo lo que en el capítulo 7 hacías con sumatorias y máximos a mano, aquí es una línea. Los ciclos siguen sirviendo cuando la condición es más complicada.</p>
+
+<h2>Recorrer una lista</h2>
+
+<pre><code>productos = ["pan", "leche", "queso"]
+precios = [5000, 7000, 15000]
+
+# Solo los valores
+for producto in productos:
+    print(producto)
+
+# Con la posición, cuando hay dos listas en paralelo
+for i in range(len(productos)):
+    print(f"{productos[i]}: {precios[i]}")
+
+# Con enumerate, más limpio
+for i, producto in enumerate(productos):
+    print(f"{i + 1}. {producto} — {precios[i]}")</code></pre>
+
+<p>Y el patrón de siempre —contador, sumatoria, bandera— sigue igual:</p>
+
+<pre><code>caros = 0
+total = 0
+
+for precio in precios:
+    total += precio
+    if precio &gt; 10000:
+        caros += 1
+
+print(f"Total: {total}, caros: {caros}")</code></pre>
+
+<h2>La película de una lista que crece</h2>
+
+<p>Este es el patrón que vas a usar toda la vida: una lista vacía que se va llenando.</p>
+
+<pre><code>aprobadas = []                        # nace afuera, vacía
+notas = [4.0, 2.5, 3.8, 1.9, 5.0]
+
+for nota in notas:
+    if nota &gt;= 3.0:
+        aprobadas.append(nota)        # se actualiza adentro
+
+print(aprobadas)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th><code>nota</code></th><th>¿≥ 3.0?</th><th><code>aprobadas</code> al terminar</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>4.0</td><td>Sí</td><td><code>[4.0]</code></td></tr>
+    <tr><td>2</td><td>2.5</td><td>No</td><td><code>[4.0]</code></td></tr>
+    <tr><td>3</td><td>3.8</td><td>Sí</td><td><code>[4.0, 3.8]</code></td></tr>
+    <tr><td>4</td><td>1.9</td><td>No</td><td><code>[4.0, 3.8]</code></td></tr>
+    <tr><td>5</td><td>5.0</td><td>Sí</td><td><code>[4.0, 3.8, 5.0]</code></td></tr>
+  </tbody>
+</table>
+
+<p>Es la misma regla del capítulo 7: <strong>la lista nace afuera y se llena adentro</strong>. Si <code>aprobadas = []</code> estuviera dentro del <code>for</code>, cada vuelta la vaciaría.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Guardar el resultado de <code>.sort()</code></h3>
+<pre><code>notas = notas.sort()   # ❌ notas queda en None
+notas.sort()           # ✅</code></pre>
+<p>Los métodos que modifican la lista devuelven <code>None</code>. Si necesitas una copia ordenada sin tocar el original, usa <code>sorted(notas)</code>.</p>
+
+<h3>2. Pasarse de índice</h3>
+<pre><code>notas = [4.0, 3.5, 2.8]   # posiciones 0, 1, 2
+print(notas[3])           # IndexError: list index out of range</code></pre>
+
+<h3>3. Borrar mientras se recorre</h3>
+<pre><code>for nota in notas:
+    if nota &lt; 3.0:
+        notas.remove(nota)   # ❌ se salta elementos</code></pre>
+<p>Al quitar un elemento, los de atrás se corren y el ciclo salta uno. Lo correcto es construir una lista nueva con las que sí quieres:</p>
+<pre><code>buenas = []
+for nota in notas:
+    if nota &gt;= 3.0:
+        buenas.append(nota)</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Lista vacía antes del ciclo, <code>.append()</code> adentro.</li>
+  <li>Para totales rápidos: <code>len()</code>, <code>sum()</code>, <code>max()</code>, <code>min()</code>.</li>
+  <li>Si vas a filtrar, construye una lista nueva. Nunca borres mientras recorres.</li>
+  <li><code>.sort()</code> ordena en el sitio; <code>sorted()</code> devuelve una copia.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>lista = []</code></td><td>Lista vacía</td></tr>
+    <tr><td><code>lista.append(x)</code></td><td>Agrega al final</td></tr>
+    <tr><td><code>lista[0]</code> · <code>lista[-1]</code></td><td>Primera · última</td></tr>
+    <tr><td><code>len(lista)</code> · <code>sum(lista)</code></td><td>Cuántas · la suma</td></tr>
+    <tr><td><code>max(lista)</code> · <code>min(lista)</code></td><td>Mayor · menor</td></tr>
+    <tr><td><code>lista.sort()</code></td><td>Ordena en el sitio</td></tr>
+    <tr><td><code>sorted(lista)</code></td><td>Devuelve una copia ordenada</td></tr>
+    <tr><td><code>x in lista</code></td><td><code>True</code> si está</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Las listas se modifican en el sitio; los textos no. Por eso <code>lista.sort()</code> se usa solo, y <code>texto.upper()</code> hay que guardarlo.</blockquote>
