@@ -1,0 +1,197 @@
+<p class="jc-gancho">Un parqueadero cobra 3000 la primera hora y 1500 cada hora adicional. ¿Cuánto le cobras a alguien que estuvo 4 horas y 20 minutos? Todo eso son operadores: dividir, sacar el resto, comparar y decidir.</p>
+
+<h2>Los aritméticos</h2>
+
+<table>
+  <thead>
+    <tr><th>Operador</th><th>Qué hace</th><th>Ejemplo</th><th>Resultado</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>+</code></td><td>Suma</td><td><code>7 + 2</code></td><td><code>9</code></td></tr>
+    <tr><td><code>-</code></td><td>Resta</td><td><code>7 - 2</code></td><td><code>5</code></td></tr>
+    <tr><td><code>*</code></td><td>Multiplica</td><td><code>7 * 2</code></td><td><code>14</code></td></tr>
+    <tr><td><code>/</code></td><td>Divide (siempre decimal)</td><td><code>7 / 2</code></td><td><code>3.5</code></td></tr>
+    <tr><td><code>//</code></td><td>División entera</td><td><code>7 // 2</code></td><td><code>3</code></td></tr>
+    <tr><td><code>%</code></td><td>Resto de la división</td><td><code>7 % 2</code></td><td><code>1</code></td></tr>
+    <tr><td><code>**</code></td><td>Potencia</td><td><code>7 ** 2</code></td><td><code>49</code></td></tr>
+  </tbody>
+</table>
+
+<p>Los tres primeros no tienen misterio. Los que hay que entender de verdad son <code>/</code>, <code>//</code> y <code>%</code>.</p>
+
+<h3><code>/</code> siempre devuelve decimal</h3>
+
+<pre><code>print(10 / 2)     # 5.0  <- no 5
+print(10 / 3)     # 3.3333333333333335</code></pre>
+
+<p>Aunque la división sea exacta, <code>/</code> entrega <code>float</code>. Si necesitas un entero, usa <code>//</code>.</p>
+
+<h3><code>//</code> y <code>%</code> son una pareja</h3>
+
+<p>Piensa en repartir 17 dulces entre 5 niños:</p>
+
+<pre><code>print(17 // 5)    # 3  <- a cada niño le tocan 3
+print(17 % 5)     # 2  <- sobran 2</code></pre>
+
+<p>Esa pareja resuelve una cantidad enorme de problemas reales:</p>
+
+<ul>
+  <li><strong>¿Es par?</strong> <code>numero % 2 == 0</code></li>
+  <li><strong>¿Cuántos billetes de 50000 caben?</strong> <code>monto // 50000</code></li>
+  <li><strong>Convertir minutos a horas y minutos:</strong> <code>total // 60</code> y <code>total % 60</code></li>
+</ul>
+
+<h2>La precedencia: quién va primero</h2>
+
+<p>Python no lee de izquierda a derecha a secas. Respeta el orden de siempre:</p>
+
+<ol>
+  <li><code>()</code> paréntesis</li>
+  <li><code>**</code> potencia</li>
+  <li><code>*</code> <code>/</code> <code>//</code> <code>%</code></li>
+  <li><code>+</code> <code>-</code></li>
+</ol>
+
+<pre><code>print(2 + 3 * 4)      # 14, no 20: primero multiplica
+print((2 + 3) * 4)    # 20: el paréntesis manda</code></pre>
+
+<p>El error clásico del promedio:</p>
+
+<pre><code>nota1 = 4.0
+nota2 = 3.0
+
+print(nota1 + nota2 / 2)      # 5.5  ❌ dividió solo la segunda nota
+print((nota1 + nota2) / 2)    # 3.5  ✅</code></pre>
+
+<p>Consejo que vale por todo el capítulo: <strong>cuando dudes, pon paréntesis</strong>. No cuestan nada y le dicen al que lee exactamente qué querías.</p>
+
+<h2>Los de comparación: preguntas de sí o no</h2>
+
+<p>Estos no calculan: <em>responden</em>. El resultado es siempre <code>True</code> o <code>False</code>.</p>
+
+<table>
+  <thead>
+    <tr><th>Operador</th><th>Pregunta</th><th>Ejemplo</th><th>Resultado</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>==</code></td><td>¿Son iguales?</td><td><code>3 == 3</code></td><td><code>True</code></td></tr>
+    <tr><td><code>!=</code></td><td>¿Son distintos?</td><td><code>3 != 3</code></td><td><code>False</code></td></tr>
+    <tr><td><code>&gt;</code></td><td>¿Mayor?</td><td><code>5 &gt; 3</code></td><td><code>True</code></td></tr>
+    <tr><td><code>&lt;</code></td><td>¿Menor?</td><td><code>5 &lt; 3</code></td><td><code>False</code></td></tr>
+    <tr><td><code>&gt;=</code></td><td>¿Mayor o igual?</td><td><code>3 &gt;= 3</code></td><td><code>True</code></td></tr>
+    <tr><td><code>&lt;=</code></td><td>¿Menor o igual?</td><td><code>2 &lt;= 3</code></td><td><code>True</code></td></tr>
+  </tbody>
+</table>
+
+<p><strong>Un signo igual guarda, dos preguntan.</strong> Confundirlos es el error más común del curso:</p>
+
+<pre><code>edad = 18      # guarda 18 en edad
+edad == 18     # pregunta si edad vale 18 -> True</code></pre>
+
+<p>Python permite encadenar comparaciones como en matemáticas, y se lee precioso:</p>
+
+<pre><code>nota = 3.8
+print(3.0 &lt;= nota &lt;= 5.0)    # True</code></pre>
+
+<h2>Los lógicos: unir varias preguntas</h2>
+
+<table>
+  <thead>
+    <tr><th>Operador</th><th>Es verdadero cuando…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>and</code></td><td>las dos partes son verdaderas</td></tr>
+    <tr><td><code>or</code></td><td>al menos una parte es verdadera</td></tr>
+    <tr><td><code>not</code></td><td>invierte: lo verdadero se vuelve falso</td></tr>
+  </tbody>
+</table>
+
+<pre><code>edad = 20
+tiene_cedula = True
+
+print(edad &gt;= 18 and tiene_cedula)   # True: cumple las dos
+print(edad &lt; 18 or tiene_cedula)     # True: basta con una
+print(not tiene_cedula)              # False</code></pre>
+
+<h3>La tabla de la verdad, en una frase</h3>
+
+<table>
+  <thead>
+    <tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>True</td><td>True</td><td>True</td><td>True</td></tr>
+    <tr><td>True</td><td>False</td><td>False</td><td>True</td></tr>
+    <tr><td>False</td><td>True</td><td>False</td><td>True</td></tr>
+    <tr><td>False</td><td>False</td><td>False</td><td>False</td></tr>
+  </tbody>
+</table>
+
+<p><code>and</code> es exigente: si algo falla, todo falla. <code>or</code> es conforme: con una le basta.</p>
+
+<h2>La película de un cálculo</h2>
+
+<p>El parqueadero: 3000 la primera hora y 1500 cada hora adicional. Un carro estuvo 260 minutos y se cobra por hora empezada.</p>
+
+<pre><code>minutos = 260
+horas = minutos // 60        # línea 1
+sobrante = minutos % 60      # línea 2
+if sobrante &gt; 0:             # (esto lo verás en el capítulo 6)
+    horas = horas + 1
+total = 3000 + (horas - 1) * 1500
+print("Total:", total)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Después de…</th><th><code>horas</code></th><th><code>sobrante</code></th><th><code>total</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>línea 1</td><td>4</td><td>—</td><td>—</td></tr>
+    <tr><td>línea 2</td><td>4</td><td>20</td><td>—</td></tr>
+    <tr><td>ajuste por hora empezada</td><td>5</td><td>20</td><td>—</td></tr>
+    <tr><td>cálculo final</td><td>5</td><td>20</td><td>3000 + 4×1500 = 9000</td></tr>
+  </tbody>
+</table>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Usar <code>=</code> donde va <code>==</code></h3>
+<pre><code>if edad = 18:      # SyntaxError
+if edad == 18:     # ✅</code></pre>
+
+<h3>2. Olvidar el paréntesis del promedio</h3>
+<pre><code>promedio = nota1 + nota2 / 2       # ❌
+promedio = (nota1 + nota2) / 2     # ✅</code></pre>
+
+<h3>3. Escribir la condición como se habla</h3>
+<pre><code>if nota == 3 or 4:        # ❌ no hace lo que crees
+if nota == 3 or nota == 4:  # ✅</code></pre>
+<p>La primera versión pregunta "¿nota es 3?" y luego evalúa "¿4?", que para Python es verdadero por ser distinto de cero. La condición sale siempre verdadera.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Para cuentas exactas de conteo, <code>//</code> y <code>%</code>. Para promedios y plata, <code>/</code>.</li>
+  <li>Cuando mezcles operaciones, pon paréntesis aunque no hagan falta.</li>
+  <li>Una comparación siempre entrega <code>True</code> o <code>False</code>: puedes guardarla en una variable.</li>
+  <li>Cada parte de un <code>and</code> / <code>or</code> tiene que ser una comparación completa.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>7 / 2</code></td><td><code>3.5</code> — siempre decimal</td></tr>
+    <tr><td><code>7 // 2</code></td><td><code>3</code> — cuántas veces cabe</td></tr>
+    <tr><td><code>7 % 2</code></td><td><code>1</code> — lo que sobra</td></tr>
+    <tr><td><code>n % 2 == 0</code></td><td><code>True</code> si <code>n</code> es par</td></tr>
+    <tr><td><code>(a + b) / 2</code></td><td>Promedio bien calculado</td></tr>
+    <tr><td><code>3.0 &lt;= n &lt;= 5.0</code></td><td>¿Está en el rango?</td></tr>
+    <tr><td><code>a and b</code> · <code>a or b</code></td><td>Las dos · al menos una</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Un signo igual guarda. Dos signos igual preguntan. Esa sola frase te ahorra la mitad de los errores del próximo capítulo.</blockquote>

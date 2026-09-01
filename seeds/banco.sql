@@ -6,7 +6,9 @@
 --  volver a ejecutar sin duplicar: el WHERE NOT EXISTS compara capítulo +
 --  enunciado.
 --
---    npm run db:seed:local     (ya ejecuta este archivo después de seed.sql)
+--  Es una migración de UNA SOLA VEZ para instalaciones que venían del formato
+--  viejo. En una base nueva no encuentra nada que migrar y no hace nada.
+--    npm run db:seed:local     (lo ejecuta antes del contenido)
 -- ============================================================================
 
 INSERT INTO question_bank (

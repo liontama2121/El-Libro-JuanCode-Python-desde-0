@@ -85,8 +85,7 @@ content/                      ← el libro escrito a mano (fuente de verdad)
 └── exercises/NN.json         ← ejercicios
 scripts/build-contenido.mjs   ← genera seeds/contenido.sql desde content/
 drizzle/                      ← migraciones incrementales de drizzle-kit
-seeds/seed.sql                ← las 6 partes y los 24 capítulos (esqueleto)
-seeds/banco.sql               ← migra las preguntas viejas al banco
+seeds/banco.sql               ← migra las preguntas viejas al banco (una vez)
 seeds/contenido.sql           ← GENERADO: no editar a mano
 workers/app.ts                ← entrada del Worker
 wrangler.jsonc
@@ -169,8 +168,9 @@ npm run db:seed:local        # esqueleto + banco viejo + contenido de content/
 `db:seed:local` hace tres cosas seguidas:
 
 1. `npm run content:build` — lee `content/` y genera `seeds/contenido.sql`.
-2. Migra al banco las preguntas que existieran en el formato viejo.
-3. Aplica el contenido.
+2. Migra al banco las preguntas que existieran en el formato viejo (en una base
+   nueva no hace nada).
+3. Aplica el contenido: partes, capítulos, ejercicios, quizzes y banco.
 
 **Es idempotente**: se puede correr las veces que haga falta. Edita un archivo
 de `content/`, vuelve a seedear y la base queda igual al archivo. Solo se

@@ -1,0 +1,195 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Desde qué número se cuentan las posiciones de un string?",
+    "data": { "options": [
+      { "id": "a", "text": "Desde 0" },
+      { "id": "b", "text": "Desde 1" },
+      { "id": "c", "text": "Desde -1" },
+      { "id": "d", "text": "Depende del largo del texto" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La primera casilla es la 0, así que en un texto de 9 letras la última es la 8."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es la forma más segura de obtener el último carácter de un texto?",
+    "data": { "options": [
+      { "id": "a", "text": "texto[-1]" },
+      { "id": "b", "text": "texto[len(texto)]" },
+      { "id": "c", "text": "texto[1]" },
+      { "id": "d", "text": "texto.last()" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "texto[len(texto)] se pasa por uno y da IndexError. Con [-1] no hay que calcular nada."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué hace nombre.upper() si no se guarda el resultado?",
+    "data": { "options": [
+      { "id": "a", "text": "Nada visible: devuelve un texto nuevo y se pierde" },
+      { "id": "b", "text": "Cambia la variable nombre" },
+      { "id": "c", "text": "Lanza un error" },
+      { "id": "d", "text": "Imprime el texto en mayúsculas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Los métodos de texto no modifican el original: devuelven una copia. Hay que hacer nombre = nombre.upper()."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Para qué sirve la f antes de las comillas en f\"Hola {nombre}\"?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que Python reemplace lo que está entre llaves por su valor" },
+      { "id": "b", "text": "Para indicar que el texto está en formato UTF-8" },
+      { "id": "c", "text": "Para que el texto salga en negrilla" },
+      { "id": "d", "text": "Para convertir el texto en float" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sin la f, las llaves se imprimen tal cual. Con la f, adentro cabe cualquier expresión."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué una cédula se guarda como texto y no como número?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque no se hacen cuentas con ella y un cero inicial se perdería" },
+      { "id": "b", "text": "Porque los números enteros no aceptan más de 8 dígitos" },
+      { "id": "c", "text": "Porque input() no puede convertirla" },
+      { "id": "d", "text": "Porque ocupa menos memoria" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cédulas, teléfonos y códigos son identificadores, no cantidades: se manejan como texto."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "ciudad = \"Cartagena\"\nprint(ciudad[0], ciudad[-1])",
+    "data": { "options": [
+      { "id": "a", "text": "C a" },
+      { "id": "b", "text": "C n" },
+      { "id": "c", "text": "Ca" },
+      { "id": "d", "text": "IndexError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "[0] es la primera letra y [-1] la última, que en Cartagena es otra a."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "ciudad = \"Cartagena\"\nprint(ciudad[0:5])",
+    "data": { "options": [
+      { "id": "a", "text": "Carta" },
+      { "id": "b", "text": "Cartag" },
+      { "id": "c", "text": "artag" },
+      { "id": "d", "text": "Carta g" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "En una rebanada el inicio entra y el final no: se toman las posiciones 0, 1, 2, 3 y 4."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "nombre = \"  ana  \"\nnombre.strip()\nprint(f\"[{nombre}]\")",
+    "data": { "options": [
+      { "id": "a", "text": "[  ana  ]" },
+      { "id": "b", "text": "[ana]" },
+      { "id": "c", "text": "[]" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El strip() calculó el texto limpio y lo botó porque nadie lo guardó. La variable sigue igual."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(f\"{4.5678:.2f}\")",
+    "data": { "options": [
+      { "id": "a", "text": "4.57" },
+      { "id": "b", "text": "4.56" },
+      { "id": "c", "text": "4.5678" },
+      { "id": "d", "text": "4.6" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": ".2f deja dos decimales y redondea: 4.5678 pasa a 4.57."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "saldo = 1250000\nprint(f\"{saldo:,}\")",
+    "data": { "options": [
+      { "id": "a", "text": "1,250,000" },
+      { "id": "b", "text": "1.250.000" },
+      { "id": "c", "text": "1250000" },
+      { "id": "d", "text": "1250,000" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La coma como especificador mete el separador de miles al estilo inglés."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "fecha = \"14/03/2026\"\npartes = fecha.split(\"/\")\nprint(partes[2])",
+    "data": { "options": [
+      { "id": "a", "text": "2026" },
+      { "id": "b", "text": "03" },
+      { "id": "c", "text": "14" },
+      { "id": "d", "text": "/" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "split() parte el texto donde encuentra el separador y devuelve una lista: [\"14\", \"03\", \"2026\"]."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(\"  ANA gomez  \".strip().lower().title())",
+    "data": { "options": [
+      { "id": "a", "text": "Ana Gomez" },
+      { "id": "b", "text": "  Ana Gomez  " },
+      { "id": "c", "text": "ANA GOMEZ" },
+      { "id": "d", "text": "ana gomez" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Los métodos se encadenan de izquierda a derecha: primero se quitan espacios, luego se baja todo a minúsculas y al final se ponen las iniciales."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El programa debe mostrar el nombre en mayúsculas. ¿En qué línea está el error?",
+    "data": { "lines": ["nombre = input(\"Nombre: \")", "nombre.upper()", "print(nombre)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Falta guardar: nombre = nombre.upper(). Así como está, el resultado se calcula y se bota."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["nombre = \"Ana\"", "saldo = 1250000", "print(\"{nombre} tiene {saldo}\")"] },
+    "correct": { "line_number": 3 },
+    "explanation": "Falta la f antes de las comillas: sin ella las llaves se imprimen tal cual."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme el programa que separa un correo en usuario y dominio",
+    "data": { "lines": [
+      { "id": "l1", "text": "crudo = input(\"Correo: \")", "indent": 0 },
+      { "id": "l2", "text": "correo = crudo.strip().lower()", "indent": 0 },
+      { "id": "l3", "text": "partes = correo.split(\"@\")", "indent": 0 },
+      { "id": "l4", "text": "print(f\"Usuario: {partes[0]}\")", "indent": 0 },
+      { "id": "l5", "text": "print(f\"Dominio: {partes[-1]}\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5"] },
+    "explanation": "Primero se pide, después se normaliza, luego se parte y al final se muestran los pedazos."
+  }
+]

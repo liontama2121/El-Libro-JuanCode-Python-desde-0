@@ -1,0 +1,162 @@
+<p class="jc-gancho">Estás calculando cuánto le queda a un cliente después de pagar tres cuotas. Sin variables tendrías que volver a escribir el saldo en cada línea, y si el número cambia, cambiarlo en diez sitios. Con variables lo escribes una vez y el programa se encarga del resto.</p>
+
+<h2>Una variable es una caja con nombre</h2>
+
+<p>Una <strong>variable</strong> guarda un dato para usarlo después. Se crea con el signo <code>=</code>: a la izquierda el nombre, a la derecha el valor.</p>
+
+<pre><code>nombre = "Ana"
+edad = 17
+saldo = 250000
+
+print(nombre)
+print(saldo)</code></pre>
+
+<p>Paso a paso, lo que hace Python:</p>
+
+<table>
+  <thead>
+    <tr><th>Línea</th><th>Qué pasa por dentro</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>nombre = "Ana"</code></td><td>Guarda el texto <code>"Ana"</code> en memoria y le cuelga la etiqueta <code>nombre</code>.</td></tr>
+    <tr><td><code>edad = 17</code></td><td>Guarda el número 17 con la etiqueta <code>edad</code>.</td></tr>
+    <tr><td><code>print(nombre)</code></td><td>Busca la etiqueta <code>nombre</code>, encuentra <code>"Ana"</code> y lo imprime.</td></tr>
+  </tbody>
+</table>
+
+<p>Ojo con algo que confunde a todo el mundo: el <code>=</code> aquí <strong>no</strong> significa "es igual a" como en matemáticas. Significa "guarda esto acá". Por eso esta línea, que en matemáticas sería imposible, en Python tiene todo el sentido:</p>
+
+<pre><code>contador = 0
+contador = contador + 1   # ahora contador vale 1</code></pre>
+
+<p>Python primero resuelve el lado derecho (<code>0 + 1</code>) y después mete el resultado en la caja. Es la base de los contadores que vas a usar en el capítulo 7.</p>
+
+<h3>Reglas para los nombres</h3>
+
+<ul>
+  <li>Solo letras, números y guion bajo. No pueden empezar por número.</li>
+  <li>Sin espacios: se usa <code>snake_case</code>, como <code>nota_final</code> o <code>saldo_actual</code>.</li>
+  <li>Que digan qué guardan. <code>edad</code> le gana a <code>x</code> siempre.</li>
+  <li>Python distingue mayúsculas: <code>Saldo</code> y <code>saldo</code> son dos cajas distintas.</li>
+</ul>
+
+<h2>Los cuatro tipos básicos</h2>
+
+<p>Python decide el tipo solo, mirando el valor que le diste.</p>
+
+<table>
+  <thead>
+    <tr><th>Tipo</th><th>Qué guarda</th><th>Ejemplo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>str</code></td><td>Texto</td><td><code>"Cartagena"</code></td></tr>
+    <tr><td><code>int</code></td><td>Números enteros</td><td><code>250000</code></td></tr>
+    <tr><td><code>float</code></td><td>Números con decimales</td><td><code>4.5</code></td></tr>
+    <tr><td><code>bool</code></td><td>Verdadero o falso</td><td><code>True</code></td></tr>
+  </tbody>
+</table>
+
+<p>Dos detalles que cuestan puntos en los parciales: <code>True</code> y <code>False</code> van con mayúscula inicial, y <code>"17"</code> con comillas es <strong>texto</strong>, no número.</p>
+
+<pre><code>print(type("Cartagena"))   # str
+print(type(250000))        # int
+print(type(4.5))           # float
+print(type(True))          # bool</code></pre>
+
+<p>En Colombia los precios se escriben con puntos de miles, pero en Python el punto es el separador decimal. <code>1.500</code> para Python es "uno coma cinco", no mil quinientos. Los miles se escriben pelados: <code>1500</code>. Si quieres separarlos para leerlos mejor, Python acepta guion bajo: <code>1_500_000</code>.</p>
+
+<h2>El tipo cambia lo que hacen los operadores</h2>
+
+<p>El mismo símbolo <code>+</code> hace cosas distintas según con qué trabaje:</p>
+
+<pre><code>print(2 + 3)            # 5      -> suma
+print("2" + "3")        # 23     -> pega los textos
+print("Hola " + "Ana")  # Hola Ana</code></pre>
+
+<p>Y mezclar tipos incompatibles revienta:</p>
+
+<pre><code>edad = 17
+print("Edad: " + edad)   # TypeError: can only concatenate str (not "int") to str</code></pre>
+
+<p>Ese <code>TypeError</code> te está diciendo: <em>"a un texto solo le puedo pegar otro texto"</em>. La solución es convertir.</p>
+
+<h3>Convertir de un tipo a otro</h3>
+
+<pre><code>edad = 17
+print("Edad: " + str(edad))   # Edad: 17    -> el número se vuelve texto
+
+texto = "25"
+print(int(texto) + 5)         # 30          -> el texto se vuelve número
+
+print(float("4.5") + 0.5)     # 5.0</code></pre>
+
+<p>Y hay un atajo que ya conoces: las comas de <code>print()</code> convierten solas.</p>
+
+<pre><code>print("Edad:", edad)   # Edad: 17 — sin str(), sin errores</code></pre>
+
+<h2>La película de un programa con variables</h2>
+
+<p>Cuando un programa cambia el valor de sus variables, la única forma de entenderlo es seguirlo línea por línea. Este calcula el saldo de una cuenta después de dos movimientos:</p>
+
+<pre><code>saldo = 250000      # línea 1
+saldo = saldo - 80000   # línea 2: retiro
+saldo = saldo + 30000   # línea 3: consignación
+print("Saldo final:", saldo)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Después de…</th><th><code>saldo</code> vale</th><th>Por qué</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>línea 1</td><td>250000</td><td>Se crea la caja con el saldo inicial</td></tr>
+    <tr><td>línea 2</td><td>170000</td><td>Resuelve <code>250000 - 80000</code> y lo vuelve a guardar</td></tr>
+    <tr><td>línea 3</td><td>200000</td><td>Resuelve <code>170000 + 30000</code> y lo vuelve a guardar</td></tr>
+  </tbody>
+</table>
+
+<p>La caja es siempre la misma; lo que cambia es lo que hay adentro. Esa tabla —qué vale cada variable después de cada línea— es la herramienta que te va a salvar en los ciclos.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Usar una variable antes de crearla</h3>
+<pre><code>print(total)     # NameError: name 'total' is not defined
+total = 100</code></pre>
+<p>Python lee de arriba hacia abajo. Cuando llegó al <code>print</code>, la caja <code>total</code> todavía no existía.</p>
+
+<h3>2. Creer que el resultado se guarda solo</h3>
+<pre><code>saldo = 250000
+saldo - 80000          # esto calcula 170000 y lo bota
+print(saldo)           # 250000 — nada cambió</code></pre>
+<p>Calcular no es guardar. Si no hay <code>saldo = ...</code>, el resultado se pierde.</p>
+
+<h3>3. Sumar texto con número</h3>
+<pre><code>precio = "1500"
+print(precio + 500)    # TypeError</code></pre>
+<p>Ese <code>1500</code> entre comillas es texto. O le quitas las comillas, o usas <code>int(precio) + 500</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Todo dato que vayas a usar más de una vez merece una variable.</li>
+  <li>Ponle un nombre que se lea solo, en <code>snake_case</code>.</li>
+  <li>Si lo vas a mostrar, es texto. Si vas a hacer cuentas, es número.</li>
+  <li>Cuando cruzas de un lado al otro, convierte con <code>str()</code>, <code>int()</code> o <code>float()</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>saldo = 250000</code></td><td>Crea la caja <code>saldo</code> con ese número</td></tr>
+    <tr><td><code>type(saldo)</code></td><td>Dice de qué tipo es</td></tr>
+    <tr><td><code>str(17)</code></td><td><code>"17"</code> — número a texto</td></tr>
+    <tr><td><code>int("17")</code></td><td><code>17</code> — texto a número entero</td></tr>
+    <tr><td><code>float("4.5")</code></td><td><code>4.5</code> — texto a decimal</td></tr>
+    <tr><td><code>1_500_000</code></td><td>Un millón y medio, más fácil de leer</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Regla de oro: si vas a mostrarlo, es texto. Si vas a hacer cuentas con eso, es número. Convierte cuando cruces de un lado al otro.</blockquote>

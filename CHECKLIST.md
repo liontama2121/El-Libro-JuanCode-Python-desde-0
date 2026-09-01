@@ -89,8 +89,49 @@
 
 ## Fase C — Modo Código (Piston) + contenido completo
 
-- [ ] Ejecución de Python contra Piston + tabla `code_runs`
-- [ ] `▶ Probar mi código` en el lector, en el parcial y en el arcade
-- [ ] Seed idempotente desde `content/chapters`, `content/bank`, `content/exercises`
-- [ ] Los 24 capítulos escritos, con banco y ejercicios
-- [ ] README con `PISTON_URL` y `CODE_MODE_ENABLED`
+### Modo Código
+- [x] Tabla `code_runs` y `lib/piston.server.ts`
+- [x] Timeout de 10 s y 20 ejecuciones por minuto y estudiante
+- [x] Salida comparada normalizada (espacios y saltos sobrantes)
+- [x] `/api/probar` como ruta de recurso: los tests se leen de la base
+- [x] `▶ Probar mi código` en el lector del capítulo
+- [x] Nota automática en el simulacro de parcial
+- [x] Arcade 💻 Modo código
+- [x] `CODE_MODE_ENABLED` y `PISTON_URL` documentados en el README
+- [x] ⚠️ La instancia pública de Piston es whitelist-only desde el 15/02/2026:
+      hay que montar una propia (documentado). Sin motor la app no se rompe.
+
+### Pipeline de contenido
+- [x] `content/libro.json`, `content/chapters`, `content/bank`, `content/exercises`
+- [x] `scripts/build-contenido.mjs` valida y genera `seeds/contenido.sql`
+- [x] Seed idempotente por número de capítulo
+- [x] Columna `source`: el seed solo pisa lo suyo, lo del profe no se toca
+- [x] Un capítulo se publica solo cuando tiene cuerpo, banco y ejercicios
+- [x] `/admin/capitulo/:id/quiz` explica que el quiz sale del banco (las tablas
+      `questions` / `options` quedaron como legado)
+
+### Los 24 capítulos
+- [x] 1 🐍 ¿Qué es programar?
+- [x] 2 📦 Variables y tipos de datos
+- [x] 3 ⌨️ input() y conversiones
+- [x] 4 🧮 Operadores
+- [x] 5 📝 Strings a fondo
+- [ ] 6 🔀 Condicionales
+- [ ] 7 ⏳ while (contadores, sumatorias y banderas)
+- [ ] 8 🔢 for y range()
+- [ ] 9 🎛️ break, continue y anidados
+- [ ] 10 📋 Listas
+- [ ] 11 🎯 Tuplas y sets
+- [ ] 12 🗂️ Diccionarios
+- [ ] 13 ⚡ Comprehensions
+- [ ] 14 🧰 Funciones
+- [ ] 15 🛡️ Errores y excepciones
+- [ ] 16 📚 Módulos, pip y entornos
+- [ ] 17 📁 Archivos
+- [ ] 18 🏛️ Clases y objetos
+- [ ] 19 🧬 Herencia y métodos especiales
+- [ ] 20 🏗️ Proyecto: Sistema Bancario
+- [ ] 21 🗄️ SQL desde cero
+- [ ] 22 🐼 Pandas
+- [ ] 23 🤖 IA aplicada
+- [ ] 24 🚀 FastAPI y despliegue

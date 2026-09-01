@@ -1,0 +1,194 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué significa el signo = en Python?",
+    "data": { "options": [
+      { "id": "a", "text": "Guarda en la variable de la izquierda el valor de la derecha" },
+      { "id": "b", "text": "Compara si los dos lados son iguales" },
+      { "id": "c", "text": "Suma los dos lados" },
+      { "id": "d", "text": "Declara una constante que no se puede cambiar" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El = es asignación. Comparar es == , que verás en el capítulo 4."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿De qué tipo es la variable precio en precio = \"1990\"?",
+    "data": { "options": [
+      { "id": "a", "text": "str, porque está entre comillas" },
+      { "id": "b", "text": "int, porque solo tiene dígitos" },
+      { "id": "c", "text": "float, porque representa dinero" },
+      { "id": "d", "text": "bool" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las comillas mandan: todo lo que va entre comillas es texto, aunque parezca número."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál de estos nombres de variable es válido?",
+    "data": { "options": [
+      { "id": "a", "text": "nota_final" },
+      { "id": "b", "text": "2do_intento" },
+      { "id": "c", "text": "nota final" },
+      { "id": "d", "text": "nota-final" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Solo letras, números y guion bajo, y sin empezar por número. El guion medio Python lo lee como una resta."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En Python, ¿qué representa el literal 1.500?",
+    "data": { "options": [
+      { "id": "a", "text": "Uno coma cinco: el punto es el separador decimal" },
+      { "id": "b", "text": "Mil quinientos" },
+      { "id": "c", "text": "Un error de sintaxis" },
+      { "id": "d", "text": "El texto \"1.500\"" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Mil quinientos se escribe 1500 o 1_500. El punto siempre es decimal."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué tipo devuelve la operación 7000 * 0.04?",
+    "data": { "options": [
+      { "id": "a", "text": "float" },
+      { "id": "b", "text": "int" },
+      { "id": "c", "text": "str" },
+      { "id": "d", "text": "bool" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Si uno de los dos es float, el resultado es float. Por eso los descuentos salen con .0"
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "x = 5\nx = x + 3\nprint(x)",
+    "data": { "options": [
+      { "id": "a", "text": "8" },
+      { "id": "b", "text": "5" },
+      { "id": "c", "text": "53" },
+      { "id": "d", "text": "Error: no se puede usar x en su propia asignación" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Python resuelve primero el lado derecho (5 + 3) y después guarda el 8 en la misma caja."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(\"2\" + \"3\")",
+    "data": { "options": [
+      { "id": "a", "text": "23" },
+      { "id": "b", "text": "5" },
+      { "id": "c", "text": "2 3" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con textos el + pega en vez de sumar. Para sumar habría que convertir con int()."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "saldo = 250000\nsaldo - 80000\nprint(saldo)",
+    "data": { "options": [
+      { "id": "a", "text": "250000" },
+      { "id": "b", "text": "170000" },
+      { "id": "c", "text": "0" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La línea 2 calcula 170000 y lo bota: sin una asignación, el resultado se pierde."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "edad = 17\nprint(\"Edad:\", edad)",
+    "data": { "options": [
+      { "id": "a", "text": "Edad: 17" },
+      { "id": "b", "text": "TypeError" },
+      { "id": "c", "text": "Edad:17" },
+      { "id": "d", "text": "Edad: edad" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las comas de print() aceptan tipos mezclados: no hace falta str(). Con + sí daría TypeError."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "a = 10\nb = a\na = 99\nprint(b)",
+    "data": { "options": [
+      { "id": "a", "text": "10" },
+      { "id": "b", "text": "99" },
+      { "id": "c", "text": "1099" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "b se llevó una copia del valor que a tenía en ese momento. Cambiar a después no afecta a b."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(type(4.5))",
+    "data": { "options": [
+      { "id": "a", "text": "class 'float'" },
+      { "id": "b", "text": "class 'int'" },
+      { "id": "c", "text": "class 'str'" },
+      { "id": "d", "text": "4.5" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "type() dice de qué tipo es el dato. Con decimales, siempre float."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["edad = 17", "print(\"Edad: \" + edad)", "print(\"fin\")"] },
+    "correct": { "line_number": 2 },
+    "explanation": "No se puede pegar texto con número usando +. Faltaba str(edad), o usar las comas de print()."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["print(total)", "total = 100", "print(total)"] },
+    "correct": { "line_number": 1 },
+    "explanation": "Python lee de arriba hacia abajo: cuando llegó al primer print, la variable total todavía no existía."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme el programa que calcula el neto de la quincena",
+    "data": { "lines": [
+      { "id": "l1", "text": "valor_hora = 7000", "indent": 0 },
+      { "id": "l2", "text": "horas = 96", "indent": 0 },
+      { "id": "l3", "text": "total = valor_hora * horas", "indent": 0 },
+      { "id": "l4", "text": "descuentos = total * 0.08", "indent": 0 },
+      { "id": "l5", "text": "print(\"Neto:\", total - descuentos)", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5"] },
+    "explanation": "Una variable no se puede usar antes de crearse: primero los datos de entrada, luego los cálculos que dependen de ellos y al final la salida."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme el programa que muestra el saldo tras dos movimientos",
+    "data": { "lines": [
+      { "id": "l1", "text": "saldo = 250000", "indent": 0 },
+      { "id": "l2", "text": "saldo = saldo - 80000", "indent": 0 },
+      { "id": "l3", "text": "saldo = saldo + 30000", "indent": 0 },
+      { "id": "l4", "text": "print(\"Saldo final:\", saldo)", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4"] },
+    "explanation": "El orden de los movimientos cambia el resultado intermedio, y el print va de último para ver el saldo ya actualizado."
+  }
+]

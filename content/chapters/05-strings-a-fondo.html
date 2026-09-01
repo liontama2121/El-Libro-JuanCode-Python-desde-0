@@ -1,0 +1,180 @@
+<p class="jc-gancho">El extracto bancario dice <code>ana gomez</code> y tiene que salir <code>Ana Gomez</code>. El precio es <code>1250000</code> y debe verse <code>$ 1,250,000</code>. Nada de eso es cuenta: es manejo de texto, y en programación se hace todo el día.</p>
+
+<h2>Un string es una fila de casillas</h2>
+
+<p>Cada carácter tiene una posición, y se cuenta <strong>desde cero</strong>.</p>
+
+<pre><code>ciudad = "Cartagena"</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Carácter</th><td>C</td><td>a</td><td>r</td><td>t</td><td>a</td><td>g</td><td>e</td><td>n</td><td>a</td></tr>
+  </thead>
+  <tbody>
+    <tr><th>Posición</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+    <tr><th>Desde atrás</th><td>-9</td><td>-8</td><td>-7</td><td>-6</td><td>-5</td><td>-4</td><td>-3</td><td>-2</td><td>-1</td></tr>
+  </tbody>
+</table>
+
+<pre><code>print(ciudad[0])     # C   la primera
+print(ciudad[3])     # t
+print(ciudad[-1])    # a   la última, sin saber cuánto mide
+print(len(ciudad))   # 9   cuántos caracteres tiene</code></pre>
+
+<p>Ese <code>[-1]</code> es un regalo de Python: la última casilla, sin tener que calcular <code>len(ciudad) - 1</code>.</p>
+
+<h3>Rebanadas (<em>slicing</em>)</h3>
+
+<p>Con dos puntos se pide un pedazo: <code>texto[desde:hasta]</code>. El <code>desde</code> entra, el <code>hasta</code> <strong>no</strong>.</p>
+
+<pre><code>print(ciudad[0:5])   # Carta   posiciones 0,1,2,3,4
+print(ciudad[5:])    # gena    desde la 5 hasta el final
+print(ciudad[:5])    # Carta   desde el principio hasta la 5
+print(ciudad[-3:])   # ena     las últimas tres</code></pre>
+
+<p>Lo de que el final no entre confunde al principio, pero tiene una ventaja: <code>texto[0:5]</code> siempre entrega exactamente 5 caracteres.</p>
+
+<h2>Los métodos que vas a usar siempre</h2>
+
+<p>Un <strong>método</strong> es una función que va pegada al dato con un punto. Todos estos devuelven un texto <em>nuevo</em>: el original nunca cambia.</p>
+
+<pre><code>nombre = "  ana gomez  "
+
+print(nombre.strip())       # "ana gomez"  quita espacios de los lados
+print(nombre.upper())       # "  ANA GOMEZ  "
+print(nombre.lower())       # "  ana gomez  "
+print(nombre.title())       # "  Ana Gomez  "  primera letra de cada palabra
+print(nombre.strip().title())  # "Ana Gomez"  encadenados</code></pre>
+
+<p>Los de buscar y reemplazar:</p>
+
+<pre><code>correo = "ana@juancode.co"
+
+print(correo.replace("@", " arroba "))   # ana arroba juancode.co
+print("@" in correo)                     # True   ¿lo contiene?
+print(correo.startswith("ana"))          # True
+print(correo.endswith(".co"))            # True
+print(correo.find("@"))                  # 3      en qué posición está</code></pre>
+
+<p>Y el que parte un texto en pedazos:</p>
+
+<pre><code>fecha = "14/03/2026"
+partes = fecha.split("/")     # ["14", "03", "2026"]
+print(partes[2])              # 2026</code></pre>
+
+<p><strong>Ojo con esto:</strong> como los métodos devuelven un texto nuevo, esto no hace nada:</p>
+
+<pre><code>nombre = "  ana  "
+nombre.strip()        # ❌ calcula el resultado y lo bota
+print(nombre)         # "  ana  " — igualito
+
+nombre = nombre.strip()   # ✅ hay que guardarlo</code></pre>
+
+<h2>f-strings: la forma moderna de armar texto</h2>
+
+<p>Hasta aquí veníamos usando las comas de <code>print()</code>. Funcionan, pero se quedan cortas apenas quieres controlar el formato. La solución son las <strong>f-strings</strong>: una <code>f</code> antes de las comillas y variables entre llaves.</p>
+
+<pre><code>nombre = "Ana"
+saldo = 1250000
+
+print(f"{nombre} tiene {saldo} pesos")     # Ana tiene 1250000 pesos</code></pre>
+
+<p>Adentro de las llaves cabe cualquier expresión:</p>
+
+<pre><code>print(f"El doble es {saldo * 2}")
+print(f"Inicial: {nombre[0]}")
+print(f"En mayúsculas: {nombre.upper()}")</code></pre>
+
+<h3>Formato: donde las f-strings se ganan el sueldo</h3>
+
+<p>Después de la variable van dos puntos y el formato.</p>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Sale</th><th>Para qué</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>f"{4.5678:.2f}"</code></td><td><code>4.57</code></td><td>Dos decimales, redondeando</td></tr>
+    <tr><td><code>f"{1250000:,}"</code></td><td><code>1,250,000</code></td><td>Separador de miles</td></tr>
+    <tr><td><code>f"{0.15:.0%}"</code></td><td><code>15%</code></td><td>Porcentaje</td></tr>
+    <tr><td><code>f"{'Pan':&lt;10}"</code></td><td><code>Pan_______</code></td><td>Alinear a la izquierda en 10 espacios</td></tr>
+    <tr><td><code>f"{600:&gt;10}"</code></td><td><code>_______600</code></td><td>Alinear a la derecha</td></tr>
+  </tbody>
+</table>
+
+<p>Con eso, el volante de la panadería del capítulo 1 —el que tocó alinear contando espacios a mano— sale así:</p>
+
+<pre><code>producto = "Bunuelo"
+precio = 1500
+
+print(f"{producto:&lt;15}{precio:&gt;8,}")    # Bunuelo           1,500</code></pre>
+
+<p>De aquí en adelante, el libro usa f-strings. Las comas de <code>print()</code> siguen siendo válidas para cosas rápidas.</p>
+
+<h2>La película de una limpieza de datos</h2>
+
+<p>Llega el nombre <code>"  ANA gomez  "</code> desde un formulario y hay que dejarlo presentable:</p>
+
+<pre><code>crudo = "  ANA gomez  "
+paso1 = crudo.strip()        # línea 1
+paso2 = paso1.lower()        # línea 2
+limpio = paso2.title()       # línea 3
+print(f"[{limpio}]")</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Después de…</th><th>Valor</th><th>Qué se arregló</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>línea 1</td><td><code>"ANA gomez"</code></td><td>Se fueron los espacios de los lados</td></tr>
+    <tr><td>línea 2</td><td><code>"ana gomez"</code></td><td>Todo a minúsculas, para partir parejo</td></tr>
+    <tr><td>línea 3</td><td><code>"Ana Gomez"</code></td><td>Primera letra de cada palabra en mayúscula</td></tr>
+  </tbody>
+</table>
+
+<p>El <code>lower()</code> del paso 2 parece innecesario, pero sin él <code>title()</code> recibiría <code>"ANA gomez"</code> y dejaría <code>"Ana Gomez"</code> igual… en este caso. Con <code>"aNa GOMEZ"</code> el resultado sí cambiaría. Normalizar antes de formatear es la costumbre segura.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Creer que el método cambia la variable</h3>
+<pre><code>nombre.upper()            # ❌ no hace nada visible
+nombre = nombre.upper()   # ✅</code></pre>
+
+<h3>2. Pasarse de posición</h3>
+<pre><code>ciudad = "Cartagena"    # 9 letras: posiciones 0 a 8
+print(ciudad[9])        # IndexError: string index out of range</code></pre>
+<p>Con <code>len()</code> da 9, pero la última posición es 8. Por eso <code>[-1]</code> es más seguro.</p>
+
+<h3>3. Olvidar la <code>f</code></h3>
+<pre><code>print("{nombre} tiene {saldo}")     # imprime las llaves tal cual
+print(f"{nombre} tiene {saldo}")    # ✅</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Todo texto que venga de afuera se limpia primero: <code>.strip()</code>.</li>
+  <li>Si vas a comparar, normaliza a minúsculas: <code>.lower()</code>.</li>
+  <li>Para mostrar, arma con f-string y formatea ahí mismo.</li>
+  <li>Recuerda guardar: los métodos devuelven texto nuevo, no cambian el original.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>texto[0]</code> · <code>texto[-1]</code></td><td>Primer carácter · último</td></tr>
+    <tr><td><code>texto[2:5]</code></td><td>De la 2 a la 4 (la 5 no entra)</td></tr>
+    <tr><td><code>len(texto)</code></td><td>Cuántos caracteres tiene</td></tr>
+    <tr><td><code>.strip()</code></td><td>Quita espacios de los lados</td></tr>
+    <tr><td><code>.upper()</code> · <code>.lower()</code> · <code>.title()</code></td><td>MAYÚSCULAS · minúsculas · Cada Palabra</td></tr>
+    <tr><td><code>.replace("a", "b")</code></td><td>Cambia todas las apariciones</td></tr>
+    <tr><td><code>.split("/")</code></td><td>Parte el texto en una lista</td></tr>
+    <tr><td><code>"@" in correo</code></td><td><code>True</code> si lo contiene</td></tr>
+    <tr><td><code>f"{x:.2f}"</code> · <code>f"{x:,}"</code></td><td>Dos decimales · separador de miles</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Los métodos de texto no cambian la variable: devuelven una copia arreglada. Si no la guardas, se pierde.</blockquote>

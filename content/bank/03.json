@@ -1,0 +1,192 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué tipo devuelve siempre input()?",
+    "data": { "options": [
+      { "id": "a", "text": "str, sin importar lo que escriba el usuario" },
+      { "id": "b", "text": "int si el usuario escribe dígitos" },
+      { "id": "c", "text": "El tipo que Python adivine del contenido" },
+      { "id": "d", "text": "float, para poder hacer cuentas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "input() siempre entrega texto. Por eso hay que convertir con int() o float() cuando el dato es numérico."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Dónde va el mensaje que ve el usuario al pedir un dato?",
+    "data": { "options": [
+      { "id": "a", "text": "Dentro del paréntesis del input()" },
+      { "id": "b", "text": "En un print() de la línea anterior" },
+      { "id": "c", "text": "En un comentario" },
+      { "id": "d", "text": "En el encabezado del programa" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "input(\"Edad: \") muestra el mensaje y deja el cursor a continuación. Con print() aparte el cursor baja de línea."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "El usuario debe escribir un precio que puede llevar centavos. ¿Cómo se pide?",
+    "data": { "options": [
+      { "id": "a", "text": "float(input(\"Precio: \"))" },
+      { "id": "b", "text": "int(input(\"Precio: \"))" },
+      { "id": "c", "text": "input(float(\"Precio: \"))" },
+      { "id": "d", "text": "str(input(\"Precio: \"))" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "int() revienta con \"12500.50\". Para decimales se usa float(), y la conversión envuelve al input()."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué error lanza int(\"veinte\")?",
+    "data": { "options": [
+      { "id": "a", "text": "ValueError" },
+      { "id": "b", "text": "TypeError" },
+      { "id": "c", "text": "NameError" },
+      { "id": "d", "text": "SyntaxError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El tipo es correcto (un texto), pero el contenido no representa un entero: eso es ValueError."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué debe llevar el encabezado documentado de un programa?",
+    "data": { "options": [
+      { "id": "a", "text": "Nombre del programa, autor, fecha y descripción, entre comillas triples" },
+      { "id": "b", "text": "Solo el nombre del archivo" },
+      { "id": "c", "text": "La lista completa de variables usadas" },
+      { "id": "d", "text": "El resultado esperado del programa" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El bloque entre ''' documenta qué es el programa y quién lo hizo. Adentro van las secciones #Inicio y #Fin."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "El usuario escribe 3. ¿Qué imprime este programa?",
+    "code_snippet": "cantidad = input(\"Cantidad: \")\nprint(cantidad * 2)",
+    "data": { "options": [
+      { "id": "a", "text": "33" },
+      { "id": "b", "text": "6" },
+      { "id": "c", "text": "3 3" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Falta el int(): multiplicar un texto por 2 lo repite. Corre sin error y entrega basura, que es lo peligroso."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "El usuario escribe 25. ¿Qué imprime este programa?",
+    "code_snippet": "edad = int(input(\"Edad: \"))\nprint(edad + 1)",
+    "data": { "options": [
+      { "id": "a", "text": "26" },
+      { "id": "b", "text": "251" },
+      { "id": "c", "text": "TypeError" },
+      { "id": "d", "text": "ValueError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con el int() la suma es aritmética. Sin él, sería TypeError al mezclar texto y número."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(int(\" 25 \"))",
+    "data": { "options": [
+      { "id": "a", "text": "25" },
+      { "id": "b", "text": "ValueError" },
+      { "id": "c", "text": "\" 25 \"" },
+      { "id": "d", "text": "2 5" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "int() ignora los espacios de sobra a lado y lado. Lo que no acepta son letras ni decimales."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "print(int(float(\"25.7\")))",
+    "data": { "options": [
+      { "id": "a", "text": "25" },
+      { "id": "b", "text": "26" },
+      { "id": "c", "text": "25.7" },
+      { "id": "d", "text": "ValueError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "float() acepta el decimal y int() recorta la parte decimal: no redondea, la corta."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "El usuario escribe 12000 y luego 3. ¿Qué imprime?",
+    "code_snippet": "precio = input(\"Precio: \")\ncantidad = int(input(\"Cantidad: \"))\nprint(precio * cantidad)",
+    "data": { "options": [
+      { "id": "a", "text": "120001200012000" },
+      { "id": "b", "text": "36000" },
+      { "id": "c", "text": "TypeError" },
+      { "id": "d", "text": "12000 3" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "precio quedó como texto: texto por entero repite el texto tres veces. El error está en la línea 1, no en la 3."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El programa debe sumar 1 a la edad. ¿En qué línea está el error?",
+    "data": { "lines": ["edad = input(\"Edad: \")", "print(edad + 1)"] },
+    "correct": { "line_number": 1 },
+    "explanation": "Falta convertir: debía ser int(input(\"Edad: \")). El síntoma sale en la línea 2, pero el error se cometió en la 1."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El precio puede tener centavos. ¿En qué línea está el error?",
+    "data": { "lines": ["'''", "Programa: Compra", "'''", "# Inicio", "precio = int(input(\"Precio: \"))", "print(\"Precio:\", precio)", "# Fin"] },
+    "correct": { "line_number": 5 },
+    "explanation": "Con centavos, int() lanza ValueError. Ahí va float()."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "¿En qué línea está el error?",
+    "data": { "lines": ["nombre = input(\"Nombre: \")", "edad = int(input(\"Edad: \")", "print(nombre, edad)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Falta un paréntesis de cierre: se abrieron int( e input( y solo se cerró uno."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme el programa que calcula el total de una compra",
+    "data": { "lines": [
+      { "id": "l1", "text": "precio = int(input(\"Precio unitario: \"))", "indent": 0 },
+      { "id": "l2", "text": "cantidad = int(input(\"Cantidad: \"))", "indent": 0 },
+      { "id": "l3", "text": "total = precio * cantidad", "indent": 0 },
+      { "id": "l4", "text": "print(\"Total a pagar:\", total)", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4"] },
+    "explanation": "Primero se piden los dos datos, después se calcula con ellos y de último se muestra. No se puede calcular con algo que aún no se pidió."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme el programa documentado que calcula el descuento",
+    "data": { "lines": [
+      { "id": "l1", "text": "'''", "indent": 0 },
+      { "id": "l2", "text": "Programa: Descuento del almacen", "indent": 0 },
+      { "id": "l3", "text": "'''", "indent": 0 },
+      { "id": "l4", "text": "# Inicio", "indent": 0 },
+      { "id": "l5", "text": "precio = float(input(\"Precio: \"))", "indent": 0 },
+      { "id": "l6", "text": "descuento = float(input(\"Descuento (%): \"))", "indent": 0 },
+      { "id": "l7", "text": "total = precio - precio * (descuento / 100)", "indent": 0 },
+      { "id": "l8", "text": "print(\"Total a pagar:\", total)", "indent": 0 },
+      { "id": "l9", "text": "# Fin", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9"] },
+    "explanation": "El encabezado abre y cierra con ''', y toda la lógica queda encerrada entre #Inicio y #Fin."
+  }
+]

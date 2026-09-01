@@ -151,6 +151,11 @@ export const quizzes = sqliteTable("quizzes", {
 	passingScore: integer("passing_score").notNull().default(80),
 });
 
+/**
+ * LEGADO. El quiz del capítulo ahora saca sus preguntas de `question_bank`.
+ * Estas dos tablas solo siguen aquí para que `seeds/banco.sql` pueda migrar
+ * instalaciones viejas. No las lee ninguna pantalla.
+ */
 export const questions = sqliteTable(
 	"questions",
 	{

@@ -1,0 +1,54 @@
+[
+  {
+    "orden": 1,
+    "title": "Saludo personalizado",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar al usuario su nombre y su ciudad. Mostrar un saludo con el formato:</p><pre><code>Hola Ana , bienvenida desde Bogota</code></pre><p><em>Nota:</em> use las comas de <code>print()</code>. El programa debe ir documentado con encabezado y secciones <code>#Inicio</code> / <code>#Fin</code>.</p>",
+    "hint_html": "<p>Dos <code>input()</code>, dos variables y un <code>print()</code> con varios argumentos. Aquí no hay que convertir nada: nombre y ciudad son textos.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Saludo personalizado\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide el nombre y la ciudad del usuario y muestra un saludo.\n'''\n\n# Inicio\nnombre = input(\"Nombre: \")\nciudad = input(\"Ciudad: \")\n\nprint(\"Hola\", nombre, \", bienvenida desde\", ciudad)\n# Fin</code></pre><p>Línea por línea:</p><ol><li>El encabezado documenta el programa. No lo ejecuta Python, pero es lo primero que lee quien califica.</li><li><code>input(\"Nombre: \")</code> muestra el mensaje, espera el Enter y devuelve lo escrito.</li><li>Como los dos datos son texto, no hace falta <code>int()</code> ni <code>float()</code>.</li><li>Las comas de <code>print()</code> ponen los espacios; por eso la coma del saludo queda separada.</li></ol>",
+    "starter_code": "'''\nPrograma: Saludo personalizado\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "Ana\nBogota\n", "expected_output": "Nombre: Ciudad: Hola Ana , bienvenida desde Bogota" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Total de la compra",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar el precio unitario de un producto y la cantidad comprada. Calcular y mostrar el total:</p><pre><code>Total a pagar: 36000</code></pre><p><em>Nota:</em> el precio y la cantidad son enteros. Recuerde que <code>input()</code> entrega texto.</p>",
+    "hint_html": "<p>Envuelve cada <code>input()</code> en <code>int()</code> desde el momento en que pides el dato. Si no, <code>precio * cantidad</code> repetirá el texto en vez de multiplicar.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Total de la compra\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide precio unitario y cantidad, y calcula el total a pagar.\n'''\n\n# Inicio\nprecio = int(input(\"Precio unitario: \"))\ncantidad = int(input(\"Cantidad: \"))\n\ntotal = precio * cantidad\n\nprint(\"Total a pagar:\", total)\n# Fin</code></pre><p>La conversión va pegada al <code>input()</code>: se lee de adentro hacia afuera. Primero <code>input()</code> entrega el texto <code>\"12000\"</code>, después <code>int()</code> lo vuelve el número <code>12000</code>, y ese número se guarda. Sin el <code>int()</code>, <code>\"12000\" * 3</code> daría el texto repetido tres veces.</p>",
+    "starter_code": "'''\nPrograma: Total de la compra\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "12000\n3\n", "expected_output": "Precio unitario: Cantidad: Total a pagar: 36000" },
+      { "stdin": "2500\n10\n", "expected_output": "Precio unitario: Cantidad: Total a pagar: 25000" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Descuento del almacén",
+    "difficulty": "medio",
+    "statement_html": "<p>Solicitar el precio de un producto (puede tener decimales) y el porcentaje de descuento. Calcular y mostrar cuánto se ahorra el cliente y cuánto debe pagar:</p><pre><code>Te ahorras: 15000.0\nTotal a pagar: 85000.0</code></pre><p><em>Nota:</em> el porcentaje se recibe como número entre 0 y 100.</p>",
+    "hint_html": "<p>Use <code>float()</code> porque el precio puede llevar centavos. Para pasar de porcentaje a proporción, divida entre 100: un 15% es <code>15 / 100</code>, o sea <code>0.15</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Descuento del almacen\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide el precio de un producto y el porcentaje de descuento,\n    y muestra el ahorro y el total a pagar.\n'''\n\n# Inicio\nprecio = float(input(\"Precio del producto: \"))\ndescuento = float(input(\"Descuento (%): \"))\n\n# El porcentaje se divide entre 100 para volverlo proporcion\nahorro = precio * (descuento / 100)\ntotal = precio - ahorro\n\nprint(\"Te ahorras:\", ahorro)\nprint(\"Total a pagar:\", total)\n# Fin</code></pre><p>Tres decisiones que valen puntos:</p><ul><li><code>float()</code> y no <code>int()</code>: un precio puede ser <code>99500.50</code>.</li><li>El paréntesis en <code>(descuento / 100)</code> deja clarísimo qué se divide primero, aunque la precedencia ya lo haría bien.</li><li>El ahorro se guarda en su propia variable porque se necesita dos veces: para mostrarlo y para restarlo.</li></ul>",
+    "starter_code": "'''\nPrograma: Descuento del almacen\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "100000\n15\n", "expected_output": "Precio del producto: Descuento (%): Te ahorras: 15000.0\nTotal a pagar: 85000.0" }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Cambio del cajero",
+    "difficulty": "dificil",
+    "statement_html": "<p>Un cajero de tienda necesita saber con cuántos billetes devolver el cambio. Solicitar el valor de la compra y con cuánto paga el cliente. Calcular el cambio y descomponerlo en billetes de <strong>50000</strong>, <strong>20000</strong>, <strong>10000</strong> y el resto suelto:</p><pre><code>Cambio: 87000\nBilletes de 50000: 1\nBilletes de 20000: 1\nBilletes de 10000: 1\nSuelto: 7000</code></pre><p><em>Nota:</em> use división entera <code>//</code> para saber cuántos billetes caben y módulo <code>%</code> para lo que sobra.</p>",
+    "hint_html": "<p><code>87000 // 50000</code> da 1 (cuántos caben) y <code>87000 % 50000</code> da 37000 (lo que sobra). Repite la pareja con cada denominación, arrastrando siempre el sobrante.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Cambio del cajero\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Calcula el cambio de una compra y lo descompone en billetes\n    de 50000, 20000 y 10000, mostrando el suelto restante.\n'''\n\n# Inicio\ncompra = int(input(\"Valor de la compra: \"))\npago = int(input(\"Paga con: \"))\n\ncambio = pago - compra\nprint(\"Cambio:\", cambio)\n\n# Con cada denominacion: cuantos caben (//) y cuanto sobra (%)\nbilletes_50 = cambio // 50000\nresto = cambio % 50000\n\nbilletes_20 = resto // 20000\nresto = resto % 20000\n\nbilletes_10 = resto // 10000\nsuelto = resto % 10000\n\nprint(\"Billetes de 50000:\", billetes_50)\nprint(\"Billetes de 20000:\", billetes_20)\nprint(\"Billetes de 10000:\", billetes_10)\nprint(\"Suelto:\", suelto)\n# Fin</code></pre><p>La idea completa, con 87000 de cambio:</p><table><thead><tr><th>Paso</th><th>Cuentan</th><th>Sobra</th></tr></thead><tbody><tr><td>50000</td><td>87000 // 50000 = 1</td><td>87000 % 50000 = 37000</td></tr><tr><td>20000</td><td>37000 // 20000 = 1</td><td>37000 % 20000 = 17000</td></tr><tr><td>10000</td><td>17000 // 10000 = 1</td><td>17000 % 10000 = 7000</td></tr></tbody></table><p>La variable <code>resto</code> se va reasignando: siempre guarda lo que queda por repartir. Ese patrón —dividir, guardar el sobrante y seguir— aparece en muchísimos ejercicios.</p>",
+    "starter_code": "'''\nPrograma: Cambio del cajero\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "13000\n100000\n",
+        "expected_output": "Valor de la compra: Paga con: Cambio: 87000\nBilletes de 50000: 1\nBilletes de 20000: 1\nBilletes de 10000: 1\nSuelto: 7000"
+      }
+    ]
+  }
+]

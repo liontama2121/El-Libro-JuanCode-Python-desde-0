@@ -1,0 +1,59 @@
+[
+  {
+    "orden": 1,
+    "title": "Promedio de tres notas",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar tres notas de un estudiante (de 0.0 a 5.0). Calcular y mostrar el promedio:</p><pre><code>Promedio: 3.5</code></pre><p><em>Nota:</em> cuidado con la precedencia de operadores.</p>",
+    "hint_html": "<p>Las tres notas se suman <strong>primero</strong> y el resultado se divide entre 3. Sin paréntesis, Python solo divide la última nota.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Promedio de tres notas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide tres notas de 0.0 a 5.0 y muestra el promedio.\n'''\n\n# Inicio\nnota1 = float(input(\"Nota 1: \"))\nnota2 = float(input(\"Nota 2: \"))\nnota3 = float(input(\"Nota 3: \"))\n\n# Los parentesis son obligatorios: sin ellos solo se dividiria nota3\npromedio = (nota1 + nota2 + nota3) / 3\n\nprint(\"Promedio:\", promedio)\n# Fin</code></pre><p>Con notas 4.0, 3.0 y 3.5: <code>(4.0 + 3.0 + 3.5) / 3</code> = <code>10.5 / 3</code> = <code>3.5</code>. Sin los paréntesis Python haría <code>4.0 + 3.0 + (3.5 / 3)</code> = <code>8.166…</code>, que corre sin error y está mal.</p>",
+    "starter_code": "'''\nPrograma: Promedio de tres notas\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "4.0\n3.0\n3.5\n", "expected_output": "Nota 1: Nota 2: Nota 3: Promedio: 3.5" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Minutos a horas y minutos",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar una cantidad de minutos y mostrarla en horas y minutos:</p><pre><code>260 minutos son 4 horas y 20 minutos</code></pre><p><em>Nota:</em> use división entera y módulo. No use decimales.</p>",
+    "hint_html": "<p><code>260 // 60</code> dice cuántas horas completas caben, y <code>260 % 60</code> dice cuántos minutos sobran. Son la misma pareja de siempre.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Conversor de minutos\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Convierte una cantidad de minutos a horas y minutos.\n'''\n\n# Inicio\ntotal_minutos = int(input(\"Minutos: \"))\n\nhoras = total_minutos // 60      # cuantas horas completas caben\nminutos = total_minutos % 60     # lo que sobra\n\nprint(total_minutos, \"minutos son\", horas, \"horas y\", minutos, \"minutos\")\n# Fin</code></pre><p>Es el mismo patrón del cambio del cajero: <code>//</code> dice cuántas veces cabe la unidad grande y <code>%</code> dice qué queda suelto. Si hubieras usado <code>/</code> obtendrías <code>4.333…</code>, que no sirve para separar horas de minutos.</p>",
+    "starter_code": "'''\nPrograma: Conversor de minutos\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "260\n", "expected_output": "Minutos: 260 minutos son 4 horas y 20 minutos" },
+      { "stdin": "45\n", "expected_output": "Minutos: 45 minutos son 0 horas y 45 minutos" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Verificaciones de un cliente",
+    "difficulty": "medio",
+    "statement_html": "<p>Solicitar la edad de un cliente y el saldo de su cuenta. Mostrar, con <code>True</code> o <code>False</code>, tres verificaciones:</p><pre><code>Es mayor de edad: True\nTiene saldo suficiente (>= 50000): True\nPuede retirar: True</code></pre><p><em>Nota:</em> puede retirar si es mayor de edad <strong>y</strong> tiene saldo suficiente. No use <code>if</code> todavía: guarde cada comparación en una variable.</p>",
+    "hint_html": "<p>Una comparación devuelve <code>True</code> o <code>False</code>, así que se puede guardar igual que un número: <code>mayor = edad >= 18</code>. Después une las dos con <code>and</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Verificaciones de un cliente\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Verifica si un cliente es mayor de edad, si tiene saldo\n    suficiente y si por lo tanto puede retirar.\n'''\n\n# Inicio\nedad = int(input(\"Edad: \"))\nsaldo = int(input(\"Saldo: \"))\n\n# Cada comparacion devuelve True o False y se puede guardar\nes_mayor = edad >= 18\ntiene_saldo = saldo >= 50000\npuede_retirar = es_mayor and tiene_saldo\n\nprint(\"Es mayor de edad:\", es_mayor)\nprint(\"Tiene saldo suficiente (>= 50000):\", tiene_saldo)\nprint(\"Puede retirar:\", puede_retirar)\n# Fin</code></pre><p>Lo importante del ejercicio es ver que <code>edad >= 18</code> <strong>es un valor</strong>, igual que <code>3 + 4</code> lo es. Guardarlo en una variable con nombre claro hace que la última línea se lea sola: <code>es_mayor and tiene_saldo</code>.</p>",
+    "starter_code": "'''\nPrograma: Verificaciones de un cliente\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "20\n80000\n",
+        "expected_output": "Edad: Saldo: Es mayor de edad: True\nTiene saldo suficiente (>= 50000): True\nPuede retirar: True"
+      },
+      {
+        "stdin": "16\n80000\n",
+        "expected_output": "Edad: Saldo: Es mayor de edad: False\nTiene saldo suficiente (>= 50000): True\nPuede retirar: False"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Tarifa del parqueadero",
+    "difficulty": "dificil",
+    "statement_html": "<p>Un parqueadero cobra <strong>3000</strong> pesos la primera hora y <strong>1500</strong> cada hora adicional. Se cobra por <strong>hora empezada</strong>.</p><p>Solicitar los minutos que estuvo el vehículo y mostrar:</p><pre><code>Horas cobradas: 5\nTotal a pagar: 9000</code></pre><p><em>Nota:</em> 260 minutos son 4 horas y 20 minutos, así que se cobran 5 horas. No use <code>if</code>: resuélvalo con aritmética.</p>",
+    "hint_html": "<p>Truco clásico para redondear hacia arriba con enteros: <code>(minutos + 59) // 60</code>. Sumar 59 hace que cualquier sobrante empuje a la siguiente hora, y si es exacto no cambia nada.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Tarifa del parqueadero\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Calcula el cobro de un parqueadero que cobra 3000 la primera\n    hora y 1500 cada hora adicional, por hora empezada.\n'''\n\n# Inicio\nPRIMERA_HORA = 3000\nHORA_ADICIONAL = 1500\n\nminutos = int(input(\"Minutos estacionado: \"))\n\n# Sumar 59 antes de dividir redondea hacia arriba sin usar if\nhoras = (minutos + 59) // 60\n\ntotal = PRIMERA_HORA + (horas - 1) * HORA_ADICIONAL\n\nprint(\"Horas cobradas:\", horas)\nprint(\"Total a pagar:\", total)\n# Fin</code></pre><p>Por qué funciona el redondeo:</p><table><thead><tr><th>Minutos</th><th>+59</th><th>// 60</th></tr></thead><tbody><tr><td>240 (4 h exactas)</td><td>299</td><td>4</td></tr><tr><td>241</td><td>300</td><td>5</td></tr><tr><td>260</td><td>319</td><td>5</td></tr></tbody></table><p>Los nombres en MAYÚSCULAS son la convención de Python para valores que no cambian durante el programa. Si mañana suben la tarifa, se toca una línea.</p>",
+    "starter_code": "'''\nPrograma: Tarifa del parqueadero\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\nPRIMERA_HORA = 3000\nHORA_ADICIONAL = 1500\n\n# Fin\n",
+    "tests": [
+      { "stdin": "260\n", "expected_output": "Minutos estacionado: Horas cobradas: 5\nTotal a pagar: 9000" },
+      { "stdin": "60\n", "expected_output": "Minutos estacionado: Horas cobradas: 1\nTotal a pagar: 3000" }
+    ]
+  }
+]

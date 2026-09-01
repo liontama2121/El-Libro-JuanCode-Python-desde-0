@@ -1,0 +1,51 @@
+[
+  {
+    "orden": 1,
+    "title": "Limpiar el nombre del formulario",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar el nombre completo de una persona tal como llega de un formulario (puede traer espacios de sobra y mayúsculas desordenadas). Mostrarlo limpio y con cada palabra en mayúscula inicial, entre corchetes:</p><pre><code>[Ana Gomez]</code></pre><p><em>Nota:</em> use f-string para la salida.</p>",
+    "hint_html": "<p>Tres métodos encadenados: <code>.strip()</code> para los espacios, <code>.lower()</code> para partir parejo y <code>.title()</code> para las iniciales. Recuerde guardar el resultado.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Limpieza de nombres\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Toma un nombre como llega de un formulario y lo deja\n    presentable: sin espacios sobrantes y con iniciales en mayuscula.\n'''\n\n# Inicio\ncrudo = input(\"Nombre completo: \")\n\n# Se normaliza a minusculas antes de formatear para que\n# entradas como \"aNa GOMEZ\" queden igual de bien\nlimpio = crudo.strip().lower().title()\n\nprint(f\"[{limpio}]\")\n# Fin</code></pre><p>Los tres métodos se encadenan de izquierda a derecha: el resultado de <code>.strip()</code> recibe <code>.lower()</code>, y el de ese recibe <code>.title()</code>. Los corchetes de la salida sirven para <em>ver</em> que los espacios se fueron.</p>",
+    "starter_code": "'''\nPrograma: Limpieza de nombres\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "  ANA gomez  \n", "expected_output": "Nombre completo: [Ana Gomez]" },
+      { "stdin": "juan CARLOS perez\n", "expected_output": "Nombre completo: [Juan Carlos Perez]" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Datos de la cédula",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar un número de cédula. Mostrar cuántos dígitos tiene, su primer dígito y sus últimos cuatro:</p><pre><code>Digitos: 10\nPrimero: 1\nUltimos cuatro: 6789</code></pre><p><em>Nota:</em> trabaje la cédula como texto, no como número.</p>",
+    "hint_html": "<p>Como es texto, sirve <code>len()</code>, <code>[0]</code> y la rebanada <code>[-4:]</code>, que toma las últimas cuatro casillas sin importar cuánto mida.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Datos de la cedula\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra la cantidad de digitos de una cedula, su primer\n    digito y sus ultimos cuatro.\n'''\n\n# Inicio\ncedula = input(\"Cedula: \").strip()\n\nprint(f\"Digitos: {len(cedula)}\")\nprint(f\"Primero: {cedula[0]}\")\nprint(f\"Ultimos cuatro: {cedula[-4:]}\")\n# Fin</code></pre><p>Por qué texto y no número: a un número no se le puede pedir <code>[0]</code>, y además un cero al principio se perdería. Las cédulas, los teléfonos y los códigos de barras son <strong>texto</strong> aunque estén hechos de dígitos.</p><p><code>[-4:]</code> se lee \"desde la cuarta contando por detrás, hasta el final\".</p>",
+    "starter_code": "'''\nPrograma: Datos de la cedula\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "1023456789\n", "expected_output": "Cedula: Digitos: 10\nPrimero: 1\nUltimos cuatro: 6789" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Factura formateada",
+    "difficulty": "medio",
+    "statement_html": "<p>Solicitar el nombre de un producto, su precio unitario y la cantidad. Mostrar una línea de factura con el nombre alineado a la izquierda en 15 espacios y el total alineado a la derecha en 12, con separador de miles:</p><pre><code>Producto       Total\nBunuelo           15,000</code></pre><p><em>Nota:</em> use f-strings con especificadores de formato.</p>",
+    "hint_html": "<p><code>f\"{texto:&lt;15}\"</code> alinea a la izquierda rellenando hasta 15 caracteres. <code>f\"{numero:&gt;12,}\"</code> alinea a la derecha y mete el separador de miles.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Linea de factura\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Muestra una linea de factura con el nombre del producto\n    alineado a la izquierda y el total a la derecha.\n'''\n\n# Inicio\nproducto = input(\"Producto: \").strip().title()\nprecio = int(input(\"Precio unitario: \"))\ncantidad = int(input(\"Cantidad: \"))\n\ntotal = precio * cantidad\n\nprint(f\"{'Producto':&lt;15}{'Total':&gt;12}\")\nprint(f\"{producto:&lt;15}{total:&gt;12,}\")\n# Fin</code></pre><p>Lo que hace cada especificador:</p><ul><li><code>:&lt;15</code> — alinea a la izquierda y rellena con espacios hasta ocupar 15 caracteres.</li><li><code>:&gt;12,</code> — alinea a la derecha en 12 caracteres <strong>y</strong> agrega el separador de miles.</li></ul><p>Compárelo con el volante del capítulo 1, donde tocó contar espacios a mano dentro de las comillas. Esa es la diferencia que hacen las f-strings.</p>",
+    "starter_code": "'''\nPrograma: Linea de factura\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n"
+  },
+  {
+    "orden": 4,
+    "title": "Validador de correo",
+    "difficulty": "dificil",
+    "statement_html": "<p>Solicitar un correo electrónico y mostrar un informe:</p><pre><code>Correo: ana@juancode.co\nUsuario: ana\nDominio: juancode.co\nTiene arroba: True\nEs .co: True</code></pre><p><em>Nota:</em> el correo debe quedar sin espacios y en minúsculas. Para separar usuario y dominio use <code>split(\"@\")</code>. No use <code>if</code>.</p>",
+    "hint_html": "<p><code>\"ana@juancode.co\".split(\"@\")</code> entrega una lista de dos textos: el de la posición 0 es el usuario y el de la 1 el dominio. Para las verificaciones sirven <code>in</code> y <code>.endswith()</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Validador de correo\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Separa un correo en usuario y dominio y verifica que tenga\n    arroba y que el dominio termine en .co\n'''\n\n# Inicio\ncrudo = input(\"Correo: \")\n\n# Los correos no distinguen mayusculas: se normaliza antes de nada\ncorreo = crudo.strip().lower()\n\npartes = correo.split(\"@\")\nusuario = partes[0]\ndominio = partes[-1]   # [-1] evita romperse si no hubiera arroba\n\nprint(f\"Correo: {correo}\")\nprint(f\"Usuario: {usuario}\")\nprint(f\"Dominio: {dominio}\")\nprint(f\"Tiene arroba: {'@' in correo}\")\nprint(f\"Es .co: {correo.endswith('.co')}\")\n# Fin</code></pre><p>Dos detalles de oficio:</p><ul><li><code>partes[-1]</code> en vez de <code>partes[1]</code>: si el usuario escribe un correo sin arroba, <code>split</code> devuelve una lista de un solo elemento y <code>[1]</code> daría <code>IndexError</code>. Con <code>[-1]</code> el programa no se cae.</li><li>Adentro de una f-string con comillas dobles hay que usar comillas sencillas: <code>{'@' in correo}</code>.</li></ul>",
+    "starter_code": "'''\nPrograma: Validador de correo\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "  ANA@JuanCode.CO \n",
+        "expected_output": "Correo: Correo: ana@juancode.co\nUsuario: ana\nDominio: juancode.co\nTiene arroba: True\nEs .co: True"
+      }
+    ]
+  }
+]

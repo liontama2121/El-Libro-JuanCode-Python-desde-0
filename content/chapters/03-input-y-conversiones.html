@@ -1,0 +1,158 @@
+<p class="jc-gancho">Hasta ahora tus programas siempre hacen lo mismo porque los datos están escritos adentro. Un cajero que solo sabe retirar 80000 pesos no le sirve a nadie. Lo que falta es que el programa <strong>pregunte</strong>.</p>
+
+<h2><code>input()</code>: el programa pregunta y espera</h2>
+
+<p>La instrucción <code>input()</code> muestra un mensaje, detiene el programa y espera a que el usuario escriba algo y presione Enter. Lo que haya escrito queda como resultado.</p>
+
+<pre><code>nombre = input("¿Cómo te llamas? ")
+print("Mucho gusto,", nombre)</code></pre>
+
+<p>Paso a paso:</p>
+
+<table>
+  <thead>
+    <tr><th>Momento</th><th>Qué pasa</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Antes</td><td>Python muestra <code>¿Cómo te llamas?</code> y se queda quieto.</td></tr>
+    <tr><td>El usuario escribe <code>Ana</code> y da Enter</td><td><code>input()</code> devuelve el texto <code>"Ana"</code>.</td></tr>
+    <tr><td>Después</td><td>Ese texto se guarda en <code>nombre</code> y el programa sigue.</td></tr>
+  </tbody>
+</table>
+
+<p>Fíjate en el espacio al final del mensaje: <code>"¿Cómo te llamas? "</code>. Sin él, el cursor queda pegado a la pregunta y se ve feo. Es un detalle de un renglón que separa un programa cuidado de uno hecho a la carrera.</p>
+
+<h2>La trampa: <code>input()</code> SIEMPRE devuelve texto</h2>
+
+<p>Esta es la fuente número uno de errores en este punto del curso. Aunque el usuario escriba <code>25</code>, lo que llega es el <strong>texto</strong> <code>"25"</code>.</p>
+
+<pre><code>edad = input("Edad: ")     # el usuario escribe 25
+print(edad + 1)            # TypeError: can only concatenate str (not "int") to str</code></pre>
+
+<p>Y lo peor no es que falle: es cuando <em>no</em> falla y da un resultado equivocado.</p>
+
+<pre><code>cantidad = input("Cantidad: ")   # el usuario escribe 3
+print(cantidad * 2)              # imprime 33, no 6</code></pre>
+
+<p>Python multiplicó el texto <code>"3"</code> por 2 y lo repitió. El programa corrió feliz y entregó basura. Por eso la regla es tajante: <strong>todo dato numérico que venga de <code>input()</code> hay que convertirlo</strong>.</p>
+
+<h3>La conversión va pegada al input</h3>
+
+<pre><code>edad = int(input("Edad: "))            # texto -> entero
+precio = float(input("Precio: "))      # texto -> decimal
+
+print("El año que viene tendrás", edad + 1)</code></pre>
+
+<p>Se lee de adentro hacia afuera: primero corre <code>input(...)</code>, que entrega texto; ese texto entra en <code>int(...)</code>, que entrega un número; y ese número se guarda en la variable.</p>
+
+<h2>Cuándo <code>int()</code> se queja</h2>
+
+<p><code>int()</code> solo convierte lo que de verdad es un entero escrito con dígitos:</p>
+
+<pre><code>int("25")      # 25   ✅
+int(" 25 ")    # 25   ✅ los espacios sobrantes no molestan
+int("25.7")    # ValueError ❌ eso es un decimal, no un entero
+int("veinte")  # ValueError ❌
+int("")        # ValueError ❌ el usuario solo dio Enter</code></pre>
+
+<p><code>ValueError</code> significa "el tipo está bien (es un texto) pero el contenido no me sirve". Si esperas decimales, usa <code>float()</code>, que sí acepta <code>"25.7"</code>. Y si necesitas un entero a partir de un decimal, convierte en dos pasos: <code>int(float("25.7"))</code> da 25 (recorta, no redondea).</p>
+
+<p>Por ahora, si el usuario escribe cualquier cosa, el programa se cae. Eso está bien: en el capítulo 15 aprenderás a atraparlo con <code>try / except</code>.</p>
+
+<h2>Documentar como en la universidad</h2>
+
+<p>Desde este capítulo, todos los programas del libro se entregan documentados. No es adorno: es lo que te van a calificar.</p>
+
+<pre><code>'''
+Programa: Calculadora de descuento
+Autor:    Ana Gómez
+Fecha:    2026-03-14
+Descripción:
+    Pide el precio de un producto y el porcentaje de descuento,
+    y muestra cuánto se ahorra y cuánto queda por pagar.
+'''
+
+# Inicio
+precio = float(input("Precio del producto: "))
+descuento = float(input("Descuento (%): "))
+
+# El porcentaje se divide entre 100 para volverlo proporción
+ahorro = precio * (descuento / 100)
+total = precio - ahorro
+
+print("Te ahorras:", ahorro)
+print("Total a pagar:", total)
+# Fin</code></pre>
+
+<p>Las tres partes:</p>
+
+<ul>
+  <li><strong>El encabezado</strong> entre <code>'''</code>: qué programa es, quién lo hizo, cuándo y qué hace. Ese bloque se llama <em>docstring</em>.</li>
+  <li><strong><code># Inicio</code> y <code># Fin</code></strong>: marcan dónde arranca y termina la lógica.</li>
+  <li><strong>Comentarios de porqué</strong>: adentro, solo donde una línea necesita explicación. No comentes lo obvio.</li>
+</ul>
+
+<h2>La película de un programa con input</h2>
+
+<p>Supongamos que el usuario escribe <code>12000</code> y luego <code>3</code>:</p>
+
+<pre><code>precio = int(input("Precio: "))       # línea 1
+cantidad = int(input("Cantidad: "))   # línea 2
+total = precio * cantidad             # línea 3
+print("Total:", total)                # línea 4</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Después de…</th><th><code>precio</code></th><th><code>cantidad</code></th><th><code>total</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>línea 1</td><td>12000</td><td>no existe</td><td>no existe</td></tr>
+    <tr><td>línea 2</td><td>12000</td><td>3</td><td>no existe</td></tr>
+    <tr><td>línea 3</td><td>12000</td><td>3</td><td>36000</td></tr>
+  </tbody>
+</table>
+
+<p>Si en la línea 1 hubiera faltado el <code>int()</code>, en la línea 3 <code>total</code> valdría <code>"120001200012000"</code>. Corre igual, y está mal.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar el <code>int()</code></h3>
+<pre><code>cantidad = input("Cantidad: ")
+print(cantidad * 2)     # "33" en vez de 6</code></pre>
+<p>El más peligroso, porque no siempre revienta: a veces solo entrega un número equivocado.</p>
+
+<h3>2. Convertir a <code>int</code> algo con decimales</h3>
+<pre><code>precio = int(input("Precio: "))    # el usuario escribe 12500.50 -> ValueError</code></pre>
+<p>Si el dato puede llevar centavos, es <code>float()</code>.</p>
+
+<h3>3. Poner el mensaje en un <code>print</code> aparte</h3>
+<pre><code>print("Edad: ")
+edad = int(input())     # funciona, pero el cursor queda en otra línea</code></pre>
+<p>El mensaje va <em>dentro</em> del <code>input()</code>. Para eso está.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Pide el dato con <code>input("mensaje: ")</code>, con espacio al final.</li>
+  <li>Si es número, envuélvelo de una en <code>int()</code> o <code>float()</code>.</li>
+  <li>Calcula con variables de nombre claro.</li>
+  <li>Muestra el resultado con <code>print()</code>.</li>
+  <li>Documenta: encabezado <code>'''</code>, <code># Inicio</code>, <code># Fin</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>input("Nombre: ")</code></td><td>Pregunta y devuelve lo escrito, siempre como texto</td></tr>
+    <tr><td><code>int(input("Edad: "))</code></td><td>Pregunta y convierte a entero</td></tr>
+    <tr><td><code>float(input("Precio: "))</code></td><td>Pregunta y convierte a decimal</td></tr>
+    <tr><td><code>int("25.7")</code></td><td><code>ValueError</code>: para eso está <code>float()</code></td></tr>
+    <tr><td><code>int(float("25.7"))</code></td><td><code>25</code> — recorta los decimales</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Todo lo que entra por el teclado es texto. Si vas a hacer cuentas con eso, conviértelo en la misma línea en que lo pides.</blockquote>

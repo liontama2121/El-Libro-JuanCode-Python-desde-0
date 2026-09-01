@@ -1,0 +1,51 @@
+[
+  {
+    "orden": 1,
+    "title": "Ficha del estudiante",
+    "difficulty": "facil",
+    "statement_html": "<p>Cree tres variables: <code>nombre</code> (texto), <code>edad</code> (entero) y <code>estatura</code> (decimal). Luego muestre una sola línea con el formato:</p><pre><code>Ana tiene 17 anios y mide 1.62 metros</code></pre><p><em>Nota:</em> use las comas de <code>print()</code>, no concatenación con <code>+</code>.</p>",
+    "hint_html": "<p>Las comas de <code>print()</code> aceptan textos y números mezclados y ponen un espacio entre cada argumento. Por eso no necesitas <code>str()</code>.</p>",
+    "solution_html": "<pre><code># Ficha basica del estudiante\nnombre = \"Ana\"\nedad = 17\nestatura = 1.62\n\nprint(nombre, \"tiene\", edad, \"anios y mide\", estatura, \"metros\")</code></pre><p>Las tres primeras líneas crean las cajas. La última las usa: <code>print()</code> recibe seis argumentos y los pega con un espacio entre cada uno. Si hubieras usado <code>+</code> tendrías que convertir <code>edad</code> y <code>estatura</code> con <code>str()</code>.</p>",
+    "starter_code": "# Ficha basica del estudiante\n",
+    "tests": [
+      { "stdin": "", "expected_output": "Ana tiene 17 anios y mide 1.62 metros" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Movimientos de la cuenta",
+    "difficulty": "facil",
+    "statement_html": "<p>Una cuenta de ahorros arranca con <strong>250000</strong> pesos. Se hace un retiro de <strong>80000</strong> y luego una consignación de <strong>30000</strong>.</p><p>Escriba un programa que muestre el saldo después de cada movimiento:</p><pre><code>Saldo inicial: 250000\nDespues del retiro: 170000\nSaldo final: 200000</code></pre>",
+    "hint_html": "<p>Usa <strong>una sola</strong> variable <code>saldo</code> y ve reasignándola: <code>saldo = saldo - 80000</code>. Imprime después de cada cambio.</p>",
+    "solution_html": "<pre><code># Movimientos de una cuenta de ahorros\nsaldo = 250000\nprint(\"Saldo inicial:\", saldo)\n\nsaldo = saldo - 80000     # retiro\nprint(\"Despues del retiro:\", saldo)\n\nsaldo = saldo + 30000     # consignacion\nprint(\"Saldo final:\", saldo)</code></pre><p>La clave es que la caja <code>saldo</code> es siempre la misma; lo que cambia es su contenido. Python primero resuelve el lado derecho (<code>250000 - 80000</code>) y después guarda el resultado en la misma variable.</p>",
+    "starter_code": "# Movimientos de una cuenta de ahorros\nsaldo = 250000\n",
+    "tests": [
+      { "stdin": "", "expected_output": "Saldo inicial: 250000\nDespues del retiro: 170000\nSaldo final: 200000" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "La calculadora que se rompió",
+    "difficulty": "medio",
+    "statement_html": "<p>Este programa debería sumar dos números pero imprime <code>1020</code> en vez de <code>30</code>:</p><pre><code>a = \"10\"\nb = \"20\"\nprint(a + b)</code></pre><p>Explique por qué pasa y entregue el programa corregido, que debe imprimir:</p><pre><code>30</code></pre>",
+    "hint_html": "<p>Mire las comillas. Con dos <code>str</code>, el operador <code>+</code> no suma: pega. Hay dos formas de arreglarlo y ambas son válidas.</p>",
+    "solution_html": "<p><code>a</code> y <code>b</code> son <code>str</code>, no <code>int</code>. Con textos, <code>+</code> concatena: <code>\"10\" + \"20\"</code> da <code>\"1020\"</code>.</p><pre><code># Opcion 1: que sean numeros desde el principio\na = 10\nb = 20\nprint(a + b)          # 30\n\n# Opcion 2: convertirlos al usarlos\na = \"10\"\nb = \"20\"\nprint(int(a) + int(b))  # 30</code></pre><p>La opción 1 es mejor cuando el dato siempre es número. La opción 2 es la que vas a usar en el capítulo 3, cuando el dato venga de <code>input()</code>, que siempre entrega texto.</p>",
+    "starter_code": "a = \"10\"\nb = \"20\"\nprint(a + b)\n",
+    "tests": [{ "stdin": "", "expected_output": "30" }]
+  },
+  {
+    "orden": 4,
+    "title": "Liquidación de la quincena",
+    "difficulty": "dificil",
+    "statement_html": "<p>Un empleado de una tienda gana <strong>7000</strong> pesos la hora y trabajó <strong>96</strong> horas en la quincena. Le descuentan el <strong>4%</strong> de salud y el <strong>4%</strong> de pensión sobre el total.</p><p>Escriba un programa que calcule y muestre:</p><pre><code>Total devengado: 672000\nSalud: 26880.0\nPension: 26880.0\nNeto a pagar: 618240.0</code></pre><p><em>Nota:</em> use variables con nombres claros para el valor de la hora, las horas y cada descuento. Nada de números sueltos repetidos.</p>",
+    "hint_html": "<p>Calcula primero el total devengado y guárdalo. Los descuentos son <code>total * 0.04</code>. El neto es el total menos los dos descuentos. Fíjate en que multiplicar un <code>int</code> por un <code>float</code> da <code>float</code>: por eso salen los <code>.0</code>.</p>",
+    "solution_html": "<pre><code># Liquidacion de quincena de un empleado de tienda\nvalor_hora = 7000\nhoras_trabajadas = 96\nporcentaje_salud = 0.04\nporcentaje_pension = 0.04\n\ntotal_devengado = valor_hora * horas_trabajadas\nsalud = total_devengado * porcentaje_salud\npension = total_devengado * porcentaje_pension\nneto = total_devengado - salud - pension\n\nprint(\"Total devengado:\", total_devengado)\nprint(\"Salud:\", salud)\nprint(\"Pension:\", pension)\nprint(\"Neto a pagar:\", neto)</code></pre><p>Por qué queda así de largo y está bien que lo esté:</p><ul><li>Cada dato de entrada tiene su variable con nombre propio. Si mañana la hora sube a 7500, se cambia <strong>un</strong> número.</li><li><code>total_devengado</code> es <code>int</code> (7000 × 96 = 672000), pero al multiplicarlo por <code>0.04</code> el resultado es <code>float</code>. Por eso salen los decimales.</li><li>El neto se calcula a partir de las variables anteriores, no repitiendo cuentas.</li></ul>",
+    "starter_code": "# Liquidacion de quincena de un empleado de tienda\nvalor_hora = 7000\nhoras_trabajadas = 96\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Total devengado: 672000\nSalud: 26880.0\nPension: 26880.0\nNeto a pagar: 618240.0"
+      }
+    ]
+  }
+]
