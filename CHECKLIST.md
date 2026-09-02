@@ -143,3 +143,21 @@
 - `npm run content:verificar`: 102/102 casos en verde
 - 15 ejercicios sin tests automáticos: los 3 de salida libre de los capítulos 1 y 5,
   y los 12 de los capítulos 22–24 (pandas, red/API key y fastapi no corren en el verificador)
+
+## 🎬 La película en vivo (capítulos 7 y 8)
+
+- [x] Migración `0004_pelicula_en_vivo`: tabla `trace_demos` (única por capítulo+orden)
+- [x] `app/lib/traces.ts`: tipos, parseo tolerante y validación con mensajes en español
+- [x] `TraceStepper`: código estilo editor, [▶ Siguiente paso] [⏩ Ver todo] [🔄 Reiniciar],
+      tabla que crece de a una fila, consola verde con `pre-wrap` y badge 🏁
+- [x] Solo la última fila queda resaltada; la celda `hl` va magenta y en negrita
+- [x] Al terminar se deshabilitan Siguiente y Ver todo; Reiniciar limpia todo
+- [x] Responsive: botones a ancho completo en móvil, tabla con scroll horizontal
+- [x] Lector: sección entre la teoría y los ejercicios, solo si hay demos activos
+- [x] `/admin/capitulo/:id/peliculas` con vista previa en vivo y validación de JSON
+      (en el cliente y otra vez en el servidor)
+- [x] 6 películas seedeadas: 3 del while (contador, sumatoria, PIN) y 3 del for
+      (quién es i, acumulador, contador con filtro)
+- [x] `npm run peliculas:verificar` → 6/6 contra Python real: la concatenación de
+      los `out` es idéntica a la salida del programa
+- [x] Seed idempotente por `(chapter_id, orden)`

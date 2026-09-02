@@ -187,6 +187,12 @@ export default function AdminCapitulos({
 															🎯 Quiz
 														</Link>
 														<Link
+															to={`/admin/capitulo/${c.id}/peliculas`}
+															className="jc-btn jc-btn-sm jc-btn-ghost"
+														>
+															🎬 Películas
+														</Link>
+														<Link
 															to={`/libro/capitulo/${c.number}`}
 															className="jc-btn jc-btn-sm jc-btn-ghost"
 														>

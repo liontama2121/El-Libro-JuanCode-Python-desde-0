@@ -2,12 +2,14 @@ import { and, asc, eq } from "drizzle-orm";
 import { Link, redirect } from "react-router";
 import { Nav } from "~/components/nav";
 import { ProbarCodigo } from "~/components/probar-codigo";
+import { TraceStepper } from "~/components/trace-stepper";
 import { BadgeDificultad, Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import type { Exercise } from "~/db/schema";
 import { requireUser } from "~/lib/auth.server";
 import { leerTests, modoCodigoActivo } from "~/lib/piston.server";
 import { cargarLibro } from "~/lib/progress.server";
+import { aPelicula } from "~/lib/traces";
 import type { Route } from "./+types/capitulo";
 
 export const meta: Route.MetaFunction = ({ data }) => [
@@ -39,7 +41,7 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 		);
 	}
 
-	const [ejercicios, quiz] = await Promise.all([
+	const [ejercicios, quiz, peliculas] = await Promise.all([
 		db
 			.select()
 			.from(schema.exercises)
@@ -50,6 +52,16 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 			.from(schema.quizzes)
 			.where(eq(schema.quizzes.chapterId, capitulo.id))
 			.limit(1),
+		db
+			.select()
+			.from(schema.traceDemos)
+			.where(
+				and(
+					eq(schema.traceDemos.chapterId, capitulo.id),
+					eq(schema.traceDemos.active, true),
+				),
+			)
+			.orderBy(asc(schema.traceDemos.orden), asc(schema.traceDemos.id)),
 	]);
 
 	const [aprobado] = await db
@@ -75,6 +87,7 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 			tieneTests: leerTests(e.testsJson).length > 0,
 			testsJson: null,
 		})),
+		peliculas: peliculas.map(aPelicula),
 		tieneQuiz: quiz.length > 0,
 		yaAprobado: Boolean(aprobado),
 		siguiente: capitulos.find((c) => c.number === numero + 1) ?? null,
@@ -87,6 +100,7 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 		capitulo,
 		capitulos,
 		ejercicios,
+		peliculas,
 		tieneQuiz,
 		yaAprobado,
 		siguiente,
@@ -185,6 +199,26 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 						<p className="mt-10 rounded-2xl border border-dashed border-[var(--color-borde)] p-8 text-center text-[var(--color-tinta-2)]">
 							Este capítulo todavía se está escribiendo ✍️
 						</p>
+					)}
+
+					{/* La película en vivo ---------------------------------------- */}
+					{peliculas.length > 0 && (
+						<section className="mt-16">
+							<h2 className="jc-display text-3xl">
+								🎬 La película en vivo
+							</h2>
+							<p className="mt-2 text-[var(--color-tinta-2)]">
+								Mira las variables en directo.{" "}
+								<strong className="text-[var(--color-dorado)]">
+									Intenta predecir cada fila ANTES de darle al botón.
+								</strong>
+							</p>
+							<div className="mt-6 space-y-6">
+								{peliculas.map((p) => (
+									<TraceStepper key={p.id} pelicula={p} />
+								))}
+							</div>
+						</section>
 					)}
 
 					{/* Ejercicios ------------------------------------------------- */}

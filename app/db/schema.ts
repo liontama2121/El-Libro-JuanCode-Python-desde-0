@@ -358,6 +358,43 @@ export const codeRuns = sqliteTable(
 	(t) => [index("code_runs_user_idx").on(t.userId, t.createdAt)],
 );
 
+/* -------------------------------------------------------------------------- */
+/*  LA PELICULA EN VIVO (prueba de escritorio interactiva)                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Una "pelicula" es una prueba de escritorio paso a paso de un programa:
+ * el estudiante le da a "siguiente" y ve como se van seteando las variables.
+ *
+ * Se usa en los capitulos de ciclos (while y for), donde el problema no es
+ * la sintaxis sino no ver que pasa dentro de cada vuelta.
+ */
+export const traceDemos = sqliteTable(
+	"trace_demos",
+	{
+		id: integer("id").primaryKey({ autoIncrement: true }),
+		chapterId: integer("chapter_id")
+			.notNull()
+			.references(() => chapters.id, { onDelete: "cascade" }),
+		orden: integer("orden").notNull().default(1),
+		title: text("title").notNull(),
+		/** Una linea: que hay que mirar en esta pelicula */
+		description: text("description").notNull().default(""),
+		/** El codigo Python que se muestra arriba de la tabla */
+		code: text("code").notNull().default(""),
+		/** ["Vuelta", "contador", ...] -> los th de la tabla */
+		columnsJson: text("columns_json").notNull().default("[]"),
+		/** [{ cells: string[], out: string, hl: number | null }] -> una fila por paso */
+		stepsJson: text("steps_json").notNull().default("[]"),
+		active: integer("active", { mode: "boolean" }).notNull().default(true),
+	},
+	(t) => [
+		index("trace_demos_chapter_idx").on(t.chapterId),
+		// El seed de content/peliculas.json hace upsert por (capitulo, orden).
+		uniqueIndex("trace_demos_chapter_orden_idx").on(t.chapterId, t.orden),
+	],
+);
+
 export type User = typeof users.$inferSelect;
 export type Part = typeof parts.$inferSelect;
 export type Chapter = typeof chapters.$inferSelect;
@@ -371,6 +408,7 @@ export type BankQuestion = typeof questionBank.$inferSelect;
 export type PracticeAttempt = typeof practiceAttempts.$inferSelect;
 export type UserStats = typeof userStats.$inferSelect;
 export type CodeRun = typeof codeRuns.$inferSelect;
+export type TraceDemo = typeof traceDemos.$inferSelect;
 
 /** Tipos de pregunta soportados por el banco. */
 export const TIPOS_PREGUNTA = [

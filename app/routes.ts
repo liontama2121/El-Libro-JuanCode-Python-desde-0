@@ -35,4 +35,5 @@ export default [
 	route("admin/ejercicio/:id", "routes/admin.ejercicio.tsx"),
 	route("admin/capitulo/:id/ejercicios", "routes/admin.ejercicios.tsx"),
 	route("admin/capitulo/:id/quiz", "routes/admin.quiz.tsx"),
+	route("admin/capitulo/:id/peliculas", "routes/admin.peliculas.tsx"),
 ] satisfies RouteConfig;

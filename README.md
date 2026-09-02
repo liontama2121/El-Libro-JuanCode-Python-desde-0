@@ -277,6 +277,7 @@ content/libro.json              partes y ficha de cada capítulo
 content/chapters/07-ciclo-while.html
 content/bank/07.json
 content/exercises/07.json
+content/peliculas.json          las películas de los capítulos 7 y 8
 ```
 
 Después de editar cualquiera de esos archivos:
@@ -293,6 +294,62 @@ exactamente qué archivo y qué pregunta.
 Un capítulo pasa a `published = true` solo cuando tiene las tres cosas: cuerpo,
 banco y ejercicios. Mientras falte una, sigue siendo borrador y los estudiantes
 no lo ven.
+
+---
+
+## 🎬 La película en vivo
+
+Una prueba de escritorio **interactiva**: el estudiante le da a "siguiente paso"
+y ve cómo se van seteando las variables, fila por fila, con la consola llenándose
+abajo. Solo está en los capítulos de ciclos (**7 while** y **8 for**), que es
+donde el problema no es la sintaxis sino no ver qué pasa dentro de cada vuelta.
+
+```
+content/peliculas.json              las 6 películas (3 por capítulo)
+scripts/verify-traces.py            las corre en Python REAL y compara
+scripts/build-peliculas.mjs         genera seeds/peliculas.sql
+app/components/trace-stepper.tsx    el componente (lector y panel del profe)
+app/lib/traces.ts                   tipos, parseo y validación
+```
+
+Cada película guarda su tabla en `trace_demos`:
+
+| Columna | Qué lleva |
+|---|---|
+| `code` | El programa Python que se muestra arriba |
+| `columns_json` | `["Vuelta", "contador", "¿contador ≤ 5?", "imprime"]` |
+| `steps_json` | Un paso por fila: `{ cells, out, hl }` |
+| `active` | Si no está activa, no aparece en el capítulo |
+
+`out` es lo que el programa imprime en ese paso (con sus `
+`) y `hl` es el
+índice de la celda que se resalta en magenta.
+
+### La regla: la película no puede mentir
+
+```bash
+npm run peliculas:verificar     # python scripts/verify-traces.py
+```
+
+Corre cada uno de los 6 códigos en Python de verdad y compara la salida real con
+la concatenación de todos los `out`. Si no coinciden **se corrige el
+`steps_json`, nunca el código**. Ninguna película entra al seed sin pasar esto.
+
+```bash
+npm run peliculas:build         # genera seeds/peliculas.sql
+npm run db:seed:local           # ya lo incluye
+```
+
+El seed hace upsert por `(chapter_id, orden)`: volver a correrlo actualiza las
+mismas seis en vez de duplicarlas.
+
+### Panel del profe
+
+`/admin/capitulo/:id/peliculas` — lista, crear, editar y borrar, con
+**vista previa en vivo** usando el mismo componente que ve el estudiante. Los dos
+textareas de JSON se validan mientras se escribe (y otra vez en el servidor):
+si el JSON está roto o un paso tiene menos celdas que columnas, dice cuál es el
+problema y no deja guardar.
 
 ---
 
@@ -334,6 +391,8 @@ Domains & Routes → Add → Custom domain →** `libro.juancode.co`.
 | `npm run db:seed:local` | Carga el contenido del libro en local |
 | `npm run db:seed:remote` | Carga el contenido del libro en remoto |
 | `npm run content:build` | Regenera `seeds/contenido.sql` desde `content/` |
+| `npm run peliculas:build` | Regenera `seeds/peliculas.sql` desde `content/peliculas.json` |
+| `npm run peliculas:verificar` | Corre las 6 películas en Python real y compara la salida |
 | `npm run cf-typegen` | Regenera los tipos de bindings y de rutas |
 | `npm run typecheck` | Tipos + rutas |
 | `npm run check` | typecheck + build + `wrangler deploy --dry-run` |
