@@ -4,13 +4,12 @@
 	"compatibility_date": "2026-08-01",
 	"pages_build_output_dir": "public",
 
-	// Base de datos de la agenda. Reemplaza database_id con el que
-	// devuelve:  npx wrangler d1 create juancode-agenda
+	// Base de datos de la agenda (creada con: npx wrangler d1 create juancode-agenda)
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "juancode-agenda",
-			"database_id": "REEMPLAZA_CON_TU_DATABASE_ID",
+			"database_id": "9a1ae07d-8a8f-492e-9839-9ceb0179dba3",
 			"migrations_dir": "migrations"
 		}
 	],
