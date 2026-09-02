@@ -15,7 +15,7 @@
 		{
 			"binding": "DB",
 			"database_name": "libro-juancode-db",
-			"database_id": "REEMPLAZA_CON_TU_DATABASE_ID",
+			"database_id": "93282d9f-84e7-42a6-97f6-7b830b87cd0f",
 			"migrations_dir": "drizzle"
 		}
 	],
