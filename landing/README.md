@@ -79,7 +79,7 @@ Una hora puede estar en tres estados:
 ```js
 window.JUANCODE = {
   WHATSAPP_URL:  "https://wa.me/573046452629",
-  LIBRO_URL:     "https://libro.juancode.co",
+  LIBRO_URL:     "https://libro-juancode.juankmolina2121.workers.dev",
   TIKTOK_URL:    "https://www.tiktok.com/@juancode",
   INSTAGRAM_URL: "https://www.instagram.com/juancode",
 };
