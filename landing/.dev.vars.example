@@ -1,0 +1,5 @@
+# Copia este archivo como .dev.vars (que NO se sube al repo)
+
+# Clave del panel privado (/panel-juancode)
+ADMIN_PASSWORD=cambia-esta-clave
+

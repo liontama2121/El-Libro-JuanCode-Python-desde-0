@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JuanCode — Aprende a programar · Páginas web que se sienten premium</title>
+<meta name="description" content="Clases de programación 1 a 1 en Python y desarrollo de páginas web modernas. Guías de estudio, simulacros pre-parcial y sitios que se sienten premium.">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070A12;--bg2:#0b0b16;
+  --cyan:#00E5FF;--magenta:#FF4DFF;--purple:#b975ff;--green:#34e07a;--orange:#ffa94d;--gold:#ffd43b;
+  --text:#f2f3fa;--muted:#9aa0bf;
+  --glass:rgba(255,255,255,.045);--border:rgba(255,255,255,.09);
+  --grad:linear-gradient(135deg,#00E5FF,#FF4DFF);
+  --grad-text:linear-gradient(120deg,#00E5FF 0%,#b975ff 50%,#FF4DFF 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:19px;line-height:1.75;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:28px 28px;}
+.orb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;}
+.orb-1{width:520px;height:520px;background:rgba(0,229,255,.14);top:-160px;left:-140px;}
+.orb-2{width:560px;height:560px;background:rgba(255,77,255,.12);top:30%;right:-200px;}
+.orb-3{width:460px;height:460px;background:rgba(185,117,255,.10);bottom:-160px;left:22%;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 40px;position:relative;z-index:1;}
+.grad-text{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(7,10,18,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+nav .wrap{display:flex;align-items:center;gap:28px;padding:18px 40px;}
+.logo{font-family:'Sora',sans-serif;font-weight:800;font-size:20px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
+nav a{color:var(--muted);text-decoration:none;font-size:15px;font-weight:700;transition:color .2s;white-space:nowrap;}
+nav a:hover{color:var(--cyan);}
+.nav-cta{margin-left:auto;padding:10px 22px;border-radius:999px;background:var(--grad);color:#fff !important;font-weight:800;box-shadow:0 4px 18px rgba(0,229,255,.3);}
+.nav-links{display:flex;gap:26px;align-items:center;flex:1;}
+
+/* HERO */
+.hero{min-height:88vh;display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:50px;padding:70px 0 60px;}
+.hero-tag{display:inline-flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:13.5px;color:var(--cyan);letter-spacing:.14em;text-transform:uppercase;margin-bottom:24px;padding:9px 20px;border:1px solid rgba(0,229,255,.35);border-radius:999px;background:rgba(0,229,255,.06);}
+h1{font-family:'Sora',sans-serif;font-size:clamp(42px,5.2vw,68px);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin-bottom:22px;}
+.hero-sub{font-size:21px;color:var(--muted);max-width:560px;margin-bottom:36px;}
+.hero-sub strong{color:var(--text);}
+.btns{display:flex;gap:16px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:999px;font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;text-decoration:none;transition:transform .15s, box-shadow .15s;}
+.btn:hover{transform:translateY(-3px);}
+.btn-grad{background:var(--grad);color:#fff;box-shadow:0 6px 24px rgba(0,229,255,.35);}
+.btn-ghost{background:var(--glass);color:var(--text);border:1px solid var(--border);}
+.hero-visual{display:flex;align-items:center;justify-content:center;position:relative;}
+.big-j{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(160px,20vw,260px);background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 60px rgba(0,229,255,.35)) drop-shadow(0 0 120px rgba(255,77,255,.25));animation:flotar 5s ease-in-out infinite;user-select:none;}
+@keyframes flotar{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+.hero-chips{position:absolute;inset:0;pointer-events:none;}
+.chip{position:absolute;font-family:'JetBrains Mono',monospace;font-size:13.5px;padding:9px 16px;border-radius:12px;background:rgba(11,11,22,.85);border:1px solid var(--border);backdrop-filter:blur(8px);animation:flotar 6s ease-in-out infinite;}
+.chip b{color:var(--cyan);font-weight:600;}
+.ch1{top:8%;left:2%;animation-delay:.6s;}
+.ch2{bottom:14%;left:0;animation-delay:1.4s;}
+.ch3{top:22%;right:0;animation-delay:2.1s;}
+.ch4{bottom:4%;right:6%;animation-delay:.2s;}
+
+/* SECCIONES */
+section{padding:90px 0 30px;}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:13.5px;letter-spacing:.15em;text-transform:uppercase;display:inline-block;margin-bottom:14px;padding:8px 18px;border-radius:999px;font-weight:600;border:1px solid;}
+.st-cyan{color:var(--cyan);border-color:rgba(0,229,255,.35);background:rgba(0,229,255,.06);}
+.st-magenta{color:var(--magenta);border-color:rgba(255,77,255,.35);background:rgba(255,77,255,.06);}
+.st-purple{color:var(--purple);border-color:rgba(185,117,255,.4);background:rgba(185,117,255,.07);}
+.st-green{color:var(--green);border-color:rgba(52,224,122,.4);background:rgba(52,224,122,.07);}
+h2{font-family:'Sora',sans-serif;font-size:clamp(34px,4vw,50px);font-weight:800;letter-spacing:-.02em;line-height:1.12;margin-bottom:16px;}
+.sec-desc{font-size:20px;color:var(--muted);max-width:760px;}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+</style>
+<style>
+/* QUIÉN SOY */
+.about{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;margin-top:38px;align-items:start;}
+.about p{font-size:19.5px;color:var(--muted);margin-bottom:18px;}
+.about p strong{color:var(--text);}
+.badges{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;background:var(--glass);border:1px solid var(--border);font-size:15px;font-weight:700;}
+.pasiones{display:flex;flex-direction:column;gap:14px;}
+.pasion{display:flex;gap:16px;align-items:flex-start;background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:20px 24px;backdrop-filter:blur(10px);}
+.pasion .pe{font-size:28px;flex-shrink:0;}
+.pasion strong{display:block;font-size:17.5px;margin-bottom:2px;}
+.pasion span{font-size:16px;color:var(--muted);}
+
+/* SERVICIOS */
+.servicios{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:44px;}
+.serv{background:var(--glass);border:1px solid var(--border);border-radius:26px;padding:40px;backdrop-filter:blur(12px);border-top:4px solid;position:relative;overflow:hidden;}
+.sv-cyan{border-top-color:var(--cyan);}
+.sv-magenta{border-top-color:var(--magenta);}
+.serv .se{font-size:44px;}
+.serv h3{font-family:'Sora',sans-serif;font-size:27px;font-weight:800;margin:14px 0 8px;}
+.serv .sd{color:var(--muted);font-size:17.5px;margin-bottom:20px;}
+.serv ul{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:28px;}
+.serv li{display:flex;gap:11px;font-size:16.5px;color:var(--muted);align-items:flex-start;}
+.serv li::before{content:'✓';color:var(--green);font-weight:800;flex-shrink:0;}
+.serv li strong{color:var(--text);}
+
+/* PORTAFOLIO */
+.grid-port{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:44px;}
+.proy{background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:34px;backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:12px;transition:transform .2s, border-color .2s;position:relative;}
+.proy:hover{transform:translateY(-6px);border-color:rgba(0,229,255,.4);}
+.proy .pemoji{font-size:38px;}
+.proy h3{font-family:'Sora',sans-serif;font-size:23px;font-weight:800;}
+.proy p{color:var(--muted);font-size:16.5px;flex:1;}
+.tags{display:flex;gap:9px;flex-wrap:wrap;}
+.tag-pill{font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 13px;border-radius:999px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.25);color:var(--cyan);}
+.proy a.ver{color:var(--cyan);text-decoration:none;font-weight:800;font-size:16px;display:inline-flex;gap:8px;align-items:center;}
+.proy a.ver:hover{gap:12px;}
+.proy.soon{border-style:dashed;opacity:.85;}
+.soon-badge{position:absolute;top:20px;right:20px;font-size:12px;font-weight:800;letter-spacing:.08em;padding:6px 14px;border-radius:999px;background:rgba(255,212,59,.12);border:1px solid rgba(255,212,59,.4);color:var(--gold);}
+
+/* CONTACTO */
+.contacto{background:var(--glass);border:1px solid var(--border);border-radius:30px;padding:60px 50px;text-align:center;margin-top:44px;backdrop-filter:blur(12px);position:relative;overflow:hidden;}
+.contacto::before{content:'';position:absolute;inset:-2px;background:var(--grad);opacity:.08;pointer-events:none;}
+.contacto h2{margin-bottom:12px;}
+.contacto p{color:var(--muted);font-size:19px;max-width:620px;margin:0 auto 32px;}
+.socials{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:26px;}
+.socials a{color:var(--muted);text-decoration:none;font-weight:700;font-size:16px;display:inline-flex;gap:9px;align-items:center;transition:color .2s;}
+.socials a:hover{color:var(--cyan);}
+
+footer{padding:46px 0;border-top:1px solid var(--border);margin-top:90px;}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;}
+.f-copy{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);}
+
+.wa-float{position:fixed;bottom:26px;right:26px;z-index:120;width:62px;height:62px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:30px;text-decoration:none;box-shadow:0 8px 28px rgba(37,211,102,.45);animation:flotar 4s ease-in-out infinite;}
+
+@media (max-width:880px){
+  .wrap{padding:0 20px;}
+  nav .wrap{padding:14px 20px;gap:16px;overflow-x:auto;}
+  .nav-links{gap:18px;}
+  nav a{font-size:13.5px;}
+  .nav-cta{padding:9px 16px;}
+  .hero{grid-template-columns:1fr;min-height:auto;padding:50px 0 30px;gap:20px;}
+  .hero-visual{order:-1;height:210px;}
+  .big-j{font-size:150px;}
+  .chip{display:none;}
+  h1{font-size:clamp(34px,9vw,44px);}
+  .hero-sub{font-size:18px;}
+  .btn{padding:13px 22px;font-size:15.5px;}
+  section{padding:64px 0 20px;}
+  .about{grid-template-columns:1fr;gap:26px;}
+  .servicios{grid-template-columns:1fr;}
+  .serv{padding:28px 22px;}
+  .grid-port{grid-template-columns:1fr;}
+  .contacto{padding:40px 22px;}
+  .wa-float{width:56px;height:56px;font-size:27px;bottom:18px;right:18px;}
+}
+
+/* AGENDA */
+.st-gold{color:var(--gold);border-color:rgba(255,212,59,.4);background:rgba(255,212,59,.07);}
+.agenda-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:26px;margin-top:44px;align-items:stretch;}
+.agenda-card{background:var(--glass);border:1px solid var(--border);border-radius:26px;padding:36px;backdrop-filter:blur(12px);border-top:4px solid var(--gold);}
+.horario-big{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;margin:8px 0 2px;}
+.dias{display:flex;gap:10px;margin:20px 0 6px;flex-wrap:wrap;}
+.dia{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:17px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.3);color:var(--cyan);}
+.dia.off{background:var(--glass);border-color:var(--border);color:var(--muted);opacity:.5;}
+.slots{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.slot{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-radius:12px;background:rgba(52,224,122,.06);border:1px solid rgba(52,224,122,.25);font-family:'JetBrains Mono',monospace;font-size:15px;}
+.slot b{color:var(--green);font-weight:600;}
+.booking{background:var(--glass);border:1px solid var(--border);border-radius:26px;padding:22px;backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:14px;}
+.booking iframe{width:100%;height:580px;border:0;border-radius:16px;background:#fff;}
+.booking-note{font-size:14.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.booking-note a{color:var(--cyan);}
+@media (max-width:880px){
+  .agenda-wrap{grid-template-columns:1fr;}
+  .agenda-card{padding:26px 22px;}
+  .horario-big{font-size:26px;}
+  .dia{width:44px;height:44px;font-size:15px;}
+  .booking iframe{height:520px;}
+}
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+
+<nav>
+  <div class="wrap">
+    <span class="logo">&lt;J&gt; JUANCODE</span>
+    <div class="nav-links">
+      <a href="#quien-soy">Quién soy</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#portafolio">Portafolio</a>
+      <a href="#agenda">Agenda</a>
+      <a href="#contacto" class="nav-cta">Escríbeme</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div>
+    <div class="hero-tag">◉ Bogotá, Colombia · Disponible</div>
+    <h1>Enseño a <span class="grad-text">programar</span>.<br>Construyo <span class="grad-text">la web</span>.</h1>
+    <p class="hero-sub">Soy Juan — ingeniero de sistemas. Doy <strong>clases de programación 1 a 1</strong> que rescatan semestres, y creo <strong>páginas web</strong> que se sienten premium desde el primer scroll.</p>
+    <div class="btns">
+      <a class="btn btn-grad" href="#servicios">🐍 Quiero aprender Python</a>
+      <a class="btn btn-ghost" href="#portafolio">🌐 Quiero mi página web</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <span class="big-j">&lt;J&gt;</span>
+    <div class="hero-chips">
+      <span class="chip ch1"><b>while</b> semestre.en_riesgo():</span>
+      <span class="chip ch2">estudiar_con_juan() <b>✓</b></span>
+      <span class="chip ch3"><b>print</b>("Página lista 🚀")</span>
+      <span class="chip ch4">nota = <b>5.0</b></span>
+    </div>
+  </div>
+</section>
+
+<!-- QUIÉN SOY -->
+<section id="quien-soy">
+  <span class="sec-tag st-cyan">01 · Quién soy</span>
+  <h2>Hola, soy <span class="grad-text">Juan</span> 👋</h2>
+  <div class="about">
+    <div class="reveal">
+      <p>Ingeniero de sistemas de Bogotá. Mi momento favorito del mundo es ese instante exacto en que un estudiante dice <strong>"¡ahh, ya entendí!"</strong> — todo lo que hago está construido alrededor de provocar ese momento.</p>
+      <p>Soy de los que <strong>construyen</strong>: plataformas educativas, tiendas, portafolios, guías interactivas... si vive en internet, me emociona hacerlo. Y soy social pero fundamentalmente introvertido: hablo poquito — <strong>hasta que hablo de código</strong> 😄.</p>
+      <p>Cuando no estoy enseñando o programando, estoy viendo básquet 🏀, metido en algo de arte, o creando contenido en <strong>@juancode</strong> para que aprender a programar en español sea claro, cercano y sin misterios.</p>
+      <div class="badges">
+        <span class="badge">🎓 Ing. de Sistemas</span>
+        <span class="badge">☁️ Certificado en AWS</span>
+        <span class="badge">📍 Bogotá, Colombia</span>
+        <span class="badge">🎥 @juancode</span>
+      </div>
+    </div>
+    <div class="pasiones reveal">
+      <div class="pasion"><span class="pe">🎯</span><div><strong>Lo que me apasiona</strong><span>Explicar paso a paso hasta que hace clic. Sin atajos, sin humo: la película completa de cada línea de código.</span></div></div>
+      <div class="pasion"><span class="pe">🛠️</span><div><strong>Lo que hago</strong><span>Clases 1 a 1 de Python y desarrollo web moderno — de la landing page a la plataforma completa.</span></div></div>
+      <div class="pasion"><span class="pe">🚀</span><div><strong>Lo que quiero</strong><span>Que nadie le tenga miedo a un parcial de programación, y que los negocios de acá tengan páginas que se sientan de nivel mundial.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section id="servicios">
+  <span class="sec-tag st-magenta">02 · Servicios</span>
+  <h2>Dos cosas, <span class="grad-text">bien hechas</span></h2>
+  <p class="sec-desc">No hago de todo. Hago estas dos cosas — y las hago con obsesión por el detalle.</p>
+  <div class="servicios">
+    <div class="serv sv-cyan reveal">
+      <span class="se">🐍</span>
+      <h3>Profesor de programación 1 a 1</h3>
+      <p class="sd">Python desde cero o rescate de parciales universitarios. Clases en vivo, a tu ritmo, con material hecho para TI.</p>
+      <ul>
+        <li><strong>Clases personalizadas</strong> — arrancamos con una prueba de nivel y armamos tu ruta</li>
+        <li><strong>Guías de estudio a tu medida</strong> — el paso a paso que el profe no explica</li>
+        <li><strong>Simulacros pre-parcial</strong> — enunciados estilo universidad, con cronómetro y soluciones explicadas línea por línea</li>
+        <li><strong>Bonus de código misterioso</strong> — pruebas de escritorio entrenadas paso a paso</li>
+      </ul>
+      <a class="btn btn-grad" href="#contacto">Escríbeme "PARCIAL" 🎯</a>
+    </div>
+    <div class="serv sv-magenta reveal">
+      <span class="se">🌐</span>
+      <h3>Creador de páginas web</h3>
+      <p class="sd">Sitios modernos, rápidos y con identidad — que se sienten premium en celular y en computador.</p>
+      <ul>
+        <li><strong>Landing pages y portafolios</strong> — tu marca con presencia de verdad</li>
+        <li><strong>Tiendas con pagos en línea</strong> — vende con Wompi, PayPal y más</li>
+        <li><strong>Plataformas educativas a medida</strong> — libros digitales, cursos, contenido interactivo</li>
+        <li><strong>Rápidas y seguras</strong> — desplegadas en infraestructura moderna, sin mensualidades infladas</li>
+      </ul>
+      <a class="btn btn-ghost" href="#contacto">Cotiza tu página 💬</a>
+    </div>
+  </div>
+</section>
+
+<!-- PORTAFOLIO -->
+<section id="portafolio">
+  <span class="sec-tag st-purple">03 · Portafolio</span>
+  <h2>Proyectos <span class="grad-text">reales, en línea</span></h2>
+  <p class="sec-desc">No son mockups: son sitios vivos que puedes visitar ahora mismo.</p>
+  <div class="grid-port">
+    <div class="proy reveal">
+      <span class="pemoji">📖</span>
+      <h3>Sharick Platform</h3>
+      <p>Libro digital interactivo para aprender inglés: páginas a pantalla completa estilo editorial, audio real, juegos por módulo y navegación de libro profesional.</p>
+      <div class="tags"><span class="tag-pill">Plataforma educativa</span><span class="tag-pill">React</span><span class="tag-pill">Interactivo</span></div>
+      <a class="ver" href="https://sharick-platform.pages.dev/" target="_blank" rel="noopener">Visitar el proyecto →</a>
+    </div>
+    <div class="proy reveal">
+      <span class="pemoji">📸</span>
+      <h3>Inalper Photography</h3>
+      <p>Portafolio profesional de fotografía: galería inmersiva y marca personal — el trabajo hablando por sí solo, sin distracciones.</p>
+      <div class="tags"><span class="tag-pill">Portafolio</span><span class="tag-pill">Galería</span><span class="tag-pill">Marca personal</span></div>
+      <a class="ver" href="https://inalperphotography.com/" target="_blank" rel="noopener">Visitar el proyecto →</a>
+    </div>
+    <div class="proy reveal">
+      <span class="pemoji">☕</span>
+      <h3>Mr. Capacho Coffee</h3>
+      <p>Sitio de marca y tienda para café colombiano de origen, con catálogo y pagos en línea — del grano a la web.</p>
+      <div class="tags"><span class="tag-pill">E-commerce</span><span class="tag-pill">Pagos en línea</span><span class="tag-pill">Marca</span></div>
+      <a class="ver" href="https://www.mrcapacho.com/" target="_blank" rel="noopener">Visitar el proyecto →</a>
+    </div>
+    <div class="proy soon reveal">
+      <span class="soon-badge">🚧 EN CONSTRUCCIÓN</span>
+      <span class="pemoji">🐍</span>
+      <h3>El Libro JuanCode</h3>
+      <p>Mi propio libro digital para aprender Python desde 0: capítulos con quiz, ejercicios interactivos y la "película en vivo" — mira las variables setearse paso a paso.</p>
+      <div class="tags"><span class="tag-pill">Producto propio</span><span class="tag-pill">Próximamente</span></div>
+      <span class="ver" style="color:var(--muted);">Muy pronto ✨</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- AGENDA -->
+<section id="agenda">
+  <span class="sec-tag st-gold">04 · Agenda</span>
+  <h2>Reserva tu <span class="grad-text">clase</span></h2>
+  <p class="sec-desc">Doy clases en las noches, de lunes a viernes (hora Colombia 🇨🇴). Elige tu cupo directamente en el calendario: la confirmación te llega al correo con recordatorio y link de videollamada.</p>
+  <div class="agenda-wrap">
+    <div class="agenda-card reveal">
+      <span style="font-size:40px;">🗓️</span>
+      <div class="horario-big">6:00 – 11:00 p.m.</div>
+      <p style="color:var(--muted);font-size:16.5px;">Lunes a viernes · clases 1 a 1 en vivo</p>
+      <div class="dias">
+        <span class="dia">L</span><span class="dia">M</span><span class="dia">X</span><span class="dia">J</span><span class="dia">V</span><span class="dia off">S</span><span class="dia off">D</span>
+      </div>
+      <div class="slots">
+        <div class="slot"><span>6:00 – 7:00 p.m.</span><b>✓ Disponible</b></div>
+        <div class="slot"><span>7:00 – 8:00 p.m.</span><b>✓ Disponible</b></div>
+        <div class="slot"><span>8:00 – 9:00 p.m.</span><b>✓ Disponible</b></div>
+        <div class="slot"><span>9:00 – 10:00 p.m.</span><b>✓ Disponible</b></div>
+        <div class="slot"><span>10:00 – 11:00 p.m.</span><b>✓ Disponible</b></div>
+      </div>
+      <p style="color:var(--muted);font-size:15px;margin-top:18px;">⏱️ Sesiones de 1 hora · el calendario muestra solo los cupos realmente libres</p>
+    </div>
+    <div class="booking reveal">
+      <!-- 🔧 PASO PENDIENTE: reemplaza el src de este iframe por el embed de tu
+           Google Calendar → Horarios de citas → Compartir → "Insertar en el sitio web" -->
+      <iframe src="https://calendar.google.com/calendar/appointments/schedules/TU_CODIGO_AQUI?gv=true" title="Agenda tu clase con JuanCode" loading="lazy"></iframe>
+      <span class="booking-note">// ¿Problemas con el calendario? <a href="https://wa.me/57XXXXXXXXXX" target="_blank" rel="noopener">Agenda por WhatsApp →</a></span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="contacto reveal">
+    <span class="sec-tag st-green">05 · Hablemos</span>
+    <h2>¿Salvamos ese semestre o <span class="grad-text">lanzamos tu página</span>?</h2>
+    <p>Escríbeme por WhatsApp con la palabra <strong style="color:var(--text)">"PARCIAL"</strong> si vienes por clases, o <strong style="color:var(--text)">"WEB"</strong> si vienes por tu página — y te respondo con el paso a paso.</p>
+    <a class="btn btn-grad" href="https://wa.me/57XXXXXXXXXX" target="_blank" rel="noopener">💬 Escríbeme por WhatsApp</a>
+    <div class="socials">
+      <a href="https://www.tiktok.com/@juancode" target="_blank" rel="noopener">🎵 TikTok @juancode</a>
+      <a href="https://www.instagram.com/juancode" target="_blank" rel="noopener">📷 Instagram @juancode</a>
+    </div>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<footer>
+  <div class="wrap">
+    <span class="logo">&lt;J&gt; JUANCODE</span>
+    <span class="f-copy">// Hecho con amor por JuanCode · Bogotá ☕ · <span id="anio"></span></span>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/57XXXXXXXXXX" target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
+
+<script>
+document.getElementById('anio').textContent = new Date().getFullYear();
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+}, {threshold: 0.12});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

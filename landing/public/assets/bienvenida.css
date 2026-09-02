@@ -1,0 +1,65 @@
+/* ==========================================================================
+   Portada — la bienvenida que separa los dos caminos.
+   Mobile-first: en celular las dos opciones van una debajo de otra.
+   ========================================================================== */
+
+body.bienvenida { display: flex; flex-direction: column; min-height: 100dvh; }
+
+.portada { display: flex; flex-direction: column; justify-content: center; flex: 1; padding: 44px 20px 34px; text-align: center; gap: 30px; }
+
+.portada-head { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.big-j.chico { font-size: clamp(72px, 16vw, 108px); line-height: 1; animation: flotar 5s ease-in-out infinite; }
+.marca { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: .42em; color: var(--muted); margin-bottom: 12px; }
+.portada-head h1 { font-family: 'Sora', sans-serif; font-size: clamp(30px, 7vw, 44px); font-weight: 800; letter-spacing: -.02em; }
+.portada-sub { color: var(--muted); font-size: 18px; max-width: 520px; margin: 4px auto 0; }
+.portada-sub strong { color: var(--text); }
+
+/* Los dos caminos */
+.caminos { display: grid; gap: 16px; }
+
+.camino { display: flex; flex-direction: column; gap: 10px; text-align: left; padding: 28px 24px; border-radius: 26px; border: 1px solid var(--border); background: var(--glass); backdrop-filter: blur(12px); text-decoration: none; color: var(--text); position: relative; overflow: hidden; border-top: 4px solid; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.camino::before { content: ''; position: absolute; inset: -2px; opacity: 0; transition: opacity .18s ease; pointer-events: none; }
+.camino:hover { transform: translateY(-5px); }
+.camino:hover::before { opacity: .1; }
+.camino:focus-visible { outline: 3px solid var(--cyan); outline-offset: 4px; }
+
+.camino-clases { border-top-color: var(--cyan); }
+.camino-clases::before { background: linear-gradient(135deg, #00E5FF, #b975ff); }
+.camino-clases:hover { border-color: rgba(0,229,255,.45); box-shadow: 0 22px 54px -26px rgba(0,229,255,.9); }
+
+.camino-web { border-top-color: var(--magenta); }
+.camino-web::before { background: linear-gradient(135deg, #FF4DFF, #b975ff); }
+.camino-web:hover { border-color: rgba(255,77,255,.45); box-shadow: 0 22px 54px -26px rgba(255,77,255,.9); }
+
+.camino > * { position: relative; z-index: 1; }
+.camino-emoji { font-size: 42px; line-height: 1; }
+.camino h2 { font-family: 'Sora', sans-serif; font-size: 25px; font-weight: 700; line-height: 1.2; }
+.camino h2 b { font-weight: 800; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.camino p { color: var(--muted); font-size: 16.5px; }
+.camino ul { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-top: 2px; }
+.camino li { display: flex; gap: 10px; align-items: flex-start; color: var(--muted); font-size: 15.5px; }
+.camino li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
+.camino-cta { margin-top: 8px; font-family: 'Sora', sans-serif; font-weight: 800; font-size: 16.5px; color: var(--cyan); display: inline-flex; gap: 8px; transition: gap .18s ease; }
+.camino-web .camino-cta { color: var(--magenta); }
+.camino:hover .camino-cta { gap: 14px; }
+
+/* Enlaces de abajo */
+.portada-extras { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.portada-extras a { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--muted); text-decoration: none; font-size: 14.5px; font-weight: 700; transition: color .15s, border-color .15s; }
+.portada-extras a:hover { color: var(--cyan); border-color: rgba(0,229,255,.4); }
+
+.portada-pie { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--muted); opacity: .8; }
+
+/* Volver, en las páginas de cada camino */
+.volver-camino { display: inline-block; margin-bottom: 16px; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .1em; }
+.volver-camino:hover { color: var(--cyan); }
+
+/* Una sola tarjeta de servicio ocupa el ancho, pero sin quedar gigante */
+.servicios.una { grid-template-columns: 1fr; max-width: 780px; }
+.btns.btns-centro { justify-content: center; }
+
+@media (min-width: 820px) {
+  .portada { padding: 56px 20px 40px; gap: 38px; }
+  .caminos { grid-template-columns: 1fr 1fr; gap: 22px; }
+  .camino { padding: 34px 30px; }
+}

@@ -1,0 +1,56 @@
+/* ==========================================================================
+   Panel privado de disponibilidad
+   ========================================================================== */
+
+.login { max-width: 440px; margin: 60px auto; }
+.login h1 { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+
+.panel { padding: 30px 0 60px; }
+.panel-head { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+.panel-head h1 { font-family: 'Sora', sans-serif; font-size: clamp(28px, 5vw, 38px); font-weight: 800; }
+.panel-head .ayuda { max-width: 560px; margin-bottom: 0; }
+.v-libre { color: var(--green); }
+.v-ocupado { color: var(--magenta); }
+
+.tarjetas-resumen { display: flex; gap: 12px; flex-wrap: wrap; }
+.mini { display: flex; flex-direction: column; padding: 14px 20px; border-radius: 18px; border: 1px solid var(--border); background: var(--glass); min-width: 122px; }
+.mini b { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--cyan); line-height: 1.1; }
+.mini span { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+.acciones-rapidas { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 22px; }
+.campo-motivo { flex: 1 1 280px; }
+.campo-motivo input { width: 100%; border-radius: 12px; border: 1px solid var(--border); background: rgba(8,8,18,.6); padding: 11px 14px; color: var(--text); font-family: 'Manrope', sans-serif; font-size: 15.5px; outline: none; }
+.campo-motivo input:focus { border-color: rgba(0,229,255,.5); }
+
+/* Un bloque por día */
+.agenda-panel { display: grid; gap: 14px; }
+.dia-panel { border: 1px solid var(--border); border-radius: 20px; background: var(--glass); backdrop-filter: blur(10px); padding: 16px; }
+.dia-panel > header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.dia-panel > header b { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 800; text-transform: capitalize; }
+.dia-panel.dia-cerrado { border-color: rgba(255,77,255,.32); background: rgba(255,77,255,.05); }
+
+.celdas { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 9px; }
+
+.celda { display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); cursor: pointer; font-family: 'Manrope', sans-serif; transition: transform .14s, border-color .14s, background .14s; }
+.celda:hover:not(:disabled) { transform: translateY(-2px); }
+.celda b { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 600; }
+.celda span { font-size: 13px; }
+.celda em { font-style: normal; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.celda.libre { border-color: rgba(52,224,122,.35); background: rgba(52,224,122,.07); }
+.celda.libre span { color: var(--green); }
+.celda.libre:hover { border-color: rgba(52,224,122,.7); }
+
+.celda.ocupado { border-color: rgba(255,77,255,.4); background: rgba(255,77,255,.09); }
+.celda.ocupado span { color: var(--magenta); }
+.celda.ocupado:hover { border-color: rgba(255,77,255,.75); }
+
+.celda.pasado { opacity: .38; cursor: not-allowed; }
+.celda.pasado span { color: var(--muted); }
+
+.pie-panel { margin-top: 26px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--muted); opacity: .8; max-width: 560px; }
+
+@media (max-width: 620px) {
+  .celdas { grid-template-columns: 1fr 1fr; }
+  .celda { padding: 11px 12px; }
+}

@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Piezas de formulario del panel — mismo sistema de diseño JuanCode.
+   Mobile-first: los tamaños base son los del celular.
+   ========================================================================== */
+
+.oculto { display: none !important; }
+
+.reserva { padding: 34px 0 40px; max-width: 820px; margin: 0 auto; }
+.reserva-head { text-align: center; margin-bottom: 26px; }
+.reserva-head h1 { font-family: 'Sora', sans-serif; font-size: clamp(32px, 7vw, 48px); font-weight: 800; letter-spacing: -.02em; margin: 12px 0 10px; }
+.reserva-head .sec-desc { margin: 0 auto; font-size: 17px; }
+
+/* Progreso */
+.pasos { list-style: none; display: flex; gap: 8px; justify-content: center; margin-bottom: 22px; flex-wrap: wrap; }
+.paso-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--glass); font-size: 14px; font-weight: 700; color: var(--muted); }
+.paso-pill b { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.08); font-size: 12.5px; }
+.paso-pill.activo { color: var(--text); border-color: rgba(0,229,255,.45); background: rgba(0,229,255,.08); }
+.paso-pill.activo b { background: var(--grad); color: #0a0a14; }
+.paso-pill.hecho { color: var(--green); border-color: rgba(52,224,122,.35); }
+.paso-pill.hecho b { background: rgba(52,224,122,.18); color: var(--green); }
+
+/* Tarjetas */
+.tarjeta { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 26px 20px; backdrop-filter: blur(12px); }
+.tarjeta h2 { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+.ayuda { color: var(--muted); font-size: 16px; margin-bottom: 20px; }
+.ayuda strong { color: var(--text); }
+
+.cargando { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 14.5px; padding: 18px 0; }
+
+.aviso { border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; font-size: 15.5px; color: var(--muted); }
+.aviso.error { border-color: rgba(255,77,255,.4); background: rgba(255,77,255,.08); color: #ffb3ff; margin-bottom: 16px; }
+.aviso.ok { border-color: rgba(52,224,122,.4); background: rgba(52,224,122,.08); color: var(--green); }
+
+/* Paso 1: días y horas */
+.dias-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x proximity; }
+.dia-chip { flex: 0 0 auto; scroll-snap-align: start; display: flex; flex-direction: column; gap: 2px; min-width: 104px; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); cursor: pointer; text-align: left; font-family: 'Manrope', sans-serif; transition: border-color .15s, background .15s, transform .15s; }
+.dia-chip:hover { transform: translateY(-2px); }
+.dia-chip b { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 800; text-transform: capitalize; }
+.dia-chip span { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+.dia-chip.activo { border-color: rgba(0,229,255,.55); background: rgba(0,229,255,.1); }
+.dia-chip.activo span { color: var(--cyan); }
+
+.horas { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 18px; }
+.hora-chip { padding: 15px 12px; border-radius: 14px; border: 1px solid rgba(52,224,122,.3); background: rgba(52,224,122,.06); color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 14.5px; cursor: pointer; transition: transform .15s, border-color .15s, background .15s; }
+.hora-chip:hover { transform: translateY(-2px); }
+.hora-chip.activo { border-color: var(--cyan); background: rgba(0,229,255,.16); color: var(--cyan); font-weight: 600; }
+
+/* Campos */
+.campos { display: grid; gap: 16px; }
+.campo { display: flex; flex-direction: column; gap: 7px; }
+.campo > span, .campo-titulo { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.campo em { text-transform: none; letter-spacing: 0; font-style: normal; opacity: .75; }
+.campo input, .campo textarea { width: 100%; border-radius: 14px; border: 1px solid var(--border); background: rgba(8,8,18,.6); padding: 14px 16px; color: var(--text); font-family: 'Manrope', sans-serif; font-size: 16.5px; outline: none; transition: border-color .15s, box-shadow .15s; }
+.campo input:focus, .campo textarea:focus { border-color: rgba(0,229,255,.55); box-shadow: 0 0 0 3px rgba(0,229,255,.14); }
+.campo input.invalido, .campo textarea.invalido { border-color: rgba(255,77,255,.6); }
+.campo textarea { resize: vertical; line-height: 1.6; }
+#website { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+/* Bre-B */
+.breb { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 18px; border-radius: 16px; border: 1px solid rgba(255,212,59,.35); background: rgba(255,212,59,.07); margin-bottom: 20px; }
+.breb-label { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.breb-key { font-family: 'JetBrains Mono', monospace; font-size: 19px; font-weight: 600; color: var(--text); letter-spacing: .02em; }
+.btn-sm { padding: 8px 15px; font-size: 14px; }
+
+/* Subida del comprobante */
+.subida { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+.dropzone { display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; padding: 28px 18px; border: 1px dashed rgba(255,255,255,.22); border-radius: 18px; background: rgba(255,255,255,.02); cursor: pointer; transition: border-color .15s, background .15s; }
+.dropzone:hover { border-color: rgba(0,229,255,.5); background: rgba(0,229,255,.04); }
+.dz-emoji { font-size: 30px; }
+.dz-txt { font-weight: 700; }
+.dz-sub { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--muted); }
+.dropzone input[type=file] { display: none; }
+
+.previa { border: 1px solid var(--border); border-radius: 16px; padding: 14px; background: rgba(255,255,255,.02); }
+.previa-ficha { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; margin-bottom: 10px; }
+.previa-ficha span { font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+.previa img { width: 100%; max-height: 320px; object-fit: contain; border-radius: 12px; background: #000; }
+.previa-pdf { font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+
+/* Acciones */
+.acciones { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.acciones .btn { flex: 1 1 160px; justify-content: center; }
+.acciones-centro { justify-content: center; }
+
+/* Éxito */
+.exito { text-align: center; }
+.exito-emoji { font-size: 54px; display: block; }
+.exito h2 { font-size: 30px; margin: 10px 0 6px; }
+.exito-sub { color: var(--muted); font-size: 17px; margin-bottom: 22px; }
+.exito-sub strong { color: var(--text); }
+.resumen { display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; text-align: left; }
+.resumen-fila { display: flex; justify-content: space-between; gap: 14px; padding: 13px 16px; background: #0b0b16; font-size: 15.5px; }
+.resumen-fila span { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+.resumen-fila b.pendiente { color: var(--gold); }
+.exito-pie { margin-top: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+.exito-pie code { color: var(--cyan); }
+.volver-inicio { display: inline-block; margin-top: 16px; color: var(--muted); text-decoration: none; font-weight: 700; }
+.volver-inicio:hover { color: var(--cyan); }
+
+nav a.logo { text-decoration: none; }
+
+@media (min-width: 700px) {
+  .tarjeta { padding: 34px 32px; }
+  .campos { grid-template-columns: 1fr 1fr; }
+  .campo-ancho { grid-column: 1 / -1; }
+  .acciones .btn { flex: 0 0 auto; }
+}

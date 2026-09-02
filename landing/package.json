@@ -1,0 +1,13 @@
+{
+	"name": "juancode-landing",
+	"private": true,
+	"scripts": {
+		"dev": "wrangler pages dev",
+		"db:migrate:local": "wrangler d1 migrations apply juancode-agenda --local",
+		"db:migrate:remote": "wrangler d1 migrations apply juancode-agenda --remote",
+		"deploy": "wrangler pages deploy"
+	},
+	"devDependencies": {
+		"wrangler": "^4.128.0"
+	}
+}

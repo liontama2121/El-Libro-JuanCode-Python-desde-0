@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi agenda — JuanCode</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#070A12">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/formularios.css">
+<link rel="stylesheet" href="/assets/panel.css">
+</head>
+<body>
+<div class="orb orb-1"></div><div class="orb orb-2"></div>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="/">&lt;J&gt; JUANCODE</a>
+    <div class="nav-links">
+      <a href="/clases#agenda" target="_blank" rel="noopener">Ver mi agenda pública</a>
+      <a href="#" id="salir" class="oculto">Cerrar sesión</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- LOGIN ---------------------------------------------------------------- -->
+<section class="login" id="login">
+  <form class="tarjeta" id="form-login">
+    <h1>🔐 Mi agenda</h1>
+    <p class="ayuda">Entra con tu clave para marcar qué horas tienes ocupadas.</p>
+    <label class="campo">
+      <span>Clave</span>
+      <input type="password" id="password" autocomplete="current-password" required>
+    </label>
+    <div id="error-login" class="aviso error oculto" role="alert"></div>
+    <div class="acciones">
+      <button type="submit" class="btn btn-grad">Entrar</button>
+    </div>
+  </form>
+</section>
+
+<!-- PANEL ---------------------------------------------------------------- -->
+<main class="panel oculto" id="panel">
+
+  <header class="panel-head">
+    <div>
+      <h1>🗓️ Mi disponibilidad</h1>
+      <p class="ayuda">Toca una hora para cambiarla. <b class="v-libre">Verde</b> = se ve libre en la página · <b class="v-ocupado">Roja</b> = ocupada. El cambio se ve al instante.</p>
+    </div>
+    <div class="tarjetas-resumen">
+      <div class="mini"><b id="n-libres">0</b><span>horas libres</span></div>
+      <div class="mini"><b id="n-ocupadas">0</b><span>ocupadas</span></div>
+    </div>
+  </header>
+
+  <div class="acciones-rapidas">
+    <label class="campo campo-motivo">
+      <span>Motivo (opcional, solo lo ves tú)</span>
+      <input id="motivo" maxlength="200" placeholder="Clase con Ana, viaje, descanso…">
+    </label>
+    <button type="button" class="btn btn-ghost btn-sm" id="recargar">🔄 Recargar</button>
+  </div>
+
+  <div id="cargando" class="cargando">Cargando tu agenda…</div>
+  <div id="agenda" class="agenda-panel"></div>
+
+  <p class="pie-panel">
+    Esta página no está enlazada desde ningún lado y le pide a Google que no la
+    indexe. Aun así: guarda el link y no lo compartas.
+  </p>
+
+</main>
+</div>
+
+<script src="/assets/config.js"></script>
+<script src="/assets/panel.js"></script>
+</body>
+</html>

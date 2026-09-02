@@ -1,0 +1,14 @@
+# sistema
+.DS_Store
+Thumbs.db
+
+# editores
+.vscode/
+.idea/
+
+# node (por si algún día se agrega una herramienta)
+node_modules/
+
+# Cloudflare
+.wrangler/
+.dev.vars

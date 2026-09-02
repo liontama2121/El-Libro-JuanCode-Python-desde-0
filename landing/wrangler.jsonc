@@ -1,0 +1,24 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "juancode-landing",
+	"compatibility_date": "2026-08-01",
+	"pages_build_output_dir": "public",
+
+	// Base de datos de la agenda. Reemplaza database_id con el que
+	// devuelve:  npx wrangler d1 create juancode-agenda
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "juancode-agenda",
+			"database_id": "REEMPLAZA_CON_TU_DATABASE_ID",
+			"migrations_dir": "migrations"
+		}
+	],
+
+	"vars": {
+		"WHATSAPP_URL": "https://wa.me/573046452629"
+	}
+
+	// ADMIN_PASSWORD es un secreto: en local va en .dev.vars y en
+	// producción en el panel de Cloudflare Pages.
+}
