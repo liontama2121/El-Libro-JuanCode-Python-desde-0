@@ -1,0 +1,62 @@
+[
+  {
+    "orden": 1,
+    "title": "Usar la biblioteca estándar",
+    "difficulty": "facil",
+    "statement_html": "<p>Usando los módulos <code>math</code> y <code>statistics</code>, mostrar para la lista <code>[4.5, 3.0, 2.8, 5.0]</code>:</p><pre><code>Promedio: 3.83\nMediana: 3.75\nRaiz del promedio: 1.96\nRedondeado arriba: 4</code></pre><p><em>Nota:</em> los tres primeros con dos decimales.</p>",
+    "hint_html": "<p><code>statistics.mean()</code> y <code>statistics.median()</code> hacen el promedio y la mediana. De <code>math</code> necesita <code>sqrt()</code> y <code>ceil()</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Estadisticas con la biblioteca estandar\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Usa los modulos math y statistics para calcular medidas\n    basicas de una lista de notas.\n'''\n\nimport math\nimport statistics\n\n# Inicio\nnotas = [4.5, 3.0, 2.8, 5.0]\n\npromedio = statistics.mean(notas)\n\nprint(f\"Promedio: {promedio:.2f}\")\nprint(f\"Mediana: {statistics.median(notas):.2f}\")\nprint(f\"Raiz del promedio: {math.sqrt(promedio):.2f}\")\nprint(f\"Redondeado arriba: {math.ceil(promedio)}\")\n# Fin</code></pre><p>Los <code>import</code> van siempre arriba del archivo, después del encabezado. Antes de escribir una función propia vale la pena revisar si ya existe: <code>statistics.mean()</code> ahorra el <code>sum() / len()</code> y además maneja mejor los casos raros.</p><p><code>math.ceil()</code> redondea siempre hacia arriba, a diferencia de <code>round()</code>, que redondea al más cercano.</p>",
+    "starter_code": "'''\nPrograma: Estadisticas con la biblioteca estandar\nAutor:\nFecha:\nDescripcion:\n'''\n\n\n# Inicio\nnotas = [4.5, 3.0, 2.8, 5.0]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Promedio: 3.83\nMediana: 3.75\nRaiz del promedio: 1.96\nRedondeado arriba: 4"
+      }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Simulador de dado",
+    "difficulty": "facil",
+    "statement_html": "<p>Usando <code>random</code> con semilla fija <code>random.seed(42)</code>, simular <strong>10</strong> lanzamientos de un dado y mostrar los resultados y cuántas veces salió cada cara:</p><pre><code>Lanzamientos: [6, 1, 1, 6, 3, 2, 2, 2, 6, 1]\n1: 3\n2: 3\n3: 1\n6: 3</code></pre><p><em>Nota:</em> las caras se muestran ordenadas y solo las que salieron.</p>",
+    "hint_html": "<p><code>random.randint(1, 6)</code> da un número entre 1 y 6 (aquí el final SÍ entra). Para contar, el patrón del capítulo 12: <code>conteo.get(cara, 0) + 1</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Simulador de dado\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Simula diez lanzamientos de un dado y cuenta cuantas veces\n    salio cada cara.\n'''\n\nimport random\n\nLANZAMIENTOS = 10\n\n# Inicio\n# La semilla fija hace que el resultado sea siempre el mismo:\n# util para probar el programa\nrandom.seed(42)\n\nresultados = [random.randint(1, 6) for _ in range(LANZAMIENTOS)]\n\nconteo = {}\nfor cara in resultados:\n    conteo[cara] = conteo.get(cara, 0) + 1\n\nprint(f\"Lanzamientos: {resultados}\")\n\nfor cara in sorted(conteo):\n    print(f\"{cara}: {conteo[cara]}\")\n# Fin</code></pre><p>Dos detalles:</p><ul><li><strong><code>random.seed(42)</code></strong> fija la secuencia de números \"aleatorios\". Sin ella, cada corrida daría algo distinto y el programa sería imposible de probar. En producción se quita.</li><li><strong><code>randint(1, 6)</code> sí incluye el 6</strong>, a diferencia de <code>range(1, 6)</code>. Es de las pocas funciones de Python donde el final entra.</li></ul><p>El guion bajo en <code>for _ in range(...)</code> es la convención para decir \"esta variable no me importa, solo quiero repetir\".</p>",
+    "starter_code": "'''\nPrograma: Simulador de dado\nAutor:\nFecha:\nDescripcion:\n'''\n\n\nLANZAMIENTOS = 10\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Lanzamientos: [6, 1, 1, 6, 3, 2, 2, 2, 6, 1]\n1: 3\n2: 3\n3: 1\n6: 3"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Módulo de formato",
+    "difficulty": "medio",
+    "statement_html": "<p>Escribir un módulo de utilidades con tres funciones y probarlo con el guardián <code>if __name__ == \"__main__\"</code>:</p><ul><li><code>pesos(valor)</code> → <code>$ 1,250,000</code></li><li><code>porcentaje(parte, total)</code> → <code>25.0%</code></li><li><code>titulo(texto)</code> → el texto centrado en 30 caracteres entre líneas de <code>=</code></li></ul><pre><code>==============================\n        REPORTE DIARIO\n==============================\nVentas: $ 1,250,000\nMeta cumplida: 62.5%</code></pre>",
+    "hint_html": "<p><code>f\"{valor:,}\"</code> mete el separador de miles y <code>f\"{texto:^30}\"</code> centra en 30 caracteres. Las funciones devuelven el texto; el <code>print()</code> va en el bloque del guardián.</p>",
+    "solution_html": "<pre><code>'''\nModulo: formato\nAutor:  Ana Gomez\nFecha:  2026-03-14\nDescripcion:\n    Utilidades de formato para los reportes del banco.\n    Se puede importar desde otros archivos o ejecutar directo\n    para probarlo.\n'''\n\nANCHO = 30\n\n\ndef pesos(valor):\n    '''\n    Formatea un valor como moneda colombiana.\n\n    Parametros:\n        valor (int): el monto\n\n    Retorna:\n        str: por ejemplo \"$ 1,250,000\"\n    '''\n    return f\"$ {valor:,}\"\n\n\ndef porcentaje(parte, total):\n    '''\n    Calcula que porcentaje representa parte sobre total.\n\n    Parametros:\n        parte (int|float): la cantidad\n        total (int|float): el total de referencia\n\n    Retorna:\n        str: por ejemplo \"25.0%\"\n    '''\n    return f\"{parte / total * 100}%\"\n\n\ndef titulo(texto):\n    '''\n    Arma un titulo centrado entre lineas de igual.\n\n    Parametros:\n        texto (str): el titulo\n\n    Retorna:\n        str: el bloque de tres lineas\n    '''\n    linea = \"=\" * ANCHO\n    return f\"{linea}\\n{texto:^{ANCHO}}\\n{linea}\"\n\n\n# Este bloque solo corre si se ejecuta ESTE archivo directamente.\n# Si alguien hace \"import formato\", no sale nada.\nif __name__ == \"__main__\":\n    # Inicio\n    print(titulo(\"REPORTE DIARIO\"))\n    print(f\"Ventas: {pesos(1250000)}\")\n    print(f\"Meta cumplida: {porcentaje(1250000, 2000000)}\")\n    # Fin</code></pre><p>Así se escribe un módulo de verdad:</p><ul><li><strong>Las funciones solo devuelven.</strong> Ninguna imprime, así que sirven igual para pantalla, archivo o correo.</li><li><strong>El guardián separa los dos usos.</strong> Ejecutado directo, muestra la demostración; importado, solo aporta sus funciones y no ensucia la salida de nadie.</li></ul><p>El formato <code>{texto:^{ANCHO}}</code> tiene llaves anidadas: el ancho también sale de una variable. Así, cambiar <code>ANCHO</code> reacomoda todo el reporte.</p>",
+    "starter_code": "'''\nModulo: formato\nAutor:\nFecha:\nDescripcion:\n'''\n\nANCHO = 30\n\n\nif __name__ == \"__main__\":\n    # Inicio\n\n    # Fin\n    pass\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "==============================\n        REPORTE DIARIO\n==============================\nVentas: $ 1,250,000\nMeta cumplida: 62.5%"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Reporte con fechas",
+    "difficulty": "dificil",
+    "statement_html": "<p>Un banco necesita un reporte de vencimientos. Dada la lista de créditos con su fecha de desembolso y su plazo en días:</p><pre><code>creditos = [\n    (\"C-001\", \"2026-01-15\", 30),\n    (\"C-002\", \"2026-02-01\", 90),\n    (\"C-003\", \"2026-03-10\", 15),\n]</code></pre><p>Tomando como \"hoy\" el <strong>2026-03-14</strong>, mostrar para cada crédito su fecha de vencimiento y su estado:</p><pre><code>C-001  vence 2026-02-14  VENCIDO hace 28 dias\nC-002  vence 2026-05-02  vigente, faltan 49 dias\nC-003  vence 2026-03-25  vigente, faltan 11 dias\nVencidos: 1 de 3</code></pre>",
+    "hint_html": "<p><code>datetime.date.fromisoformat(\"2026-01-15\")</code> convierte el texto en fecha. Sumar días es <code>fecha + datetime.timedelta(days=30)</code>, y restar dos fechas da un <code>timedelta</code> del que se saca <code>.days</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Reporte de vencimientos\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Calcula la fecha de vencimiento de cada credito y reporta\n    cuales ya estan vencidos.\n'''\n\nimport datetime\n\n\ndef vencimiento(desembolso, plazo_dias):\n    '''\n    Calcula la fecha de vencimiento de un credito.\n\n    Parametros:\n        desembolso (str) : fecha en formato YYYY-MM-DD\n        plazo_dias (int) : dias de plazo\n\n    Retorna:\n        datetime.date: la fecha de vencimiento\n    '''\n    inicio = datetime.date.fromisoformat(desembolso)\n    return inicio + datetime.timedelta(days=plazo_dias)\n\n\n# Inicio\n# En un programa real seria datetime.date.today(); aqui se fija\n# para que el reporte sea siempre el mismo\nHOY = datetime.date(2026, 3, 14)\n\ncreditos = [\n    (\"C-001\", \"2026-01-15\", 30),\n    (\"C-002\", \"2026-02-01\", 90),\n    (\"C-003\", \"2026-03-10\", 15),\n]\n\nvencidos = 0\n\nfor codigo, desembolso, plazo in creditos:\n    vence = vencimiento(desembolso, plazo)\n\n    # Restar dos fechas da un timedelta: .days son los dias\n    dias = (vence - HOY).days\n\n    if dias < 0:\n        vencidos += 1\n        estado = f\"VENCIDO hace {abs(dias)} dias\"\n    else:\n        estado = f\"vigente, faltan {dias} dias\"\n\n    print(f\"{codigo}  vence {vence}  {estado}\")\n\nprint(f\"Vencidos: {vencidos} de {len(creditos)}\")\n# Fin</code></pre><p>Trabajar con fechas a mano es una trampa: los meses tienen distinta cantidad de días y existen los años bisiestos. El módulo <code>datetime</code> resuelve todo eso.</p><table><thead><tr><th>Operación</th><th>Qué devuelve</th></tr></thead><tbody><tr><td><code>date.fromisoformat(\"2026-01-15\")</code></td><td>un <code>date</code></td></tr><tr><td><code>fecha + timedelta(days=30)</code></td><td>otro <code>date</code></td></tr><tr><td><code>fecha_a - fecha_b</code></td><td>un <code>timedelta</code>: <code>.days</code> da el número</td></tr></tbody></table><p>Dos decisiones de diseño: <code>HOY</code> se fija como constante en vez de usar <code>today()</code> para que el reporte sea reproducible, y <code>vencimiento()</code> es una función aparte porque es justo la pieza que se reutilizaría en otros reportes.</p>",
+    "starter_code": "'''\nPrograma: Reporte de vencimientos\nAutor:\nFecha:\nDescripcion:\n'''\n\n\n# Inicio\ncreditos = [\n    (\"C-001\", \"2026-01-15\", 30),\n    (\"C-002\", \"2026-02-01\", 90),\n    (\"C-003\", \"2026-03-10\", 15),\n]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "C-001  vence 2026-02-14  VENCIDO hace 28 dias\nC-002  vence 2026-05-02  vigente, faltan 49 dias\nC-003  vence 2026-03-25  vigente, faltan 11 dias\nVencidos: 1 de 3"
+      }
+    ]
+  }
+]

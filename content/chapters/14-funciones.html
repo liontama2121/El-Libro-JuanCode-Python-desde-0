@@ -1,0 +1,195 @@
+<p class="jc-gancho">Calculaste el IVA en el capítulo 13. Y en el 10. Y lo vas a calcular otra vez en el proyecto del capítulo 20. Cada vez copiaste la fórmula. El día que cambie el IVA, tienes que acordarte de los cinco sitios. Una función arregla eso para siempre.</p>
+
+<h2>Una función es una receta con nombre</h2>
+
+<pre><code>def calcular_iva(precio):
+    return precio * 0.19
+
+# Ahora se usa las veces que quieras
+print(calcular_iva(10000))    # 1900.0
+print(calcular_iva(50000))    # 9500.0</code></pre>
+
+<p>Las partes:</p>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>En el ejemplo</th><th>Qué es</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>def</code></td><td><code>def</code></td><td>"voy a definir una función"</td></tr>
+    <tr><td>nombre</td><td><code>calcular_iva</code></td><td>en <code>snake_case</code>, y que diga qué hace</td></tr>
+    <tr><td>parámetros</td><td><code>(precio)</code></td><td>lo que la función necesita recibir</td></tr>
+    <tr><td>cuerpo</td><td>lo indentado</td><td>lo que hace</td></tr>
+    <tr><td><code>return</code></td><td><code>return precio * 0.19</code></td><td>lo que devuelve</td></tr>
+  </tbody>
+</table>
+
+<p>Definir no es ejecutar. El <code>def</code> solo guarda la receta; el código corre cuando <strong>llamas</strong> a la función con paréntesis.</p>
+
+<h2><code>return</code> vs <code>print</code>: la confusión clásica</h2>
+
+<pre><code>def suma_mala(a, b):
+    print(a + b)         # muestra, pero no entrega nada
+
+def suma_buena(a, b):
+    return a + b         # entrega el resultado
+
+x = suma_mala(2, 3)      # imprime 5, pero x queda en None
+y = suma_buena(2, 3)     # no imprime nada, pero y vale 5
+
+print(y * 2)             # 10 — se puede seguir trabajando</code></pre>
+
+<p><strong><code>print</code> le habla al usuario; <code>return</code> le habla al programa.</strong> Una función que calcula debe <em>devolver</em>; imprimir es trabajo de quien la llama. Así la misma función sirve para mostrar en pantalla, guardar en un archivo o sumar a un total.</p>
+
+<p>Además, <code>return</code> termina la función de inmediato:</p>
+
+<pre><code>def clasificar(nota):
+    if nota &gt;= 4.5:
+        return "Excelente"      # sale aquí mismo
+    if nota &gt;= 3.0:
+        return "Aprobado"
+    return "Reprobado"</code></pre>
+
+<p>Como cada <code>return</code> sale, no hacen falta <code>elif</code> ni <code>else</code>. Es un estilo muy usado y muy legible.</p>
+
+<h2>Parámetros: obligatorios, por defecto y por nombre</h2>
+
+<pre><code>def total_con_iva(precio, iva=0.19):
+    return precio + precio * iva
+
+print(total_con_iva(10000))          # 11900.0  usa el IVA por defecto
+print(total_con_iva(10000, 0.05))    # 10500.0  IVA reducido
+print(total_con_iva(iva=0.0, precio=10000))   # 10000.0  por nombre</code></pre>
+
+<ul>
+  <li><strong>Obligatorios</strong> primero, <strong>con valor por defecto</strong> después. Al revés es error de sintaxis.</li>
+  <li>Pasarlos <strong>por nombre</strong> hace la llamada auto-explicativa: <code>total_con_iva(precio=10000, iva=0.05)</code>.</li>
+</ul>
+
+<h3>Devolver varias cosas</h3>
+
+<pre><code>def analizar(notas):
+    return min(notas), max(notas), sum(notas) / len(notas)
+
+menor, mayor, promedio = analizar([4.0, 2.5, 5.0])</code></pre>
+
+<p>En realidad devuelve una tupla, y el desempaquetado del capítulo 11 la reparte.</p>
+
+<h2>Alcance: lo que pasa adentro se queda adentro</h2>
+
+<pre><code>def cambiar():
+    total = 100        # esta es OTRA variable, solo vive aquí
+    return total
+
+total = 5
+cambiar()
+print(total)           # 5 — no cambió</code></pre>
+
+<p>Las variables creadas dentro de una función son <strong>locales</strong>: nacen al llamarla y mueren al terminar. Eso es una virtud, no un estorbo: garantiza que una función no rompa nada afuera.</p>
+
+<p>Sí puede <em>leer</em> lo de afuera, pero depender de eso es mala idea: la función deja de funcionar sola. Lo que necesite, que llegue por parámetro.</p>
+
+<pre><code># ❌ depende de una variable de afuera
+def con_iva(precio):
+    return precio * IVA
+
+# ✅ todo lo que necesita, lo recibe
+def con_iva(precio, iva=0.19):
+    return precio * iva</code></pre>
+
+<h2>Documentar una función</h2>
+
+<p>El mismo <code>'''</code> del encabezado del programa, pero dentro de la función:</p>
+
+<pre><code>def cuota_mensual(monto, tasa, meses):
+    '''
+    Calcula la cuota fija de un credito.
+
+    Parametros:
+        monto (int)  : valor prestado
+        tasa (float) : interes mensual como proporcion (0.02 = 2%)
+        meses (int)  : plazo en meses
+
+    Retorna:
+        float: valor de la cuota mensual
+    '''
+    # Formula de anualidades
+    return monto * tasa / (1 - (1 + tasa) ** -meses)</code></pre>
+
+<p>Ese bloque se llama <em>docstring</em> y es lo que aparece cuando alguien escribe <code>help(cuota_mensual)</code>.</p>
+
+<h2>La película de una llamada</h2>
+
+<pre><code>def con_descuento(precio, porcentaje):
+    ahorro = precio * (porcentaje / 100)      # línea A
+    return precio - ahorro                     # línea B
+
+total = con_descuento(100000, 15)
+print(total)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Qué pasa</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Se llama con <code>100000</code> y <code>15</code></td></tr>
+    <tr><td>2</td><td>Nacen <code>precio = 100000</code> y <code>porcentaje = 15</code>, solo dentro</td></tr>
+    <tr><td>3</td><td>Línea A: <code>ahorro = 15000.0</code></td></tr>
+    <tr><td>4</td><td>Línea B: devuelve <code>85000.0</code> y la función termina</td></tr>
+    <tr><td>5</td><td><code>precio</code>, <code>porcentaje</code> y <code>ahorro</code> dejan de existir</td></tr>
+    <tr><td>6</td><td>Afuera, <code>total</code> vale <code>85000.0</code></td></tr>
+  </tbody>
+</table>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. <code>print</code> donde iba <code>return</code></h3>
+<pre><code>def doble(x):
+    print(x * 2)
+
+r = doble(5)
+print(r + 1)     # TypeError: r es None</code></pre>
+
+<h3>2. Olvidar los paréntesis al llamar</h3>
+<pre><code>print(calcular_iva)      # &lt;function calcular_iva at 0x...&gt;
+print(calcular_iva(100)) # 19.0 ✅</code></pre>
+
+<h3>3. Usar una lista como valor por defecto</h3>
+<pre><code>def agregar(x, lista=[]):    # ❌ la lista se comparte entre llamadas
+    lista.append(x)
+    return lista
+
+def agregar(x, lista=None):  # ✅
+    if lista is None:
+        lista = []
+    lista.append(x)
+    return lista</code></pre>
+<p>Es el error más famoso de Python: el valor por defecto se crea <strong>una sola vez</strong>, al definir la función.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Escribiste lo mismo dos veces? Es una función.</li>
+  <li>Nombre en verbo: <code>calcular_iva</code>, <code>validar_cedula</code>, <code>buscar_cliente</code>.</li>
+  <li>Todo lo que necesite, por parámetro. Nada de variables de afuera.</li>
+  <li>Que <strong>devuelva</strong>, no que imprima. El <code>print</code> lo pone quien la llama.</li>
+  <li>Una función, una responsabilidad. Si necesita "y" para explicarse, son dos.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>def f(a, b):</code></td><td>Define una función de dos parámetros</td></tr>
+    <tr><td><code>return x</code></td><td>Devuelve <code>x</code> y termina</td></tr>
+    <tr><td><code>def f(a, b=10):</code></td><td><code>b</code> es opcional</td></tr>
+    <tr><td><code>f(b=3, a=1)</code></td><td>Argumentos por nombre</td></tr>
+    <tr><td><code>return a, b</code></td><td>Devuelve una tupla</td></tr>
+    <tr><td><code>'''docstring'''</code></td><td>Documenta la función</td></tr>
+  </tbody>
+</table>
+
+<blockquote><code>print</code> le habla al usuario; <code>return</code> le habla al programa. Una función que calcula devuelve; imprimir es trabajo de quien la llama.</blockquote>

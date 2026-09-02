@@ -1,0 +1,61 @@
+[
+  {
+    "orden": 1,
+    "title": "Edad a prueba de errores",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar la edad del usuario. Si escribe algo que no es un número, avisar y volver a preguntar hasta que escriba bien:</p><pre><code>Edad: Eso no es un numero, intente otra vez\nEdad: Eso no es un numero, intente otra vez\nEdad: Edad registrada: 25</code></pre>",
+    "hint_html": "<p><code>while True</code> con un <code>try</code> adentro. Si el <code>int()</code> funciona, un <code>break</code> sale del ciclo; si falla, el <code>except ValueError</code> imprime el aviso y el ciclo vuelve a empezar.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Edad a prueba de errores\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Pide la edad e insiste hasta que el usuario escriba un\n    numero valido.\n'''\n\n# Inicio\nwhile True:\n    try:\n        edad = int(input(\"Edad: \"))\n        break     # solo llega aqui si el int() no fallo\n    except ValueError:\n        print(\"Eso no es un numero, intente otra vez\")\n\nprint(f\"Edad registrada: {edad}\")\n# Fin</code></pre><p>La clave está en dónde va el <code>break</code>: <strong>después</strong> del <code>int()</code>. Si la conversión falla, Python abandona el resto del <code>try</code> —incluido el <code>break</code>— y salta al <code>except</code>. Por eso el ciclo vuelve a preguntar.</p><p>Este es el patrón que le faltaba al capítulo 3, donde <code>int(input())</code> tumbaba el programa con cualquier dato raro.</p>",
+    "starter_code": "'''\nPrograma: Edad a prueba de errores\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "abc\n\n25\n",
+        "expected_output": "Edad: Eso no es un numero, intente otra vez\nEdad: Eso no es un numero, intente otra vez\nEdad: Edad registrada: 25"
+      }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "División segura",
+    "difficulty": "facil",
+    "statement_html": "<p>Solicitar el total de una cuenta y el número de personas, y mostrar cuánto paga cada una. Atender los dos errores posibles:</p><ul><li>si escriben algo que no es número: <code>Escriba solo numeros</code></li><li>si el número de personas es cero: <code>No se puede repartir entre cero personas</code></li></ul><pre><code>Total: Personas: Cada uno paga: 25000.0</code></pre>",
+    "hint_html": "<p>Un solo <code>try</code> con dos <code>except</code>: uno para <code>ValueError</code> y otro para <code>ZeroDivisionError</code>. Python entra por el que coincida.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Division segura de una cuenta\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Reparte el total de una cuenta entre varias personas\n    atendiendo los errores de dato invalido y division por cero.\n'''\n\n# Inicio\ntry:\n    total = int(input(\"Total: \"))\n    personas = int(input(\"Personas: \"))\n    print(f\"Cada uno paga: {total / personas}\")\nexcept ValueError:\n    print(\"Escriba solo numeros\")\nexcept ZeroDivisionError:\n    print(\"No se puede repartir entre cero personas\")\n# Fin</code></pre><p>Los dos errores son distintos y merecen mensajes distintos:</p><ul><li><code>ValueError</code> lo lanza <code>int()</code> cuando el texto no representa un número.</li><li><code>ZeroDivisionError</code> lo lanza la división, y solo si los dos <code>int()</code> pasaron.</li></ul><p>Un <code>except</code> pelado atraparía los dos con el mismo mensaje, y el usuario no sabría qué corregir.</p>",
+    "starter_code": "'''\nPrograma: Division segura de una cuenta\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "100000\n4\n", "expected_output": "Total: Personas: Cada uno paga: 25000.0" },
+      { "stdin": "100000\n0\n", "expected_output": "Total: Personas: No se puede repartir entre cero personas" },
+      { "stdin": "cien mil\n", "expected_output": "Total: Escriba solo numeros" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Función que pide números",
+    "difficulty": "medio",
+    "statement_html": "<p>Escribir una función <code>pedir_entero(mensaje, minimo=0)</code> que:</p><ul><li>pregunte hasta que el usuario escriba un entero válido,</li><li>y que además sea mayor o igual a <code>minimo</code>.</li></ul><p>Usarla para pedir la edad (mínimo 0) y el monto de un retiro (mínimo 10000):</p><pre><code>Edad: Debe ser un numero entero\nEdad: Monto a retirar: Debe ser al menos 10000\nMonto a retirar: Edad 25, retiro 50000</code></pre>",
+    "hint_html": "<p>Dentro de la función, un <code>while True</code> con <code>try</code>. Cuando el valor sea válido, use <code>return</code>: eso sale del ciclo y de la función a la vez.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Lector de enteros validados\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Define una funcion reutilizable que pide un entero e insiste\n    hasta que sea valido y cumpla un minimo.\n'''\n\n\ndef pedir_entero(mensaje, minimo=0):\n    '''\n    Pide un numero entero por teclado hasta que sea valido.\n\n    Parametros:\n        mensaje (str): lo que se le muestra al usuario\n        minimo (int) : valor minimo aceptado\n\n    Retorna:\n        int: el numero validado\n    '''\n    while True:\n        try:\n            valor = int(input(mensaje))\n        except ValueError:\n            print(\"Debe ser un numero entero\")\n            continue\n\n        if valor < minimo:\n            print(f\"Debe ser al menos {minimo}\")\n            continue\n\n        # return sale del ciclo y de la funcion al mismo tiempo\n        return valor\n\n\n# Inicio\nedad = pedir_entero(\"Edad: \")\nmonto = pedir_entero(\"Monto a retirar: \", 10000)\n\nprint(f\"Edad {edad}, retiro {monto}\")\n# Fin</code></pre><p>Dos validaciones distintas conviven sin enredarse:</p><ul><li>El <code>try / except</code> atiende el error <strong>técnico</strong>: el texto no es un número.</li><li>El <code>if valor &lt; minimo</code> atiende la regla del <strong>negocio</strong>: el número es válido pero no sirve.</li></ul><p>Los dos usan <code>continue</code> para volver a preguntar, y el <code>return</code> solo se alcanza cuando el dato pasó las dos pruebas.</p><p>Empaquetarlo en una función es lo que lo vuelve útil: las mismas cinco líneas sirven para la edad, el monto y cualquier otro número del programa.</p>",
+    "starter_code": "'''\nPrograma: Lector de enteros validados\nAutor:\nFecha:\nDescripcion:\n'''\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "abc\n25\n500\n50000\n",
+        "expected_output": "Edad: Debe ser un numero entero\nEdad: Monto a retirar: Debe ser al menos 10000\nMonto a retirar: Edad 25, retiro 50000"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Cajero con reglas propias",
+    "difficulty": "dificil",
+    "statement_html": "<p>Escribir una función <code>retirar(saldo, monto)</code> que devuelva el nuevo saldo, pero que lance <code>ValueError</code> con un mensaje claro si:</p><ul><li>el monto no es positivo → <code>El monto debe ser positivo</code></li><li>no es múltiplo de 10000 → <code>El cajero solo entrega multiplos de 10000</code></li><li>supera el saldo → <code>Saldo insuficiente</code></li></ul><p>El programa principal procesa una lista de retiros sobre un saldo inicial de <strong>100000</strong> y reporta cada uno:</p><pre><code>Retiro de 50000: OK, saldo 50000\nRetiro de -100: RECHAZADO, El monto debe ser positivo\nRetiro de 35000: RECHAZADO, El cajero solo entrega multiplos de 10000\nRetiro de 90000: RECHAZADO, Saldo insuficiente\nRetiro de 20000: OK, saldo 30000\nSaldo final: 30000</code></pre>",
+    "hint_html": "<p>La función solo valida y lanza; no imprime nada. El programa principal la llama dentro de un <code>try</code> y usa <code>except ValueError as e</code> para leer el mensaje.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Cajero con reglas propias\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Procesa una lista de retiros validando las reglas del cajero\n    con excepciones propias.\n'''\n\nBILLETE = 10000\n\n\ndef retirar(saldo, monto):\n    '''\n    Aplica un retiro validando las reglas del cajero.\n\n    Parametros:\n        saldo (int): saldo disponible\n        monto (int): valor a retirar\n\n    Retorna:\n        int: el nuevo saldo\n\n    Lanza:\n        ValueError: si el monto no cumple alguna regla\n    '''\n    if monto <= 0:\n        raise ValueError(\"El monto debe ser positivo\")\n    if monto % BILLETE != 0:\n        raise ValueError(f\"El cajero solo entrega multiplos de {BILLETE}\")\n    if monto > saldo:\n        raise ValueError(\"Saldo insuficiente\")\n\n    return saldo - monto\n\n\n# Inicio\nsaldo = 100000\nretiros = [50000, -100, 35000, 90000, 20000]\n\nfor monto in retiros:\n    try:\n        saldo = retirar(saldo, monto)\n    except ValueError as e:\n        # La funcion valida; aqui se decide que hacer con el error\n        print(f\"Retiro de {monto}: RECHAZADO, {e}\")\n    else:\n        print(f\"Retiro de {monto}: OK, saldo {saldo}\")\n\nprint(f\"Saldo final: {saldo}\")\n# Fin</code></pre><p>El reparto de responsabilidades es lo importante:</p><ul><li><strong><code>retirar()</code> no imprime ni decide nada.</strong> Solo sabe las reglas del cajero: si algo está mal, lanza el error y se acabó su trabajo.</li><li><strong>Quien la llama decide.</strong> Aquí imprime un mensaje, pero la misma función serviría igual si hubiera que guardar el rechazo en un archivo o reintentar.</li></ul><p>Fíjese en el <code>else</code> del <code>try</code>: solo corre cuando <strong>no</strong> hubo error. Poner ese <code>print</code> dentro del <code>try</code> también funcionaría, pero mezclaría en el mismo bloque lo que puede fallar con lo que no.</p><p>Y algo sutil pero importante: cuando el retiro se rechaza, <code>saldo</code> no se toca. La asignación <code>saldo = retirar(...)</code> nunca llega a ejecutarse porque la excepción interrumpe la línea completa.</p>",
+    "starter_code": "'''\nPrograma: Cajero con reglas propias\nAutor:\nFecha:\nDescripcion:\n'''\n\nBILLETE = 10000\n\n\n# Inicio\nsaldo = 100000\nretiros = [50000, -100, 35000, 90000, 20000]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Retiro de 50000: OK, saldo 50000\nRetiro de -100: RECHAZADO, El monto debe ser positivo\nRetiro de 35000: RECHAZADO, El cajero solo entrega multiplos de 10000\nRetiro de 90000: RECHAZADO, Saldo insuficiente\nRetiro de 20000: OK, saldo 30000\nSaldo final: 30000"
+      }
+    ]
+  }
+]

@@ -1,0 +1,191 @@
+<p class="jc-gancho">Todos los programas que has escrito olvidan todo al cerrarse. El inventario, las notas, los clientes: se pierden. Un archivo es la memoria que sobrevive al programa.</p>
+
+<h2>Abrir, usar, cerrar</h2>
+
+<p>Trabajar con un archivo son tres pasos, y el tercero se olvida siempre. Por eso Python tiene <code>with</code>, que cierra solo:</p>
+
+<pre><code>with open("notas.txt", "w", encoding="utf-8") as f:
+    f.write("Ana,4.5\n")
+    f.write("Juan,3.0\n")
+
+# aquí el archivo YA está cerrado, aunque algo hubiera fallado adentro</code></pre>
+
+<p>Los tres argumentos de <code>open()</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>Modo</th><th>Qué hace</th><th>Ojo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>"r"</code></td><td>Leer (por defecto)</td><td><code>FileNotFoundError</code> si no existe</td></tr>
+    <tr><td><code>"w"</code></td><td>Escribir</td><td><strong>Borra todo</strong> lo que había</td></tr>
+    <tr><td><code>"a"</code></td><td>Agregar al final</td><td>Lo crea si no existe</td></tr>
+    <tr><td><code>"x"</code></td><td>Crear nuevo</td><td>Falla si ya existe</td></tr>
+  </tbody>
+</table>
+
+<p><code>encoding="utf-8"</code> no es opcional en la práctica: sin él, las tildes y las eñes se dañan según el sistema operativo.</p>
+
+<h2>Leer un archivo de texto</h2>
+
+<pre><code># Todo de una (archivos pequeños)
+with open("notas.txt", encoding="utf-8") as f:
+    contenido = f.read()
+
+# Línea por línea (la forma recomendada)
+with open("notas.txt", encoding="utf-8") as f:
+    for linea in f:
+        print(linea.strip())      # strip() quita el salto de línea final</code></pre>
+
+<p>Recorrer el archivo con <code>for</code> lee una línea a la vez, así que funciona igual con un archivo de 10 líneas que con uno de 10 millones. <code>f.read()</code> mete todo en memoria de un golpe.</p>
+
+<p>Ese <code>.strip()</code> es obligatorio: cada línea trae su <code>\n</code> al final, y sin quitarlo <code>"Ana\n" == "Ana"</code> da <code>False</code>.</p>
+
+<h2>CSV: la tabla de toda la vida</h2>
+
+<p>Un CSV es texto plano con valores separados por comas. Es lo que exporta Excel y lo que come casi todo el mundo.</p>
+
+<pre><code>nombre,nota1,nota2
+Ana,4.5,3.8
+Juan,2.5,3.0</code></pre>
+
+<p>Se podría partir con <code>.split(",")</code>, pero el módulo <code>csv</code> maneja los casos raros (comas dentro de comillas, saltos de línea en un campo):</p>
+
+<pre><code>import csv
+
+# Leer con encabezado: cada fila llega como diccionario
+with open("notas.csv", encoding="utf-8", newline="") as f:
+    for fila in csv.DictReader(f):
+        print(fila["nombre"], fila["nota1"])
+
+# Escribir
+with open("salida.csv", "w", encoding="utf-8", newline="") as f:
+    escritor = csv.writer(f)
+    escritor.writerow(["nombre", "promedio"])
+    escritor.writerow(["Ana", 4.15])</code></pre>
+
+<p><code>newline=""</code> evita que en Windows queden renglones en blanco entre filas. Es una de esas cosas que uno copia y ya.</p>
+
+<p><strong>Ojo:</strong> todo lo que sale de un CSV es <strong>texto</strong>, igual que <code>input()</code>. Si vas a hacer cuentas, convierte: <code>float(fila["nota1"])</code>.</p>
+
+<h2>JSON: guardar estructuras completas</h2>
+
+<p>El CSV solo guarda tablas planas. Cuando el dato tiene estructura —un diccionario de diccionarios, listas adentro— se usa JSON.</p>
+
+<pre><code>import json
+
+clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000, "activa": True},
+    "1045": {"nombre": "Juan", "saldo": 80000, "activa": False},
+}
+
+# Guardar
+with open("clientes.json", "w", encoding="utf-8") as f:
+    json.dump(clientes, f, indent=2, ensure_ascii=False)
+
+# Leer: vuelve a ser un diccionario de Python, con sus tipos
+with open("clientes.json", encoding="utf-8") as f:
+    datos = json.load(f)
+
+print(datos["1023"]["saldo"] + 1000)     # 251000 — es un int de verdad</code></pre>
+
+<p>Esa es la ventaja grande sobre el CSV: JSON <strong>conserva los tipos</strong>. Un número vuelve como número y un <code>True</code> vuelve como <code>True</code>.</p>
+
+<table>
+  <thead>
+    <tr><th>Función</th><th>Qué hace</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>json.dump(obj, f)</code></td><td>Escribe al archivo</td></tr>
+    <tr><td><code>json.load(f)</code></td><td>Lee del archivo</td></tr>
+    <tr><td><code>json.dumps(obj)</code></td><td>Convierte a texto (con "s" de string)</td></tr>
+    <tr><td><code>json.loads(texto)</code></td><td>Convierte desde texto</td></tr>
+  </tbody>
+</table>
+
+<p><code>indent=2</code> lo deja legible para humanos y <code>ensure_ascii=False</code> guarda las tildes como tildes y no como <code>á</code>.</p>
+
+<h2>Cuando el archivo no está</h2>
+
+<p>Los archivos fallan por cosas que no dependen de ti: alguien lo borró, cambió de carpeta, no hay permisos. Es el terreno natural del capítulo 15.</p>
+
+<pre><code>import json
+
+def cargar_clientes(ruta):
+    '''Devuelve los clientes guardados, o un diccionario vacío si es la
+    primera vez que corre el programa.'''
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}                     # primera vez: arranca vacío
+    except json.JSONDecodeError:
+        print("El archivo está dañado, se empieza de cero")
+        return {}</code></pre>
+
+<p>Ese patrón —intentar cargar, y si no hay nada empezar vacío— es exactamente lo que hace cualquier aplicación la primera vez que la abres.</p>
+
+<h2>La película de un programa que recuerda</h2>
+
+<pre><code>datos = cargar_clientes("clientes.json")    # 1. cargar
+datos["1088"] = {"nombre": "Sofia", "saldo": 500000}   # 2. modificar
+
+with open("clientes.json", "w", encoding="utf-8") as f:  # 3. guardar
+    json.dump(datos, f, indent=2, ensure_ascii=False)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Qué pasa</th><th>Si el programa se cierra aquí…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>El archivo se vuelve un diccionario en memoria</td><td>no pasa nada</td></tr>
+    <tr><td>2</td><td>Se cambia el diccionario en memoria</td><td><strong>se pierde el cambio</strong></td></tr>
+    <tr><td>3</td><td>El diccionario se escribe al archivo</td><td>queda guardado</td></tr>
+  </tbody>
+</table>
+
+<p>Cargar → modificar → guardar. Si olvidas el paso 3, el programa funciona perfecto… hasta que lo cierras.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Abrir en <code>"w"</code> creyendo que agrega</h3>
+<pre><code>with open("datos.txt", "w") as f:    # ❌ borró todo el historial
+with open("datos.txt", "a") as f:    # ✅ agrega al final</code></pre>
+
+<h3>2. Olvidar el <code>.strip()</code></h3>
+<pre><code>for linea in f:
+    if linea == "fin":     # ❌ nunca es igual: la línea es "fin\n"
+    if linea.strip() == "fin":   # ✅</code></pre>
+
+<h3>3. Hacer cuentas con lo que sale de un CSV</h3>
+<pre><code>total += fila["nota1"]           # ❌ concatena textos
+total += float(fila["nota1"])    # ✅</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Siempre <code>with open(...)</code>: cierra solo, incluso si algo falla.</li>
+  <li>Siempre <code>encoding="utf-8"</code>.</li>
+  <li>¿Tabla plana? CSV. ¿Estructura con tipos? JSON.</li>
+  <li>Cargar → modificar → guardar. El paso 3 no se olvida.</li>
+  <li>Envuelve la lectura en <code>try / except FileNotFoundError</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>with open(r, "r", encoding="utf-8") as f:</code></td><td>Abre para leer y cierra solo</td></tr>
+    <tr><td><code>for linea in f:</code></td><td>Recorre línea por línea</td></tr>
+    <tr><td><code>f.write(texto)</code></td><td>Escribe (hay que poner el <code>\n</code>)</td></tr>
+    <tr><td><code>csv.DictReader(f)</code></td><td>Cada fila como diccionario</td></tr>
+    <tr><td><code>json.dump(obj, f, indent=2)</code></td><td>Guarda estructura legible</td></tr>
+    <tr><td><code>json.load(f)</code></td><td>Recupera la estructura con sus tipos</td></tr>
+    <tr><td><code>except FileNotFoundError:</code></td><td>El archivo no existe todavía</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Modo <code>"w"</code> borra el archivo entero antes de escribir. Si querías agregar, era <code>"a"</code>. Ese descuido ha borrado muchos datos de trabajos reales.</blockquote>

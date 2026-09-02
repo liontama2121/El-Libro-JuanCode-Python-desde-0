@@ -1,0 +1,184 @@
+<p class="jc-gancho">El cajero le pide el monto al cliente y el cliente escribe "cincuenta mil". El programa se cae, la pantalla queda en negro y el cajero se traba. Ningún programa serio se comporta así: los errores se esperan y se atienden.</p>
+
+<h2>Los errores que ya conoces</h2>
+
+<p>Llevas catorce capítulos rompiendo cosas. Estos son los sospechosos habituales:</p>
+
+<table>
+  <thead>
+    <tr><th>Error</th><th>Significa</th><th>Ejemplo típico</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>SyntaxError</code></td><td>Está mal escrito</td><td>Falta un <code>:</code> o un paréntesis</td></tr>
+    <tr><td><code>NameError</code></td><td>Ese nombre no existe</td><td>Usar una variable antes de crearla</td></tr>
+    <tr><td><code>TypeError</code></td><td>Tipos incompatibles</td><td><code>"Edad: " + 17</code></td></tr>
+    <tr><td><code>ValueError</code></td><td>El tipo está bien, el contenido no</td><td><code>int("veinte")</code></td></tr>
+    <tr><td><code>IndexError</code></td><td>Posición fuera de rango</td><td><code>lista[5]</code> en una de 3</td></tr>
+    <tr><td><code>KeyError</code></td><td>Esa clave no está</td><td><code>precios["arroz"]</code></td></tr>
+    <tr><td><code>ZeroDivisionError</code></td><td>División entre cero</td><td><code>total / cantidad</code> con cantidad en 0</td></tr>
+  </tbody>
+</table>
+
+<p><strong>El <code>SyntaxError</code> es distinto a todos los demás.</strong> Ocurre antes de que el programa arranque, así que no se puede atrapar: hay que arreglarlo. Los otros ocurren <em>durante</em> la ejecución, y esos sí se pueden manejar.</p>
+
+<h2><code>try</code> / <code>except</code>: el paracaídas</h2>
+
+<pre><code>try:
+    edad = int(input("Edad: "))
+    print("El año que viene tendrás", edad + 1)
+except ValueError:
+    print("Eso no es un número válido")</code></pre>
+
+<p>Cómo lo lee Python:</p>
+
+<ol>
+  <li>Intenta ejecutar todo lo que está en <code>try</code>.</li>
+  <li>Si sale bien, se salta el <code>except</code> por completo.</li>
+  <li>Si algo revienta con ese error, <strong>abandona el resto del <code>try</code></strong> y salta al <code>except</code>.</li>
+</ol>
+
+<p>Ese "abandona el resto" importa: si el <code>int()</code> falla, el <code>print</code> de abajo nunca corre.</p>
+
+<h3>Varios <code>except</code></h3>
+
+<pre><code>try:
+    total = int(input("Total: "))
+    cuantos = int(input("Personas: "))
+    print("Cada uno paga:", total / cuantos)
+except ValueError:
+    print("Escriba solo números")
+except ZeroDivisionError:
+    print("No se puede repartir entre cero personas")</code></pre>
+
+<p>Python entra por el primero que coincida. Como los <code>elif</code>: el orden va de lo específico a lo general.</p>
+
+<h3><code>else</code> y <code>finally</code></h3>
+
+<pre><code>try:
+    monto = int(input("Monto: "))
+except ValueError:
+    print("Monto inválido")
+else:
+    print("Retirando", monto)      # solo si NO hubo error
+finally:
+    print("Gracias por usar el cajero")   # SIEMPRE, pase lo que pase</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Bloque</th><th>Cuándo corre</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>try</code></td><td>Siempre, hasta que algo falle</td></tr>
+    <tr><td><code>except</code></td><td>Solo si hubo ese error</td></tr>
+    <tr><td><code>else</code></td><td>Solo si NO hubo error</td></tr>
+    <tr><td><code>finally</code></td><td>Siempre, haya error o no</td></tr>
+  </tbody>
+</table>
+
+<p><code>finally</code> es para lo que hay que hacer sí o sí: cerrar un archivo, cerrar la conexión a la base de datos, soltar el cajero.</p>
+
+<h2>El patrón que arregla el capítulo 3</h2>
+
+<p>Recuerda que <code>int(input())</code> se caía si el usuario escribía cualquier cosa. Ahora se puede insistir hasta que escriba bien:</p>
+
+<pre><code>while True:
+    try:
+        edad = int(input("Edad: "))
+        break                          # salió bien: se sale del ciclo
+    except ValueError:
+        print("Eso no es un número, intente otra vez")
+
+print("Edad registrada:", edad)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th>El usuario escribe</th><th>Qué pasa</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><code>abc</code></td><td><code>int()</code> falla → <code>except</code> → vuelve a preguntar</td></tr>
+    <tr><td>2</td><td>(Enter vacío)</td><td>falla otra vez → vuelve a preguntar</td></tr>
+    <tr><td>3</td><td><code>25</code></td><td>funciona → <code>break</code> → sale del ciclo</td></tr>
+  </tbody>
+</table>
+
+<p>El <code>while True</code> con <code>break</code> adentro es la forma normal de escribir "insiste hasta que salga bien". Y encapsulado en una función queda reutilizable:</p>
+
+<pre><code>def pedir_entero(mensaje):
+    while True:
+        try:
+            return int(input(mensaje))    # el return sale del ciclo Y de la función
+        except ValueError:
+            print("Eso no es un número, intente otra vez")
+
+edad = pedir_entero("Edad: ")
+monto = pedir_entero("Monto: ")</code></pre>
+
+<h2>Lanzar tus propios errores: <code>raise</code></h2>
+
+<p>A veces el error no lo comete Python: lo comete el negocio. Un retiro negativo no revienta nada, pero está mal.</p>
+
+<pre><code>def retirar(saldo, monto):
+    if monto &lt;= 0:
+        raise ValueError("El monto debe ser positivo")
+    if monto &gt; saldo:
+        raise ValueError("Saldo insuficiente")
+    return saldo - monto
+
+
+try:
+    nuevo = retirar(100000, -500)
+except ValueError as e:
+    print("No se pudo:", e)     # No se pudo: El monto debe ser positivo</code></pre>
+
+<p>Ese <code>as e</code> guarda el error en una variable para poder leer su mensaje. La ventaja del <code>raise</code>: la función <strong>valida</strong> y quien la llama <strong>decide qué hacer</strong> —mostrar un mensaje, reintentar, escribir en un log—. La función no tiene que saber nada de eso.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Atrapar todo con un <code>except</code> pelado</h3>
+<pre><code>try:
+    ...
+except:              # ❌ atrapa hasta un error de tipeo tuyo
+    print("Error")
+
+except ValueError:   # ✅ solo lo que esperabas
+    print("Número inválido")</code></pre>
+<p>Un <code>except</code> sin tipo esconde bugs. Si de verdad quieres atrapar cualquier cosa, usa <code>except Exception as e</code> y al menos imprime <code>e</code>.</p>
+
+<h3>2. Meter medio programa en el <code>try</code></h3>
+<pre><code>try:
+    # 40 líneas
+except ValueError:
+    print("Algo falló")     # ¿qué falló? nadie sabe</code></pre>
+<p>El <code>try</code> debe rodear solo la línea que puede fallar.</p>
+
+<h3>3. Silenciar el error</h3>
+<pre><code>except ValueError:
+    pass          # ❌ el programa sigue con datos inválidos</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Rodea con <code>try</code> solo lo que puede fallar de verdad.</li>
+  <li>Atrapa el error <strong>específico</strong> que esperas.</li>
+  <li>Para insistir: <code>while True</code> + <code>try</code> + <code>break</code> (o <code>return</code> si es función).</li>
+  <li>Para reglas del negocio: <code>raise ValueError("mensaje claro")</code>.</li>
+  <li>Lo que hay que hacer pase lo que pase, en <code>finally</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>try: … except X: …</code></td><td>Intenta y atiende el error X</td></tr>
+    <tr><td><code>except X as e:</code></td><td>Guarda el error para leer su mensaje</td></tr>
+    <tr><td><code>else:</code></td><td>Corre solo si no hubo error</td></tr>
+    <tr><td><code>finally:</code></td><td>Corre siempre</td></tr>
+    <tr><td><code>raise ValueError("…")</code></td><td>Lanza un error propio</td></tr>
+    <tr><td><code>while True: try: … break</code></td><td>Insiste hasta que salga bien</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Atrapa el error que esperas, no todos. Un <code>except</code> pelado convierte un bug ruidoso en un bug silencioso, que es mucho peor.</blockquote>

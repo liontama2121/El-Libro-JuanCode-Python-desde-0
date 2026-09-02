@@ -1,0 +1,140 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué ventaja tiene with open(...) sobre abrir el archivo a mano?",
+    "data": { "options": [
+      { "id": "a", "text": "Cierra el archivo solo, incluso si algo falla adentro" },
+      { "id": "b", "text": "Es más rápido" },
+      { "id": "c", "text": "Permite leer y escribir a la vez" },
+      { "id": "d", "text": "No necesita la ruta del archivo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Olvidar el .close() es el error clásico; with lo hace imposible."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué le pasa a un archivo existente si se abre en modo \"w\"?",
+    "data": { "options": [
+      { "id": "a", "text": "Se borra todo su contenido" },
+      { "id": "b", "text": "Se agrega al final" },
+      { "id": "c", "text": "Da un error porque ya existe" },
+      { "id": "d", "text": "Se abre solo para lectura" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Para agregar sin borrar se usa el modo \"a\". Este descuido ha borrado datos de trabajos reales."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuál es la diferencia clave entre guardar en CSV y guardar en JSON?",
+    "data": { "options": [
+      { "id": "a", "text": "JSON conserva los tipos y la estructura; el CSV lo devuelve todo como texto plano" },
+      { "id": "b", "text": "El CSV ocupa menos espacio" },
+      { "id": "c", "text": "JSON solo sirve para internet" },
+      { "id": "d", "text": "El CSV no se puede leer con Python" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con JSON un int vuelve como int; con CSV hay que convertir cada valor a mano."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué se usa encoding=\"utf-8\" al abrir un archivo?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que las tildes y las eñes no se dañen entre sistemas operativos" },
+      { "id": "b", "text": "Para que el archivo pese menos" },
+      { "id": "c", "text": "Para poder escribir números" },
+      { "id": "d", "text": "Es obligatorio en Python 3" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sin él, Python usa la codificación del sistema y el mismo archivo se lee distinto en cada máquina."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Un programa carga un JSON, modifica el diccionario y se cierra. ¿Qué pasa?",
+    "data": { "options": [
+      { "id": "a", "text": "El cambio se pierde: faltó volver a guardar" },
+      { "id": "b", "text": "El cambio queda guardado automáticamente" },
+      { "id": "c", "text": "El archivo se corrompe" },
+      { "id": "d", "text": "Python lanza un error al cerrar" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El ciclo es cargar, modificar y GUARDAR. Modificar el diccionario solo cambia la memoria."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "El archivo tiene la línea \"fin\". ¿Qué imprime este programa?",
+    "code_snippet": "with open(\"d.txt\", encoding=\"utf-8\") as f:\n    for linea in f:\n        if linea == \"fin\":\n            print(\"encontrado\")\nprint(\"listo\")",
+    "data": { "options": [
+      { "id": "a", "text": "listo" },
+      { "id": "b", "text": "encontrado\nlisto" },
+      { "id": "c", "text": "encontrado" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La línea leída es \"fin\\n\", que no es igual a \"fin\". Faltaba el .strip()."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import json\nd = {\"saldo\": 250000}\ntexto = json.dumps(d)\nvuelto = json.loads(texto)\nprint(vuelto[\"saldo\"] + 1000)",
+    "data": { "options": [
+      { "id": "a", "text": "251000" },
+      { "id": "b", "text": "2500001000" },
+      { "id": "c", "text": "TypeError" },
+      { "id": "d", "text": "250000" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "JSON conserva los tipos: el saldo vuelve como int y la suma es aritmética."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "El CSV tiene la columna nota1 con el valor 4.5. ¿Qué imprime?",
+    "code_snippet": "import csv\nwith open(\"n.csv\", encoding=\"utf-8\", newline=\"\") as f:\n    for fila in csv.DictReader(f):\n        print(fila[\"nota1\"] + fila[\"nota1\"])",
+    "data": { "options": [
+      { "id": "a", "text": "4.54.5" },
+      { "id": "b", "text": "9.0" },
+      { "id": "c", "text": "9" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Todo lo que sale de un CSV es texto: el + concatena. Faltaba float()."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El programa debía agregar al historial pero lo borró. ¿En qué línea está el error?",
+    "data": { "lines": ["with open(\"log.txt\", \"w\", encoding=\"utf-8\") as f:", "    f.write(\"nuevo registro\\n\")"] },
+    "correct": { "line_number": 1 },
+    "explanation": "El modo \"w\" borra el archivo entero. Para agregar al final va el modo \"a\"."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El programa se cae la primera vez que se ejecuta. ¿En qué línea está el problema?",
+    "data": { "lines": ["import json", "", "with open(\"datos.json\", encoding=\"utf-8\") as f:", "    datos = json.load(f)", "", "print(len(datos))"] },
+    "correct": { "line_number": 3 },
+    "explanation": "Si el archivo no existe todavía, open lanza FileNotFoundError. Hay que envolverlo en try/except y devolver {}."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme la función que carga un JSON sin caerse la primera vez",
+    "data": { "lines": [
+      { "id": "l1", "text": "def cargar(ruta):", "indent": 0 },
+      { "id": "l2", "text": "try:", "indent": 1 },
+      { "id": "l3", "text": "with open(ruta, encoding=\"utf-8\") as f:", "indent": 2 },
+      { "id": "l4", "text": "return json.load(f)", "indent": 3 },
+      { "id": "l5", "text": "except FileNotFoundError:", "indent": 1 },
+      { "id": "l6", "text": "return {}", "indent": 2 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6"] },
+    "explanation": "El with va dentro del try, y el except devuelve un diccionario vacío para que el programa arranque de cero."
+  }
+]

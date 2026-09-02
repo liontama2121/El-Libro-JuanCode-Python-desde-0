@@ -4931,9 +4931,203 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
   SELECT id, 'parsons', 'dificil', 'Arme el reporte del curso con comprehensions', NULL, '{"lines":[{"id":"l1","text":"curso = {\"Ana\": [4.5, 5.0], \"Juan\": [2.0, 2.5]}","indent":0},{"id":"l2","text":"promedios = {n: sum(v) / len(v) for n, v in curso.items()}","indent":0},{"id":"l3","text":"aprobados = [n for n, p in promedios.items() if p >= 3.0]","indent":0},{"id":"l4","text":"print(f\"Aprobados: {aprobados}\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'Los promedios se calculan una sola vez y las líneas siguientes trabajan sobre ese diccionario.', 1, 'seed'
     FROM chapters WHERE number = 13;
 
--- ── Capítulo 14: Funciones (borrador)
+-- ── Capítulo 14: Funciones (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 14, 'Funciones', '🧰', 'Empaquetar lógica para reutilizarla.', '', 0
+  SELECT p.id, 14, 'Funciones', '🧰', 'Empaquetar lógica para reutilizarla.', '<p class="jc-gancho">Calculaste el IVA en el capítulo 13. Y en el 10. Y lo vas a calcular otra vez en el proyecto del capítulo 20. Cada vez copiaste la fórmula. El día que cambie el IVA, tienes que acordarte de los cinco sitios. Una función arregla eso para siempre.</p>
+
+<h2>Una función es una receta con nombre</h2>
+
+<pre><code>def calcular_iva(precio):
+    return precio * 0.19
+
+# Ahora se usa las veces que quieras
+print(calcular_iva(10000))    # 1900.0
+print(calcular_iva(50000))    # 9500.0</code></pre>
+
+<p>Las partes:</p>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>En el ejemplo</th><th>Qué es</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>def</code></td><td><code>def</code></td><td>"voy a definir una función"</td></tr>
+    <tr><td>nombre</td><td><code>calcular_iva</code></td><td>en <code>snake_case</code>, y que diga qué hace</td></tr>
+    <tr><td>parámetros</td><td><code>(precio)</code></td><td>lo que la función necesita recibir</td></tr>
+    <tr><td>cuerpo</td><td>lo indentado</td><td>lo que hace</td></tr>
+    <tr><td><code>return</code></td><td><code>return precio * 0.19</code></td><td>lo que devuelve</td></tr>
+  </tbody>
+</table>
+
+<p>Definir no es ejecutar. El <code>def</code> solo guarda la receta; el código corre cuando <strong>llamas</strong> a la función con paréntesis.</p>
+
+<h2><code>return</code> vs <code>print</code>: la confusión clásica</h2>
+
+<pre><code>def suma_mala(a, b):
+    print(a + b)         # muestra, pero no entrega nada
+
+def suma_buena(a, b):
+    return a + b         # entrega el resultado
+
+x = suma_mala(2, 3)      # imprime 5, pero x queda en None
+y = suma_buena(2, 3)     # no imprime nada, pero y vale 5
+
+print(y * 2)             # 10 — se puede seguir trabajando</code></pre>
+
+<p><strong><code>print</code> le habla al usuario; <code>return</code> le habla al programa.</strong> Una función que calcula debe <em>devolver</em>; imprimir es trabajo de quien la llama. Así la misma función sirve para mostrar en pantalla, guardar en un archivo o sumar a un total.</p>
+
+<p>Además, <code>return</code> termina la función de inmediato:</p>
+
+<pre><code>def clasificar(nota):
+    if nota &gt;= 4.5:
+        return "Excelente"      # sale aquí mismo
+    if nota &gt;= 3.0:
+        return "Aprobado"
+    return "Reprobado"</code></pre>
+
+<p>Como cada <code>return</code> sale, no hacen falta <code>elif</code> ni <code>else</code>. Es un estilo muy usado y muy legible.</p>
+
+<h2>Parámetros: obligatorios, por defecto y por nombre</h2>
+
+<pre><code>def total_con_iva(precio, iva=0.19):
+    return precio + precio * iva
+
+print(total_con_iva(10000))          # 11900.0  usa el IVA por defecto
+print(total_con_iva(10000, 0.05))    # 10500.0  IVA reducido
+print(total_con_iva(iva=0.0, precio=10000))   # 10000.0  por nombre</code></pre>
+
+<ul>
+  <li><strong>Obligatorios</strong> primero, <strong>con valor por defecto</strong> después. Al revés es error de sintaxis.</li>
+  <li>Pasarlos <strong>por nombre</strong> hace la llamada auto-explicativa: <code>total_con_iva(precio=10000, iva=0.05)</code>.</li>
+</ul>
+
+<h3>Devolver varias cosas</h3>
+
+<pre><code>def analizar(notas):
+    return min(notas), max(notas), sum(notas) / len(notas)
+
+menor, mayor, promedio = analizar([4.0, 2.5, 5.0])</code></pre>
+
+<p>En realidad devuelve una tupla, y el desempaquetado del capítulo 11 la reparte.</p>
+
+<h2>Alcance: lo que pasa adentro se queda adentro</h2>
+
+<pre><code>def cambiar():
+    total = 100        # esta es OTRA variable, solo vive aquí
+    return total
+
+total = 5
+cambiar()
+print(total)           # 5 — no cambió</code></pre>
+
+<p>Las variables creadas dentro de una función son <strong>locales</strong>: nacen al llamarla y mueren al terminar. Eso es una virtud, no un estorbo: garantiza que una función no rompa nada afuera.</p>
+
+<p>Sí puede <em>leer</em> lo de afuera, pero depender de eso es mala idea: la función deja de funcionar sola. Lo que necesite, que llegue por parámetro.</p>
+
+<pre><code># ❌ depende de una variable de afuera
+def con_iva(precio):
+    return precio * IVA
+
+# ✅ todo lo que necesita, lo recibe
+def con_iva(precio, iva=0.19):
+    return precio * iva</code></pre>
+
+<h2>Documentar una función</h2>
+
+<p>El mismo <code>''''''</code> del encabezado del programa, pero dentro de la función:</p>
+
+<pre><code>def cuota_mensual(monto, tasa, meses):
+    ''''''
+    Calcula la cuota fija de un credito.
+
+    Parametros:
+        monto (int)  : valor prestado
+        tasa (float) : interes mensual como proporcion (0.02 = 2%)
+        meses (int)  : plazo en meses
+
+    Retorna:
+        float: valor de la cuota mensual
+    ''''''
+    # Formula de anualidades
+    return monto * tasa / (1 - (1 + tasa) ** -meses)</code></pre>
+
+<p>Ese bloque se llama <em>docstring</em> y es lo que aparece cuando alguien escribe <code>help(cuota_mensual)</code>.</p>
+
+<h2>La película de una llamada</h2>
+
+<pre><code>def con_descuento(precio, porcentaje):
+    ahorro = precio * (porcentaje / 100)      # línea A
+    return precio - ahorro                     # línea B
+
+total = con_descuento(100000, 15)
+print(total)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Qué pasa</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Se llama con <code>100000</code> y <code>15</code></td></tr>
+    <tr><td>2</td><td>Nacen <code>precio = 100000</code> y <code>porcentaje = 15</code>, solo dentro</td></tr>
+    <tr><td>3</td><td>Línea A: <code>ahorro = 15000.0</code></td></tr>
+    <tr><td>4</td><td>Línea B: devuelve <code>85000.0</code> y la función termina</td></tr>
+    <tr><td>5</td><td><code>precio</code>, <code>porcentaje</code> y <code>ahorro</code> dejan de existir</td></tr>
+    <tr><td>6</td><td>Afuera, <code>total</code> vale <code>85000.0</code></td></tr>
+  </tbody>
+</table>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. <code>print</code> donde iba <code>return</code></h3>
+<pre><code>def doble(x):
+    print(x * 2)
+
+r = doble(5)
+print(r + 1)     # TypeError: r es None</code></pre>
+
+<h3>2. Olvidar los paréntesis al llamar</h3>
+<pre><code>print(calcular_iva)      # &lt;function calcular_iva at 0x...&gt;
+print(calcular_iva(100)) # 19.0 ✅</code></pre>
+
+<h3>3. Usar una lista como valor por defecto</h3>
+<pre><code>def agregar(x, lista=[]):    # ❌ la lista se comparte entre llamadas
+    lista.append(x)
+    return lista
+
+def agregar(x, lista=None):  # ✅
+    if lista is None:
+        lista = []
+    lista.append(x)
+    return lista</code></pre>
+<p>Es el error más famoso de Python: el valor por defecto se crea <strong>una sola vez</strong>, al definir la función.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Escribiste lo mismo dos veces? Es una función.</li>
+  <li>Nombre en verbo: <code>calcular_iva</code>, <code>validar_cedula</code>, <code>buscar_cliente</code>.</li>
+  <li>Todo lo que necesite, por parámetro. Nada de variables de afuera.</li>
+  <li>Que <strong>devuelva</strong>, no que imprima. El <code>print</code> lo pone quien la llama.</li>
+  <li>Una función, una responsabilidad. Si necesita "y" para explicarse, son dos.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>def f(a, b):</code></td><td>Define una función de dos parámetros</td></tr>
+    <tr><td><code>return x</code></td><td>Devuelve <code>x</code> y termina</td></tr>
+    <tr><td><code>def f(a, b=10):</code></td><td><code>b</code> es opcional</td></tr>
+    <tr><td><code>f(b=3, a=1)</code></td><td>Argumentos por nombre</td></tr>
+    <tr><td><code>return a, b</code></td><td>Devuelve una tupla</td></tr>
+    <tr><td><code>''''''docstring''''''</code></td><td>Documenta la función</td></tr>
+  </tbody>
+</table>
+
+<blockquote><code>print</code> le habla al usuario; <code>return</code> le habla al programa. Una función que calcula devuelve; imprimir es trabajo de quien la llama.</blockquote>', 1
     FROM parts p WHERE p.number = 4
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -4945,11 +5139,509 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 14
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 14);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 14);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Función de IVA', 'facil', '<p>Escribir una función <code>calcular_iva(precio)</code> que <strong>devuelva</strong> el valor del IVA (19%) de un precio. Luego usarla para mostrar:</p><pre><code>IVA de 10000: 1900.0
+IVA de 50000: 9500.0
+Total a pagar: 71400.0</code></pre><p><em>Nota:</em> la función debe devolver, no imprimir. El total es la suma de los dos precios más sus IVAs.</p>', '<p>Dentro de la función va <code>return precio * 0.19</code>. Los <code>print()</code> van afuera, en quien la llama.</p>', '<pre><code>''''''
+Programa: Calculadora de IVA
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Define una funcion para calcular el IVA y la usa sobre
+    dos precios.
+''''''
 
--- ── Capítulo 15: Errores y excepciones (borrador)
+IVA = 0.19
+
+
+def calcular_iva(precio):
+    ''''''
+    Calcula el IVA de un precio.
+
+    Parametros:
+        precio (int|float): valor sin IVA
+
+    Retorna:
+        float: el valor del IVA
+    ''''''
+    return precio * IVA
+
+
+# Inicio
+precio1 = 10000
+precio2 = 50000
+
+iva1 = calcular_iva(precio1)
+iva2 = calcular_iva(precio2)
+
+print(f"IVA de {precio1}: {iva1}")
+print(f"IVA de {precio2}: {iva2}")
+print(f"Total a pagar: {precio1 + iva1 + precio2 + iva2}")
+# Fin</code></pre><p>La función <strong>devuelve</strong> y no imprime. Por eso el mismo <code>calcular_iva()</code> sirve para mostrarlo en pantalla y también para sumarlo al total. Si hubiera hecho <code>print()</code> adentro, no se podría usar el resultado para nada más.</p><p>Fíjese en el orden del archivo: las funciones se definen arriba y la lógica del programa va abajo, entre <code>#Inicio</code> y <code>#Fin</code>.</p>', '[{"stdin":"","expected_output":"IVA de 10000: 1900.0\nIVA de 50000: 9500.0\nTotal a pagar: 71400.0"}]', '''''''
+Programa: Calculadora de IVA
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+IVA = 0.19
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Clasificar notas', 'facil', '<p>Escribir una función <code>clasificar(nota)</code> que devuelva el concepto de una nota:</p><table><thead><tr><th>Nota</th><th>Concepto</th></tr></thead><tbody><tr><td>4.5 o más</td><td>Excelente</td></tr><tr><td>4.0 a 4.4</td><td>Muy bien</td></tr><tr><td>3.0 a 3.9</td><td>Aprobado</td></tr><tr><td>menor a 3.0</td><td>Reprobado</td></tr></tbody></table><p>Usarla para clasificar la lista <code>[4.8, 4.2, 3.5, 2.0]</code>:</p><pre><code>4.8: Excelente
+4.2: Muy bien
+3.5: Aprobado
+2.0: Reprobado</code></pre>', '<p>Como cada <code>return</code> termina la función de inmediato, no hacen falta <code>elif</code> ni <code>else</code>: basta con <code>if</code> seguidos, del más exigente al menos exigente.</p>', '<pre><code>''''''
+Programa: Clasificador de notas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Define una funcion que convierte una nota en su concepto
+    cualitativo y la aplica a una lista.
+''''''
+
+
+def clasificar(nota):
+    ''''''
+    Convierte una nota de 0.0 a 5.0 en su concepto.
+
+    Parametros:
+        nota (float): la nota a clasificar
+
+    Retorna:
+        str: Excelente, Muy bien, Aprobado o Reprobado
+    ''''''
+    # Cada return sale de la funcion, asi que no hacen falta elif
+    if nota >= 4.5:
+        return "Excelente"
+    if nota >= 4.0:
+        return "Muy bien"
+    if nota >= 3.0:
+        return "Aprobado"
+    return "Reprobado"
+
+
+# Inicio
+notas = [4.8, 4.2, 3.5, 2.0]
+
+for nota in notas:
+    print(f"{nota}: {clasificar(nota)}")
+# Fin</code></pre><p>Este estilo de <em>varios <code>return</code> sin <code>else</code></em> se llama <em>early return</em> y es muy común: apenas se sabe la respuesta, se devuelve. El orden sigue importando igual que en el capítulo 6: de la condición más exigente a la menos exigente.</p><p>El último <code>return</code> no necesita <code>if</code>: si el programa llegó hasta ahí es porque ninguna condición anterior se cumplió.</p>', '[{"stdin":"","expected_output":"4.8: Excelente\n4.2: Muy bien\n3.5: Aprobado\n2.0: Reprobado"}]', '''''''
+Programa: Clasificador de notas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+notas = [4.8, 4.2, 3.5, 2.0]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Estadísticas en una función', 'medio', '<p>Escribir una función <code>analizar(notas)</code> que reciba una lista y devuelva <strong>tres valores</strong>: la menor, la mayor y el promedio.</p><p>Escribir también <code>formatear(nombre, notas)</code> que devuelva una línea lista para imprimir usando la función anterior.</p><pre><code>Ana      min 2.5  max 5.0  prom 4.00
+Juan     min 2.0  max 3.0  prom 2.50</code></pre><p><em>Nota:</em> el nombre va alineado en 8 espacios y el promedio con dos decimales. Ninguna de las dos funciones debe imprimir.</p>', '<p><code>return min(notas), max(notas), suma / cantidad</code> devuelve una tupla, y quien llama la desempaqueta con <code>a, b, c = analizar(...)</code>.</p>', '<pre><code>''''''
+Programa: Estadisticas de notas con funciones
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Separa el calculo de estadisticas y el formato de la salida
+    en dos funciones independientes.
+''''''
+
+
+def analizar(notas):
+    ''''''
+    Calcula estadisticas basicas de una lista de notas.
+
+    Parametros:
+        notas (list): notas de un estudiante
+
+    Retorna:
+        tuple: (menor, mayor, promedio)
+    ''''''
+    return min(notas), max(notas), sum(notas) / len(notas)
+
+
+def formatear(nombre, notas):
+    ''''''
+    Arma la linea de reporte de un estudiante.
+
+    Parametros:
+        nombre (str) : nombre del estudiante
+        notas (list) : sus notas
+
+    Retorna:
+        str: la linea lista para imprimir
+    ''''''
+    menor, mayor, promedio = analizar(notas)
+    return f"{nombre:<8} min {menor}  max {mayor}  prom {promedio:.2f}"
+
+
+# Inicio
+curso = {
+    "Ana": [4.5, 2.5, 5.0],
+    "Juan": [2.0, 3.0, 2.5],
+}
+
+for nombre, notas in curso.items():
+    print(formatear(nombre, notas))
+# Fin</code></pre><p>Dos ideas de diseño que se ven aquí:</p><ul><li><strong>Una función, una responsabilidad.</strong> <code>analizar()</code> hace cuentas y <code>formatear()</code> arma texto. Si mañana cambia el formato del reporte, <code>analizar()</code> ni se entera.</li><li><strong>Devolver varias cosas es devolver una tupla.</strong> <code>return a, b, c</code> arma una tupla y el desempaquetado del capítulo 11 la reparte en tres variables con nombre.</li></ul><p>Ninguna de las dos imprime: el único <code>print()</code> está en el programa principal. Así estas funciones servirían igual para escribir un archivo o mandar un correo.</p>', '[{"stdin":"","expected_output":"Ana      min 2.5  max 5.0  prom 4.00\nJuan     min 2.0  max 3.0  prom 2.50"}]', '''''''
+Programa: Estadisticas de notas con funciones
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+curso = {
+    "Ana": [4.5, 2.5, 5.0],
+    "Juan": [2.0, 3.0, 2.5],
+}
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Módulo de crédito', 'dificil', '<p>Un banco necesita tres funciones reutilizables:</p><ul><li><code>cuota_mensual(monto, tasa, meses)</code> — devuelve la cuota fija, redondeada a entero.</li><li><code>total_pagado(cuota, meses)</code> — devuelve cuánto se paga en total.</li><li><code>aprobar(ingresos, cuota, tope=0.30)</code> — devuelve <code>True</code> si la cuota no supera el porcentaje tope de los ingresos.</li></ul><p>Solicitar monto, tasa mensual (en %), plazo e ingresos. Por ejemplo, con un préstamo de <strong>1000000</strong> al <strong>2%</strong> mensual a <strong>24</strong> meses e ingresos de <strong>300000</strong>:</p><pre><code>Cuota mensual: 52,871
+Total pagado: 1,268,904
+Intereses: 268,904
+Estado: APROBADO</code></pre><p><em>Nota:</em> la fórmula de la cuota es <code>monto * tasa / (1 - (1 + tasa) ** -meses)</code>, con la tasa como proporción.</p>', '<p>Las tres funciones se definen arriba y solo devuelven. El programa principal pide los datos, las llama y arma la salida. El <code>tope</code> lleva valor por defecto, así que se puede llamar sin él.</p>', '<pre><code>''''''
+Programa: Modulo de credito
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Calcula la cuota fija de un credito, el total pagado y si el
+    solicitante lo puede sostener con sus ingresos.
+''''''
+
+
+def cuota_mensual(monto, tasa, meses):
+    ''''''
+    Calcula la cuota fija de un credito de cuota constante.
+
+    Parametros:
+        monto (int)  : valor prestado
+        tasa (float) : interes mensual como proporcion (0.02 = 2%)
+        meses (int)  : plazo en meses
+
+    Retorna:
+        int: valor de la cuota, redondeado
+    ''''''
+    # Formula de anualidades
+    return round(monto * tasa / (1 - (1 + tasa) ** -meses))
+
+
+def total_pagado(cuota, meses):
+    ''''''
+    Cuanto se termina pagando en total.
+
+    Parametros:
+        cuota (int): cuota mensual
+        meses (int): plazo en meses
+
+    Retorna:
+        int: suma de todas las cuotas
+    ''''''
+    return cuota * meses
+
+
+def aprobar(ingresos, cuota, tope=0.30):
+    ''''''
+    Decide si la cuota es sostenible con los ingresos.
+
+    Parametros:
+        ingresos (int): ingresos mensuales
+        cuota (int)   : cuota del credito
+        tope (float)  : maximo porcentaje de los ingresos permitido
+
+    Retorna:
+        bool: True si la cuota no supera el tope
+    ''''''
+    return cuota <= ingresos * tope
+
+
+# Inicio
+monto = int(input("Monto: "))
+tasa = float(input("Tasa mensual (%): ")) / 100
+meses = int(input("Meses: "))
+ingresos = int(input("Ingresos mensuales: "))
+
+cuota = cuota_mensual(monto, tasa, meses)
+total = total_pagado(cuota, meses)
+
+print(f"Cuota mensual: {cuota:,}")
+print(f"Total pagado: {total:,}")
+print(f"Intereses: {total - monto:,}")
+print(f"Estado: {''APROBADO'' if aprobar(ingresos, cuota) else ''NEGADO''}")
+# Fin</code></pre><p>Por qué este código es mejor que el mismo cálculo escrito de corrido:</p><ul><li><strong>Cada función se puede probar sola.</strong> <code>cuota_mensual(1000000, 0.02, 24)</code> se puede verificar contra una calculadora financiera sin correr todo el programa.</li><li><strong><code>aprobar()</code> tiene el tope por defecto.</strong> El banco normalmente usa 30%, pero si mañana quiere evaluar al 40% se llama <code>aprobar(ingresos, cuota, 0.40)</code> sin tocar la función.</li><li><strong>La conversión de porcentaje a proporción se hace una sola vez</strong>, al pedir el dato. Adentro de las funciones la tasa ya llega lista, y eso evita el error clásico de dividir entre 100 dos veces.</li></ul><p>Estas tres funciones son exactamente el tipo de pieza que en el capítulo 16 se saca a su propio archivo para importarla desde otros programas.</p>', '[{"stdin":"1000000\n2\n24\n300000\n","expected_output":"Monto: Tasa mensual (%): Meses: Ingresos mensuales: Cuota mensual: 52,871\nTotal pagado: 1,268,904\nIntereses: 268,904\nEstado: APROBADO"}]', '''''''
+Programa: Modulo de credito
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 14;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 14);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cuál es la diferencia entre return y print dentro de una función?', NULL, '{"options":[{"id":"a","text":"return entrega el resultado al programa; print solo lo muestra al usuario"},{"id":"b","text":"Son equivalentes"},{"id":"c","text":"print es más rápido"},{"id":"d","text":"return solo sirve con números"}]}', '{"option_id":"a"}', 'Una función que imprime en vez de devolver no sirve para seguir calculando: su resultado se pierde.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué pasa cuando Python ejecuta un return?', NULL, '{"options":[{"id":"a","text":"Devuelve el valor y termina la función de inmediato"},{"id":"b","text":"Devuelve el valor y sigue con las líneas siguientes"},{"id":"c","text":"Termina el programa entero"},{"id":"d","text":"Guarda el valor en una variable global"}]}', '{"option_id":"a"}', 'Por eso se puede escribir varios if con return seguidos, sin elif ni else.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué es una variable local?', NULL, '{"options":[{"id":"a","text":"Una que nace dentro de la función y muere cuando esta termina"},{"id":"b","text":"Una que se puede usar en todo el programa"},{"id":"c","text":"Una que solo guarda números"},{"id":"d","text":"Una que se define con la palabra local"}]}', '{"option_id":"a"}', 'Es una virtud: garantiza que una función no rompa nada de afuera por accidente.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Por qué es mala idea que una función lea variables de afuera en vez de recibirlas por parámetro?', NULL, '{"options":[{"id":"a","text":"Porque deja de funcionar sola: depende de que exista algo fuera de ella"},{"id":"b","text":"Porque Python lo prohíbe"},{"id":"c","text":"Porque es más lento"},{"id":"d","text":"Porque no se puede documentar"}]}', '{"option_id":"a"}', 'Una función que recibe todo lo que necesita se puede probar y reutilizar en cualquier programa.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Por qué def agregar(x, lista=[]) es peligroso?', NULL, '{"options":[{"id":"a","text":"Porque la lista se crea una sola vez y se comparte entre todas las llamadas"},{"id":"b","text":"Porque las listas no pueden ser parámetros"},{"id":"c","text":"Porque hay que ponerla de primera"},{"id":"d","text":"Porque consume mucha memoria"}]}', '{"option_id":"a"}', 'El valor por defecto se evalúa al definir la función. La solución es usar None y crear la lista adentro.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'def doble(x):
+    return x * 2
+
+print(doble(5) + 1)', '{"options":[{"id":"a","text":"11"},{"id":"b","text":"10"},{"id":"c","text":"12"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'doble(5) devuelve 10 y después se le suma 1. Con print en vez de return daría TypeError.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'def doble(x):
+    print(x * 2)
+
+r = doble(5)
+print(r)', '{"options":[{"id":"a","text":"10\nNone"},{"id":"b","text":"10\n10"},{"id":"c","text":"None"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'La función imprime 10 pero no devuelve nada, así que r queda en None.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'def total(precio, iva=0.19):
+    return precio + precio * iva
+
+print(total(10000, 0))', '{"options":[{"id":"a","text":"10000.0"},{"id":"b","text":"11900.0"},{"id":"c","text":"10000"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'El argumento explícito 0 reemplaza el valor por defecto, y el resultado es float por la multiplicación.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'def cambiar():
+    total = 100
+
+total = 5
+cambiar()
+print(total)', '{"options":[{"id":"a","text":"5"},{"id":"b","text":"100"},{"id":"c","text":"None"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'El total de adentro es otra variable, local a la función. La de afuera ni se entera.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'def clasificar(n):
+    if n >= 3.0:
+        return "pasa"
+    return "no pasa"
+
+print(clasificar(4.0), clasificar(2.0))', '{"options":[{"id":"a","text":"pasa no pasa"},{"id":"b","text":"pasa pasa"},{"id":"c","text":"no pasa no pasa"},{"id":"d","text":"pasa"}]}', '{"option_id":"a"}', 'Cada llamada es independiente: la primera sale por el primer return y la segunda llega al último.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'El programa debe mostrar 19.0 pero muestra otra cosa. ¿En qué línea está el error?', NULL, '{"lines":["def iva(p):","    return p * 0.19","","print(iva)"]}', '{"line_number":4}', 'Falta llamar la función con paréntesis: print(iva(100)). Sin ellos se imprime el objeto función.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El resultado no se puede usar después. ¿En qué línea está el error?', NULL, '{"lines":["def suma(a, b):","    print(a + b)","","r = suma(2, 3)","print(r * 2)"]}', '{"line_number":2}', 'Ahí va return, no print: como está, r queda en None y la última línea da TypeError.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'medio', 'Arme la función que calcula el IVA y la usa', NULL, '{"lines":[{"id":"l1","text":"def calcular_iva(precio):","indent":0},{"id":"l2","text":"return precio * 0.19","indent":1},{"id":"l3","text":"precio = 10000","indent":0},{"id":"l4","text":"print(f\"IVA: {calcular_iva(precio)}\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'La función se define antes de usarse, el return va indentado dentro de ella, y el print va afuera.', 1, 'seed'
+    FROM chapters WHERE number = 14;
+
+-- ── Capítulo 15: Errores y excepciones (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 15, 'Errores y excepciones', '🛡️', 'try, except, finally y errores propios.', '', 0
+  SELECT p.id, 15, 'Errores y excepciones', '🛡️', 'try, except, finally y errores propios.', '<p class="jc-gancho">El cajero le pide el monto al cliente y el cliente escribe "cincuenta mil". El programa se cae, la pantalla queda en negro y el cajero se traba. Ningún programa serio se comporta así: los errores se esperan y se atienden.</p>
+
+<h2>Los errores que ya conoces</h2>
+
+<p>Llevas catorce capítulos rompiendo cosas. Estos son los sospechosos habituales:</p>
+
+<table>
+  <thead>
+    <tr><th>Error</th><th>Significa</th><th>Ejemplo típico</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>SyntaxError</code></td><td>Está mal escrito</td><td>Falta un <code>:</code> o un paréntesis</td></tr>
+    <tr><td><code>NameError</code></td><td>Ese nombre no existe</td><td>Usar una variable antes de crearla</td></tr>
+    <tr><td><code>TypeError</code></td><td>Tipos incompatibles</td><td><code>"Edad: " + 17</code></td></tr>
+    <tr><td><code>ValueError</code></td><td>El tipo está bien, el contenido no</td><td><code>int("veinte")</code></td></tr>
+    <tr><td><code>IndexError</code></td><td>Posición fuera de rango</td><td><code>lista[5]</code> en una de 3</td></tr>
+    <tr><td><code>KeyError</code></td><td>Esa clave no está</td><td><code>precios["arroz"]</code></td></tr>
+    <tr><td><code>ZeroDivisionError</code></td><td>División entre cero</td><td><code>total / cantidad</code> con cantidad en 0</td></tr>
+  </tbody>
+</table>
+
+<p><strong>El <code>SyntaxError</code> es distinto a todos los demás.</strong> Ocurre antes de que el programa arranque, así que no se puede atrapar: hay que arreglarlo. Los otros ocurren <em>durante</em> la ejecución, y esos sí se pueden manejar.</p>
+
+<h2><code>try</code> / <code>except</code>: el paracaídas</h2>
+
+<pre><code>try:
+    edad = int(input("Edad: "))
+    print("El año que viene tendrás", edad + 1)
+except ValueError:
+    print("Eso no es un número válido")</code></pre>
+
+<p>Cómo lo lee Python:</p>
+
+<ol>
+  <li>Intenta ejecutar todo lo que está en <code>try</code>.</li>
+  <li>Si sale bien, se salta el <code>except</code> por completo.</li>
+  <li>Si algo revienta con ese error, <strong>abandona el resto del <code>try</code></strong> y salta al <code>except</code>.</li>
+</ol>
+
+<p>Ese "abandona el resto" importa: si el <code>int()</code> falla, el <code>print</code> de abajo nunca corre.</p>
+
+<h3>Varios <code>except</code></h3>
+
+<pre><code>try:
+    total = int(input("Total: "))
+    cuantos = int(input("Personas: "))
+    print("Cada uno paga:", total / cuantos)
+except ValueError:
+    print("Escriba solo números")
+except ZeroDivisionError:
+    print("No se puede repartir entre cero personas")</code></pre>
+
+<p>Python entra por el primero que coincida. Como los <code>elif</code>: el orden va de lo específico a lo general.</p>
+
+<h3><code>else</code> y <code>finally</code></h3>
+
+<pre><code>try:
+    monto = int(input("Monto: "))
+except ValueError:
+    print("Monto inválido")
+else:
+    print("Retirando", monto)      # solo si NO hubo error
+finally:
+    print("Gracias por usar el cajero")   # SIEMPRE, pase lo que pase</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Bloque</th><th>Cuándo corre</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>try</code></td><td>Siempre, hasta que algo falle</td></tr>
+    <tr><td><code>except</code></td><td>Solo si hubo ese error</td></tr>
+    <tr><td><code>else</code></td><td>Solo si NO hubo error</td></tr>
+    <tr><td><code>finally</code></td><td>Siempre, haya error o no</td></tr>
+  </tbody>
+</table>
+
+<p><code>finally</code> es para lo que hay que hacer sí o sí: cerrar un archivo, cerrar la conexión a la base de datos, soltar el cajero.</p>
+
+<h2>El patrón que arregla el capítulo 3</h2>
+
+<p>Recuerda que <code>int(input())</code> se caía si el usuario escribía cualquier cosa. Ahora se puede insistir hasta que escriba bien:</p>
+
+<pre><code>while True:
+    try:
+        edad = int(input("Edad: "))
+        break                          # salió bien: se sale del ciclo
+    except ValueError:
+        print("Eso no es un número, intente otra vez")
+
+print("Edad registrada:", edad)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th>El usuario escribe</th><th>Qué pasa</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><code>abc</code></td><td><code>int()</code> falla → <code>except</code> → vuelve a preguntar</td></tr>
+    <tr><td>2</td><td>(Enter vacío)</td><td>falla otra vez → vuelve a preguntar</td></tr>
+    <tr><td>3</td><td><code>25</code></td><td>funciona → <code>break</code> → sale del ciclo</td></tr>
+  </tbody>
+</table>
+
+<p>El <code>while True</code> con <code>break</code> adentro es la forma normal de escribir "insiste hasta que salga bien". Y encapsulado en una función queda reutilizable:</p>
+
+<pre><code>def pedir_entero(mensaje):
+    while True:
+        try:
+            return int(input(mensaje))    # el return sale del ciclo Y de la función
+        except ValueError:
+            print("Eso no es un número, intente otra vez")
+
+edad = pedir_entero("Edad: ")
+monto = pedir_entero("Monto: ")</code></pre>
+
+<h2>Lanzar tus propios errores: <code>raise</code></h2>
+
+<p>A veces el error no lo comete Python: lo comete el negocio. Un retiro negativo no revienta nada, pero está mal.</p>
+
+<pre><code>def retirar(saldo, monto):
+    if monto &lt;= 0:
+        raise ValueError("El monto debe ser positivo")
+    if monto &gt; saldo:
+        raise ValueError("Saldo insuficiente")
+    return saldo - monto
+
+
+try:
+    nuevo = retirar(100000, -500)
+except ValueError as e:
+    print("No se pudo:", e)     # No se pudo: El monto debe ser positivo</code></pre>
+
+<p>Ese <code>as e</code> guarda el error en una variable para poder leer su mensaje. La ventaja del <code>raise</code>: la función <strong>valida</strong> y quien la llama <strong>decide qué hacer</strong> —mostrar un mensaje, reintentar, escribir en un log—. La función no tiene que saber nada de eso.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Atrapar todo con un <code>except</code> pelado</h3>
+<pre><code>try:
+    ...
+except:              # ❌ atrapa hasta un error de tipeo tuyo
+    print("Error")
+
+except ValueError:   # ✅ solo lo que esperabas
+    print("Número inválido")</code></pre>
+<p>Un <code>except</code> sin tipo esconde bugs. Si de verdad quieres atrapar cualquier cosa, usa <code>except Exception as e</code> y al menos imprime <code>e</code>.</p>
+
+<h3>2. Meter medio programa en el <code>try</code></h3>
+<pre><code>try:
+    # 40 líneas
+except ValueError:
+    print("Algo falló")     # ¿qué falló? nadie sabe</code></pre>
+<p>El <code>try</code> debe rodear solo la línea que puede fallar.</p>
+
+<h3>3. Silenciar el error</h3>
+<pre><code>except ValueError:
+    pass          # ❌ el programa sigue con datos inválidos</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Rodea con <code>try</code> solo lo que puede fallar de verdad.</li>
+  <li>Atrapa el error <strong>específico</strong> que esperas.</li>
+  <li>Para insistir: <code>while True</code> + <code>try</code> + <code>break</code> (o <code>return</code> si es función).</li>
+  <li>Para reglas del negocio: <code>raise ValueError("mensaje claro")</code>.</li>
+  <li>Lo que hay que hacer pase lo que pase, en <code>finally</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>try: … except X: …</code></td><td>Intenta y atiende el error X</td></tr>
+    <tr><td><code>except X as e:</code></td><td>Guarda el error para leer su mensaje</td></tr>
+    <tr><td><code>else:</code></td><td>Corre solo si no hubo error</td></tr>
+    <tr><td><code>finally:</code></td><td>Corre siempre</td></tr>
+    <tr><td><code>raise ValueError("…")</code></td><td>Lanza un error propio</td></tr>
+    <tr><td><code>while True: try: … break</code></td><td>Insiste hasta que salga bien</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Atrapa el error que esperas, no todos. Un <code>except</code> pelado convierte un bug ruidoso en un bug silencioso, que es mucho peor.</blockquote>', 1
     FROM parts p WHERE p.number = 4
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -4961,11 +5653,458 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 15
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 15);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 15);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Edad a prueba de errores', 'facil', '<p>Solicitar la edad del usuario. Si escribe algo que no es un número, avisar y volver a preguntar hasta que escriba bien:</p><pre><code>Edad: Eso no es un numero, intente otra vez
+Edad: Eso no es un numero, intente otra vez
+Edad: Edad registrada: 25</code></pre>', '<p><code>while True</code> con un <code>try</code> adentro. Si el <code>int()</code> funciona, un <code>break</code> sale del ciclo; si falla, el <code>except ValueError</code> imprime el aviso y el ciclo vuelve a empezar.</p>', '<pre><code>''''''
+Programa: Edad a prueba de errores
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Pide la edad e insiste hasta que el usuario escriba un
+    numero valido.
+''''''
 
--- ── Capítulo 16: Módulos, pip y entornos virtuales (borrador)
+# Inicio
+while True:
+    try:
+        edad = int(input("Edad: "))
+        break     # solo llega aqui si el int() no fallo
+    except ValueError:
+        print("Eso no es un numero, intente otra vez")
+
+print(f"Edad registrada: {edad}")
+# Fin</code></pre><p>La clave está en dónde va el <code>break</code>: <strong>después</strong> del <code>int()</code>. Si la conversión falla, Python abandona el resto del <code>try</code> —incluido el <code>break</code>— y salta al <code>except</code>. Por eso el ciclo vuelve a preguntar.</p><p>Este es el patrón que le faltaba al capítulo 3, donde <code>int(input())</code> tumbaba el programa con cualquier dato raro.</p>', '[{"stdin":"abc\n\n25\n","expected_output":"Edad: Eso no es un numero, intente otra vez\nEdad: Eso no es un numero, intente otra vez\nEdad: Edad registrada: 25"}]', '''''''
+Programa: Edad a prueba de errores
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'División segura', 'facil', '<p>Solicitar el total de una cuenta y el número de personas, y mostrar cuánto paga cada una. Atender los dos errores posibles:</p><ul><li>si escriben algo que no es número: <code>Escriba solo numeros</code></li><li>si el número de personas es cero: <code>No se puede repartir entre cero personas</code></li></ul><pre><code>Total: Personas: Cada uno paga: 25000.0</code></pre>', '<p>Un solo <code>try</code> con dos <code>except</code>: uno para <code>ValueError</code> y otro para <code>ZeroDivisionError</code>. Python entra por el que coincida.</p>', '<pre><code>''''''
+Programa: Division segura de una cuenta
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Reparte el total de una cuenta entre varias personas
+    atendiendo los errores de dato invalido y division por cero.
+''''''
+
+# Inicio
+try:
+    total = int(input("Total: "))
+    personas = int(input("Personas: "))
+    print(f"Cada uno paga: {total / personas}")
+except ValueError:
+    print("Escriba solo numeros")
+except ZeroDivisionError:
+    print("No se puede repartir entre cero personas")
+# Fin</code></pre><p>Los dos errores son distintos y merecen mensajes distintos:</p><ul><li><code>ValueError</code> lo lanza <code>int()</code> cuando el texto no representa un número.</li><li><code>ZeroDivisionError</code> lo lanza la división, y solo si los dos <code>int()</code> pasaron.</li></ul><p>Un <code>except</code> pelado atraparía los dos con el mismo mensaje, y el usuario no sabría qué corregir.</p>', '[{"stdin":"100000\n4\n","expected_output":"Total: Personas: Cada uno paga: 25000.0"},{"stdin":"100000\n0\n","expected_output":"Total: Personas: No se puede repartir entre cero personas"},{"stdin":"cien mil\n","expected_output":"Total: Escriba solo numeros"}]', '''''''
+Programa: Division segura de una cuenta
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Función que pide números', 'medio', '<p>Escribir una función <code>pedir_entero(mensaje, minimo=0)</code> que:</p><ul><li>pregunte hasta que el usuario escriba un entero válido,</li><li>y que además sea mayor o igual a <code>minimo</code>.</li></ul><p>Usarla para pedir la edad (mínimo 0) y el monto de un retiro (mínimo 10000):</p><pre><code>Edad: Debe ser un numero entero
+Edad: Monto a retirar: Debe ser al menos 10000
+Monto a retirar: Edad 25, retiro 50000</code></pre>', '<p>Dentro de la función, un <code>while True</code> con <code>try</code>. Cuando el valor sea válido, use <code>return</code>: eso sale del ciclo y de la función a la vez.</p>', '<pre><code>''''''
+Programa: Lector de enteros validados
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Define una funcion reutilizable que pide un entero e insiste
+    hasta que sea valido y cumpla un minimo.
+''''''
+
+
+def pedir_entero(mensaje, minimo=0):
+    ''''''
+    Pide un numero entero por teclado hasta que sea valido.
+
+    Parametros:
+        mensaje (str): lo que se le muestra al usuario
+        minimo (int) : valor minimo aceptado
+
+    Retorna:
+        int: el numero validado
+    ''''''
+    while True:
+        try:
+            valor = int(input(mensaje))
+        except ValueError:
+            print("Debe ser un numero entero")
+            continue
+
+        if valor < minimo:
+            print(f"Debe ser al menos {minimo}")
+            continue
+
+        # return sale del ciclo y de la funcion al mismo tiempo
+        return valor
+
+
+# Inicio
+edad = pedir_entero("Edad: ")
+monto = pedir_entero("Monto a retirar: ", 10000)
+
+print(f"Edad {edad}, retiro {monto}")
+# Fin</code></pre><p>Dos validaciones distintas conviven sin enredarse:</p><ul><li>El <code>try / except</code> atiende el error <strong>técnico</strong>: el texto no es un número.</li><li>El <code>if valor &lt; minimo</code> atiende la regla del <strong>negocio</strong>: el número es válido pero no sirve.</li></ul><p>Los dos usan <code>continue</code> para volver a preguntar, y el <code>return</code> solo se alcanza cuando el dato pasó las dos pruebas.</p><p>Empaquetarlo en una función es lo que lo vuelve útil: las mismas cinco líneas sirven para la edad, el monto y cualquier otro número del programa.</p>', '[{"stdin":"abc\n25\n500\n50000\n","expected_output":"Edad: Debe ser un numero entero\nEdad: Monto a retirar: Debe ser al menos 10000\nMonto a retirar: Edad 25, retiro 50000"}]', '''''''
+Programa: Lector de enteros validados
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Cajero con reglas propias', 'dificil', '<p>Escribir una función <code>retirar(saldo, monto)</code> que devuelva el nuevo saldo, pero que lance <code>ValueError</code> con un mensaje claro si:</p><ul><li>el monto no es positivo → <code>El monto debe ser positivo</code></li><li>no es múltiplo de 10000 → <code>El cajero solo entrega multiplos de 10000</code></li><li>supera el saldo → <code>Saldo insuficiente</code></li></ul><p>El programa principal procesa una lista de retiros sobre un saldo inicial de <strong>100000</strong> y reporta cada uno:</p><pre><code>Retiro de 50000: OK, saldo 50000
+Retiro de -100: RECHAZADO, El monto debe ser positivo
+Retiro de 35000: RECHAZADO, El cajero solo entrega multiplos de 10000
+Retiro de 90000: RECHAZADO, Saldo insuficiente
+Retiro de 20000: OK, saldo 30000
+Saldo final: 30000</code></pre>', '<p>La función solo valida y lanza; no imprime nada. El programa principal la llama dentro de un <code>try</code> y usa <code>except ValueError as e</code> para leer el mensaje.</p>', '<pre><code>''''''
+Programa: Cajero con reglas propias
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Procesa una lista de retiros validando las reglas del cajero
+    con excepciones propias.
+''''''
+
+BILLETE = 10000
+
+
+def retirar(saldo, monto):
+    ''''''
+    Aplica un retiro validando las reglas del cajero.
+
+    Parametros:
+        saldo (int): saldo disponible
+        monto (int): valor a retirar
+
+    Retorna:
+        int: el nuevo saldo
+
+    Lanza:
+        ValueError: si el monto no cumple alguna regla
+    ''''''
+    if monto <= 0:
+        raise ValueError("El monto debe ser positivo")
+    if monto % BILLETE != 0:
+        raise ValueError(f"El cajero solo entrega multiplos de {BILLETE}")
+    if monto > saldo:
+        raise ValueError("Saldo insuficiente")
+
+    return saldo - monto
+
+
+# Inicio
+saldo = 100000
+retiros = [50000, -100, 35000, 90000, 20000]
+
+for monto in retiros:
+    try:
+        saldo = retirar(saldo, monto)
+    except ValueError as e:
+        # La funcion valida; aqui se decide que hacer con el error
+        print(f"Retiro de {monto}: RECHAZADO, {e}")
+    else:
+        print(f"Retiro de {monto}: OK, saldo {saldo}")
+
+print(f"Saldo final: {saldo}")
+# Fin</code></pre><p>El reparto de responsabilidades es lo importante:</p><ul><li><strong><code>retirar()</code> no imprime ni decide nada.</strong> Solo sabe las reglas del cajero: si algo está mal, lanza el error y se acabó su trabajo.</li><li><strong>Quien la llama decide.</strong> Aquí imprime un mensaje, pero la misma función serviría igual si hubiera que guardar el rechazo en un archivo o reintentar.</li></ul><p>Fíjese en el <code>else</code> del <code>try</code>: solo corre cuando <strong>no</strong> hubo error. Poner ese <code>print</code> dentro del <code>try</code> también funcionaría, pero mezclaría en el mismo bloque lo que puede fallar con lo que no.</p><p>Y algo sutil pero importante: cuando el retiro se rechaza, <code>saldo</code> no se toca. La asignación <code>saldo = retirar(...)</code> nunca llega a ejecutarse porque la excepción interrumpe la línea completa.</p>', '[{"stdin":"","expected_output":"Retiro de 50000: OK, saldo 50000\nRetiro de -100: RECHAZADO, El monto debe ser positivo\nRetiro de 35000: RECHAZADO, El cajero solo entrega multiplos de 10000\nRetiro de 90000: RECHAZADO, Saldo insuficiente\nRetiro de 20000: OK, saldo 30000\nSaldo final: 30000"}]', '''''''
+Programa: Cajero con reglas propias
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+BILLETE = 10000
+
+
+# Inicio
+saldo = 100000
+retiros = [50000, -100, 35000, 90000, 20000]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 15;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 15);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cuál de estos errores NO se puede atrapar con try/except?', NULL, '{"options":[{"id":"a","text":"SyntaxError"},{"id":"b","text":"ValueError"},{"id":"c","text":"ZeroDivisionError"},{"id":"d","text":"KeyError"}]}', '{"option_id":"a"}', 'El SyntaxError ocurre antes de que el programa arranque: hay que arreglarlo, no atraparlo.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué error lanza int("veinte")?', NULL, '{"options":[{"id":"a","text":"ValueError"},{"id":"b","text":"TypeError"},{"id":"c","text":"NameError"},{"id":"d","text":"KeyError"}]}', '{"option_id":"a"}', 'El tipo está bien (es un texto) pero el contenido no representa un entero: eso es ValueError.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Cuándo se ejecuta el bloque finally?', NULL, '{"options":[{"id":"a","text":"Siempre, haya error o no"},{"id":"b","text":"Solo si hubo error"},{"id":"c","text":"Solo si no hubo error"},{"id":"d","text":"Solo si se usó raise"}]}', '{"option_id":"a"}', 'Es para lo que hay que hacer sí o sí: cerrar un archivo, soltar una conexión.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Por qué es mala práctica escribir except: sin especificar el error?', NULL, '{"options":[{"id":"a","text":"Porque atrapa hasta los bugs propios y los vuelve invisibles"},{"id":"b","text":"Porque es más lento"},{"id":"c","text":"Porque Python lo prohíbe"},{"id":"d","text":"Porque solo funciona una vez"}]}', '{"option_id":"a"}', 'Convierte un bug ruidoso en uno silencioso, que es mucho más difícil de encontrar.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Para qué sirve raise ValueError("Saldo insuficiente") dentro de una función?', NULL, '{"options":[{"id":"a","text":"Para que la función valide y quien la llama decida qué hacer"},{"id":"b","text":"Para imprimir el mensaje en pantalla"},{"id":"c","text":"Para terminar el programa"},{"id":"d","text":"Para devolver el texto como resultado"}]}', '{"option_id":"a"}', 'La función sabe las reglas; el que llama decide si muestra un mensaje, reintenta o guarda un log.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', 'El usuario escribe abc. ¿Qué imprime este programa?', 'try:
+    n = int(input("n: "))
+    print("ok")
+except ValueError:
+    print("malo")', '{"options":[{"id":"a","text":"n: malo"},{"id":"b","text":"n: ok"},{"id":"c","text":"n: ok\nmalo"},{"id":"d","text":"El programa se cae"}]}', '{"option_id":"a"}', 'Al fallar el int(), Python abandona el resto del try: el print("ok") nunca corre.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'try:
+    print(10 / 0)
+except ValueError:
+    print("valor")
+except ZeroDivisionError:
+    print("division")', '{"options":[{"id":"a","text":"division"},{"id":"b","text":"valor"},{"id":"c","text":"valor\ndivision"},{"id":"d","text":"El programa se cae"}]}', '{"option_id":"a"}', 'Python entra por el except que coincide con el error, no por el primero que encuentre.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'try:
+    n = int("5")
+except ValueError:
+    print("error")
+else:
+    print("bien")
+finally:
+    print("fin")', '{"options":[{"id":"a","text":"bien\nfin"},{"id":"b","text":"fin"},{"id":"c","text":"error\nfin"},{"id":"d","text":"bien"}]}', '{"option_id":"a"}', 'No hubo error, así que corre el else; el finally corre siempre.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'def retirar(saldo, monto):
+    if monto > saldo:
+        raise ValueError("Saldo insuficiente")
+    return saldo - monto
+
+saldo = 1000
+try:
+    saldo = retirar(saldo, 5000)
+except ValueError as e:
+    print(e)
+print(saldo)', '{"options":[{"id":"a","text":"Saldo insuficiente\n1000"},{"id":"b","text":"Saldo insuficiente\n-4000"},{"id":"c","text":"Saldo insuficiente\nNone"},{"id":"d","text":"1000"}]}', '{"option_id":"a"}', 'La excepción interrumpe la línea completa, así que la asignación nunca ocurre y el saldo queda intacto.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El ciclo nunca termina aunque el usuario escriba bien. ¿En qué línea está el error?', NULL, '{"lines":["while True:","    try:","        edad = int(input(\"Edad: \"))","    except ValueError:","        print(\"malo\")","        break"]}', '{"line_number":6}', 'El break está en el except: sale solo cuando FALLA. Debía ir dentro del try, después del int().', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El programa esconde los errores. ¿En qué línea está el problema?', NULL, '{"lines":["try:","    n = int(input())","except:","    pass"]}', '{"line_number":3}', 'Un except pelado atrapa cualquier cosa, y con pass ni siquiera avisa. Debía ser except ValueError con un mensaje.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme el ciclo que insiste hasta recibir un número válido', NULL, '{"lines":[{"id":"l1","text":"while True:","indent":0},{"id":"l2","text":"try:","indent":1},{"id":"l3","text":"edad = int(input(\"Edad: \"))","indent":2},{"id":"l4","text":"break","indent":2},{"id":"l5","text":"except ValueError:","indent":1},{"id":"l6","text":"print(\"Eso no es un numero\")","indent":2},{"id":"l7","text":"print(f\"Edad: {edad}\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7"]}', 'El break va dentro del try y después del int(): si la conversión falla, Python salta al except y nunca lo alcanza.', 1, 'seed'
+    FROM chapters WHERE number = 15;
+
+-- ── Capítulo 16: Módulos, pip y entornos virtuales (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 16, 'Módulos, pip y entornos virtuales', '📚', 'Organizar el proyecto y usar librerías externas.', '', 0
+  SELECT p.id, 16, 'Módulos, pip y entornos virtuales', '📚', 'Organizar el proyecto y usar librerías externas.', '<p class="jc-gancho">Las tres funciones de crédito del capítulo 14 las vas a necesitar en el simulador, en el reporte y en el proyecto final. Copiarlas en cada archivo es garantizar que un día tengas tres versiones distintas. Un módulo se escribe una vez y se importa.</p>
+
+<h2>Un módulo es un archivo .py</h2>
+
+<p>Eso es todo. Cualquier archivo de Python es un módulo, y sus funciones se pueden usar desde otro archivo.</p>
+
+<pre><code># archivo: credito.py
+
+TASA_USURA = 0.025
+
+
+def cuota_mensual(monto, tasa, meses):
+    return round(monto * tasa / (1 - (1 + tasa) ** -meses))
+
+
+def total_pagado(cuota, meses):
+    return cuota * meses</code></pre>
+
+<pre><code># archivo: main.py (en la misma carpeta)
+
+import credito
+
+cuota = credito.cuota_mensual(1000000, 0.02, 24)
+print(cuota, credito.TASA_USURA)</code></pre>
+
+<h3>Las tres formas de importar</h3>
+
+<pre><code>import credito                        # todo, con prefijo
+credito.cuota_mensual(...)
+
+from credito import cuota_mensual     # solo lo que necesito, sin prefijo
+cuota_mensual(...)
+
+import credito as cr                  # con apodo
+cr.cuota_mensual(...)</code></pre>
+
+<p>La que hay que evitar es <code>from credito import *</code>: trae todo sin que se sepa qué, y si dos módulos tienen una función con el mismo nombre, uno pisa al otro en silencio.</p>
+
+<h2>El guardián: <code>if __name__ == "__main__"</code></h2>
+
+<p>Cuando importas un módulo, Python <strong>ejecuta todo lo que hay en él</strong>. Si <code>credito.py</code> tuviera un <code>print()</code> suelto, ese <code>print</code> saldría cada vez que alguien lo importe.</p>
+
+<pre><code># credito.py
+
+def cuota_mensual(monto, tasa, meses):
+    return round(monto * tasa / (1 - (1 + tasa) ** -meses))
+
+
+# Esto solo corre si se ejecuta ESTE archivo directamente
+if __name__ == "__main__":
+    print("Prueba rápida:", cuota_mensual(1000000, 0.02, 24))</code></pre>
+
+<p>La variable <code>__name__</code> vale <code>"__main__"</code> cuando el archivo se ejecuta directo, y el nombre del módulo cuando se importa. Es el interruptor que separa <em>"soy una librería"</em> de <em>"soy el programa"</em>.</p>
+
+<h2>La biblioteca estándar: lo que ya viene puesto</h2>
+
+<p>Python trae cientos de módulos sin instalar nada. Estos son los que vas a usar:</p>
+
+<pre><code>import math
+print(math.sqrt(16))       # 4.0
+print(math.ceil(4.2))      # 5   redondea hacia arriba
+print(math.floor(4.8))     # 4   hacia abajo
+print(math.pi)             # 3.141592653589793
+
+import random
+print(random.randint(1, 6))            # dado
+print(random.choice(["a", "b", "c"]))  # uno al azar
+
+import datetime
+hoy = datetime.date.today()
+print(hoy)                             # 2026-03-14
+print(hoy.year, hoy.month)
+
+import statistics
+print(statistics.mean([4.0, 3.0, 5.0]))    # 4.0
+print(statistics.median([4.0, 3.0, 5.0]))  # 4.0</code></pre>
+
+<p>Antes de escribir una función, vale la pena preguntarse si ya existe. Casi siempre sí.</p>
+
+<h2>pip: instalar lo que no viene</h2>
+
+<p>Para lo demás está <strong>PyPI</strong>, el repositorio público de paquetes, y <code>pip</code>, el programa que los instala.</p>
+
+<pre><code>pip install requests          # instalar
+pip install requests==2.31.0  # una versión exacta
+pip list                      # ver qué hay instalado
+pip uninstall requests        # desinstalar</code></pre>
+
+<p>Los que aparecen más adelante en este libro:</p>
+
+<table>
+  <thead>
+    <tr><th>Paquete</th><th>Para qué</th><th>Capítulo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>requests</code></td><td>Hablar con APIs por internet</td><td>23</td></tr>
+    <tr><td><code>pandas</code></td><td>Analizar tablas de datos</td><td>22</td></tr>
+    <tr><td><code>fastapi</code></td><td>Crear tu propia API</td><td>24</td></tr>
+  </tbody>
+</table>
+
+<h2>Entornos virtuales: una caja por proyecto</h2>
+
+<p>Aquí está el problema real. El proyecto del semestre pasado usa <code>pandas 1.5</code>; el nuevo necesita <code>pandas 2.1</code>. Si instalas todo en el computador, uno de los dos se rompe.</p>
+
+<p>Un <strong>entorno virtual</strong> es una carpeta con su propio Python y sus propios paquetes. Cada proyecto en su caja, sin pisarse.</p>
+
+<pre><code># 1. Crear el entorno (una sola vez por proyecto)
+python -m venv venv
+
+# 2. Activarlo (cada vez que se trabaja)
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Mac y Linux
+
+# 3. Instalar lo que haga falta: ya queda dentro de la caja
+pip install requests
+
+# 4. Salir
+deactivate</code></pre>
+
+<p>Sabes que está activo porque el prompt de la terminal muestra <code>(venv)</code> adelante.</p>
+
+<h3><code>requirements.txt</code>: la lista de ingredientes</h3>
+
+<pre><code># Guardar lo que este proyecto necesita
+pip freeze &gt; requirements.txt
+
+# En otro computador, instalar todo de un tirón
+pip install -r requirements.txt</code></pre>
+
+<p>Ese archivo <strong>sí</strong> va al repositorio. La carpeta <code>venv/</code> <strong>no</strong>: se regenera en un minuto y pesa cientos de megas. Por eso todo proyecto de Python lleva un <code>.gitignore</code> con <code>venv/</code> adentro.</p>
+
+<h2>Cómo se organiza un proyecto de verdad</h2>
+
+<pre><code>banco/
+├── venv/                 (no va al repositorio)
+├── requirements.txt
+├── main.py               el programa que se ejecuta
+├── credito.py            funciones de crédito
+├── clientes.py           funciones de clientes
+└── utils/
+    ├── __init__.py       marca la carpeta como paquete
+    └── formato.py</code></pre>
+
+<pre><code>from utils.formato import pesos</code></pre>
+
+<p>Ese <code>__init__.py</code> (puede estar vacío) es lo que convierte una carpeta en un <strong>paquete</strong> importable.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Ponerle a tu archivo el nombre de un módulo conocido</h3>
+<pre><code># tu archivo se llama random.py
+import random
+random.randint(1, 6)      # AttributeError: se importó TU archivo</code></pre>
+<p>Nunca llames a un archivo <code>random.py</code>, <code>math.py</code>, <code>json.py</code> ni <code>test.py</code>.</p>
+
+<h3>2. Olvidar activar el entorno</h3>
+<pre><code>pip install pandas        # se instaló en el sistema, no en el proyecto</code></pre>
+<p>Si no ves <code>(venv)</code> en la terminal, no está activo.</p>
+
+<h3>3. Código suelto en un módulo</h3>
+<pre><code># credito.py
+print("Cargando...")      # ❌ sale cada vez que alguien lo importe</code></pre>
+<p>Todo lo ejecutable va bajo el <code>if __name__ == "__main__"</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Vas a usar una función en dos archivos? Sácala a su propio módulo.</li>
+  <li>Un módulo define; el programa principal ejecuta. Separado con <code>if __name__ == "__main__"</code>.</li>
+  <li>Proyecto nuevo: <code>python -m venv venv</code>, activarlo, instalar, y <code>pip freeze &gt; requirements.txt</code>.</li>
+  <li>Antes de escribir algo, revisa si ya está en la biblioteca estándar.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>import modulo</code></td><td>Trae el módulo, se usa con prefijo</td></tr>
+    <tr><td><code>from modulo import f</code></td><td>Trae solo <code>f</code>, sin prefijo</td></tr>
+    <tr><td><code>import modulo as m</code></td><td>Con apodo</td></tr>
+    <tr><td><code>if __name__ == "__main__":</code></td><td>Solo corre si se ejecuta este archivo</td></tr>
+    <tr><td><code>python -m venv venv</code></td><td>Crea el entorno virtual</td></tr>
+    <tr><td><code>pip install -r requirements.txt</code></td><td>Instala todo lo del proyecto</td></tr>
+    <tr><td><code>pip freeze &gt; requirements.txt</code></td><td>Guarda la lista de dependencias</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Un módulo define y el programa ejecuta. Si al importar tu archivo pasa <em>algo</em>, le falta el <code>if __name__ == "__main__"</code>.</blockquote>', 1
     FROM parts p WHERE p.number = 4
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -4977,11 +6116,496 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 16
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 16);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 16);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Usar la biblioteca estándar', 'facil', '<p>Usando los módulos <code>math</code> y <code>statistics</code>, mostrar para la lista <code>[4.5, 3.0, 2.8, 5.0]</code>:</p><pre><code>Promedio: 3.83
+Mediana: 3.75
+Raiz del promedio: 1.96
+Redondeado arriba: 4</code></pre><p><em>Nota:</em> los tres primeros con dos decimales.</p>', '<p><code>statistics.mean()</code> y <code>statistics.median()</code> hacen el promedio y la mediana. De <code>math</code> necesita <code>sqrt()</code> y <code>ceil()</code>.</p>', '<pre><code>''''''
+Programa: Estadisticas con la biblioteca estandar
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Usa los modulos math y statistics para calcular medidas
+    basicas de una lista de notas.
+''''''
 
--- ── Capítulo 17: Archivos (txt, csv, json) (borrador)
+import math
+import statistics
+
+# Inicio
+notas = [4.5, 3.0, 2.8, 5.0]
+
+promedio = statistics.mean(notas)
+
+print(f"Promedio: {promedio:.2f}")
+print(f"Mediana: {statistics.median(notas):.2f}")
+print(f"Raiz del promedio: {math.sqrt(promedio):.2f}")
+print(f"Redondeado arriba: {math.ceil(promedio)}")
+# Fin</code></pre><p>Los <code>import</code> van siempre arriba del archivo, después del encabezado. Antes de escribir una función propia vale la pena revisar si ya existe: <code>statistics.mean()</code> ahorra el <code>sum() / len()</code> y además maneja mejor los casos raros.</p><p><code>math.ceil()</code> redondea siempre hacia arriba, a diferencia de <code>round()</code>, que redondea al más cercano.</p>', '[{"stdin":"","expected_output":"Promedio: 3.83\nMediana: 3.75\nRaiz del promedio: 1.96\nRedondeado arriba: 4"}]', '''''''
+Programa: Estadisticas con la biblioteca estandar
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+notas = [4.5, 3.0, 2.8, 5.0]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Simulador de dado', 'facil', '<p>Usando <code>random</code> con semilla fija <code>random.seed(42)</code>, simular <strong>10</strong> lanzamientos de un dado y mostrar los resultados y cuántas veces salió cada cara:</p><pre><code>Lanzamientos: [6, 1, 1, 6, 3, 2, 2, 2, 6, 1]
+1: 3
+2: 3
+3: 1
+6: 3</code></pre><p><em>Nota:</em> las caras se muestran ordenadas y solo las que salieron.</p>', '<p><code>random.randint(1, 6)</code> da un número entre 1 y 6 (aquí el final SÍ entra). Para contar, el patrón del capítulo 12: <code>conteo.get(cara, 0) + 1</code>.</p>', '<pre><code>''''''
+Programa: Simulador de dado
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Simula diez lanzamientos de un dado y cuenta cuantas veces
+    salio cada cara.
+''''''
+
+import random
+
+LANZAMIENTOS = 10
+
+# Inicio
+# La semilla fija hace que el resultado sea siempre el mismo:
+# util para probar el programa
+random.seed(42)
+
+resultados = [random.randint(1, 6) for _ in range(LANZAMIENTOS)]
+
+conteo = {}
+for cara in resultados:
+    conteo[cara] = conteo.get(cara, 0) + 1
+
+print(f"Lanzamientos: {resultados}")
+
+for cara in sorted(conteo):
+    print(f"{cara}: {conteo[cara]}")
+# Fin</code></pre><p>Dos detalles:</p><ul><li><strong><code>random.seed(42)</code></strong> fija la secuencia de números "aleatorios". Sin ella, cada corrida daría algo distinto y el programa sería imposible de probar. En producción se quita.</li><li><strong><code>randint(1, 6)</code> sí incluye el 6</strong>, a diferencia de <code>range(1, 6)</code>. Es de las pocas funciones de Python donde el final entra.</li></ul><p>El guion bajo en <code>for _ in range(...)</code> es la convención para decir "esta variable no me importa, solo quiero repetir".</p>', '[{"stdin":"","expected_output":"Lanzamientos: [6, 1, 1, 6, 3, 2, 2, 2, 6, 1]\n1: 3\n2: 3\n3: 1\n6: 3"}]', '''''''
+Programa: Simulador de dado
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+LANZAMIENTOS = 10
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Módulo de formato', 'medio', '<p>Escribir un módulo de utilidades con tres funciones y probarlo con el guardián <code>if __name__ == "__main__"</code>:</p><ul><li><code>pesos(valor)</code> → <code>$ 1,250,000</code></li><li><code>porcentaje(parte, total)</code> → <code>25.0%</code></li><li><code>titulo(texto)</code> → el texto centrado en 30 caracteres entre líneas de <code>=</code></li></ul><pre><code>==============================
+        REPORTE DIARIO
+==============================
+Ventas: $ 1,250,000
+Meta cumplida: 62.5%</code></pre>', '<p><code>f"{valor:,}"</code> mete el separador de miles y <code>f"{texto:^30}"</code> centra en 30 caracteres. Las funciones devuelven el texto; el <code>print()</code> va en el bloque del guardián.</p>', '<pre><code>''''''
+Modulo: formato
+Autor:  Ana Gomez
+Fecha:  2026-03-14
+Descripcion:
+    Utilidades de formato para los reportes del banco.
+    Se puede importar desde otros archivos o ejecutar directo
+    para probarlo.
+''''''
+
+ANCHO = 30
+
+
+def pesos(valor):
+    ''''''
+    Formatea un valor como moneda colombiana.
+
+    Parametros:
+        valor (int): el monto
+
+    Retorna:
+        str: por ejemplo "$ 1,250,000"
+    ''''''
+    return f"$ {valor:,}"
+
+
+def porcentaje(parte, total):
+    ''''''
+    Calcula que porcentaje representa parte sobre total.
+
+    Parametros:
+        parte (int|float): la cantidad
+        total (int|float): el total de referencia
+
+    Retorna:
+        str: por ejemplo "25.0%"
+    ''''''
+    return f"{parte / total * 100}%"
+
+
+def titulo(texto):
+    ''''''
+    Arma un titulo centrado entre lineas de igual.
+
+    Parametros:
+        texto (str): el titulo
+
+    Retorna:
+        str: el bloque de tres lineas
+    ''''''
+    linea = "=" * ANCHO
+    return f"{linea}\n{texto:^{ANCHO}}\n{linea}"
+
+
+# Este bloque solo corre si se ejecuta ESTE archivo directamente.
+# Si alguien hace "import formato", no sale nada.
+if __name__ == "__main__":
+    # Inicio
+    print(titulo("REPORTE DIARIO"))
+    print(f"Ventas: {pesos(1250000)}")
+    print(f"Meta cumplida: {porcentaje(1250000, 2000000)}")
+    # Fin</code></pre><p>Así se escribe un módulo de verdad:</p><ul><li><strong>Las funciones solo devuelven.</strong> Ninguna imprime, así que sirven igual para pantalla, archivo o correo.</li><li><strong>El guardián separa los dos usos.</strong> Ejecutado directo, muestra la demostración; importado, solo aporta sus funciones y no ensucia la salida de nadie.</li></ul><p>El formato <code>{texto:^{ANCHO}}</code> tiene llaves anidadas: el ancho también sale de una variable. Así, cambiar <code>ANCHO</code> reacomoda todo el reporte.</p>', '[{"stdin":"","expected_output":"==============================\n        REPORTE DIARIO\n==============================\nVentas: $ 1,250,000\nMeta cumplida: 62.5%"}]', '''''''
+Modulo: formato
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+ANCHO = 30
+
+
+if __name__ == "__main__":
+    # Inicio
+
+    # Fin
+    pass
+', 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Reporte con fechas', 'dificil', '<p>Un banco necesita un reporte de vencimientos. Dada la lista de créditos con su fecha de desembolso y su plazo en días:</p><pre><code>creditos = [
+    ("C-001", "2026-01-15", 30),
+    ("C-002", "2026-02-01", 90),
+    ("C-003", "2026-03-10", 15),
+]</code></pre><p>Tomando como "hoy" el <strong>2026-03-14</strong>, mostrar para cada crédito su fecha de vencimiento y su estado:</p><pre><code>C-001  vence 2026-02-14  VENCIDO hace 28 dias
+C-002  vence 2026-05-02  vigente, faltan 49 dias
+C-003  vence 2026-03-25  vigente, faltan 11 dias
+Vencidos: 1 de 3</code></pre>', '<p><code>datetime.date.fromisoformat("2026-01-15")</code> convierte el texto en fecha. Sumar días es <code>fecha + datetime.timedelta(days=30)</code>, y restar dos fechas da un <code>timedelta</code> del que se saca <code>.days</code>.</p>', '<pre><code>''''''
+Programa: Reporte de vencimientos
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Calcula la fecha de vencimiento de cada credito y reporta
+    cuales ya estan vencidos.
+''''''
+
+import datetime
+
+
+def vencimiento(desembolso, plazo_dias):
+    ''''''
+    Calcula la fecha de vencimiento de un credito.
+
+    Parametros:
+        desembolso (str) : fecha en formato YYYY-MM-DD
+        plazo_dias (int) : dias de plazo
+
+    Retorna:
+        datetime.date: la fecha de vencimiento
+    ''''''
+    inicio = datetime.date.fromisoformat(desembolso)
+    return inicio + datetime.timedelta(days=plazo_dias)
+
+
+# Inicio
+# En un programa real seria datetime.date.today(); aqui se fija
+# para que el reporte sea siempre el mismo
+HOY = datetime.date(2026, 3, 14)
+
+creditos = [
+    ("C-001", "2026-01-15", 30),
+    ("C-002", "2026-02-01", 90),
+    ("C-003", "2026-03-10", 15),
+]
+
+vencidos = 0
+
+for codigo, desembolso, plazo in creditos:
+    vence = vencimiento(desembolso, plazo)
+
+    # Restar dos fechas da un timedelta: .days son los dias
+    dias = (vence - HOY).days
+
+    if dias < 0:
+        vencidos += 1
+        estado = f"VENCIDO hace {abs(dias)} dias"
+    else:
+        estado = f"vigente, faltan {dias} dias"
+
+    print(f"{codigo}  vence {vence}  {estado}")
+
+print(f"Vencidos: {vencidos} de {len(creditos)}")
+# Fin</code></pre><p>Trabajar con fechas a mano es una trampa: los meses tienen distinta cantidad de días y existen los años bisiestos. El módulo <code>datetime</code> resuelve todo eso.</p><table><thead><tr><th>Operación</th><th>Qué devuelve</th></tr></thead><tbody><tr><td><code>date.fromisoformat("2026-01-15")</code></td><td>un <code>date</code></td></tr><tr><td><code>fecha + timedelta(days=30)</code></td><td>otro <code>date</code></td></tr><tr><td><code>fecha_a - fecha_b</code></td><td>un <code>timedelta</code>: <code>.days</code> da el número</td></tr></tbody></table><p>Dos decisiones de diseño: <code>HOY</code> se fija como constante en vez de usar <code>today()</code> para que el reporte sea reproducible, y <code>vencimiento()</code> es una función aparte porque es justo la pieza que se reutilizaría en otros reportes.</p>', '[{"stdin":"","expected_output":"C-001  vence 2026-02-14  VENCIDO hace 28 dias\nC-002  vence 2026-05-02  vigente, faltan 49 dias\nC-003  vence 2026-03-25  vigente, faltan 11 dias\nVencidos: 1 de 3"}]', '''''''
+Programa: Reporte de vencimientos
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+creditos = [
+    ("C-001", "2026-01-15", 30),
+    ("C-002", "2026-02-01", 90),
+    ("C-003", "2026-03-10", 15),
+]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 16;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 16);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué es un módulo en Python?', NULL, '{"options":[{"id":"a","text":"Un archivo .py cuyas funciones se pueden importar desde otro archivo"},{"id":"b","text":"Una carpeta con código"},{"id":"c","text":"Un paquete que se instala con pip"},{"id":"d","text":"Una función muy larga"}]}', '{"option_id":"a"}', 'Cualquier archivo de Python ya es un módulo. No hay que hacer nada especial.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Para qué sirve un entorno virtual?', NULL, '{"options":[{"id":"a","text":"Para que cada proyecto tenga sus propios paquetes sin pisar a los demás"},{"id":"b","text":"Para que el programa corra más rápido"},{"id":"c","text":"Para ejecutar Python sin instalarlo"},{"id":"d","text":"Para subir el proyecto a internet"}]}', '{"option_id":"a"}', 'Un proyecto puede necesitar pandas 1.5 y otro pandas 2.1: cada uno en su caja.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué hace if __name__ == "__main__":?', NULL, '{"options":[{"id":"a","text":"Ejecuta ese bloque solo si el archivo se corre directamente, no al importarlo"},{"id":"b","text":"Define la función principal del programa"},{"id":"c","text":"Importa todos los módulos necesarios"},{"id":"d","text":"Marca dónde empieza el programa para el intérprete"}]}', '{"option_id":"a"}', 'Es el interruptor entre "soy una librería" y "soy el programa".', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Cuál de estos archivos NO debe subirse al repositorio?', NULL, '{"options":[{"id":"a","text":"La carpeta venv/"},{"id":"b","text":"requirements.txt"},{"id":"c","text":"main.py"},{"id":"d","text":".gitignore"}]}', '{"option_id":"a"}', 'venv/ pesa cientos de megas y se regenera en un minuto con requirements.txt.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Por qué es mala idea from modulo import *?', NULL, '{"options":[{"id":"a","text":"Porque trae todo sin que se sepa qué, y una función puede pisar a otra en silencio"},{"id":"b","text":"Porque es más lento"},{"id":"c","text":"Porque Python lo prohíbe"},{"id":"d","text":"Porque no funciona con la biblioteca estándar"}]}', '{"option_id":"a"}', 'Si dos módulos tienen una función con el mismo nombre, el último importado gana y nadie se entera.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'import math
+print(math.ceil(4.2), math.floor(4.8))', '{"options":[{"id":"a","text":"5 4"},{"id":"b","text":"4 5"},{"id":"c","text":"4 4"},{"id":"d","text":"5 5"}]}', '{"option_id":"a"}', 'ceil siempre redondea hacia arriba y floor siempre hacia abajo, sin importar los decimales.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import statistics
+print(statistics.mean([4.0, 3.0, 5.0]))', '{"options":[{"id":"a","text":"4.0"},{"id":"b","text":"12.0"},{"id":"c","text":"3.0"},{"id":"d","text":"4"}]}', '{"option_id":"a"}', 'mean() es el promedio: hace el mismo sum() / len() pero con nombre propio.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', 'Si este archivo se importa desde otro, ¿qué imprime?', 'def saludar():
+    return "hola"
+
+if __name__ == "__main__":
+    print(saludar())', '{"options":[{"id":"a","text":"Nada"},{"id":"b","text":"hola"},{"id":"c","text":"__main__"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'Al importarlo, __name__ vale el nombre del módulo, así que el bloque no corre. Solo aporta la función.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'import datetime
+d = datetime.date(2026, 3, 10)
+print(d + datetime.timedelta(days=15))', '{"options":[{"id":"a","text":"2026-03-25"},{"id":"b","text":"2026-03-15"},{"id":"c","text":"2026-04-10"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'timedelta suma días respetando los meses y los años bisiestos, que es justo lo difícil de hacer a mano.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Este archivo se llama random.py y no funciona. ¿En qué línea está el problema?', NULL, '{"lines":["import random","","print(random.randint(1, 6))"]}', '{"line_number":1}', 'Python importa el propio archivo en vez del módulo de la biblioteca. Nunca hay que ponerle a un archivo el nombre de un módulo conocido.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Este módulo ensucia la salida de quien lo importe. ¿En qué línea está el problema?', NULL, '{"lines":["def cuota(m, t, n):","    return m * t","","print(\"Modulo cargado\")"]}', '{"line_number":4}', 'Ese print corre cada vez que alguien importe el módulo. Debía ir dentro de if __name__ == "__main__".', 1, 'seed'
+    FROM chapters WHERE number = 16;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'medio', 'Arme un módulo con su bloque de prueba', NULL, '{"lines":[{"id":"l1","text":"import math","indent":0},{"id":"l2","text":"def area_circulo(radio):","indent":0},{"id":"l3","text":"return math.pi * radio ** 2","indent":1},{"id":"l4","text":"if __name__ == \"__main__\":","indent":0},{"id":"l5","text":"print(area_circulo(2))","indent":1}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Los imports arriba, después las funciones, y de último el bloque del guardián con la prueba.', 1, 'seed'
+    FROM chapters WHERE number = 16;
+
+-- ── Capítulo 17: Archivos (txt, csv, json) (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 17, 'Archivos (txt, csv, json)', '📁', 'Leer y escribir datos en disco.', '', 0
+  SELECT p.id, 17, 'Archivos (txt, csv, json)', '📁', 'Leer y escribir datos en disco.', '<p class="jc-gancho">Todos los programas que has escrito olvidan todo al cerrarse. El inventario, las notas, los clientes: se pierden. Un archivo es la memoria que sobrevive al programa.</p>
+
+<h2>Abrir, usar, cerrar</h2>
+
+<p>Trabajar con un archivo son tres pasos, y el tercero se olvida siempre. Por eso Python tiene <code>with</code>, que cierra solo:</p>
+
+<pre><code>with open("notas.txt", "w", encoding="utf-8") as f:
+    f.write("Ana,4.5\n")
+    f.write("Juan,3.0\n")
+
+# aquí el archivo YA está cerrado, aunque algo hubiera fallado adentro</code></pre>
+
+<p>Los tres argumentos de <code>open()</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>Modo</th><th>Qué hace</th><th>Ojo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>"r"</code></td><td>Leer (por defecto)</td><td><code>FileNotFoundError</code> si no existe</td></tr>
+    <tr><td><code>"w"</code></td><td>Escribir</td><td><strong>Borra todo</strong> lo que había</td></tr>
+    <tr><td><code>"a"</code></td><td>Agregar al final</td><td>Lo crea si no existe</td></tr>
+    <tr><td><code>"x"</code></td><td>Crear nuevo</td><td>Falla si ya existe</td></tr>
+  </tbody>
+</table>
+
+<p><code>encoding="utf-8"</code> no es opcional en la práctica: sin él, las tildes y las eñes se dañan según el sistema operativo.</p>
+
+<h2>Leer un archivo de texto</h2>
+
+<pre><code># Todo de una (archivos pequeños)
+with open("notas.txt", encoding="utf-8") as f:
+    contenido = f.read()
+
+# Línea por línea (la forma recomendada)
+with open("notas.txt", encoding="utf-8") as f:
+    for linea in f:
+        print(linea.strip())      # strip() quita el salto de línea final</code></pre>
+
+<p>Recorrer el archivo con <code>for</code> lee una línea a la vez, así que funciona igual con un archivo de 10 líneas que con uno de 10 millones. <code>f.read()</code> mete todo en memoria de un golpe.</p>
+
+<p>Ese <code>.strip()</code> es obligatorio: cada línea trae su <code>\n</code> al final, y sin quitarlo <code>"Ana\n" == "Ana"</code> da <code>False</code>.</p>
+
+<h2>CSV: la tabla de toda la vida</h2>
+
+<p>Un CSV es texto plano con valores separados por comas. Es lo que exporta Excel y lo que come casi todo el mundo.</p>
+
+<pre><code>nombre,nota1,nota2
+Ana,4.5,3.8
+Juan,2.5,3.0</code></pre>
+
+<p>Se podría partir con <code>.split(",")</code>, pero el módulo <code>csv</code> maneja los casos raros (comas dentro de comillas, saltos de línea en un campo):</p>
+
+<pre><code>import csv
+
+# Leer con encabezado: cada fila llega como diccionario
+with open("notas.csv", encoding="utf-8", newline="") as f:
+    for fila in csv.DictReader(f):
+        print(fila["nombre"], fila["nota1"])
+
+# Escribir
+with open("salida.csv", "w", encoding="utf-8", newline="") as f:
+    escritor = csv.writer(f)
+    escritor.writerow(["nombre", "promedio"])
+    escritor.writerow(["Ana", 4.15])</code></pre>
+
+<p><code>newline=""</code> evita que en Windows queden renglones en blanco entre filas. Es una de esas cosas que uno copia y ya.</p>
+
+<p><strong>Ojo:</strong> todo lo que sale de un CSV es <strong>texto</strong>, igual que <code>input()</code>. Si vas a hacer cuentas, convierte: <code>float(fila["nota1"])</code>.</p>
+
+<h2>JSON: guardar estructuras completas</h2>
+
+<p>El CSV solo guarda tablas planas. Cuando el dato tiene estructura —un diccionario de diccionarios, listas adentro— se usa JSON.</p>
+
+<pre><code>import json
+
+clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000, "activa": True},
+    "1045": {"nombre": "Juan", "saldo": 80000, "activa": False},
+}
+
+# Guardar
+with open("clientes.json", "w", encoding="utf-8") as f:
+    json.dump(clientes, f, indent=2, ensure_ascii=False)
+
+# Leer: vuelve a ser un diccionario de Python, con sus tipos
+with open("clientes.json", encoding="utf-8") as f:
+    datos = json.load(f)
+
+print(datos["1023"]["saldo"] + 1000)     # 251000 — es un int de verdad</code></pre>
+
+<p>Esa es la ventaja grande sobre el CSV: JSON <strong>conserva los tipos</strong>. Un número vuelve como número y un <code>True</code> vuelve como <code>True</code>.</p>
+
+<table>
+  <thead>
+    <tr><th>Función</th><th>Qué hace</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>json.dump(obj, f)</code></td><td>Escribe al archivo</td></tr>
+    <tr><td><code>json.load(f)</code></td><td>Lee del archivo</td></tr>
+    <tr><td><code>json.dumps(obj)</code></td><td>Convierte a texto (con "s" de string)</td></tr>
+    <tr><td><code>json.loads(texto)</code></td><td>Convierte desde texto</td></tr>
+  </tbody>
+</table>
+
+<p><code>indent=2</code> lo deja legible para humanos y <code>ensure_ascii=False</code> guarda las tildes como tildes y no como <code>á</code>.</p>
+
+<h2>Cuando el archivo no está</h2>
+
+<p>Los archivos fallan por cosas que no dependen de ti: alguien lo borró, cambió de carpeta, no hay permisos. Es el terreno natural del capítulo 15.</p>
+
+<pre><code>import json
+
+def cargar_clientes(ruta):
+    ''''''Devuelve los clientes guardados, o un diccionario vacío si es la
+    primera vez que corre el programa.''''''
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}                     # primera vez: arranca vacío
+    except json.JSONDecodeError:
+        print("El archivo está dañado, se empieza de cero")
+        return {}</code></pre>
+
+<p>Ese patrón —intentar cargar, y si no hay nada empezar vacío— es exactamente lo que hace cualquier aplicación la primera vez que la abres.</p>
+
+<h2>La película de un programa que recuerda</h2>
+
+<pre><code>datos = cargar_clientes("clientes.json")    # 1. cargar
+datos["1088"] = {"nombre": "Sofia", "saldo": 500000}   # 2. modificar
+
+with open("clientes.json", "w", encoding="utf-8") as f:  # 3. guardar
+    json.dump(datos, f, indent=2, ensure_ascii=False)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Qué pasa</th><th>Si el programa se cierra aquí…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>El archivo se vuelve un diccionario en memoria</td><td>no pasa nada</td></tr>
+    <tr><td>2</td><td>Se cambia el diccionario en memoria</td><td><strong>se pierde el cambio</strong></td></tr>
+    <tr><td>3</td><td>El diccionario se escribe al archivo</td><td>queda guardado</td></tr>
+  </tbody>
+</table>
+
+<p>Cargar → modificar → guardar. Si olvidas el paso 3, el programa funciona perfecto… hasta que lo cierras.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Abrir en <code>"w"</code> creyendo que agrega</h3>
+<pre><code>with open("datos.txt", "w") as f:    # ❌ borró todo el historial
+with open("datos.txt", "a") as f:    # ✅ agrega al final</code></pre>
+
+<h3>2. Olvidar el <code>.strip()</code></h3>
+<pre><code>for linea in f:
+    if linea == "fin":     # ❌ nunca es igual: la línea es "fin\n"
+    if linea.strip() == "fin":   # ✅</code></pre>
+
+<h3>3. Hacer cuentas con lo que sale de un CSV</h3>
+<pre><code>total += fila["nota1"]           # ❌ concatena textos
+total += float(fila["nota1"])    # ✅</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Siempre <code>with open(...)</code>: cierra solo, incluso si algo falla.</li>
+  <li>Siempre <code>encoding="utf-8"</code>.</li>
+  <li>¿Tabla plana? CSV. ¿Estructura con tipos? JSON.</li>
+  <li>Cargar → modificar → guardar. El paso 3 no se olvida.</li>
+  <li>Envuelve la lectura en <code>try / except FileNotFoundError</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>with open(r, "r", encoding="utf-8") as f:</code></td><td>Abre para leer y cierra solo</td></tr>
+    <tr><td><code>for linea in f:</code></td><td>Recorre línea por línea</td></tr>
+    <tr><td><code>f.write(texto)</code></td><td>Escribe (hay que poner el <code>\n</code>)</td></tr>
+    <tr><td><code>csv.DictReader(f)</code></td><td>Cada fila como diccionario</td></tr>
+    <tr><td><code>json.dump(obj, f, indent=2)</code></td><td>Guarda estructura legible</td></tr>
+    <tr><td><code>json.load(f)</code></td><td>Recupera la estructura con sus tipos</td></tr>
+    <tr><td><code>except FileNotFoundError:</code></td><td>El archivo no existe todavía</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Modo <code>"w"</code> borra el archivo entero antes de escribir. Si querías agregar, era <code>"a"</code>. Ese descuido ha borrado muchos datos de trabajos reales.</blockquote>', 1
     FROM parts p WHERE p.number = 4
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -4993,7 +6617,312 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 17
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 17);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Bitácora de ventas', 'facil', '<p>Escribir un programa que registre tres ventas en un archivo <code>ventas.txt</code>, una por línea, y luego lo lea y muestre su contenido con el total:</p><pre><code>Contenido de ventas.txt:
+50000
+30000
+20000
+Total: 100000</code></pre><p><em>Nota:</em> use <code>with open(...)</code> y <code>encoding="utf-8"</code>.</p>', '<p>Primero abrir en modo <code>"w"</code> para escribir (recuerde poner el <code>\n</code> a mano) y después en modo lectura recorriendo con <code>for linea in f</code>. No olvide <code>.strip()</code>.</p>', '<pre><code>''''''
+Programa: Bitacora de ventas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Guarda las ventas del dia en un archivo de texto y luego lo
+    lee para mostrar el total.
+''''''
+
+ARCHIVO = "ventas.txt"
+
+# Inicio
+ventas = [50000, 30000, 20000]
+
+# Modo "w": crea el archivo o borra lo que hubiera
+with open(ARCHIVO, "w", encoding="utf-8") as f:
+    for venta in ventas:
+        # write() NO agrega el salto de linea: hay que ponerlo
+        f.write(f"{venta}\n")
+
+print(f"Contenido de {ARCHIVO}:")
+
+total = 0
+with open(ARCHIVO, encoding="utf-8") as f:
+    for linea in f:
+        limpia = linea.strip()      # quita el salto de linea final
+        print(limpia)
+        total += int(limpia)        # lo que sale de un archivo es TEXTO
+
+print(f"Total: {total}")
+# Fin</code></pre><p>Tres cosas que siempre se olvidan:</p><ul><li><code>f.write()</code> no baja de línea sola: el <code>\n</code> se pone a mano.</li><li>Cada línea leída trae su <code>\n</code> pegado, por eso el <code>.strip()</code>.</li><li>Todo lo que sale de un archivo es texto, igual que <code>input()</code>: hay que convertir para sumar.</li></ul>', '[{"stdin":"","expected_output":"Contenido de ventas.txt:\n50000\n30000\n20000\nTotal: 100000"}]', '''''''
+Programa: Bitacora de ventas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+ARCHIVO = "ventas.txt"
+
+# Inicio
+ventas = [50000, 30000, 20000]
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Notas en CSV', 'facil', '<p>Crear un archivo <code>notas.csv</code> con este contenido y luego leerlo con el módulo <code>csv</code> para mostrar el promedio de cada estudiante:</p><pre><code>nombre,nota1,nota2
+Ana,4.5,3.8
+Juan,2.5,3.0</code></pre><p>La salida esperada es:</p><pre><code>Ana: 4.15
+Juan: 2.75</code></pre>', '<p><code>csv.DictReader(f)</code> entrega cada fila como diccionario usando la primera línea como encabezado. Recuerde que los valores llegan como texto: hay que convertirlos con <code>float()</code>.</p>', '<pre><code>''''''
+Programa: Promedios desde un CSV
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Crea un archivo CSV de notas y lo lee para calcular el
+    promedio de cada estudiante.
+''''''
+
+import csv
+
+ARCHIVO = "notas.csv"
+
+# Inicio
+# newline="" evita renglones en blanco entre filas en Windows
+with open(ARCHIVO, "w", encoding="utf-8", newline="") as f:
+    escritor = csv.writer(f)
+    escritor.writerow(["nombre", "nota1", "nota2"])
+    escritor.writerow(["Ana", 4.5, 3.8])
+    escritor.writerow(["Juan", 2.5, 3.0])
+
+with open(ARCHIVO, encoding="utf-8", newline="") as f:
+    for fila in csv.DictReader(f):
+        # Todo lo que sale del CSV es texto: hay que convertir
+        promedio = (float(fila["nota1"]) + float(fila["nota2"])) / 2
+        print(f"{fila[''nombre'']}: {promedio}")
+# Fin</code></pre><p><code>DictReader</code> usa la primera línea como nombres de columna, así que se accede por <code>fila["nombre"]</code> en vez de <code>fila[0]</code>. Si mañana alguien agrega una columna al principio, el programa sigue funcionando.</p><p>Se podría partir cada línea con <code>.split(",")</code>, pero el módulo <code>csv</code> maneja los casos raros: comas dentro de comillas, campos con saltos de línea, comillas escapadas.</p>', '[{"stdin":"","expected_output":"Ana: 4.15\nJuan: 2.75"}]', '''''''
+Programa: Promedios desde un CSV
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+ARCHIVO = "notas.csv"
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Clientes en JSON', 'medio', '<p>Guardar en <code>clientes.json</code> el siguiente diccionario, volverlo a leer y aplicar un retiro de <strong>50000</strong> a la cliente <code>1023</code>, guardando el resultado:</p><pre><code>clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000},
+    "1045": {"nombre": "Juan", "saldo": 80000},
+}</code></pre><p>Salida esperada:</p><pre><code>Saldo antes: 250000
+Saldo despues: 200000
+Guardado. Total de clientes: 2</code></pre><p><em>Nota:</em> demuestre que JSON conserva los tipos haciendo la resta directamente sobre el valor leído.</p>', '<p><code>json.dump(obj, f)</code> guarda y <code>json.load(f)</code> recupera. A diferencia del CSV, el saldo vuelve como <code>int</code>: se le puede restar sin convertir.</p>', '<pre><code>''''''
+Programa: Clientes en JSON
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Guarda los clientes en un archivo JSON, los recupera y
+    aplica un retiro sobre uno de ellos.
+''''''
+
+import json
+
+ARCHIVO = "clientes.json"
+
+# Inicio
+clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000},
+    "1045": {"nombre": "Juan", "saldo": 80000},
+}
+
+# indent=2 lo deja legible; ensure_ascii=False respeta las tildes
+with open(ARCHIVO, "w", encoding="utf-8") as f:
+    json.dump(clientes, f, indent=2, ensure_ascii=False)
+
+# Al recuperarlo vuelve a ser un diccionario de Python, con sus tipos
+with open(ARCHIVO, encoding="utf-8") as f:
+    datos = json.load(f)
+
+print(f"Saldo antes: {datos[''1023''][''saldo'']}")
+
+# El saldo es un int de verdad: se le puede restar sin convertir
+datos["1023"]["saldo"] -= 50000
+
+print(f"Saldo despues: {datos[''1023''][''saldo'']}")
+
+# Cargar -> modificar -> GUARDAR: sin este paso el cambio se pierde
+with open(ARCHIVO, "w", encoding="utf-8") as f:
+    json.dump(datos, f, indent=2, ensure_ascii=False)
+
+print(f"Guardado. Total de clientes: {len(datos)}")
+# Fin</code></pre><p>La diferencia grande con el CSV: <strong>JSON conserva los tipos</strong>. El saldo vuelve como <code>int</code> y el <code>-= 50000</code> funciona directo. Con un CSV habría que convertir cada valor a mano.</p><p>Y el ciclo completo es siempre el mismo: <strong>cargar → modificar → guardar</strong>. Si se olvida el último paso, el programa funciona perfecto hasta que se cierra y todo vuelve a como estaba.</p>', '[{"stdin":"","expected_output":"Saldo antes: 250000\nSaldo despues: 200000\nGuardado. Total de clientes: 2"}]', '''''''
+Programa: Clientes en JSON
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+ARCHIVO = "clientes.json"
+
+# Inicio
+clientes = {
+    "1023": {"nombre": "Ana", "saldo": 250000},
+    "1045": {"nombre": "Juan", "saldo": 80000},
+}
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Registro que sobrevive', 'dificil', '<p>Escribir un programa que lleve el registro de gastos en <code>gastos.json</code> y que funcione tanto la primera vez (cuando el archivo no existe) como las siguientes.</p><p>Debe tener tres funciones: <code>cargar(ruta)</code>, <code>guardar(ruta, datos)</code> y <code>agregar(datos, categoria, monto)</code>.</p><p>El programa registra tres gastos y muestra el informe:</p><pre><code>Primera corrida: 0 categorias
+mercado: 150000
+transporte: 45000
+Total: 195000
+Segunda corrida: 2 categorias</code></pre><p><em>Nota:</em> <code>cargar()</code> debe devolver un diccionario vacío si el archivo no existe o está dañado, sin caerse.</p>', '<p><code>cargar()</code> envuelve la lectura en <code>try / except FileNotFoundError</code> y devuelve <code>{}</code>. Para acumular por categoría, el patrón del capítulo 12: <code>datos.get(categoria, 0) + monto</code>.</p>', '<pre><code>''''''
+Programa: Registro de gastos persistente
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Lleva el acumulado de gastos por categoria en un archivo
+    JSON que sobrevive entre ejecuciones.
+''''''
+
+import json
+
+ARCHIVO = "gastos.json"
+
+
+def cargar(ruta):
+    ''''''
+    Recupera los gastos guardados.
+
+    Parametros:
+        ruta (str): archivo JSON
+
+    Retorna:
+        dict: los gastos, o {} si es la primera vez o el
+              archivo esta dañado
+    ''''''
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        # Primera corrida: todavia no hay nada que cargar
+        return {}
+    except json.JSONDecodeError:
+        print("El archivo estaba dañado, se empieza de cero")
+        return {}
+
+
+def guardar(ruta, datos):
+    ''''''
+    Escribe los gastos al archivo.
+
+    Parametros:
+        ruta (str)  : archivo JSON
+        datos (dict): categoria -> total acumulado
+    ''''''
+    with open(ruta, "w", encoding="utf-8") as f:
+        json.dump(datos, f, indent=2, ensure_ascii=False)
+
+
+def agregar(datos, categoria, monto):
+    ''''''
+    Suma un gasto a su categoria.
+
+    Parametros:
+        datos (dict)    : gastos acumulados
+        categoria (str) : nombre de la categoria
+        monto (int)     : valor del gasto
+
+    Retorna:
+        dict: los datos actualizados
+    ''''''
+    datos[categoria] = datos.get(categoria, 0) + monto
+    return datos
+
+
+# Inicio
+gastos = cargar(ARCHIVO)
+print(f"Primera corrida: {len(gastos)} categorias")
+
+agregar(gastos, "mercado", 120000)
+agregar(gastos, "transporte", 45000)
+agregar(gastos, "mercado", 30000)   # se suma a lo que ya habia
+
+guardar(ARCHIVO, gastos)
+
+for categoria, total in gastos.items():
+    print(f"{categoria}: {total}")
+
+print(f"Total: {sum(gastos.values())}")
+
+# Se vuelve a cargar para comprobar que quedo guardado
+print(f"Segunda corrida: {len(cargar(ARCHIVO))} categorias")
+# Fin</code></pre><p>Esto ya es un programa de verdad. Tres ideas:</p><ul><li><strong><code>cargar()</code> nunca se cae.</strong> La primera vez no hay archivo, y eso no es un error: es lo normal. Devolver <code>{}</code> deja que el programa arranque vacío, igual que cualquier aplicación recién instalada.</li><li><strong>Dos <code>except</code> distintos.</strong> Que el archivo no exista y que esté corrupto son problemas diferentes y merecen respuestas diferentes.</li><li><strong>Las funciones no imprimen.</strong> <code>cargar</code>, <code>guardar</code> y <code>agregar</code> solo manejan datos; los <code>print()</code> viven en el programa principal. Así estas tres funciones se podrían usar igual desde una interfaz gráfica o una API.</li></ul><p>Fíjese en que <code>mercado</code> aparece dos veces y termina en 150000: el <code>get(categoria, 0) + monto</code> acumula en vez de reemplazar.</p>', '[{"stdin":"","expected_output":"Primera corrida: 0 categorias\nmercado: 150000\ntransporte: 45000\nTotal: 195000\nSegunda corrida: 2 categorias"}]', '''''''
+Programa: Registro de gastos persistente
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+ARCHIVO = "gastos.json"
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 17;
 DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 17);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué ventaja tiene with open(...) sobre abrir el archivo a mano?', NULL, '{"options":[{"id":"a","text":"Cierra el archivo solo, incluso si algo falla adentro"},{"id":"b","text":"Es más rápido"},{"id":"c","text":"Permite leer y escribir a la vez"},{"id":"d","text":"No necesita la ruta del archivo"}]}', '{"option_id":"a"}', 'Olvidar el .close() es el error clásico; with lo hace imposible.', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué le pasa a un archivo existente si se abre en modo "w"?', NULL, '{"options":[{"id":"a","text":"Se borra todo su contenido"},{"id":"b","text":"Se agrega al final"},{"id":"c","text":"Da un error porque ya existe"},{"id":"d","text":"Se abre solo para lectura"}]}', '{"option_id":"a"}', 'Para agregar sin borrar se usa el modo "a". Este descuido ha borrado datos de trabajos reales.', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Cuál es la diferencia clave entre guardar en CSV y guardar en JSON?', NULL, '{"options":[{"id":"a","text":"JSON conserva los tipos y la estructura; el CSV lo devuelve todo como texto plano"},{"id":"b","text":"El CSV ocupa menos espacio"},{"id":"c","text":"JSON solo sirve para internet"},{"id":"d","text":"El CSV no se puede leer con Python"}]}', '{"option_id":"a"}', 'Con JSON un int vuelve como int; con CSV hay que convertir cada valor a mano.', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Por qué se usa encoding="utf-8" al abrir un archivo?', NULL, '{"options":[{"id":"a","text":"Para que las tildes y las eñes no se dañen entre sistemas operativos"},{"id":"b","text":"Para que el archivo pese menos"},{"id":"c","text":"Para poder escribir números"},{"id":"d","text":"Es obligatorio en Python 3"}]}', '{"option_id":"a"}', 'Sin él, Python usa la codificación del sistema y el mismo archivo se lee distinto en cada máquina.', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', 'Un programa carga un JSON, modifica el diccionario y se cierra. ¿Qué pasa?', NULL, '{"options":[{"id":"a","text":"El cambio se pierde: faltó volver a guardar"},{"id":"b","text":"El cambio queda guardado automáticamente"},{"id":"c","text":"El archivo se corrompe"},{"id":"d","text":"Python lanza un error al cerrar"}]}', '{"option_id":"a"}', 'El ciclo es cargar, modificar y GUARDAR. Modificar el diccionario solo cambia la memoria.', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', 'El archivo tiene la línea "fin". ¿Qué imprime este programa?', 'with open("d.txt", encoding="utf-8") as f:
+    for linea in f:
+        if linea == "fin":
+            print("encontrado")
+print("listo")', '{"options":[{"id":"a","text":"listo"},{"id":"b","text":"encontrado\nlisto"},{"id":"c","text":"encontrado"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'La línea leída es "fin\n", que no es igual a "fin". Faltaba el .strip().', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import json
+d = {"saldo": 250000}
+texto = json.dumps(d)
+vuelto = json.loads(texto)
+print(vuelto["saldo"] + 1000)', '{"options":[{"id":"a","text":"251000"},{"id":"b","text":"2500001000"},{"id":"c","text":"TypeError"},{"id":"d","text":"250000"}]}', '{"option_id":"a"}', 'JSON conserva los tipos: el saldo vuelve como int y la suma es aritmética.', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', 'El CSV tiene la columna nota1 con el valor 4.5. ¿Qué imprime?', 'import csv
+with open("n.csv", encoding="utf-8", newline="") as f:
+    for fila in csv.DictReader(f):
+        print(fila["nota1"] + fila["nota1"])', '{"options":[{"id":"a","text":"4.54.5"},{"id":"b","text":"9.0"},{"id":"c","text":"9"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'Todo lo que sale de un CSV es texto: el + concatena. Faltaba float().', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'El programa debía agregar al historial pero lo borró. ¿En qué línea está el error?', NULL, '{"lines":["with open(\"log.txt\", \"w\", encoding=\"utf-8\") as f:","    f.write(\"nuevo registro\\n\")"]}', '{"line_number":1}', 'El modo "w" borra el archivo entero. Para agregar al final va el modo "a".', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El programa se cae la primera vez que se ejecuta. ¿En qué línea está el problema?', NULL, '{"lines":["import json","","with open(\"datos.json\", encoding=\"utf-8\") as f:","    datos = json.load(f)","","print(len(datos))"]}', '{"line_number":3}', 'Si el archivo no existe todavía, open lanza FileNotFoundError. Hay que envolverlo en try/except y devolver {}.', 1, 'seed'
+    FROM chapters WHERE number = 17;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme la función que carga un JSON sin caerse la primera vez', NULL, '{"lines":[{"id":"l1","text":"def cargar(ruta):","indent":0},{"id":"l2","text":"try:","indent":1},{"id":"l3","text":"with open(ruta, encoding=\"utf-8\") as f:","indent":2},{"id":"l4","text":"return json.load(f)","indent":3},{"id":"l5","text":"except FileNotFoundError:","indent":1},{"id":"l6","text":"return {}","indent":2}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'El with va dentro del try, y el except devuelve un diccionario vacío para que el programa arranque de cero.', 1, 'seed'
+    FROM chapters WHERE number = 17;
 
 -- ── Capítulo 18: Clases y objetos (borrador)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)

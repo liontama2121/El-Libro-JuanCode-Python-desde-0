@@ -1,0 +1,62 @@
+[
+  {
+    "orden": 1,
+    "title": "Función de IVA",
+    "difficulty": "facil",
+    "statement_html": "<p>Escribir una función <code>calcular_iva(precio)</code> que <strong>devuelva</strong> el valor del IVA (19%) de un precio. Luego usarla para mostrar:</p><pre><code>IVA de 10000: 1900.0\nIVA de 50000: 9500.0\nTotal a pagar: 71400.0</code></pre><p><em>Nota:</em> la función debe devolver, no imprimir. El total es la suma de los dos precios más sus IVAs.</p>",
+    "hint_html": "<p>Dentro de la función va <code>return precio * 0.19</code>. Los <code>print()</code> van afuera, en quien la llama.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Calculadora de IVA\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Define una funcion para calcular el IVA y la usa sobre\n    dos precios.\n'''\n\nIVA = 0.19\n\n\ndef calcular_iva(precio):\n    '''\n    Calcula el IVA de un precio.\n\n    Parametros:\n        precio (int|float): valor sin IVA\n\n    Retorna:\n        float: el valor del IVA\n    '''\n    return precio * IVA\n\n\n# Inicio\nprecio1 = 10000\nprecio2 = 50000\n\niva1 = calcular_iva(precio1)\niva2 = calcular_iva(precio2)\n\nprint(f\"IVA de {precio1}: {iva1}\")\nprint(f\"IVA de {precio2}: {iva2}\")\nprint(f\"Total a pagar: {precio1 + iva1 + precio2 + iva2}\")\n# Fin</code></pre><p>La función <strong>devuelve</strong> y no imprime. Por eso el mismo <code>calcular_iva()</code> sirve para mostrarlo en pantalla y también para sumarlo al total. Si hubiera hecho <code>print()</code> adentro, no se podría usar el resultado para nada más.</p><p>Fíjese en el orden del archivo: las funciones se definen arriba y la lógica del programa va abajo, entre <code>#Inicio</code> y <code>#Fin</code>.</p>",
+    "starter_code": "'''\nPrograma: Calculadora de IVA\nAutor:\nFecha:\nDescripcion:\n'''\n\nIVA = 0.19\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "IVA de 10000: 1900.0\nIVA de 50000: 9500.0\nTotal a pagar: 71400.0"
+      }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Clasificar notas",
+    "difficulty": "facil",
+    "statement_html": "<p>Escribir una función <code>clasificar(nota)</code> que devuelva el concepto de una nota:</p><table><thead><tr><th>Nota</th><th>Concepto</th></tr></thead><tbody><tr><td>4.5 o más</td><td>Excelente</td></tr><tr><td>4.0 a 4.4</td><td>Muy bien</td></tr><tr><td>3.0 a 3.9</td><td>Aprobado</td></tr><tr><td>menor a 3.0</td><td>Reprobado</td></tr></tbody></table><p>Usarla para clasificar la lista <code>[4.8, 4.2, 3.5, 2.0]</code>:</p><pre><code>4.8: Excelente\n4.2: Muy bien\n3.5: Aprobado\n2.0: Reprobado</code></pre>",
+    "hint_html": "<p>Como cada <code>return</code> termina la función de inmediato, no hacen falta <code>elif</code> ni <code>else</code>: basta con <code>if</code> seguidos, del más exigente al menos exigente.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Clasificador de notas\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Define una funcion que convierte una nota en su concepto\n    cualitativo y la aplica a una lista.\n'''\n\n\ndef clasificar(nota):\n    '''\n    Convierte una nota de 0.0 a 5.0 en su concepto.\n\n    Parametros:\n        nota (float): la nota a clasificar\n\n    Retorna:\n        str: Excelente, Muy bien, Aprobado o Reprobado\n    '''\n    # Cada return sale de la funcion, asi que no hacen falta elif\n    if nota >= 4.5:\n        return \"Excelente\"\n    if nota >= 4.0:\n        return \"Muy bien\"\n    if nota >= 3.0:\n        return \"Aprobado\"\n    return \"Reprobado\"\n\n\n# Inicio\nnotas = [4.8, 4.2, 3.5, 2.0]\n\nfor nota in notas:\n    print(f\"{nota}: {clasificar(nota)}\")\n# Fin</code></pre><p>Este estilo de <em>varios <code>return</code> sin <code>else</code></em> se llama <em>early return</em> y es muy común: apenas se sabe la respuesta, se devuelve. El orden sigue importando igual que en el capítulo 6: de la condición más exigente a la menos exigente.</p><p>El último <code>return</code> no necesita <code>if</code>: si el programa llegó hasta ahí es porque ninguna condición anterior se cumplió.</p>",
+    "starter_code": "'''\nPrograma: Clasificador de notas\nAutor:\nFecha:\nDescripcion:\n'''\n\n\n# Inicio\nnotas = [4.8, 4.2, 3.5, 2.0]\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "4.8: Excelente\n4.2: Muy bien\n3.5: Aprobado\n2.0: Reprobado"
+      }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Estadísticas en una función",
+    "difficulty": "medio",
+    "statement_html": "<p>Escribir una función <code>analizar(notas)</code> que reciba una lista y devuelva <strong>tres valores</strong>: la menor, la mayor y el promedio.</p><p>Escribir también <code>formatear(nombre, notas)</code> que devuelva una línea lista para imprimir usando la función anterior.</p><pre><code>Ana      min 2.5  max 5.0  prom 4.00\nJuan     min 2.0  max 3.0  prom 2.50</code></pre><p><em>Nota:</em> el nombre va alineado en 8 espacios y el promedio con dos decimales. Ninguna de las dos funciones debe imprimir.</p>",
+    "hint_html": "<p><code>return min(notas), max(notas), suma / cantidad</code> devuelve una tupla, y quien llama la desempaqueta con <code>a, b, c = analizar(...)</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Estadisticas de notas con funciones\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Separa el calculo de estadisticas y el formato de la salida\n    en dos funciones independientes.\n'''\n\n\ndef analizar(notas):\n    '''\n    Calcula estadisticas basicas de una lista de notas.\n\n    Parametros:\n        notas (list): notas de un estudiante\n\n    Retorna:\n        tuple: (menor, mayor, promedio)\n    '''\n    return min(notas), max(notas), sum(notas) / len(notas)\n\n\ndef formatear(nombre, notas):\n    '''\n    Arma la linea de reporte de un estudiante.\n\n    Parametros:\n        nombre (str) : nombre del estudiante\n        notas (list) : sus notas\n\n    Retorna:\n        str: la linea lista para imprimir\n    '''\n    menor, mayor, promedio = analizar(notas)\n    return f\"{nombre:<8} min {menor}  max {mayor}  prom {promedio:.2f}\"\n\n\n# Inicio\ncurso = {\n    \"Ana\": [4.5, 2.5, 5.0],\n    \"Juan\": [2.0, 3.0, 2.5],\n}\n\nfor nombre, notas in curso.items():\n    print(formatear(nombre, notas))\n# Fin</code></pre><p>Dos ideas de diseño que se ven aquí:</p><ul><li><strong>Una función, una responsabilidad.</strong> <code>analizar()</code> hace cuentas y <code>formatear()</code> arma texto. Si mañana cambia el formato del reporte, <code>analizar()</code> ni se entera.</li><li><strong>Devolver varias cosas es devolver una tupla.</strong> <code>return a, b, c</code> arma una tupla y el desempaquetado del capítulo 11 la reparte en tres variables con nombre.</li></ul><p>Ninguna de las dos imprime: el único <code>print()</code> está en el programa principal. Así estas funciones servirían igual para escribir un archivo o mandar un correo.</p>",
+    "starter_code": "'''\nPrograma: Estadisticas de notas con funciones\nAutor:\nFecha:\nDescripcion:\n'''\n\n\n# Inicio\ncurso = {\n    \"Ana\": [4.5, 2.5, 5.0],\n    \"Juan\": [2.0, 3.0, 2.5],\n}\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "",
+        "expected_output": "Ana      min 2.5  max 5.0  prom 4.00\nJuan     min 2.0  max 3.0  prom 2.50"
+      }
+    ]
+  },
+  {
+    "orden": 4,
+    "title": "Módulo de crédito",
+    "difficulty": "dificil",
+    "statement_html": "<p>Un banco necesita tres funciones reutilizables:</p><ul><li><code>cuota_mensual(monto, tasa, meses)</code> — devuelve la cuota fija, redondeada a entero.</li><li><code>total_pagado(cuota, meses)</code> — devuelve cuánto se paga en total.</li><li><code>aprobar(ingresos, cuota, tope=0.30)</code> — devuelve <code>True</code> si la cuota no supera el porcentaje tope de los ingresos.</li></ul><p>Solicitar monto, tasa mensual (en %), plazo e ingresos. Por ejemplo, con un préstamo de <strong>1000000</strong> al <strong>2%</strong> mensual a <strong>24</strong> meses e ingresos de <strong>300000</strong>:</p><pre><code>Cuota mensual: 52,871\nTotal pagado: 1,268,904\nIntereses: 268,904\nEstado: APROBADO</code></pre><p><em>Nota:</em> la fórmula de la cuota es <code>monto * tasa / (1 - (1 + tasa) ** -meses)</code>, con la tasa como proporción.</p>",
+    "hint_html": "<p>Las tres funciones se definen arriba y solo devuelven. El programa principal pide los datos, las llama y arma la salida. El <code>tope</code> lleva valor por defecto, así que se puede llamar sin él.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Modulo de credito\nAutor:    Ana Gomez\nFecha:    2026-03-14\nDescripcion:\n    Calcula la cuota fija de un credito, el total pagado y si el\n    solicitante lo puede sostener con sus ingresos.\n'''\n\n\ndef cuota_mensual(monto, tasa, meses):\n    '''\n    Calcula la cuota fija de un credito de cuota constante.\n\n    Parametros:\n        monto (int)  : valor prestado\n        tasa (float) : interes mensual como proporcion (0.02 = 2%)\n        meses (int)  : plazo en meses\n\n    Retorna:\n        int: valor de la cuota, redondeado\n    '''\n    # Formula de anualidades\n    return round(monto * tasa / (1 - (1 + tasa) ** -meses))\n\n\ndef total_pagado(cuota, meses):\n    '''\n    Cuanto se termina pagando en total.\n\n    Parametros:\n        cuota (int): cuota mensual\n        meses (int): plazo en meses\n\n    Retorna:\n        int: suma de todas las cuotas\n    '''\n    return cuota * meses\n\n\ndef aprobar(ingresos, cuota, tope=0.30):\n    '''\n    Decide si la cuota es sostenible con los ingresos.\n\n    Parametros:\n        ingresos (int): ingresos mensuales\n        cuota (int)   : cuota del credito\n        tope (float)  : maximo porcentaje de los ingresos permitido\n\n    Retorna:\n        bool: True si la cuota no supera el tope\n    '''\n    return cuota <= ingresos * tope\n\n\n# Inicio\nmonto = int(input(\"Monto: \"))\ntasa = float(input(\"Tasa mensual (%): \")) / 100\nmeses = int(input(\"Meses: \"))\ningresos = int(input(\"Ingresos mensuales: \"))\n\ncuota = cuota_mensual(monto, tasa, meses)\ntotal = total_pagado(cuota, meses)\n\nprint(f\"Cuota mensual: {cuota:,}\")\nprint(f\"Total pagado: {total:,}\")\nprint(f\"Intereses: {total - monto:,}\")\nprint(f\"Estado: {'APROBADO' if aprobar(ingresos, cuota) else 'NEGADO'}\")\n# Fin</code></pre><p>Por qué este código es mejor que el mismo cálculo escrito de corrido:</p><ul><li><strong>Cada función se puede probar sola.</strong> <code>cuota_mensual(1000000, 0.02, 24)</code> se puede verificar contra una calculadora financiera sin correr todo el programa.</li><li><strong><code>aprobar()</code> tiene el tope por defecto.</strong> El banco normalmente usa 30%, pero si mañana quiere evaluar al 40% se llama <code>aprobar(ingresos, cuota, 0.40)</code> sin tocar la función.</li><li><strong>La conversión de porcentaje a proporción se hace una sola vez</strong>, al pedir el dato. Adentro de las funciones la tasa ya llega lista, y eso evita el error clásico de dividir entre 100 dos veces.</li></ul><p>Estas tres funciones son exactamente el tipo de pieza que en el capítulo 16 se saca a su propio archivo para importarla desde otros programas.</p>",
+    "starter_code": "'''\nPrograma: Modulo de credito\nAutor:\nFecha:\nDescripcion:\n'''\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "1000000\n2\n24\n300000\n",
+        "expected_output": "Monto: Tasa mensual (%): Meses: Ingresos mensuales: Cuota mensual: 52,871\nTotal pagado: 1,268,904\nIntereses: 268,904\nEstado: APROBADO"
+      }
+    ]
+  }
+]

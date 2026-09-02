@@ -1,0 +1,192 @@
+<p class="jc-gancho">Las tres funciones de crédito del capítulo 14 las vas a necesitar en el simulador, en el reporte y en el proyecto final. Copiarlas en cada archivo es garantizar que un día tengas tres versiones distintas. Un módulo se escribe una vez y se importa.</p>
+
+<h2>Un módulo es un archivo .py</h2>
+
+<p>Eso es todo. Cualquier archivo de Python es un módulo, y sus funciones se pueden usar desde otro archivo.</p>
+
+<pre><code># archivo: credito.py
+
+TASA_USURA = 0.025
+
+
+def cuota_mensual(monto, tasa, meses):
+    return round(monto * tasa / (1 - (1 + tasa) ** -meses))
+
+
+def total_pagado(cuota, meses):
+    return cuota * meses</code></pre>
+
+<pre><code># archivo: main.py (en la misma carpeta)
+
+import credito
+
+cuota = credito.cuota_mensual(1000000, 0.02, 24)
+print(cuota, credito.TASA_USURA)</code></pre>
+
+<h3>Las tres formas de importar</h3>
+
+<pre><code>import credito                        # todo, con prefijo
+credito.cuota_mensual(...)
+
+from credito import cuota_mensual     # solo lo que necesito, sin prefijo
+cuota_mensual(...)
+
+import credito as cr                  # con apodo
+cr.cuota_mensual(...)</code></pre>
+
+<p>La que hay que evitar es <code>from credito import *</code>: trae todo sin que se sepa qué, y si dos módulos tienen una función con el mismo nombre, uno pisa al otro en silencio.</p>
+
+<h2>El guardián: <code>if __name__ == "__main__"</code></h2>
+
+<p>Cuando importas un módulo, Python <strong>ejecuta todo lo que hay en él</strong>. Si <code>credito.py</code> tuviera un <code>print()</code> suelto, ese <code>print</code> saldría cada vez que alguien lo importe.</p>
+
+<pre><code># credito.py
+
+def cuota_mensual(monto, tasa, meses):
+    return round(monto * tasa / (1 - (1 + tasa) ** -meses))
+
+
+# Esto solo corre si se ejecuta ESTE archivo directamente
+if __name__ == "__main__":
+    print("Prueba rápida:", cuota_mensual(1000000, 0.02, 24))</code></pre>
+
+<p>La variable <code>__name__</code> vale <code>"__main__"</code> cuando el archivo se ejecuta directo, y el nombre del módulo cuando se importa. Es el interruptor que separa <em>"soy una librería"</em> de <em>"soy el programa"</em>.</p>
+
+<h2>La biblioteca estándar: lo que ya viene puesto</h2>
+
+<p>Python trae cientos de módulos sin instalar nada. Estos son los que vas a usar:</p>
+
+<pre><code>import math
+print(math.sqrt(16))       # 4.0
+print(math.ceil(4.2))      # 5   redondea hacia arriba
+print(math.floor(4.8))     # 4   hacia abajo
+print(math.pi)             # 3.141592653589793
+
+import random
+print(random.randint(1, 6))            # dado
+print(random.choice(["a", "b", "c"]))  # uno al azar
+
+import datetime
+hoy = datetime.date.today()
+print(hoy)                             # 2026-03-14
+print(hoy.year, hoy.month)
+
+import statistics
+print(statistics.mean([4.0, 3.0, 5.0]))    # 4.0
+print(statistics.median([4.0, 3.0, 5.0]))  # 4.0</code></pre>
+
+<p>Antes de escribir una función, vale la pena preguntarse si ya existe. Casi siempre sí.</p>
+
+<h2>pip: instalar lo que no viene</h2>
+
+<p>Para lo demás está <strong>PyPI</strong>, el repositorio público de paquetes, y <code>pip</code>, el programa que los instala.</p>
+
+<pre><code>pip install requests          # instalar
+pip install requests==2.31.0  # una versión exacta
+pip list                      # ver qué hay instalado
+pip uninstall requests        # desinstalar</code></pre>
+
+<p>Los que aparecen más adelante en este libro:</p>
+
+<table>
+  <thead>
+    <tr><th>Paquete</th><th>Para qué</th><th>Capítulo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>requests</code></td><td>Hablar con APIs por internet</td><td>23</td></tr>
+    <tr><td><code>pandas</code></td><td>Analizar tablas de datos</td><td>22</td></tr>
+    <tr><td><code>fastapi</code></td><td>Crear tu propia API</td><td>24</td></tr>
+  </tbody>
+</table>
+
+<h2>Entornos virtuales: una caja por proyecto</h2>
+
+<p>Aquí está el problema real. El proyecto del semestre pasado usa <code>pandas 1.5</code>; el nuevo necesita <code>pandas 2.1</code>. Si instalas todo en el computador, uno de los dos se rompe.</p>
+
+<p>Un <strong>entorno virtual</strong> es una carpeta con su propio Python y sus propios paquetes. Cada proyecto en su caja, sin pisarse.</p>
+
+<pre><code># 1. Crear el entorno (una sola vez por proyecto)
+python -m venv venv
+
+# 2. Activarlo (cada vez que se trabaja)
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Mac y Linux
+
+# 3. Instalar lo que haga falta: ya queda dentro de la caja
+pip install requests
+
+# 4. Salir
+deactivate</code></pre>
+
+<p>Sabes que está activo porque el prompt de la terminal muestra <code>(venv)</code> adelante.</p>
+
+<h3><code>requirements.txt</code>: la lista de ingredientes</h3>
+
+<pre><code># Guardar lo que este proyecto necesita
+pip freeze &gt; requirements.txt
+
+# En otro computador, instalar todo de un tirón
+pip install -r requirements.txt</code></pre>
+
+<p>Ese archivo <strong>sí</strong> va al repositorio. La carpeta <code>venv/</code> <strong>no</strong>: se regenera en un minuto y pesa cientos de megas. Por eso todo proyecto de Python lleva un <code>.gitignore</code> con <code>venv/</code> adentro.</p>
+
+<h2>Cómo se organiza un proyecto de verdad</h2>
+
+<pre><code>banco/
+├── venv/                 (no va al repositorio)
+├── requirements.txt
+├── main.py               el programa que se ejecuta
+├── credito.py            funciones de crédito
+├── clientes.py           funciones de clientes
+└── utils/
+    ├── __init__.py       marca la carpeta como paquete
+    └── formato.py</code></pre>
+
+<pre><code>from utils.formato import pesos</code></pre>
+
+<p>Ese <code>__init__.py</code> (puede estar vacío) es lo que convierte una carpeta en un <strong>paquete</strong> importable.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Ponerle a tu archivo el nombre de un módulo conocido</h3>
+<pre><code># tu archivo se llama random.py
+import random
+random.randint(1, 6)      # AttributeError: se importó TU archivo</code></pre>
+<p>Nunca llames a un archivo <code>random.py</code>, <code>math.py</code>, <code>json.py</code> ni <code>test.py</code>.</p>
+
+<h3>2. Olvidar activar el entorno</h3>
+<pre><code>pip install pandas        # se instaló en el sistema, no en el proyecto</code></pre>
+<p>Si no ves <code>(venv)</code> en la terminal, no está activo.</p>
+
+<h3>3. Código suelto en un módulo</h3>
+<pre><code># credito.py
+print("Cargando...")      # ❌ sale cada vez que alguien lo importe</code></pre>
+<p>Todo lo ejecutable va bajo el <code>if __name__ == "__main__"</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Vas a usar una función en dos archivos? Sácala a su propio módulo.</li>
+  <li>Un módulo define; el programa principal ejecuta. Separado con <code>if __name__ == "__main__"</code>.</li>
+  <li>Proyecto nuevo: <code>python -m venv venv</code>, activarlo, instalar, y <code>pip freeze &gt; requirements.txt</code>.</li>
+  <li>Antes de escribir algo, revisa si ya está en la biblioteca estándar.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>import modulo</code></td><td>Trae el módulo, se usa con prefijo</td></tr>
+    <tr><td><code>from modulo import f</code></td><td>Trae solo <code>f</code>, sin prefijo</td></tr>
+    <tr><td><code>import modulo as m</code></td><td>Con apodo</td></tr>
+    <tr><td><code>if __name__ == "__main__":</code></td><td>Solo corre si se ejecuta este archivo</td></tr>
+    <tr><td><code>python -m venv venv</code></td><td>Crea el entorno virtual</td></tr>
+    <tr><td><code>pip install -r requirements.txt</code></td><td>Instala todo lo del proyecto</td></tr>
+    <tr><td><code>pip freeze &gt; requirements.txt</code></td><td>Guarda la lista de dependencias</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Un módulo define y el programa ejecuta. Si al importar tu archivo pasa <em>algo</em>, le falta el <code>if __name__ == "__main__"</code>.</blockquote>

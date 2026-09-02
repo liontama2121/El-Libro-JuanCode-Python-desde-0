@@ -1,0 +1,166 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es la diferencia entre return y print dentro de una función?",
+    "data": { "options": [
+      { "id": "a", "text": "return entrega el resultado al programa; print solo lo muestra al usuario" },
+      { "id": "b", "text": "Son equivalentes" },
+      { "id": "c", "text": "print es más rápido" },
+      { "id": "d", "text": "return solo sirve con números" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Una función que imprime en vez de devolver no sirve para seguir calculando: su resultado se pierde."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué pasa cuando Python ejecuta un return?",
+    "data": { "options": [
+      { "id": "a", "text": "Devuelve el valor y termina la función de inmediato" },
+      { "id": "b", "text": "Devuelve el valor y sigue con las líneas siguientes" },
+      { "id": "c", "text": "Termina el programa entero" },
+      { "id": "d", "text": "Guarda el valor en una variable global" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Por eso se puede escribir varios if con return seguidos, sin elif ni else."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué es una variable local?",
+    "data": { "options": [
+      { "id": "a", "text": "Una que nace dentro de la función y muere cuando esta termina" },
+      { "id": "b", "text": "Una que se puede usar en todo el programa" },
+      { "id": "c", "text": "Una que solo guarda números" },
+      { "id": "d", "text": "Una que se define con la palabra local" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es una virtud: garantiza que una función no rompa nada de afuera por accidente."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué es mala idea que una función lea variables de afuera en vez de recibirlas por parámetro?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque deja de funcionar sola: depende de que exista algo fuera de ella" },
+      { "id": "b", "text": "Porque Python lo prohíbe" },
+      { "id": "c", "text": "Porque es más lento" },
+      { "id": "d", "text": "Porque no se puede documentar" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Una función que recibe todo lo que necesita se puede probar y reutilizar en cualquier programa."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué def agregar(x, lista=[]) es peligroso?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque la lista se crea una sola vez y se comparte entre todas las llamadas" },
+      { "id": "b", "text": "Porque las listas no pueden ser parámetros" },
+      { "id": "c", "text": "Porque hay que ponerla de primera" },
+      { "id": "d", "text": "Porque consume mucha memoria" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El valor por defecto se evalúa al definir la función. La solución es usar None y crear la lista adentro."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def doble(x):\n    return x * 2\n\nprint(doble(5) + 1)",
+    "data": { "options": [
+      { "id": "a", "text": "11" },
+      { "id": "b", "text": "10" },
+      { "id": "c", "text": "12" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "doble(5) devuelve 10 y después se le suma 1. Con print en vez de return daría TypeError."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def doble(x):\n    print(x * 2)\n\nr = doble(5)\nprint(r)",
+    "data": { "options": [
+      { "id": "a", "text": "10\nNone" },
+      { "id": "b", "text": "10\n10" },
+      { "id": "c", "text": "None" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La función imprime 10 pero no devuelve nada, así que r queda en None."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def total(precio, iva=0.19):\n    return precio + precio * iva\n\nprint(total(10000, 0))",
+    "data": { "options": [
+      { "id": "a", "text": "10000.0" },
+      { "id": "b", "text": "11900.0" },
+      { "id": "c", "text": "10000" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El argumento explícito 0 reemplaza el valor por defecto, y el resultado es float por la multiplicación."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def cambiar():\n    total = 100\n\ntotal = 5\ncambiar()\nprint(total)",
+    "data": { "options": [
+      { "id": "a", "text": "5" },
+      { "id": "b", "text": "100" },
+      { "id": "c", "text": "None" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El total de adentro es otra variable, local a la función. La de afuera ni se entera."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def clasificar(n):\n    if n >= 3.0:\n        return \"pasa\"\n    return \"no pasa\"\n\nprint(clasificar(4.0), clasificar(2.0))",
+    "data": { "options": [
+      { "id": "a", "text": "pasa no pasa" },
+      { "id": "b", "text": "pasa pasa" },
+      { "id": "c", "text": "no pasa no pasa" },
+      { "id": "d", "text": "pasa" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cada llamada es independiente: la primera sale por el primer return y la segunda llega al último."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El programa debe mostrar 19.0 pero muestra otra cosa. ¿En qué línea está el error?",
+    "data": { "lines": ["def iva(p):", "    return p * 0.19", "", "print(iva)"] },
+    "correct": { "line_number": 4 },
+    "explanation": "Falta llamar la función con paréntesis: print(iva(100)). Sin ellos se imprime el objeto función."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El resultado no se puede usar después. ¿En qué línea está el error?",
+    "data": { "lines": ["def suma(a, b):", "    print(a + b)", "", "r = suma(2, 3)", "print(r * 2)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Ahí va return, no print: como está, r queda en None y la última línea da TypeError."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme la función que calcula el IVA y la usa",
+    "data": { "lines": [
+      { "id": "l1", "text": "def calcular_iva(precio):", "indent": 0 },
+      { "id": "l2", "text": "return precio * 0.19", "indent": 1 },
+      { "id": "l3", "text": "precio = 10000", "indent": 0 },
+      { "id": "l4", "text": "print(f\"IVA: {calcular_iva(precio)}\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4"] },
+    "explanation": "La función se define antes de usarse, el return va indentado dentro de ella, y el print va afuera."
+  }
+]

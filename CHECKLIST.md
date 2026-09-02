@@ -126,10 +126,10 @@
 - [x] 11 🎯 Tuplas y sets
 - [x] 12 🗂️ Diccionarios
 - [x] 13 ⚡ Comprehensions
-- [ ] 14 🧰 Funciones
-- [ ] 15 🛡️ Errores y excepciones
-- [ ] 16 📚 Módulos, pip y entornos
-- [ ] 17 📁 Archivos
+- [x] 14 🧰 Funciones
+- [x] 15 🛡️ Errores y excepciones
+- [x] 16 📚 Módulos, pip y entornos
+- [x] 17 📁 Archivos
 - [ ] 18 🏛️ Clases y objetos
 - [ ] 19 🧬 Herencia y métodos especiales
 - [ ] 20 🏗️ Proyecto: Sistema Bancario

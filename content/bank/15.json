@@ -1,0 +1,155 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál de estos errores NO se puede atrapar con try/except?",
+    "data": { "options": [
+      { "id": "a", "text": "SyntaxError" },
+      { "id": "b", "text": "ValueError" },
+      { "id": "c", "text": "ZeroDivisionError" },
+      { "id": "d", "text": "KeyError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El SyntaxError ocurre antes de que el programa arranque: hay que arreglarlo, no atraparlo."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué error lanza int(\"veinte\")?",
+    "data": { "options": [
+      { "id": "a", "text": "ValueError" },
+      { "id": "b", "text": "TypeError" },
+      { "id": "c", "text": "NameError" },
+      { "id": "d", "text": "KeyError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El tipo está bien (es un texto) pero el contenido no representa un entero: eso es ValueError."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuándo se ejecuta el bloque finally?",
+    "data": { "options": [
+      { "id": "a", "text": "Siempre, haya error o no" },
+      { "id": "b", "text": "Solo si hubo error" },
+      { "id": "c", "text": "Solo si no hubo error" },
+      { "id": "d", "text": "Solo si se usó raise" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es para lo que hay que hacer sí o sí: cerrar un archivo, soltar una conexión."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué es mala práctica escribir except: sin especificar el error?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque atrapa hasta los bugs propios y los vuelve invisibles" },
+      { "id": "b", "text": "Porque es más lento" },
+      { "id": "c", "text": "Porque Python lo prohíbe" },
+      { "id": "d", "text": "Porque solo funciona una vez" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Convierte un bug ruidoso en uno silencioso, que es mucho más difícil de encontrar."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Para qué sirve raise ValueError(\"Saldo insuficiente\") dentro de una función?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que la función valide y quien la llama decida qué hacer" },
+      { "id": "b", "text": "Para imprimir el mensaje en pantalla" },
+      { "id": "c", "text": "Para terminar el programa" },
+      { "id": "d", "text": "Para devolver el texto como resultado" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La función sabe las reglas; el que llama decide si muestra un mensaje, reintenta o guarda un log."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "El usuario escribe abc. ¿Qué imprime este programa?",
+    "code_snippet": "try:\n    n = int(input(\"n: \"))\n    print(\"ok\")\nexcept ValueError:\n    print(\"malo\")",
+    "data": { "options": [
+      { "id": "a", "text": "n: malo" },
+      { "id": "b", "text": "n: ok" },
+      { "id": "c", "text": "n: ok\nmalo" },
+      { "id": "d", "text": "El programa se cae" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Al fallar el int(), Python abandona el resto del try: el print(\"ok\") nunca corre."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "try:\n    print(10 / 0)\nexcept ValueError:\n    print(\"valor\")\nexcept ZeroDivisionError:\n    print(\"division\")",
+    "data": { "options": [
+      { "id": "a", "text": "division" },
+      { "id": "b", "text": "valor" },
+      { "id": "c", "text": "valor\ndivision" },
+      { "id": "d", "text": "El programa se cae" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Python entra por el except que coincide con el error, no por el primero que encuentre."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "try:\n    n = int(\"5\")\nexcept ValueError:\n    print(\"error\")\nelse:\n    print(\"bien\")\nfinally:\n    print(\"fin\")",
+    "data": { "options": [
+      { "id": "a", "text": "bien\nfin" },
+      { "id": "b", "text": "fin" },
+      { "id": "c", "text": "error\nfin" },
+      { "id": "d", "text": "bien" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "No hubo error, así que corre el else; el finally corre siempre."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def retirar(saldo, monto):\n    if monto > saldo:\n        raise ValueError(\"Saldo insuficiente\")\n    return saldo - monto\n\nsaldo = 1000\ntry:\n    saldo = retirar(saldo, 5000)\nexcept ValueError as e:\n    print(e)\nprint(saldo)",
+    "data": { "options": [
+      { "id": "a", "text": "Saldo insuficiente\n1000" },
+      { "id": "b", "text": "Saldo insuficiente\n-4000" },
+      { "id": "c", "text": "Saldo insuficiente\nNone" },
+      { "id": "d", "text": "1000" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La excepción interrumpe la línea completa, así que la asignación nunca ocurre y el saldo queda intacto."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El ciclo nunca termina aunque el usuario escriba bien. ¿En qué línea está el error?",
+    "data": { "lines": ["while True:", "    try:", "        edad = int(input(\"Edad: \"))", "    except ValueError:", "        print(\"malo\")", "        break"] },
+    "correct": { "line_number": 6 },
+    "explanation": "El break está en el except: sale solo cuando FALLA. Debía ir dentro del try, después del int()."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El programa esconde los errores. ¿En qué línea está el problema?",
+    "data": { "lines": ["try:", "    n = int(input())", "except:", "    pass"] },
+    "correct": { "line_number": 3 },
+    "explanation": "Un except pelado atrapa cualquier cosa, y con pass ni siquiera avisa. Debía ser except ValueError con un mensaje."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme el ciclo que insiste hasta recibir un número válido",
+    "data": { "lines": [
+      { "id": "l1", "text": "while True:", "indent": 0 },
+      { "id": "l2", "text": "try:", "indent": 1 },
+      { "id": "l3", "text": "edad = int(input(\"Edad: \"))", "indent": 2 },
+      { "id": "l4", "text": "break", "indent": 2 },
+      { "id": "l5", "text": "except ValueError:", "indent": 1 },
+      { "id": "l6", "text": "print(\"Eso no es un numero\")", "indent": 2 },
+      { "id": "l7", "text": "print(f\"Edad: {edad}\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7"] },
+    "explanation": "El break va dentro del try y después del int(): si la conversión falla, Python salta al except y nunca lo alcanza."
+  }
+]

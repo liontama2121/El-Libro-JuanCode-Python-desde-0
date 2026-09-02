@@ -11,13 +11,18 @@
  * Necesita python en el PATH. No usa Piston: corre local y va mucho más rápido.
  */
 
-import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync, mkdtempSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dirEjercicios = join(raiz, "content", "exercises");
+
+/* Los ejercicios del capitulo 17 escriben archivos: se corren en una carpeta
+   temporal para no ensuciar el proyecto. */
+const arenero = mkdtempSync(join(tmpdir(), "juancode-"));
 
 /** Igual que el Modo Código: espacios al final de línea y saltos sobrantes no cuentan. */
 function normalizar(texto) {
@@ -79,6 +84,7 @@ for (const archivo of archivos) {
 				input: test.stdin ?? "",
 				encoding: "utf8",
 				timeout: 10_000,
+				cwd: arenero,
 			});
 
 			const obtenido = normalizar(res.stdout ?? "");
@@ -106,5 +112,7 @@ if (sinTests.length) {
 	console.log(`\n${sinTests.length} ejercicios sin tests (no se verifican):`);
 	for (const s of sinTests) console.log(`  · ${s}`);
 }
+
+rmSync(arenero, { recursive: true, force: true });
 
 process.exit(fallos > 0 ? 1 : 0);

@@ -1,0 +1,153 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué es un módulo en Python?",
+    "data": { "options": [
+      { "id": "a", "text": "Un archivo .py cuyas funciones se pueden importar desde otro archivo" },
+      { "id": "b", "text": "Una carpeta con código" },
+      { "id": "c", "text": "Un paquete que se instala con pip" },
+      { "id": "d", "text": "Una función muy larga" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cualquier archivo de Python ya es un módulo. No hay que hacer nada especial."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Para qué sirve un entorno virtual?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que cada proyecto tenga sus propios paquetes sin pisar a los demás" },
+      { "id": "b", "text": "Para que el programa corra más rápido" },
+      { "id": "c", "text": "Para ejecutar Python sin instalarlo" },
+      { "id": "d", "text": "Para subir el proyecto a internet" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Un proyecto puede necesitar pandas 1.5 y otro pandas 2.1: cada uno en su caja."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué hace if __name__ == \"__main__\":?",
+    "data": { "options": [
+      { "id": "a", "text": "Ejecuta ese bloque solo si el archivo se corre directamente, no al importarlo" },
+      { "id": "b", "text": "Define la función principal del programa" },
+      { "id": "c", "text": "Importa todos los módulos necesarios" },
+      { "id": "d", "text": "Marca dónde empieza el programa para el intérprete" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es el interruptor entre \"soy una librería\" y \"soy el programa\"."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuál de estos archivos NO debe subirse al repositorio?",
+    "data": { "options": [
+      { "id": "a", "text": "La carpeta venv/" },
+      { "id": "b", "text": "requirements.txt" },
+      { "id": "c", "text": "main.py" },
+      { "id": "d", "text": ".gitignore" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "venv/ pesa cientos de megas y se regenera en un minuto con requirements.txt."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué es mala idea from modulo import *?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque trae todo sin que se sepa qué, y una función puede pisar a otra en silencio" },
+      { "id": "b", "text": "Porque es más lento" },
+      { "id": "c", "text": "Porque Python lo prohíbe" },
+      { "id": "d", "text": "Porque no funciona con la biblioteca estándar" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Si dos módulos tienen una función con el mismo nombre, el último importado gana y nadie se entera."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import math\nprint(math.ceil(4.2), math.floor(4.8))",
+    "data": { "options": [
+      { "id": "a", "text": "5 4" },
+      { "id": "b", "text": "4 5" },
+      { "id": "c", "text": "4 4" },
+      { "id": "d", "text": "5 5" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "ceil siempre redondea hacia arriba y floor siempre hacia abajo, sin importar los decimales."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import statistics\nprint(statistics.mean([4.0, 3.0, 5.0]))",
+    "data": { "options": [
+      { "id": "a", "text": "4.0" },
+      { "id": "b", "text": "12.0" },
+      { "id": "c", "text": "3.0" },
+      { "id": "d", "text": "4" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "mean() es el promedio: hace el mismo sum() / len() pero con nombre propio."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "Si este archivo se importa desde otro, ¿qué imprime?",
+    "code_snippet": "def saludar():\n    return \"hola\"\n\nif __name__ == \"__main__\":\n    print(saludar())",
+    "data": { "options": [
+      { "id": "a", "text": "Nada" },
+      { "id": "b", "text": "hola" },
+      { "id": "c", "text": "__main__" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Al importarlo, __name__ vale el nombre del módulo, así que el bloque no corre. Solo aporta la función."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import datetime\nd = datetime.date(2026, 3, 10)\nprint(d + datetime.timedelta(days=15))",
+    "data": { "options": [
+      { "id": "a", "text": "2026-03-25" },
+      { "id": "b", "text": "2026-03-15" },
+      { "id": "c", "text": "2026-04-10" },
+      { "id": "d", "text": "TypeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "timedelta suma días respetando los meses y los años bisiestos, que es justo lo difícil de hacer a mano."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este archivo se llama random.py y no funciona. ¿En qué línea está el problema?",
+    "data": { "lines": ["import random", "", "print(random.randint(1, 6))"] },
+    "correct": { "line_number": 1 },
+    "explanation": "Python importa el propio archivo en vez del módulo de la biblioteca. Nunca hay que ponerle a un archivo el nombre de un módulo conocido."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este módulo ensucia la salida de quien lo importe. ¿En qué línea está el problema?",
+    "data": { "lines": ["def cuota(m, t, n):", "    return m * t", "", "print(\"Modulo cargado\")"] },
+    "correct": { "line_number": 4 },
+    "explanation": "Ese print corre cada vez que alguien importe el módulo. Debía ir dentro de if __name__ == \"__main__\"."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arme un módulo con su bloque de prueba",
+    "data": { "lines": [
+      { "id": "l1", "text": "import math", "indent": 0 },
+      { "id": "l2", "text": "def area_circulo(radio):", "indent": 0 },
+      { "id": "l3", "text": "return math.pi * radio ** 2", "indent": 1 },
+      { "id": "l4", "text": "if __name__ == \"__main__\":", "indent": 0 },
+      { "id": "l5", "text": "print(area_circulo(2))", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5"] },
+    "explanation": "Los imports arriba, después las funciones, y de último el bloque del guardián con la prueba."
+  }
+]
