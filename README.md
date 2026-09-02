@@ -353,11 +353,27 @@ Seis partes, veinticuatro capítulos:
 | 🏛️ V — POO | 18 🏛️ Clases y objetos, 19 🧬 Herencia y métodos especiales |
 | 🚀 VI — Mundo real | 20 🏗️ Sistema Bancario, 21 🗄️ SQL, 22 🐼 Pandas, 23 🤖 IA aplicada, 24 🚀 FastAPI y despliegue |
 
-Los capítulos **1 y 2** vienen publicados con contenido real, 2 ejercicios y un
-quiz de 5 preguntas cada uno (`passing_score` 80). Del **3 al 24** son
-placeholders con título, emoji y descripción, en estado borrador
-(`published = false`): no aparecen para los estudiantes hasta que el profe los
-publique desde `/admin/capitulos`.
+Los **24 capítulos** están escritos y publicados. Cada uno trae:
+
+- el cuerpo del capítulo con gancho, secciones paso a paso, los tres errores
+  típicos, el patrón y la chuleta;
+- **4 ejercicios** de fácil a difícil, con solución documentada al estilo
+  universitario (`'''` de encabezado, `#Inicio` / `#Fin` y comentarios del *por qué*);
+- un **banco de preguntas** (mínimo 15 en los capítulos 1–10 y 10 del 11 al 24)
+  mezclando los cuatro tipos: `mcq`, `predict_output`, `find_bug` y `parsons`,
+  cada una con su explicación.
+
+En total: **314 preguntas de banco y 96 ejercicios**. El quiz de cada capítulo
+saca **5 preguntas al azar** del banco en cada intento, así que dos intentos
+nunca son iguales.
+
+Un capítulo pasa a `published = true` solo cuando tiene cuerpo, banco y
+ejercicios. El profe puede despublicar cualquiera desde `/admin/capitulos`.
+
+`npm run content:verificar` corre cada solución documentada contra sus propios
+tests (**102/102 en verde**). Quedan sin verificación automática los 3
+ejercicios de salida libre de los capítulos 1 y 5, y los 12 de los capítulos
+22–24, porque pandas, fastapi y las llamadas de red no corren en el verificador.
 
 ---
 
