@@ -220,3 +220,16 @@ Y al conectar Cloudflare Pages hay que decirle dónde mirar:
 | Build output directory | `public` |
 
 Sin el **Root directory**, Pages intentaría publicar el repo del Libro.
+
+### Tres piedras con las que ya nos tropezamos
+
+1. **Build command vacío, de verdad vacío.** Si le pones `public` ahí, Cloudflare
+   intenta *ejecutar* `public` como programa y falla con
+   `/bin/sh: 1: public: not found`. `public` es la carpeta de salida, no un comando.
+2. **Retry repite el mismo commit.** Si un deploy falló por algo que ya
+   arreglaste en el repo, *Retry* lo vuelve a construir igual de roto. Usa
+   **Deployments → Create deployment** para tomar el último commit de `main`.
+3. **El binding de D1 se pone a mano.** Aunque `wrangler.jsonc` declare la base,
+   el proyecto de Pages necesita: **Settings → Bindings → Add → D1**, con
+   variable `DB` y base `juancode-agenda`. Sin eso, la agenda carga vacía y el
+   panel no guarda nada. Igual con el secreto `ADMIN_PASSWORD`.
