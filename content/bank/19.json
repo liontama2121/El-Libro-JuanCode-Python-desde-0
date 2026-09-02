@@ -1,0 +1,153 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuándo conviene usar herencia?",
+    "data": { "options": [
+      { "id": "a", "text": "Cuando la frase \"la hija ES un padre\" es cierta" },
+      { "id": "b", "text": "Siempre que dos clases compartan código" },
+      { "id": "c", "text": "Cuando una clase necesita usar otra" },
+      { "id": "d", "text": "Cuando hay muchas clases" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Si hay que decir \"tiene un\", eso es composición: guardar el objeto adentro, no heredarlo."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué hace super().__init__(...)?",
+    "data": { "options": [
+      { "id": "a", "text": "Llama al constructor de la clase padre" },
+      { "id": "b", "text": "Crea un objeto nuevo del padre" },
+      { "id": "c", "text": "Copia los atributos del padre" },
+      { "id": "d", "text": "Convierte la hija en padre" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sin esa llamada, los atributos que crea el padre nunca existen y después salta AttributeError."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué es el polimorfismo?",
+    "data": { "options": [
+      { "id": "a", "text": "Que la misma llamada funcione sobre objetos de tipos distintos, cada uno a su manera" },
+      { "id": "b", "text": "Que una clase tenga muchos atributos" },
+      { "id": "c", "text": "Que un objeto cambie de tipo en tiempo de ejecución" },
+      { "id": "d", "text": "Heredar de varias clases a la vez" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es lo que permite recorrer una lista de empleados llamando pago_mensual() sin un solo if."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué diferencia hay entre __str__ y __repr__?",
+    "data": { "options": [
+      { "id": "a", "text": "__str__ es para el usuario y __repr__ para el programador (listas, consola)" },
+      { "id": "b", "text": "Son lo mismo con distinto nombre" },
+      { "id": "c", "text": "__repr__ solo sirve con números" },
+      { "id": "d", "text": "__str__ se usa al comparar objetos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Por eso al imprimir una lista de objetos se ve el __repr__ y no el __str__."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Para qué sirve raise NotImplementedError en un método de la clase base?",
+    "data": { "options": [
+      { "id": "a", "text": "Para obligar a las clases hijas a definir ese método" },
+      { "id": "b", "text": "Para marcar código pendiente de escribir" },
+      { "id": "c", "text": "Para evitar que la clase se pueda instanciar" },
+      { "id": "d", "text": "Para documentar el método" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es un contrato: si alguien crea una hija y lo olvida, el error se lo dice en vez de dar un resultado equivocado."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class A:\n    def saludo(self):\n        return \"soy A\"\n\nclass B(A):\n    def saludo(self):\n        return \"soy B\"\n\nprint(B().saludo())",
+    "data": { "options": [
+      { "id": "a", "text": "soy B" },
+      { "id": "b", "text": "soy A" },
+      { "id": "c", "text": "soy A\nsoy B" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Python busca el método primero en la clase del objeto. Como B lo define, esa versión gana."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class A:\n    def __init__(self, x):\n        self.x = x\n\nclass B(A):\n    def __init__(self, x, y):\n        super().__init__(x)\n        self.y = y\n\nb = B(1, 2)\nprint(b.x + b.y)",
+    "data": { "options": [
+      { "id": "a", "text": "3" },
+      { "id": "b", "text": "2" },
+      { "id": "c", "text": "AttributeError" },
+      { "id": "d", "text": "1" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "super() crea self.x y después la hija agrega self.y: el objeto termina con los dos."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class D:\n    def __init__(self, v):\n        self.v = v\n\n    def __lt__(self, o):\n        return self.v < o.v\n\n    def __repr__(self):\n        return f\"D({self.v})\"\n\nprint(sorted([D(3), D(1), D(2)]))",
+    "data": { "options": [
+      { "id": "a", "text": "[D(1), D(2), D(3)]" },
+      { "id": "b", "text": "[D(3), D(1), D(2)]" },
+      { "id": "c", "text": "TypeError" },
+      { "id": "d", "text": "[1, 2, 3]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con __lt__ definido, sorted() sabe comparar los objetos; __repr__ es lo que se ve dentro de la lista."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class Cuenta:\n    def retirar(self, m):\n        return f\"retiro {m}\"\n\nclass Ahorros(Cuenta):\n    def retirar(self, m):\n        if m > 100:\n            return \"tope excedido\"\n        return super().retirar(m)\n\nprint(Ahorros().retirar(50))",
+    "data": { "options": [
+      { "id": "a", "text": "retiro 50" },
+      { "id": "b", "text": "tope excedido" },
+      { "id": "c", "text": "None" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "50 no supera el tope, así que la hija valida lo suyo y delega en el padre con super()."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Al usar el objeto salta AttributeError: no existe 'saldo'. ¿En qué línea está el error?",
+    "data": { "lines": ["class Cuenta:", "    def __init__(self, saldo):", "        self.saldo = saldo", "", "class Corriente(Cuenta):", "    def __init__(self, saldo, cupo):", "        self.cupo = cupo"] },
+    "correct": { "line_number": 7 },
+    "explanation": "Falta super().__init__(saldo) antes: sin esa llamada el atributo saldo nunca se crea."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "La jerarquía está mal planteada. ¿En qué línea está el error de diseño?",
+    "data": { "lines": ["class Producto:", "    pass", "", "class Inventario(Producto):", "    def __init__(self):", "        self.productos = {}"] },
+    "correct": { "line_number": 4 },
+    "explanation": "Un inventario no ES un producto: TIENE productos. Eso es composición, no herencia."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme la cuenta de ahorros que extiende la del padre",
+    "data": { "lines": [
+      { "id": "l1", "text": "class CuentaAhorros(Cuenta):", "indent": 0 },
+      { "id": "l2", "text": "def retirar(self, monto):", "indent": 1 },
+      { "id": "l3", "text": "if monto > 1000000:", "indent": 2 },
+      { "id": "l4", "text": "raise ValueError(\"Maximo un millon por retiro\")", "indent": 3 },
+      { "id": "l5", "text": "return super().retirar(monto)", "indent": 2 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5"] },
+    "explanation": "La hija valida lo suyo primero y termina delegando en el padre, en vez de copiar su validación de saldo."
+  }
+]

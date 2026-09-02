@@ -1,0 +1,213 @@
+<p class="jc-gancho">El banco tiene cuentas de ahorros y cuentas corrientes. Las dos tienen titular, saldo, consignar y retirar. Lo único distinto es que la corriente permite sobregiro. ¿Copias la clase entera y cambias tres líneas? No: heredas.</p>
+
+<h2>Herencia: partir de algo que ya existe</h2>
+
+<pre><code>class Cuenta:
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def consignar(self, monto):
+        self.saldo += monto
+        return self.saldo
+
+    def retirar(self, monto):
+        if monto &gt; self.saldo:
+            raise ValueError("Saldo insuficiente")
+        self.saldo -= monto
+        return self.saldo
+
+
+class CuentaCorriente(Cuenta):      # ← hereda de Cuenta
+    def __init__(self, titular, saldo=0, sobregiro=500000):
+        super().__init__(titular, saldo)     # el padre hace su parte
+        self.sobregiro = sobregiro           # y esta clase agrega la suya
+
+    def retirar(self, monto):                # ← reemplaza el del padre
+        if monto &gt; self.saldo + self.sobregiro:
+            raise ValueError("Supera el cupo de sobregiro")
+        self.saldo -= monto
+        return self.saldo</code></pre>
+
+<pre><code>corriente = CuentaCorriente("Ana", 100000)
+
+corriente.consignar(50000)     # heredado tal cual del padre
+corriente.retirar(400000)      # el suyo propio: permite sobregiro
+print(corriente.saldo)         # -250000</code></pre>
+
+<p>Lo que pasó:</p>
+
+<table>
+  <thead>
+    <tr><th>Concepto</th><th>Qué significa</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>class Hija(Padre)</code></td><td>La hija recibe todo lo del padre</td></tr>
+    <tr><td><code>super().__init__(...)</code></td><td>Llama al constructor del padre</td></tr>
+    <tr><td><strong>Sobrescribir</strong></td><td>Definir un método con el mismo nombre lo reemplaza</td></tr>
+  </tbody>
+</table>
+
+<p><code>consignar()</code> no se escribió en la hija y funciona igual: se heredó. <code>retirar()</code> sí se escribió, y esa versión gana.</p>
+
+<h3>Extender en vez de reemplazar</h3>
+
+<p>A veces no quieres cambiar el método del padre, sino agregarle algo:</p>
+
+<pre><code>class CuentaAhorros(Cuenta):
+    def retirar(self, monto):
+        if monto &gt; 1000000:
+            raise ValueError("Máximo un millón por retiro")
+        return super().retirar(monto)     # y ahora sí, lo del padre</code></pre>
+
+<p>Ese <code>super().retirar(monto)</code> reutiliza la validación de saldo que ya estaba escrita. No se copia: se llama.</p>
+
+<h2>La prueba del "es un"</h2>
+
+<p>La pregunta para saber si algo es herencia:</p>
+
+<ul>
+  <li>Una cuenta corriente <strong>es una</strong> cuenta → herencia ✅</li>
+  <li>Un inventario <strong>tiene</strong> productos → composición, no herencia ✅</li>
+  <li>Un cliente <strong>tiene</strong> cuentas → composición ✅</li>
+</ul>
+
+<p>Si tienes que decir "tiene", no es herencia. Es el error más común al empezar con objetos, y produce jerarquías absurdas como <code>class Motor(Carro)</code>.</p>
+
+<h2>Polimorfismo: distintos objetos, la misma llamada</h2>
+
+<p>Esta es la razón de fondo por la que existe la herencia:</p>
+
+<pre><code>cuentas = [
+    CuentaAhorros("Ana", 200000),
+    CuentaCorriente("Juan", 100000),
+    CuentaAhorros("Sofia", 500000),
+]
+
+for cuenta in cuentas:
+    cuenta.retirar(50000)     # cada una usa SU versión</code></pre>
+
+<p>El ciclo no sabe ni le importa de qué tipo es cada cuenta. Llama <code>retirar()</code> y cada objeto hace lo suyo. Mañana entra una <code>CuentaNomina</code> nueva y este ciclo <strong>no se toca</strong>.</p>
+
+<h2>Métodos especiales (dunder)</h2>
+
+<p>Ya conoces <code>__init__</code> y <code>__str__</code>. Hay varios más que le enseñan a tu objeto a comportarse como los de Python:</p>
+
+<pre><code>class Dinero:
+    def __init__(self, valor):
+        self.valor = valor
+
+    def __str__(self):
+        return f"$ {self.valor:,}"
+
+    def __repr__(self):
+        return f"Dinero({self.valor})"        # para el programador
+
+    def __eq__(self, otro):
+        return self.valor == otro.valor      # ==
+
+    def __lt__(self, otro):
+        return self.valor &lt; otro.valor       # &lt;  (y habilita sorted)
+
+    def __add__(self, otro):
+        return Dinero(self.valor + otro.valor)   # +
+
+    def __len__(self):
+        return len(str(self.valor))          # len()</code></pre>
+
+<pre><code>a = Dinero(50000)
+b = Dinero(30000)
+
+print(a + b)                       # $ 80,000
+print(a &gt; b)                       # True
+print(sorted([a, b]))              # [Dinero(30000), Dinero(50000)]
+print(Dinero(100) == Dinero(100))  # True</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Método</th><th>Se dispara con</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>__str__</code></td><td><code>print(obj)</code>, <code>str(obj)</code></td></tr>
+    <tr><td><code>__repr__</code></td><td>Ver el objeto en una lista o en la consola</td></tr>
+    <tr><td><code>__eq__</code></td><td><code>==</code></td></tr>
+    <tr><td><code>__lt__</code></td><td><code>&lt;</code>, y con eso <code>sorted()</code></td></tr>
+    <tr><td><code>__add__</code></td><td><code>+</code></td></tr>
+    <tr><td><code>__len__</code></td><td><code>len(obj)</code></td></tr>
+  </tbody>
+</table>
+
+<p>Sin <code>__eq__</code>, dos objetos son iguales solo si son <em>el mismo</em> objeto en memoria, aunque tengan los mismos datos.</p>
+
+<h2>La película de una llamada heredada</h2>
+
+<pre><code>ahorros = CuentaAhorros("Ana", 200000)
+ahorros.retirar(50000)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Qué hace Python</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Busca <code>retirar</code> en <code>CuentaAhorros</code>. Lo encuentra.</td></tr>
+    <tr><td>2</td><td>Valida el tope del millón. Pasa.</td></tr>
+    <tr><td>3</td><td><code>super().retirar(50000)</code> sube a <code>Cuenta</code>.</td></tr>
+    <tr><td>4</td><td>Allá valida el saldo y hace el descuento.</td></tr>
+    <tr><td>5</td><td>El saldo queda en 150000.</td></tr>
+  </tbody>
+</table>
+
+<p>Si <code>CuentaAhorros</code> no hubiera definido <code>retirar</code>, el paso 1 no lo habría encontrado y Python habría subido directo al padre. Eso es todo el mecanismo.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar <code>super().__init__()</code></h3>
+<pre><code>class CuentaCorriente(Cuenta):
+    def __init__(self, titular, sobregiro):
+        self.sobregiro = sobregiro     # ❌ nunca se creó self.saldo
+
+# después: AttributeError: 'CuentaCorriente' object has no attribute 'saldo'</code></pre>
+
+<h3>2. Heredar cuando era "tiene un"</h3>
+<pre><code>class Inventario(Producto):    # ❌ un inventario no ES un producto
+class Inventario:              # ✅ los contiene
+    def __init__(self):
+        self.productos = {}</code></pre>
+
+<h3>3. Copiar el método en vez de llamar a <code>super()</code></h3>
+<pre><code>def retirar(self, monto):
+    if monto &gt; 1000000:
+        raise ValueError("Tope excedido")
+    if monto &gt; self.saldo:              # ❌ copiado del padre
+        raise ValueError("Saldo insuficiente")
+    self.saldo -= monto
+
+    # ✅ return super().retirar(monto)</code></pre>
+<p>Si se copia, el día que cambie la regla del padre habrá dos versiones y una quedará vieja.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Antes de heredar, di la frase: ¿"<strong>es un</strong>" o "<strong>tiene un</strong>"?</li>
+  <li>En el <code>__init__</code> de la hija, <code>super().__init__(...)</code> primero.</li>
+  <li>Para extender un método, valida lo tuyo y termina con <code>super().metodo(...)</code>.</li>
+  <li>Escribe <code>__str__</code> siempre; <code>__eq__</code> y <code>__lt__</code> cuando vayas a comparar u ordenar.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>class Hija(Padre):</code></td><td>Hereda todo lo del padre</td></tr>
+    <tr><td><code>super().__init__(...)</code></td><td>Llama al constructor del padre</td></tr>
+    <tr><td><code>super().metodo(...)</code></td><td>Llama la versión del padre</td></tr>
+    <tr><td><code>isinstance(obj, Cuenta)</code></td><td>¿Es de esa clase o de una hija?</td></tr>
+    <tr><td><code>__eq__</code> · <code>__lt__</code></td><td>Habilitan <code>==</code> y <code>sorted()</code></td></tr>
+    <tr><td><code>__add__</code> · <code>__len__</code></td><td>Habilitan <code>+</code> y <code>len()</code></td></tr>
+  </tbody>
+</table>
+
+<blockquote>Herencia solo cuando la frase "<em>es un</em>" es cierta. Si dices "tiene un", lo que necesitas es guardar el objeto adentro, no heredarlo.</blockquote>

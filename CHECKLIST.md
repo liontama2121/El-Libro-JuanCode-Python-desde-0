@@ -130,8 +130,8 @@
 - [x] 15 🛡️ Errores y excepciones
 - [x] 16 📚 Módulos, pip y entornos
 - [x] 17 📁 Archivos
-- [ ] 18 🏛️ Clases y objetos
-- [ ] 19 🧬 Herencia y métodos especiales
+- [x] 18 🏛️ Clases y objetos
+- [x] 19 🧬 Herencia y métodos especiales
 - [ ] 20 🏗️ Proyecto: Sistema Bancario
 - [ ] 21 🗄️ SQL desde cero
 - [ ] 22 🐼 Pandas

@@ -6924,9 +6924,205 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
   SELECT id, 'parsons', 'dificil', 'Arme la función que carga un JSON sin caerse la primera vez', NULL, '{"lines":[{"id":"l1","text":"def cargar(ruta):","indent":0},{"id":"l2","text":"try:","indent":1},{"id":"l3","text":"with open(ruta, encoding=\"utf-8\") as f:","indent":2},{"id":"l4","text":"return json.load(f)","indent":3},{"id":"l5","text":"except FileNotFoundError:","indent":1},{"id":"l6","text":"return {}","indent":2}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'El with va dentro del try, y el except devuelve un diccionario vacío para que el programa arranque de cero.', 1, 'seed'
     FROM chapters WHERE number = 17;
 
--- ── Capítulo 18: Clases y objetos (borrador)
+-- ── Capítulo 18: Clases y objetos (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 18, 'Clases y objetos', '🏛️', 'Modelar el mundo con atributos y métodos.', '', 0
+  SELECT p.id, 18, 'Clases y objetos', '🏛️', 'Modelar el mundo con atributos y métodos.', '<p class="jc-gancho">Llevas todo el libro representando una cuenta bancaria con un diccionario suelto y funciones que la reciben por parámetro. Nada impide que alguien le meta un saldo negativo o le borre el nombre. Una clase junta los datos <em>y</em> las reglas que los protegen.</p>
+
+<h2>El molde y las galletas</h2>
+
+<p>Una <strong>clase</strong> es el molde. Un <strong>objeto</strong> es cada galleta que sale de él.</p>
+
+<pre><code>class CuentaBancaria:
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def consignar(self, monto):
+        self.saldo += monto
+        return self.saldo
+
+
+# Dos objetos, del mismo molde, independientes
+cuenta_ana = CuentaBancaria("Ana", 250000)
+cuenta_juan = CuentaBancaria("Juan")
+
+cuenta_ana.consignar(50000)
+
+print(cuenta_ana.saldo)     # 300000
+print(cuenta_juan.saldo)    # 0 — a Juan no le pasó nada</code></pre>
+
+<p>Cada objeto tiene <strong>sus propios datos</strong>. Consignarle a Ana no toca a Juan, aunque salgan del mismo molde.</p>
+
+<h3><code>__init__</code>: el constructor</h3>
+
+<p>Es el método que corre automáticamente al crear el objeto. Su trabajo es dejar el objeto listo para usar.</p>
+
+<pre><code>cuenta = CuentaBancaria("Ana", 250000)
+#          ↓
+#     __init__(self, "Ana", 250000)</code></pre>
+
+<h3><code>self</code>: este objeto en particular</h3>
+
+<p><code>self</code> es la palabra que más confunde, y en el fondo es sencilla: es <strong>el objeto sobre el que se está trabajando</strong>.</p>
+
+<pre><code>cuenta_ana.consignar(50000)
+#    ↓
+# consignar(cuenta_ana, 50000)   ← self es cuenta_ana</code></pre>
+
+<p>Python lo pasa solo. Por eso <code>self</code> va siempre de primer parámetro en la definición, pero nunca se escribe al llamar.</p>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Qué es</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>self.saldo</code></td><td>Un dato <strong>del objeto</strong>: sobrevive entre llamadas</td></tr>
+    <tr><td><code>saldo</code> (sin self)</td><td>Una variable local: muere al terminar el método</td></tr>
+  </tbody>
+</table>
+
+<h2>Atributos y métodos</h2>
+
+<pre><code>class CuentaBancaria:
+    # Atributo de CLASE: lo comparten todos los objetos
+    tasa_interes = 0.02
+
+    def __init__(self, titular, saldo=0):
+        # Atributos de INSTANCIA: uno por objeto
+        self.titular = titular
+        self.saldo = saldo
+        self.movimientos = []
+
+    def consignar(self, monto):
+        if monto &lt;= 0:
+            raise ValueError("El monto debe ser positivo")
+        self.saldo += monto
+        self.movimientos.append(("consignacion", monto))
+        return self.saldo
+
+    def retirar(self, monto):
+        if monto &gt; self.saldo:
+            raise ValueError("Saldo insuficiente")
+        self.saldo -= monto
+        self.movimientos.append(("retiro", monto))
+        return self.saldo
+
+    def extracto(self):
+        return f"{self.titular}: {self.saldo} ({len(self.movimientos)} movimientos)"</code></pre>
+
+<p>Fíjate en lo que acaba de pasar: las validaciones del capítulo 15 ahora viven <strong>dentro</strong> del objeto. Ya no hay forma de retirar de más, porque la única puerta para tocar el saldo es <code>retirar()</code>.</p>
+
+<pre><code>cuenta = CuentaBancaria("Ana", 250000)
+cuenta.consignar(50000)
+cuenta.retirar(100000)
+print(cuenta.extracto())     # Ana: 200000 (2 movimientos)</code></pre>
+
+<h2><code>__str__</code>: cómo se ve el objeto</h2>
+
+<pre><code>cuenta = CuentaBancaria("Ana", 250000)
+print(cuenta)     # &lt;__main__.CuentaBancaria object at 0x000001&gt;  😐</code></pre>
+
+<p>Ese mensaje no le sirve a nadie. <code>__str__</code> lo arregla:</p>
+
+<pre><code>    def __str__(self):
+        return f"Cuenta de {self.titular}: {self.saldo:,}"
+
+
+print(cuenta)     # Cuenta de Ana: 250,000  ✅</code></pre>
+
+<p>Los métodos con doble guion bajo a lado y lado se llaman <strong>métodos especiales</strong> o <em>dunder</em>, y Python los llama solo en ciertos momentos. En el capítulo 19 verás varios más.</p>
+
+<h2>Atributos privados: la convención del guion bajo</h2>
+
+<p>Python no tiene atributos verdaderamente privados. Lo que hay es una convención que todo el mundo respeta:</p>
+
+<pre><code>class CuentaBancaria:
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self._saldo = saldo          # el _ dice "no me toques desde afuera"
+
+    @property
+    def saldo(self):
+        ''''''Se lee como un atributo, pero es un método.''''''
+        return self._saldo
+
+
+cuenta = CuentaBancaria("Ana", 250000)
+print(cuenta.saldo)        # 250000 — sin paréntesis
+cuenta.saldo = 999999      # AttributeError: no tiene setter</code></pre>
+
+<p>Con <code>@property</code>, el saldo se lee normal pero no se puede asignar de fuera. La única forma de cambiarlo es por <code>consignar()</code> o <code>retirar()</code>, que sí validan.</p>
+
+<h2>La película de dos objetos</h2>
+
+<pre><code>a = CuentaBancaria("Ana", 100000)      # línea 1
+b = CuentaBancaria("Juan", 100000)     # línea 2
+a.retirar(30000)                       # línea 3
+b.consignar(50000)                     # línea 4</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Después de…</th><th><code>a.saldo</code></th><th><code>b.saldo</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>línea 1</td><td>100000</td><td>no existe</td></tr>
+    <tr><td>línea 2</td><td>100000</td><td>100000</td></tr>
+    <tr><td>línea 3</td><td><strong>70000</strong></td><td>100000</td></tr>
+    <tr><td>línea 4</td><td>70000</td><td><strong>150000</strong></td></tr>
+  </tbody>
+</table>
+
+<p>Dos objetos del mismo molde con vidas separadas. Eso es lo que un diccionario suelto no te garantiza.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar <code>self</code></h3>
+<pre><code>def consignar(monto):        # ❌ TypeError al llamarlo
+def consignar(self, monto):  # ✅</code></pre>
+
+<h3>2. Olvidar <code>self.</code> adentro</h3>
+<pre><code>def consignar(self, monto):
+    saldo += monto        # ❌ variable local que muere aquí
+    self.saldo += monto   # ✅ el dato del objeto</code></pre>
+
+<h3>3. Lista mutable como atributo de clase</h3>
+<pre><code>class Cuenta:
+    movimientos = []      # ❌ ¡compartida por TODAS las cuentas!
+
+class Cuenta:
+    def __init__(self):
+        self.movimientos = []   # ✅ una por objeto</code></pre>
+<p>Es el mismo error del parámetro por defecto del capítulo 14, con otro disfraz.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Tienes datos que siempre viajan juntos y reglas que los cuidan? Es una clase.</li>
+  <li><code>__init__</code> deja el objeto listo; todo atributo se crea ahí.</li>
+  <li><code>self.</code> para lo que debe sobrevivir; sin <code>self</code> para lo temporal.</li>
+  <li>Las validaciones van en los métodos: que sea imposible dejar el objeto en mal estado.</li>
+  <li><code>__str__</code> siempre, para poder imprimirlo y depurar.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>class Cuenta:</code></td><td>Define el molde</td></tr>
+    <tr><td><code>def __init__(self, ...):</code></td><td>Constructor</td></tr>
+    <tr><td><code>self.x = valor</code></td><td>Atributo del objeto</td></tr>
+    <tr><td><code>def metodo(self):</code></td><td>Método de instancia</td></tr>
+    <tr><td><code>obj = Cuenta("Ana")</code></td><td>Crea un objeto</td></tr>
+    <tr><td><code>obj.metodo()</code></td><td>Lo llama (self va solo)</td></tr>
+    <tr><td><code>def __str__(self):</code></td><td>Cómo se ve al imprimirlo</td></tr>
+    <tr><td><code>@property</code></td><td>Método que se lee como atributo</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Una clase no es solo datos juntos: es datos <em>más</em> las reglas que impiden dejarlos en un estado imposible.</blockquote>', 1
     FROM parts p WHERE p.number = 5
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -6938,11 +7134,597 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 18
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 18);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 18);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Clase Estudiante', 'facil', '<p>Crear una clase <code>Estudiante</code> con:</p><ul><li>atributos <code>nombre</code> y <code>notas</code> (lista, vacía por defecto),</li><li>método <code>agregar_nota(nota)</code>,</li><li>método <code>promedio()</code> que devuelva 0 si no tiene notas,</li><li>y <code>__str__</code> que muestre <code>Ana: 4.15</code>.</li></ul><pre><code>Ana: 4.15
+Juan: 0</code></pre>', '<p>La lista de notas debe crearse <strong>dentro</strong> de <code>__init__</code> con <code>self.notas = []</code>. Si se pone como atributo de clase, todos los estudiantes compartirían la misma lista.</p>', '<pre><code>''''''
+Programa: Clase Estudiante
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Modela un estudiante con sus notas y el calculo de su promedio.
+''''''
 
--- ── Capítulo 19: Herencia y métodos especiales (borrador)
+
+class Estudiante:
+    ''''''Un estudiante del curso, con su lista de notas.''''''
+
+    def __init__(self, nombre):
+        self.nombre = nombre
+        # La lista se crea AQUI: si fuera atributo de clase,
+        # todos los estudiantes compartirian la misma
+        self.notas = []
+
+    def agregar_nota(self, nota):
+        ''''''Registra una nota nueva.''''''
+        self.notas.append(nota)
+
+    def promedio(self):
+        ''''''Devuelve el promedio, o 0 si todavia no tiene notas.''''''
+        if not self.notas:
+            return 0
+        return sum(self.notas) / len(self.notas)
+
+    def __str__(self):
+        return f"{self.nombre}: {self.promedio()}"
+
+
+# Inicio
+ana = Estudiante("Ana")
+ana.agregar_nota(4.5)
+ana.agregar_nota(3.8)
+
+juan = Estudiante("Juan")
+
+print(ana)
+print(juan)
+# Fin</code></pre><p>Tres cosas que hacen que esta clase esté bien hecha:</p><ul><li><strong>La lista nace en <code>__init__</code>.</strong> Cada estudiante tiene la suya. Ese es el error del atributo de clase mutable, primo del parámetro por defecto del capítulo 14.</li><li><strong><code>promedio()</code> maneja el caso vacío.</strong> Sin ese <code>if</code>, un estudiante sin notas rompería el programa con <code>ZeroDivisionError</code>.</li><li><strong><code>__str__</code> permite <code>print(ana)</code>.</strong> Sin él saldría algo como <code>&lt;__main__.Estudiante object at 0x...&gt;</code>.</li></ul><p><code>if not self.notas</code> es la forma idiomática de preguntar "¿está vacía?": una lista vacía es falsa en Python.</p>', '[{"stdin":"","expected_output":"Ana: 4.15\nJuan: 0"}]', '''''''
+Programa: Clase Estudiante
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Cuenta bancaria', 'facil', '<p>Crear una clase <code>CuentaBancaria</code> con <code>titular</code> y <code>saldo</code> (0 por defecto), y los métodos <code>consignar(monto)</code> y <code>retirar(monto)</code>. Retirar más del saldo debe lanzar <code>ValueError("Saldo insuficiente")</code>.</p><p>Demostrar que dos cuentas son independientes:</p><pre><code>Ana: 300000
+Juan: 0
+Ana despues del retiro: 200000
+Error: Saldo insuficiente
+Ana sigue en: 200000</code></pre>', '<p>Las validaciones van dentro de los métodos con <code>raise</code>. Al probarlo, envuelva el retiro grande en <code>try / except ValueError as e</code>.</p>', '<pre><code>''''''
+Programa: Cuenta bancaria
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Modela una cuenta bancaria que valida sus propias reglas.
+''''''
+
+
+class CuentaBancaria:
+    ''''''Una cuenta de ahorros con validacion de saldo.''''''
+
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def consignar(self, monto):
+        ''''''Suma un monto al saldo. Lanza ValueError si no es positivo.''''''
+        if monto <= 0:
+            raise ValueError("El monto debe ser positivo")
+        self.saldo += monto
+        return self.saldo
+
+    def retirar(self, monto):
+        ''''''Descuenta un monto. Lanza ValueError si no alcanza.''''''
+        if monto > self.saldo:
+            raise ValueError("Saldo insuficiente")
+        self.saldo -= monto
+        return self.saldo
+
+    def __str__(self):
+        return f"{self.titular}: {self.saldo}"
+
+
+# Inicio
+ana = CuentaBancaria("Ana", 250000)
+juan = CuentaBancaria("Juan")
+
+ana.consignar(50000)
+
+print(ana)
+print(juan)     # a Juan no le paso nada
+
+ana.retirar(100000)
+print(f"Ana despues del retiro: {ana.saldo}")
+
+try:
+    ana.retirar(999999)
+except ValueError as e:
+    print(f"Error: {e}")
+
+print(f"Ana sigue en: {ana.saldo}")
+# Fin</code></pre><p>Lo importante es que <strong>el objeto se protege solo</strong>. Comparado con el diccionario del capítulo 12, aquí no hay forma de dejar el saldo en negativo desde afuera: la única puerta es <code>retirar()</code>, y esa valida.</p><p>Y cuando el retiro falla, el saldo no se toca: el <code>raise</code> interrumpe el método antes de llegar al <code>self.saldo -= monto</code>.</p>', '[{"stdin":"","expected_output":"Ana: 300000\nJuan: 0\nAna despues del retiro: 200000\nError: Saldo insuficiente\nAna sigue en: 200000"}]', '''''''
+Programa: Cuenta bancaria
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Producto con propiedad', 'medio', '<p>Crear una clase <code>Producto</code> con <code>nombre</code>, <code>precio</code> y <code>cantidad</code>. Debe tener:</p><ul><li>una propiedad <code>total</code> (precio × cantidad) que se lea sin paréntesis,</li><li>un método <code>vender(unidades)</code> que descuente del inventario y lance <code>ValueError</code> si no hay suficientes,</li><li>y <code>__str__</code> con el formato de la salida.</li></ul><pre><code>Pan          x20 =    100,000
+Quedan 15 unidades
+Total en inventario: 75,000
+Error: Solo quedan 15 unidades</code></pre>', '<p><code>@property</code> encima del método hace que se lea como atributo: <code>p.total</code> en vez de <code>p.total()</code>. El total no se guarda: se calcula cada vez que se pide.</p>', '<pre><code>''''''
+Programa: Producto de inventario
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Modela un producto de la tienda con su inventario y el valor
+    total calculado.
+''''''
+
+
+class Producto:
+    ''''''Un producto del inventario de la tienda.''''''
+
+    def __init__(self, nombre, precio, cantidad):
+        self.nombre = nombre
+        self.precio = precio
+        self.cantidad = cantidad
+
+    @property
+    def total(self):
+        ''''''
+        Valor del inventario de este producto.
+
+        No se guarda como atributo: se calcula al pedirlo, asi
+        nunca queda desactualizado cuando cambia la cantidad.
+        ''''''
+        return self.precio * self.cantidad
+
+    def vender(self, unidades):
+        ''''''Descuenta unidades del inventario.''''''
+        if unidades > self.cantidad:
+            raise ValueError(f"Solo quedan {self.cantidad} unidades")
+        self.cantidad -= unidades
+        return self.cantidad
+
+    def __str__(self):
+        return f"{self.nombre:<12} x{self.cantidad} = {self.total:>10,}"
+
+
+# Inicio
+pan = Producto("Pan", 5000, 20)
+print(pan)
+
+pan.vender(5)
+print(f"Quedan {pan.cantidad} unidades")
+
+# El total se recalcula solo: ya no son 100,000
+print(f"Total en inventario: {pan.total:,}")
+
+try:
+    pan.vender(100)
+except ValueError as e:
+    print(f"Error: {e}")
+# Fin</code></pre><p>La clave del ejercicio es <strong>por qué <code>total</code> es una propiedad y no un atributo</strong>.</p><p>Si en <code>__init__</code> se hubiera escrito <code>self.total = precio * cantidad</code>, ese valor quedaría congelado: después de vender 5 unidades seguiría diciendo 100,000, que es mentira. Como propiedad, se calcula en el momento en que se pide y siempre está al día.</p><p>La regla: <strong>lo que se puede deducir de otros datos no se guarda, se calcula</strong>. Guardarlo es crear dos versiones de la verdad.</p>', '[{"stdin":"","expected_output":"Pan          x20 =    100,000\nQuedan 15 unidades\nTotal en inventario: 75,000\nError: Solo quedan 15 unidades"}]', '''''''
+Programa: Producto de inventario
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Inventario completo', 'dificil', '<p>Sobre la clase <code>Producto</code> anterior, crear una clase <code>Inventario</code> que:</p><ul><li>guarde productos en un diccionario por nombre,</li><li><code>agregar(producto)</code> — si ya existe, suma la cantidad,</li><li><code>vender(nombre, unidades)</code> — lanza <code>KeyError</code> si el producto no existe,</li><li>propiedad <code>valor_total</code>,</li><li><code>bajo_stock(minimo)</code> — devuelve la lista de nombres con menos de <code>minimo</code> unidades.</li></ul><pre><code>Pan          x30 =    150,000
+Leche        x 8 =     56,000
+Valor total: 206,000
+Bajo stock: [''Leche'']
+Error: ''Cafe'' no esta en el inventario</code></pre>', '<p><code>Inventario</code> no hereda de <code>Producto</code>: lo <em>contiene</em>. Un inventario no "es un" producto, "tiene" productos. Guárdelos en <code>self.productos = {}</code> con el nombre como clave.</p>', '<pre><code>''''''
+Programa: Inventario de la tienda
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Modela el inventario completo de una tienda como una
+    coleccion de productos.
+''''''
+
+
+class Producto:
+    ''''''Un producto del inventario.''''''
+
+    def __init__(self, nombre, precio, cantidad):
+        self.nombre = nombre
+        self.precio = precio
+        self.cantidad = cantidad
+
+    @property
+    def total(self):
+        ''''''Valor del inventario de este producto.''''''
+        return self.precio * self.cantidad
+
+    def vender(self, unidades):
+        ''''''Descuenta unidades disponibles.''''''
+        if unidades > self.cantidad:
+            raise ValueError(f"Solo quedan {self.cantidad} unidades")
+        self.cantidad -= unidades
+        return self.cantidad
+
+    def __str__(self):
+        return f"{self.nombre:<12} x{self.cantidad:>2} = {self.total:>10,}"
+
+
+class Inventario:
+    ''''''
+    Coleccion de productos de una tienda.
+
+    Un inventario TIENE productos; no ES un producto. Por eso
+    los contiene en vez de heredar de Producto.
+    ''''''
+
+    def __init__(self):
+        self.productos = {}
+
+    def agregar(self, producto):
+        ''''''Agrega un producto, o suma cantidad si ya existia.''''''
+        if producto.nombre in self.productos:
+            self.productos[producto.nombre].cantidad += producto.cantidad
+        else:
+            self.productos[producto.nombre] = producto
+
+    def vender(self, nombre, unidades):
+        ''''''Vende unidades de un producto del inventario.''''''
+        if nombre not in self.productos:
+            raise KeyError(f"''{nombre}'' no esta en el inventario")
+        return self.productos[nombre].vender(unidades)
+
+    @property
+    def valor_total(self):
+        ''''''Suma del valor de todos los productos.''''''
+        return sum(p.total for p in self.productos.values())
+
+    def bajo_stock(self, minimo):
+        ''''''Nombres de los productos con menos de `minimo` unidades.''''''
+        return [p.nombre for p in self.productos.values() if p.cantidad < minimo]
+
+
+# Inicio
+inventario = Inventario()
+
+inventario.agregar(Producto("Pan", 5000, 20))
+inventario.agregar(Producto("Leche", 7000, 10))
+inventario.agregar(Producto("Pan", 5000, 10))   # se suma al que ya habia
+
+inventario.vender("Leche", 2)
+
+for producto in inventario.productos.values():
+    print(producto)
+
+print(f"Valor total: {inventario.valor_total:,}")
+print(f"Bajo stock: {inventario.bajo_stock(10)}")
+
+try:
+    inventario.vender("Cafe", 1)
+except KeyError as e:
+    # KeyError agrega comillas al mensaje: e.args[0] da el texto limpio
+    print(f"Error: {e.args[0]}")
+# Fin</code></pre><p>Dos clases y una decisión de diseño que se repite en todos los proyectos:</p><ul><li><strong>Composición, no herencia.</strong> <code>Inventario</code> no hereda de <code>Producto</code> porque un inventario no <em>es</em> un producto: <em>tiene</em> productos. La prueba de la frase "es un" contra "tiene un" decide casi siempre bien, y en el capítulo 19 se ve el caso contrario.</li><li><strong>Cada clase valida lo suyo.</strong> <code>Producto.vender()</code> sabe de unidades disponibles; <code>Inventario.vender()</code> sabe de productos que existen o no. Cada una lanza el error de su propio dominio y delega el resto.</li></ul><p>Ese <code>sum(p.total for p in ...)</code> es una <em>expresión generadora</em>: como la comprehension del capítulo 13, pero sin construir la lista intermedia. Para sumar es lo ideal.</p>', '[{"stdin":"","expected_output":"Pan          x30 =    150,000\nLeche        x 8 =     56,000\nValor total: 206,000\nBajo stock: [''Leche'']\nError: ''Cafe'' no esta en el inventario"}]', '''''''
+Programa: Inventario de la tienda
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 18;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 18);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cuál es la diferencia entre una clase y un objeto?', NULL, '{"options":[{"id":"a","text":"La clase es el molde; el objeto es cada cosa concreta creada con ese molde"},{"id":"b","text":"Son sinónimos"},{"id":"c","text":"El objeto es el molde y la clase la copia"},{"id":"d","text":"La clase guarda datos y el objeto guarda funciones"}]}', '{"option_id":"a"}', 'Del mismo molde salen muchas galletas, y cada una tiene sus propios datos.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué es self?', NULL, '{"options":[{"id":"a","text":"El objeto concreto sobre el que se está trabajando"},{"id":"b","text":"Una palabra reservada obligatoria de Python"},{"id":"c","text":"La clase en sí misma"},{"id":"d","text":"Una variable global del programa"}]}', '{"option_id":"a"}', 'cuenta.retirar(100) es en realidad retirar(cuenta, 100): Python pasa self solo.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Cuándo se ejecuta __init__?', NULL, '{"options":[{"id":"a","text":"Automáticamente al crear un objeto de la clase"},{"id":"b","text":"Cada vez que se llama un método"},{"id":"c","text":"Cuando se imprime el objeto"},{"id":"d","text":"Hay que llamarlo a mano"}]}', '{"option_id":"a"}', 'Su trabajo es dejar el objeto listo para usarse: ahí se crean todos los atributos.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Para qué sirve @property?', NULL, '{"options":[{"id":"a","text":"Para que un método se lea como atributo, sin paréntesis"},{"id":"b","text":"Para hacer el atributo privado"},{"id":"c","text":"Para declarar un atributo de clase"},{"id":"d","text":"Para documentar la clase"}]}', '{"option_id":"a"}', 'Sirve para valores que se calculan al pedirlos, como el total de un producto, en vez de guardarlos desactualizados.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Por qué un valor calculable como total = precio * cantidad conviene como propiedad y no como atributo?', NULL, '{"options":[{"id":"a","text":"Porque como atributo queda congelado y miente cuando la cantidad cambia"},{"id":"b","text":"Porque ocupa menos memoria"},{"id":"c","text":"Porque los atributos no pueden ser números"},{"id":"d","text":"Porque las propiedades son más rápidas"}]}', '{"option_id":"a"}', 'Lo que se puede deducir de otros datos se calcula, no se guarda: guardarlo crea dos versiones de la verdad.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'class Cuenta:
+    def __init__(self, saldo=0):
+        self.saldo = saldo
+
+a = Cuenta(100)
+b = Cuenta()
+a.saldo += 50
+print(a.saldo, b.saldo)', '{"options":[{"id":"a","text":"150 0"},{"id":"b","text":"150 150"},{"id":"c","text":"100 0"},{"id":"d","text":"150 100"}]}', '{"option_id":"a"}', 'Cada objeto tiene sus propios atributos: cambiar el de a no toca a b.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class Cuenta:
+    def __init__(self, saldo):
+        self.saldo = saldo
+
+    def sumar(self, x):
+        saldo = self.saldo + x
+
+c = Cuenta(100)
+c.sumar(50)
+print(c.saldo)', '{"options":[{"id":"a","text":"100"},{"id":"b","text":"150"},{"id":"c","text":"50"},{"id":"d","text":"None"}]}', '{"option_id":"a"}', 'Falta el self.: esa saldo es una variable local que muere al terminar el método.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class P:
+    def __init__(self, precio, cant):
+        self.precio = precio
+        self.cant = cant
+
+    @property
+    def total(self):
+        return self.precio * self.cant
+
+p = P(1000, 5)
+p.cant = 2
+print(p.total)', '{"options":[{"id":"a","text":"2000"},{"id":"b","text":"5000"},{"id":"c","text":"1000"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'La propiedad se recalcula al pedirla, así que refleja la cantidad nueva.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'class Cuenta:
+    movimientos = []
+
+    def __init__(self, nombre):
+        self.nombre = nombre
+
+a = Cuenta("Ana")
+b = Cuenta("Juan")
+a.movimientos.append("retiro")
+print(len(b.movimientos))', '{"options":[{"id":"a","text":"1"},{"id":"b","text":"0"},{"id":"c","text":"2"},{"id":"d","text":"AttributeError"}]}', '{"option_id":"a"}', 'La lista es atributo de CLASE: la comparten todos los objetos. Debía crearse dentro de __init__.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'Al llamar c.consignar(100) da TypeError. ¿En qué línea está el error?', NULL, '{"lines":["class Cuenta:","    def __init__(self, saldo):","        self.saldo = saldo","","    def consignar(monto):","        self.saldo += monto"]}', '{"line_number":5}', 'Falta self como primer parámetro: debía ser def consignar(self, monto).', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Todos los estudiantes terminan con las mismas notas. ¿En qué línea está el error?', NULL, '{"lines":["class Estudiante:","    notas = []","","    def __init__(self, nombre):","        self.nombre = nombre"]}', '{"line_number":2}', 'Esa lista es de la clase y la comparten todos. Va dentro de __init__ como self.notas = [].', 1, 'seed'
+    FROM chapters WHERE number = 18;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme la clase CuentaBancaria con validación', NULL, '{"lines":[{"id":"l1","text":"class CuentaBancaria:","indent":0},{"id":"l2","text":"def __init__(self, titular, saldo=0):","indent":1},{"id":"l3","text":"self.titular = titular","indent":2},{"id":"l4","text":"self.saldo = saldo","indent":2},{"id":"l5","text":"def retirar(self, monto):","indent":1},{"id":"l6","text":"if monto > self.saldo:","indent":2},{"id":"l7","text":"raise ValueError(\"Saldo insuficiente\")","indent":3},{"id":"l8","text":"self.saldo -= monto","indent":2}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8"]}', 'Los métodos van indentados dentro de la clase, y la validación antes de tocar el saldo: si el raise se dispara, el descuento nunca ocurre.', 1, 'seed'
+    FROM chapters WHERE number = 18;
+
+-- ── Capítulo 19: Herencia y métodos especiales (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 19, 'Herencia y métodos especiales', '🧬', 'Reutilizar clases y personalizar su comportamiento.', '', 0
+  SELECT p.id, 19, 'Herencia y métodos especiales', '🧬', 'Reutilizar clases y personalizar su comportamiento.', '<p class="jc-gancho">El banco tiene cuentas de ahorros y cuentas corrientes. Las dos tienen titular, saldo, consignar y retirar. Lo único distinto es que la corriente permite sobregiro. ¿Copias la clase entera y cambias tres líneas? No: heredas.</p>
+
+<h2>Herencia: partir de algo que ya existe</h2>
+
+<pre><code>class Cuenta:
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def consignar(self, monto):
+        self.saldo += monto
+        return self.saldo
+
+    def retirar(self, monto):
+        if monto &gt; self.saldo:
+            raise ValueError("Saldo insuficiente")
+        self.saldo -= monto
+        return self.saldo
+
+
+class CuentaCorriente(Cuenta):      # ← hereda de Cuenta
+    def __init__(self, titular, saldo=0, sobregiro=500000):
+        super().__init__(titular, saldo)     # el padre hace su parte
+        self.sobregiro = sobregiro           # y esta clase agrega la suya
+
+    def retirar(self, monto):                # ← reemplaza el del padre
+        if monto &gt; self.saldo + self.sobregiro:
+            raise ValueError("Supera el cupo de sobregiro")
+        self.saldo -= monto
+        return self.saldo</code></pre>
+
+<pre><code>corriente = CuentaCorriente("Ana", 100000)
+
+corriente.consignar(50000)     # heredado tal cual del padre
+corriente.retirar(400000)      # el suyo propio: permite sobregiro
+print(corriente.saldo)         # -250000</code></pre>
+
+<p>Lo que pasó:</p>
+
+<table>
+  <thead>
+    <tr><th>Concepto</th><th>Qué significa</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>class Hija(Padre)</code></td><td>La hija recibe todo lo del padre</td></tr>
+    <tr><td><code>super().__init__(...)</code></td><td>Llama al constructor del padre</td></tr>
+    <tr><td><strong>Sobrescribir</strong></td><td>Definir un método con el mismo nombre lo reemplaza</td></tr>
+  </tbody>
+</table>
+
+<p><code>consignar()</code> no se escribió en la hija y funciona igual: se heredó. <code>retirar()</code> sí se escribió, y esa versión gana.</p>
+
+<h3>Extender en vez de reemplazar</h3>
+
+<p>A veces no quieres cambiar el método del padre, sino agregarle algo:</p>
+
+<pre><code>class CuentaAhorros(Cuenta):
+    def retirar(self, monto):
+        if monto &gt; 1000000:
+            raise ValueError("Máximo un millón por retiro")
+        return super().retirar(monto)     # y ahora sí, lo del padre</code></pre>
+
+<p>Ese <code>super().retirar(monto)</code> reutiliza la validación de saldo que ya estaba escrita. No se copia: se llama.</p>
+
+<h2>La prueba del "es un"</h2>
+
+<p>La pregunta para saber si algo es herencia:</p>
+
+<ul>
+  <li>Una cuenta corriente <strong>es una</strong> cuenta → herencia ✅</li>
+  <li>Un inventario <strong>tiene</strong> productos → composición, no herencia ✅</li>
+  <li>Un cliente <strong>tiene</strong> cuentas → composición ✅</li>
+</ul>
+
+<p>Si tienes que decir "tiene", no es herencia. Es el error más común al empezar con objetos, y produce jerarquías absurdas como <code>class Motor(Carro)</code>.</p>
+
+<h2>Polimorfismo: distintos objetos, la misma llamada</h2>
+
+<p>Esta es la razón de fondo por la que existe la herencia:</p>
+
+<pre><code>cuentas = [
+    CuentaAhorros("Ana", 200000),
+    CuentaCorriente("Juan", 100000),
+    CuentaAhorros("Sofia", 500000),
+]
+
+for cuenta in cuentas:
+    cuenta.retirar(50000)     # cada una usa SU versión</code></pre>
+
+<p>El ciclo no sabe ni le importa de qué tipo es cada cuenta. Llama <code>retirar()</code> y cada objeto hace lo suyo. Mañana entra una <code>CuentaNomina</code> nueva y este ciclo <strong>no se toca</strong>.</p>
+
+<h2>Métodos especiales (dunder)</h2>
+
+<p>Ya conoces <code>__init__</code> y <code>__str__</code>. Hay varios más que le enseñan a tu objeto a comportarse como los de Python:</p>
+
+<pre><code>class Dinero:
+    def __init__(self, valor):
+        self.valor = valor
+
+    def __str__(self):
+        return f"$ {self.valor:,}"
+
+    def __repr__(self):
+        return f"Dinero({self.valor})"        # para el programador
+
+    def __eq__(self, otro):
+        return self.valor == otro.valor      # ==
+
+    def __lt__(self, otro):
+        return self.valor &lt; otro.valor       # &lt;  (y habilita sorted)
+
+    def __add__(self, otro):
+        return Dinero(self.valor + otro.valor)   # +
+
+    def __len__(self):
+        return len(str(self.valor))          # len()</code></pre>
+
+<pre><code>a = Dinero(50000)
+b = Dinero(30000)
+
+print(a + b)                       # $ 80,000
+print(a &gt; b)                       # True
+print(sorted([a, b]))              # [Dinero(30000), Dinero(50000)]
+print(Dinero(100) == Dinero(100))  # True</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Método</th><th>Se dispara con</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>__str__</code></td><td><code>print(obj)</code>, <code>str(obj)</code></td></tr>
+    <tr><td><code>__repr__</code></td><td>Ver el objeto en una lista o en la consola</td></tr>
+    <tr><td><code>__eq__</code></td><td><code>==</code></td></tr>
+    <tr><td><code>__lt__</code></td><td><code>&lt;</code>, y con eso <code>sorted()</code></td></tr>
+    <tr><td><code>__add__</code></td><td><code>+</code></td></tr>
+    <tr><td><code>__len__</code></td><td><code>len(obj)</code></td></tr>
+  </tbody>
+</table>
+
+<p>Sin <code>__eq__</code>, dos objetos son iguales solo si son <em>el mismo</em> objeto en memoria, aunque tengan los mismos datos.</p>
+
+<h2>La película de una llamada heredada</h2>
+
+<pre><code>ahorros = CuentaAhorros("Ana", 200000)
+ahorros.retirar(50000)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Qué hace Python</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Busca <code>retirar</code> en <code>CuentaAhorros</code>. Lo encuentra.</td></tr>
+    <tr><td>2</td><td>Valida el tope del millón. Pasa.</td></tr>
+    <tr><td>3</td><td><code>super().retirar(50000)</code> sube a <code>Cuenta</code>.</td></tr>
+    <tr><td>4</td><td>Allá valida el saldo y hace el descuento.</td></tr>
+    <tr><td>5</td><td>El saldo queda en 150000.</td></tr>
+  </tbody>
+</table>
+
+<p>Si <code>CuentaAhorros</code> no hubiera definido <code>retirar</code>, el paso 1 no lo habría encontrado y Python habría subido directo al padre. Eso es todo el mecanismo.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar <code>super().__init__()</code></h3>
+<pre><code>class CuentaCorriente(Cuenta):
+    def __init__(self, titular, sobregiro):
+        self.sobregiro = sobregiro     # ❌ nunca se creó self.saldo
+
+# después: AttributeError: ''CuentaCorriente'' object has no attribute ''saldo''</code></pre>
+
+<h3>2. Heredar cuando era "tiene un"</h3>
+<pre><code>class Inventario(Producto):    # ❌ un inventario no ES un producto
+class Inventario:              # ✅ los contiene
+    def __init__(self):
+        self.productos = {}</code></pre>
+
+<h3>3. Copiar el método en vez de llamar a <code>super()</code></h3>
+<pre><code>def retirar(self, monto):
+    if monto &gt; 1000000:
+        raise ValueError("Tope excedido")
+    if monto &gt; self.saldo:              # ❌ copiado del padre
+        raise ValueError("Saldo insuficiente")
+    self.saldo -= monto
+
+    # ✅ return super().retirar(monto)</code></pre>
+<p>Si se copia, el día que cambie la regla del padre habrá dos versiones y una quedará vieja.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Antes de heredar, di la frase: ¿"<strong>es un</strong>" o "<strong>tiene un</strong>"?</li>
+  <li>En el <code>__init__</code> de la hija, <code>super().__init__(...)</code> primero.</li>
+  <li>Para extender un método, valida lo tuyo y termina con <code>super().metodo(...)</code>.</li>
+  <li>Escribe <code>__str__</code> siempre; <code>__eq__</code> y <code>__lt__</code> cuando vayas a comparar u ordenar.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>class Hija(Padre):</code></td><td>Hereda todo lo del padre</td></tr>
+    <tr><td><code>super().__init__(...)</code></td><td>Llama al constructor del padre</td></tr>
+    <tr><td><code>super().metodo(...)</code></td><td>Llama la versión del padre</td></tr>
+    <tr><td><code>isinstance(obj, Cuenta)</code></td><td>¿Es de esa clase o de una hija?</td></tr>
+    <tr><td><code>__eq__</code> · <code>__lt__</code></td><td>Habilitan <code>==</code> y <code>sorted()</code></td></tr>
+    <tr><td><code>__add__</code> · <code>__len__</code></td><td>Habilitan <code>+</code> y <code>len()</code></td></tr>
+  </tbody>
+</table>
+
+<blockquote>Herencia solo cuando la frase "<em>es un</em>" es cierta. Si dices "tiene un", lo que necesitas es guardar el objeto adentro, no heredarlo.</blockquote>', 1
     FROM parts p WHERE p.number = 5
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -6954,7 +7736,421 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 19
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 19);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Empleado y Gerente', 'facil', '<p>Crear una clase <code>Empleado</code> con <code>nombre</code> y <code>salario</code>, y un método <code>pago_mensual()</code> que devuelva el salario.</p><p>Crear <code>Gerente(Empleado)</code> que además tenga <code>bono</code> y cuyo <code>pago_mensual()</code> sume el bono.</p><pre><code>Ana gana 2,000,000
+Juan gana 5,500,000</code></pre>', '<p>En el <code>__init__</code> del gerente, primero <code>super().__init__(nombre, salario)</code> y después <code>self.bono = bono</code>.</p>', '<pre><code>''''''
+Programa: Empleados y gerentes
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Modela empleados y gerentes usando herencia.
+''''''
+
+
+class Empleado:
+    ''''''Un empleado con salario fijo.''''''
+
+    def __init__(self, nombre, salario):
+        self.nombre = nombre
+        self.salario = salario
+
+    def pago_mensual(self):
+        ''''''Lo que se le paga este mes.''''''
+        return self.salario
+
+    def __str__(self):
+        return f"{self.nombre} gana {self.pago_mensual():,}"
+
+
+class Gerente(Empleado):
+    ''''''Un gerente ES un empleado, con bono adicional.''''''
+
+    def __init__(self, nombre, salario, bono):
+        # El padre hace su parte primero
+        super().__init__(nombre, salario)
+        # y aqui se agrega lo propio
+        self.bono = bono
+
+    def pago_mensual(self):
+        ''''''Salario mas el bono del cargo.''''''
+        return self.salario + self.bono
+
+
+# Inicio
+ana = Empleado("Ana", 2000000)
+juan = Gerente("Juan", 5000000, 500000)
+
+print(ana)
+print(juan)
+# Fin</code></pre><p>Fíjese en algo elegante: <code>__str__</code> se escribió <strong>una sola vez</strong>, en el padre, y funciona para los dos. Como llama a <code>self.pago_mensual()</code>, cada objeto usa su propia versión: Ana la del empleado y Juan la del gerente.</p><p>Eso es polimorfismo: el mismo código sirve para tipos distintos porque cada uno responde a su manera.</p>', '[{"stdin":"","expected_output":"Ana gana 2,000,000\nJuan gana 5,500,000"}]', '''''''
+Programa: Empleados y gerentes
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Cuenta corriente con sobregiro', 'facil', '<p>Sobre una clase <code>Cuenta</code> con <code>consignar()</code> y <code>retirar()</code> (que no permite quedar en negativo), crear <code>CuentaCorriente</code> con un cupo de sobregiro de <strong>500000</strong>.</p><pre><code>Ahorros de Ana: 150000
+Error en ahorros: Saldo insuficiente
+Corriente de Juan: -250000
+Error en corriente: Supera el cupo de sobregiro</code></pre>', '<p>La hija sobrescribe <code>retirar()</code> completo, porque su regla es distinta: compara contra <code>self.saldo + self.sobregiro</code>.</p>', '<pre><code>''''''
+Programa: Cuentas de ahorros y corriente
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Modela dos tipos de cuenta con reglas de retiro distintas
+    usando herencia.
+''''''
+
+
+class Cuenta:
+    ''''''Cuenta bancaria basica: no permite quedar en negativo.''''''
+
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def consignar(self, monto):
+        self.saldo += monto
+        return self.saldo
+
+    def retirar(self, monto):
+        if monto > self.saldo:
+            raise ValueError("Saldo insuficiente")
+        self.saldo -= monto
+        return self.saldo
+
+
+class CuentaCorriente(Cuenta):
+    ''''''Una cuenta corriente ES una cuenta, pero admite sobregiro.''''''
+
+    def __init__(self, titular, saldo=0, sobregiro=500000):
+        super().__init__(titular, saldo)
+        self.sobregiro = sobregiro
+
+    def retirar(self, monto):
+        ''''''Sobrescribe la regla: puede bajar hasta -sobregiro.''''''
+        if monto > self.saldo + self.sobregiro:
+            raise ValueError("Supera el cupo de sobregiro")
+        self.saldo -= monto
+        return self.saldo
+
+
+# Inicio
+ahorros = Cuenta("Ana", 200000)
+corriente = CuentaCorriente("Juan", 100000)
+
+ahorros.retirar(50000)
+print(f"Ahorros de {ahorros.titular}: {ahorros.saldo}")
+
+try:
+    ahorros.retirar(999999)
+except ValueError as e:
+    print(f"Error en ahorros: {e}")
+
+# La corriente si puede quedar en negativo
+corriente.retirar(350000)
+print(f"Corriente de {corriente.titular}: {corriente.saldo}")
+
+try:
+    corriente.retirar(999999)
+except ValueError as e:
+    print(f"Error en corriente: {e}")
+# Fin</code></pre><p><code>consignar()</code> no aparece en <code>CuentaCorriente</code> y funciona igual: se heredó tal cual. Solo se sobrescribió lo que de verdad cambia.</p><p>Aquí la hija <strong>reemplaza</strong> el método en vez de extenderlo con <code>super()</code>, porque su regla no es "lo del padre más algo", sino una condición distinta.</p>', '[{"stdin":"","expected_output":"Ahorros de Ana: 150000\nError en ahorros: Saldo insuficiente\nCorriente de Juan: -250000\nError en corriente: Supera el cupo de sobregiro"}]', '''''''
+Programa: Cuentas de ahorros y corriente
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Clase Dinero con operadores', 'medio', '<p>Crear una clase <code>Dinero</code> que guarde un valor en pesos y sepa comportarse como un número:</p><ul><li><code>__str__</code> → <code>$ 50,000</code></li><li><code>__repr__</code> → <code>Dinero(50000)</code></li><li><code>__eq__</code>, <code>__lt__</code> y <code>__add__</code></li></ul><pre><code>$ 80,000
+True
+False
+[Dinero(20000), Dinero(30000), Dinero(50000)]
+El mayor es $ 50,000</code></pre>', '<p><code>__add__</code> debe devolver un <code>Dinero</code> nuevo, no un número suelto. Con <code>__lt__</code> definido, <code>sorted()</code> y <code>max()</code> funcionan solos.</p>', '<pre><code>''''''
+Programa: Clase Dinero
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Modela un valor en pesos que se puede sumar, comparar y
+    ordenar como si fuera un numero.
+''''''
+
+
+class Dinero:
+    ''''''Un valor en pesos colombianos.''''''
+
+    def __init__(self, valor):
+        self.valor = valor
+
+    def __str__(self):
+        ''''''Como se ve para el usuario.''''''
+        return f"$ {self.valor:,}"
+
+    def __repr__(self):
+        ''''''Como se ve para el programador, en listas y en la consola.''''''
+        return f"Dinero({self.valor})"
+
+    def __eq__(self, otro):
+        return self.valor == otro.valor
+
+    def __lt__(self, otro):
+        ''''''Con esto ya funcionan sorted(), min() y max().''''''
+        return self.valor < otro.valor
+
+    def __add__(self, otro):
+        ''''''Devuelve un Dinero nuevo, no un numero suelto.''''''
+        return Dinero(self.valor + otro.valor)
+
+
+# Inicio
+a = Dinero(50000)
+b = Dinero(30000)
+c = Dinero(20000)
+
+print(a + b)
+print(a > b)
+print(Dinero(100) == Dinero(200))
+print(sorted([a, b, c]))
+print(f"El mayor es {max([a, b, c])}")
+# Fin</code></pre><p>Tres detalles que valen la pena:</p><ul><li><strong><code>__str__</code> y <code>__repr__</code> son distintos.</strong> El primero es para el usuario (<code>print</code>); el segundo para el programador, y es el que se ve dentro de una lista. Por eso <code>sorted()</code> muestra <code>Dinero(20000)</code> y no <code>$ 20,000</code>.</li><li><strong>Con solo <code>__lt__</code> alcanza.</strong> Python deduce <code>&gt;</code> invirtiendo la comparación, y <code>sorted()</code>, <code>min()</code> y <code>max()</code> quedan habilitados.</li><li><strong><code>__add__</code> devuelve un objeto nuevo.</strong> Si devolviera <code>self.valor + otro.valor</code>, el resultado sería un <code>int</code> pelado y se perdería el formato.</li></ul>', '[{"stdin":"","expected_output":"$ 80,000\nTrue\nFalse\n[Dinero(20000), Dinero(30000), Dinero(50000)]\nEl mayor es $ 50,000"}]', '''''''
+Programa: Clase Dinero
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Nómina polimórfica', 'dificil', '<p>Una empresa paga de tres formas distintas:</p><ul><li><code>Asalariado</code>: salario fijo.</li><li><code>PorHoras</code>: valor hora × horas, y las horas sobre 160 se pagan con recargo del 25%.</li><li><code>Comisionista</code>: básico + porcentaje de sus ventas.</li></ul><p>Todos heredan de <code>Empleado</code>, que define <code>pago_mensual()</code> y el descuento de salud y pensión (8% del pago).</p><p>Procesar la nómina completa:</p><pre><code>Ana          asalariado    2,000,000   neto 1,840,000
+Juan         por horas     1,850,000   neto 1,702,000
+Sofia        comisionista  2,300,000   neto 2,116,000
+Total nomina: 6,150,000
+Total neto: 5,658,000</code></pre><p><em>Nota:</em> el ciclo que procesa la nómina no debe preguntar de qué tipo es cada empleado.</p>', '<p><code>Empleado.pago_mensual()</code> puede lanzar <code>NotImplementedError</code> para obligar a las hijas a definirlo. El método <code>neto()</code> se escribe una sola vez en el padre y sirve para todas.</p>', '<pre><code>''''''
+Programa: Nomina polimorfica
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Procesa la nomina de empleados con tres esquemas de pago
+    distintos usando herencia y polimorfismo.
+''''''
+
+DESCUENTOS = 0.08
+HORAS_BASE = 160
+RECARGO_EXTRA = 1.25
+
+
+class Empleado:
+    ''''''
+    Base de todos los empleados.
+
+    Define lo comun (nombre, descuentos, formato) y deja el
+    calculo del pago a cada hija.
+    ''''''
+
+    tipo = "empleado"
+
+    def __init__(self, nombre):
+        self.nombre = nombre
+
+    def pago_mensual(self):
+        ''''''Cada tipo de empleado calcula el suyo.''''''
+        raise NotImplementedError("Cada tipo de empleado define su pago")
+
+    def neto(self):
+        ''''''
+        Pago menos salud y pension.
+
+        Se escribe UNA vez y sirve para todos, porque llama a
+        self.pago_mensual(), que cada hija resuelve a su manera.
+        ''''''
+        pago = self.pago_mensual()
+        return round(pago - pago * DESCUENTOS)
+
+    def __str__(self):
+        return (
+            f"{self.nombre:<12} {self.tipo:<13} "
+            f"{self.pago_mensual():>9,}   neto {self.neto():>9,}"
+        )
+
+
+class Asalariado(Empleado):
+    ''''''Salario fijo mensual.''''''
+
+    tipo = "asalariado"
+
+    def __init__(self, nombre, salario):
+        super().__init__(nombre)
+        self.salario = salario
+
+    def pago_mensual(self):
+        return self.salario
+
+
+class PorHoras(Empleado):
+    ''''''Pago por hora, con recargo sobre las horas extra.''''''
+
+    tipo = "por horas"
+
+    def __init__(self, nombre, valor_hora, horas):
+        super().__init__(nombre)
+        self.valor_hora = valor_hora
+        self.horas = horas
+
+    def pago_mensual(self):
+        if self.horas <= HORAS_BASE:
+            return self.valor_hora * self.horas
+
+        # Las horas sobre la base se pagan con recargo
+        extras = self.horas - HORAS_BASE
+        normal = self.valor_hora * HORAS_BASE
+        return round(normal + extras * self.valor_hora * RECARGO_EXTRA)
+
+
+class Comisionista(Empleado):
+    ''''''Basico mas un porcentaje de las ventas.''''''
+
+    tipo = "comisionista"
+
+    def __init__(self, nombre, basico, ventas, comision):
+        super().__init__(nombre)
+        self.basico = basico
+        self.ventas = ventas
+        self.comision = comision
+
+    def pago_mensual(self):
+        return round(self.basico + self.ventas * self.comision)
+
+
+# Inicio
+nomina = [
+    Asalariado("Ana", 2000000),
+    PorHoras("Juan", 10000, 180),
+    Comisionista("Sofia", 1500000, 8000000, 0.10),
+]
+
+total = 0
+total_neto = 0
+
+# Este ciclo NO pregunta de que tipo es cada empleado:
+# cada objeto sabe calcular lo suyo
+for empleado in nomina:
+    print(empleado)
+    total += empleado.pago_mensual()
+    total_neto += empleado.neto()
+
+print(f"Total nomina: {total:,}")
+print(f"Total neto: {total_neto:,}")
+# Fin</code></pre><p>Este ejercicio muestra por qué existe la herencia. Tres ideas:</p><ul><li><strong><code>neto()</code> se escribió una sola vez.</strong> Aunque cada tipo calcule su pago distinto, el descuento del 8% es igual para todos. Como <code>neto()</code> llama a <code>self.pago_mensual()</code>, cada objeto aporta su propia cuenta.</li><li><strong><code>raise NotImplementedError</code> es un contrato.</strong> Le dice a quien cree una clase hija: "tienes que definir este método". Si alguien crea un tipo nuevo y lo olvida, el error se lo dice de una en vez de dar un resultado silenciosamente equivocado.</li><li><strong>El ciclo final no tiene ni un <code>if</code>.</strong> No pregunta el tipo de empleado, y ese es justo el punto: mañana entra <code>PorProyecto</code> y este ciclo <strong>no se toca</strong>.</li></ul><p>Compárelo con la alternativa sin objetos: un <code>if tipo == "asalariado" ... elif tipo == "por_horas" ...</code> que habría que ampliar cada vez que aparece un esquema de pago nuevo, en todos los sitios donde se calcule algo.</p>', '[{"stdin":"","expected_output":"Ana          asalariado    2,000,000   neto 1,840,000\nJuan         por horas     1,850,000   neto 1,702,000\nSofia        comisionista  2,300,000   neto 2,116,000\nTotal nomina: 6,150,000\nTotal neto: 5,658,000"}]', '''''''
+Programa: Nomina polimorfica
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+DESCUENTOS = 0.08
+HORAS_BASE = 160
+RECARGO_EXTRA = 1.25
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 19;
 DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 19);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Cuándo conviene usar herencia?', NULL, '{"options":[{"id":"a","text":"Cuando la frase \"la hija ES un padre\" es cierta"},{"id":"b","text":"Siempre que dos clases compartan código"},{"id":"c","text":"Cuando una clase necesita usar otra"},{"id":"d","text":"Cuando hay muchas clases"}]}', '{"option_id":"a"}', 'Si hay que decir "tiene un", eso es composición: guardar el objeto adentro, no heredarlo.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué hace super().__init__(...)?', NULL, '{"options":[{"id":"a","text":"Llama al constructor de la clase padre"},{"id":"b","text":"Crea un objeto nuevo del padre"},{"id":"c","text":"Copia los atributos del padre"},{"id":"d","text":"Convierte la hija en padre"}]}', '{"option_id":"a"}', 'Sin esa llamada, los atributos que crea el padre nunca existen y después salta AttributeError.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué es el polimorfismo?', NULL, '{"options":[{"id":"a","text":"Que la misma llamada funcione sobre objetos de tipos distintos, cada uno a su manera"},{"id":"b","text":"Que una clase tenga muchos atributos"},{"id":"c","text":"Que un objeto cambie de tipo en tiempo de ejecución"},{"id":"d","text":"Heredar de varias clases a la vez"}]}', '{"option_id":"a"}', 'Es lo que permite recorrer una lista de empleados llamando pago_mensual() sin un solo if.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué diferencia hay entre __str__ y __repr__?', NULL, '{"options":[{"id":"a","text":"__str__ es para el usuario y __repr__ para el programador (listas, consola)"},{"id":"b","text":"Son lo mismo con distinto nombre"},{"id":"c","text":"__repr__ solo sirve con números"},{"id":"d","text":"__str__ se usa al comparar objetos"}]}', '{"option_id":"a"}', 'Por eso al imprimir una lista de objetos se ve el __repr__ y no el __str__.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Para qué sirve raise NotImplementedError en un método de la clase base?', NULL, '{"options":[{"id":"a","text":"Para obligar a las clases hijas a definir ese método"},{"id":"b","text":"Para marcar código pendiente de escribir"},{"id":"c","text":"Para evitar que la clase se pueda instanciar"},{"id":"d","text":"Para documentar el método"}]}', '{"option_id":"a"}', 'Es un contrato: si alguien crea una hija y lo olvida, el error se lo dice en vez de dar un resultado equivocado.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class A:
+    def saludo(self):
+        return "soy A"
+
+class B(A):
+    def saludo(self):
+        return "soy B"
+
+print(B().saludo())', '{"options":[{"id":"a","text":"soy B"},{"id":"b","text":"soy A"},{"id":"c","text":"soy A\nsoy B"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'Python busca el método primero en la clase del objeto. Como B lo define, esa versión gana.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class A:
+    def __init__(self, x):
+        self.x = x
+
+class B(A):
+    def __init__(self, x, y):
+        super().__init__(x)
+        self.y = y
+
+b = B(1, 2)
+print(b.x + b.y)', '{"options":[{"id":"a","text":"3"},{"id":"b","text":"2"},{"id":"c","text":"AttributeError"},{"id":"d","text":"1"}]}', '{"option_id":"a"}', 'super() crea self.x y después la hija agrega self.y: el objeto termina con los dos.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'class D:
+    def __init__(self, v):
+        self.v = v
+
+    def __lt__(self, o):
+        return self.v < o.v
+
+    def __repr__(self):
+        return f"D({self.v})"
+
+print(sorted([D(3), D(1), D(2)]))', '{"options":[{"id":"a","text":"[D(1), D(2), D(3)]"},{"id":"b","text":"[D(3), D(1), D(2)]"},{"id":"c","text":"TypeError"},{"id":"d","text":"[1, 2, 3]"}]}', '{"option_id":"a"}', 'Con __lt__ definido, sorted() sabe comparar los objetos; __repr__ es lo que se ve dentro de la lista.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'class Cuenta:
+    def retirar(self, m):
+        return f"retiro {m}"
+
+class Ahorros(Cuenta):
+    def retirar(self, m):
+        if m > 100:
+            return "tope excedido"
+        return super().retirar(m)
+
+print(Ahorros().retirar(50))', '{"options":[{"id":"a","text":"retiro 50"},{"id":"b","text":"tope excedido"},{"id":"c","text":"None"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', '50 no supera el tope, así que la hija valida lo suyo y delega en el padre con super().', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Al usar el objeto salta AttributeError: no existe ''saldo''. ¿En qué línea está el error?', NULL, '{"lines":["class Cuenta:","    def __init__(self, saldo):","        self.saldo = saldo","","class Corriente(Cuenta):","    def __init__(self, saldo, cupo):","        self.cupo = cupo"]}', '{"line_number":7}', 'Falta super().__init__(saldo) antes: sin esa llamada el atributo saldo nunca se crea.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'La jerarquía está mal planteada. ¿En qué línea está el error de diseño?', NULL, '{"lines":["class Producto:","    pass","","class Inventario(Producto):","    def __init__(self):","        self.productos = {}"]}', '{"line_number":4}', 'Un inventario no ES un producto: TIENE productos. Eso es composición, no herencia.', 1, 'seed'
+    FROM chapters WHERE number = 19;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme la cuenta de ahorros que extiende la del padre', NULL, '{"lines":[{"id":"l1","text":"class CuentaAhorros(Cuenta):","indent":0},{"id":"l2","text":"def retirar(self, monto):","indent":1},{"id":"l3","text":"if monto > 1000000:","indent":2},{"id":"l4","text":"raise ValueError(\"Maximo un millon por retiro\")","indent":3},{"id":"l5","text":"return super().retirar(monto)","indent":2}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'La hija valida lo suyo primero y termina delegando en el padre, en vez de copiar su validación de saldo.', 1, 'seed'
+    FROM chapters WHERE number = 19;
 
 -- ── Capítulo 20: Proyecto integrador: Sistema Bancario (borrador)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)

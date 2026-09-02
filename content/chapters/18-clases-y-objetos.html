@@ -1,0 +1,197 @@
+<p class="jc-gancho">Llevas todo el libro representando una cuenta bancaria con un diccionario suelto y funciones que la reciben por parámetro. Nada impide que alguien le meta un saldo negativo o le borre el nombre. Una clase junta los datos <em>y</em> las reglas que los protegen.</p>
+
+<h2>El molde y las galletas</h2>
+
+<p>Una <strong>clase</strong> es el molde. Un <strong>objeto</strong> es cada galleta que sale de él.</p>
+
+<pre><code>class CuentaBancaria:
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def consignar(self, monto):
+        self.saldo += monto
+        return self.saldo
+
+
+# Dos objetos, del mismo molde, independientes
+cuenta_ana = CuentaBancaria("Ana", 250000)
+cuenta_juan = CuentaBancaria("Juan")
+
+cuenta_ana.consignar(50000)
+
+print(cuenta_ana.saldo)     # 300000
+print(cuenta_juan.saldo)    # 0 — a Juan no le pasó nada</code></pre>
+
+<p>Cada objeto tiene <strong>sus propios datos</strong>. Consignarle a Ana no toca a Juan, aunque salgan del mismo molde.</p>
+
+<h3><code>__init__</code>: el constructor</h3>
+
+<p>Es el método que corre automáticamente al crear el objeto. Su trabajo es dejar el objeto listo para usar.</p>
+
+<pre><code>cuenta = CuentaBancaria("Ana", 250000)
+#          ↓
+#     __init__(self, "Ana", 250000)</code></pre>
+
+<h3><code>self</code>: este objeto en particular</h3>
+
+<p><code>self</code> es la palabra que más confunde, y en el fondo es sencilla: es <strong>el objeto sobre el que se está trabajando</strong>.</p>
+
+<pre><code>cuenta_ana.consignar(50000)
+#    ↓
+# consignar(cuenta_ana, 50000)   ← self es cuenta_ana</code></pre>
+
+<p>Python lo pasa solo. Por eso <code>self</code> va siempre de primer parámetro en la definición, pero nunca se escribe al llamar.</p>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Qué es</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>self.saldo</code></td><td>Un dato <strong>del objeto</strong>: sobrevive entre llamadas</td></tr>
+    <tr><td><code>saldo</code> (sin self)</td><td>Una variable local: muere al terminar el método</td></tr>
+  </tbody>
+</table>
+
+<h2>Atributos y métodos</h2>
+
+<pre><code>class CuentaBancaria:
+    # Atributo de CLASE: lo comparten todos los objetos
+    tasa_interes = 0.02
+
+    def __init__(self, titular, saldo=0):
+        # Atributos de INSTANCIA: uno por objeto
+        self.titular = titular
+        self.saldo = saldo
+        self.movimientos = []
+
+    def consignar(self, monto):
+        if monto &lt;= 0:
+            raise ValueError("El monto debe ser positivo")
+        self.saldo += monto
+        self.movimientos.append(("consignacion", monto))
+        return self.saldo
+
+    def retirar(self, monto):
+        if monto &gt; self.saldo:
+            raise ValueError("Saldo insuficiente")
+        self.saldo -= monto
+        self.movimientos.append(("retiro", monto))
+        return self.saldo
+
+    def extracto(self):
+        return f"{self.titular}: {self.saldo} ({len(self.movimientos)} movimientos)"</code></pre>
+
+<p>Fíjate en lo que acaba de pasar: las validaciones del capítulo 15 ahora viven <strong>dentro</strong> del objeto. Ya no hay forma de retirar de más, porque la única puerta para tocar el saldo es <code>retirar()</code>.</p>
+
+<pre><code>cuenta = CuentaBancaria("Ana", 250000)
+cuenta.consignar(50000)
+cuenta.retirar(100000)
+print(cuenta.extracto())     # Ana: 200000 (2 movimientos)</code></pre>
+
+<h2><code>__str__</code>: cómo se ve el objeto</h2>
+
+<pre><code>cuenta = CuentaBancaria("Ana", 250000)
+print(cuenta)     # &lt;__main__.CuentaBancaria object at 0x000001&gt;  😐</code></pre>
+
+<p>Ese mensaje no le sirve a nadie. <code>__str__</code> lo arregla:</p>
+
+<pre><code>    def __str__(self):
+        return f"Cuenta de {self.titular}: {self.saldo:,}"
+
+
+print(cuenta)     # Cuenta de Ana: 250,000  ✅</code></pre>
+
+<p>Los métodos con doble guion bajo a lado y lado se llaman <strong>métodos especiales</strong> o <em>dunder</em>, y Python los llama solo en ciertos momentos. En el capítulo 19 verás varios más.</p>
+
+<h2>Atributos privados: la convención del guion bajo</h2>
+
+<p>Python no tiene atributos verdaderamente privados. Lo que hay es una convención que todo el mundo respeta:</p>
+
+<pre><code>class CuentaBancaria:
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self._saldo = saldo          # el _ dice "no me toques desde afuera"
+
+    @property
+    def saldo(self):
+        '''Se lee como un atributo, pero es un método.'''
+        return self._saldo
+
+
+cuenta = CuentaBancaria("Ana", 250000)
+print(cuenta.saldo)        # 250000 — sin paréntesis
+cuenta.saldo = 999999      # AttributeError: no tiene setter</code></pre>
+
+<p>Con <code>@property</code>, el saldo se lee normal pero no se puede asignar de fuera. La única forma de cambiarlo es por <code>consignar()</code> o <code>retirar()</code>, que sí validan.</p>
+
+<h2>La película de dos objetos</h2>
+
+<pre><code>a = CuentaBancaria("Ana", 100000)      # línea 1
+b = CuentaBancaria("Juan", 100000)     # línea 2
+a.retirar(30000)                       # línea 3
+b.consignar(50000)                     # línea 4</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Después de…</th><th><code>a.saldo</code></th><th><code>b.saldo</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>línea 1</td><td>100000</td><td>no existe</td></tr>
+    <tr><td>línea 2</td><td>100000</td><td>100000</td></tr>
+    <tr><td>línea 3</td><td><strong>70000</strong></td><td>100000</td></tr>
+    <tr><td>línea 4</td><td>70000</td><td><strong>150000</strong></td></tr>
+  </tbody>
+</table>
+
+<p>Dos objetos del mismo molde con vidas separadas. Eso es lo que un diccionario suelto no te garantiza.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Olvidar <code>self</code></h3>
+<pre><code>def consignar(monto):        # ❌ TypeError al llamarlo
+def consignar(self, monto):  # ✅</code></pre>
+
+<h3>2. Olvidar <code>self.</code> adentro</h3>
+<pre><code>def consignar(self, monto):
+    saldo += monto        # ❌ variable local que muere aquí
+    self.saldo += monto   # ✅ el dato del objeto</code></pre>
+
+<h3>3. Lista mutable como atributo de clase</h3>
+<pre><code>class Cuenta:
+    movimientos = []      # ❌ ¡compartida por TODAS las cuentas!
+
+class Cuenta:
+    def __init__(self):
+        self.movimientos = []   # ✅ una por objeto</code></pre>
+<p>Es el mismo error del parámetro por defecto del capítulo 14, con otro disfraz.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿Tienes datos que siempre viajan juntos y reglas que los cuidan? Es una clase.</li>
+  <li><code>__init__</code> deja el objeto listo; todo atributo se crea ahí.</li>
+  <li><code>self.</code> para lo que debe sobrevivir; sin <code>self</code> para lo temporal.</li>
+  <li>Las validaciones van en los métodos: que sea imposible dejar el objeto en mal estado.</li>
+  <li><code>__str__</code> siempre, para poder imprimirlo y depurar.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>class Cuenta:</code></td><td>Define el molde</td></tr>
+    <tr><td><code>def __init__(self, ...):</code></td><td>Constructor</td></tr>
+    <tr><td><code>self.x = valor</code></td><td>Atributo del objeto</td></tr>
+    <tr><td><code>def metodo(self):</code></td><td>Método de instancia</td></tr>
+    <tr><td><code>obj = Cuenta("Ana")</code></td><td>Crea un objeto</td></tr>
+    <tr><td><code>obj.metodo()</code></td><td>Lo llama (self va solo)</td></tr>
+    <tr><td><code>def __str__(self):</code></td><td>Cómo se ve al imprimirlo</td></tr>
+    <tr><td><code>@property</code></td><td>Método que se lee como atributo</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Una clase no es solo datos juntos: es datos <em>más</em> las reglas que impiden dejarlos en un estado imposible.</blockquote>

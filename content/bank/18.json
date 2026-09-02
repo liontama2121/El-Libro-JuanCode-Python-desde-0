@@ -1,0 +1,156 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es la diferencia entre una clase y un objeto?",
+    "data": { "options": [
+      { "id": "a", "text": "La clase es el molde; el objeto es cada cosa concreta creada con ese molde" },
+      { "id": "b", "text": "Son sinónimos" },
+      { "id": "c", "text": "El objeto es el molde y la clase la copia" },
+      { "id": "d", "text": "La clase guarda datos y el objeto guarda funciones" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Del mismo molde salen muchas galletas, y cada una tiene sus propios datos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué es self?",
+    "data": { "options": [
+      { "id": "a", "text": "El objeto concreto sobre el que se está trabajando" },
+      { "id": "b", "text": "Una palabra reservada obligatoria de Python" },
+      { "id": "c", "text": "La clase en sí misma" },
+      { "id": "d", "text": "Una variable global del programa" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "cuenta.retirar(100) es en realidad retirar(cuenta, 100): Python pasa self solo."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuándo se ejecuta __init__?",
+    "data": { "options": [
+      { "id": "a", "text": "Automáticamente al crear un objeto de la clase" },
+      { "id": "b", "text": "Cada vez que se llama un método" },
+      { "id": "c", "text": "Cuando se imprime el objeto" },
+      { "id": "d", "text": "Hay que llamarlo a mano" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Su trabajo es dejar el objeto listo para usarse: ahí se crean todos los atributos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Para qué sirve @property?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que un método se lea como atributo, sin paréntesis" },
+      { "id": "b", "text": "Para hacer el atributo privado" },
+      { "id": "c", "text": "Para declarar un atributo de clase" },
+      { "id": "d", "text": "Para documentar la clase" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sirve para valores que se calculan al pedirlos, como el total de un producto, en vez de guardarlos desactualizados."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué un valor calculable como total = precio * cantidad conviene como propiedad y no como atributo?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque como atributo queda congelado y miente cuando la cantidad cambia" },
+      { "id": "b", "text": "Porque ocupa menos memoria" },
+      { "id": "c", "text": "Porque los atributos no pueden ser números" },
+      { "id": "d", "text": "Porque las propiedades son más rápidas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Lo que se puede deducir de otros datos se calcula, no se guarda: guardarlo crea dos versiones de la verdad."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class Cuenta:\n    def __init__(self, saldo=0):\n        self.saldo = saldo\n\na = Cuenta(100)\nb = Cuenta()\na.saldo += 50\nprint(a.saldo, b.saldo)",
+    "data": { "options": [
+      { "id": "a", "text": "150 0" },
+      { "id": "b", "text": "150 150" },
+      { "id": "c", "text": "100 0" },
+      { "id": "d", "text": "150 100" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cada objeto tiene sus propios atributos: cambiar el de a no toca a b."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class Cuenta:\n    def __init__(self, saldo):\n        self.saldo = saldo\n\n    def sumar(self, x):\n        saldo = self.saldo + x\n\nc = Cuenta(100)\nc.sumar(50)\nprint(c.saldo)",
+    "data": { "options": [
+      { "id": "a", "text": "100" },
+      { "id": "b", "text": "150" },
+      { "id": "c", "text": "50" },
+      { "id": "d", "text": "None" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Falta el self.: esa saldo es una variable local que muere al terminar el método."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class P:\n    def __init__(self, precio, cant):\n        self.precio = precio\n        self.cant = cant\n\n    @property\n    def total(self):\n        return self.precio * self.cant\n\np = P(1000, 5)\np.cant = 2\nprint(p.total)",
+    "data": { "options": [
+      { "id": "a", "text": "2000" },
+      { "id": "b", "text": "5000" },
+      { "id": "c", "text": "1000" },
+      { "id": "d", "text": "Error" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La propiedad se recalcula al pedirla, así que refleja la cantidad nueva."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class Cuenta:\n    movimientos = []\n\n    def __init__(self, nombre):\n        self.nombre = nombre\n\na = Cuenta(\"Ana\")\nb = Cuenta(\"Juan\")\na.movimientos.append(\"retiro\")\nprint(len(b.movimientos))",
+    "data": { "options": [
+      { "id": "a", "text": "1" },
+      { "id": "b", "text": "0" },
+      { "id": "c", "text": "2" },
+      { "id": "d", "text": "AttributeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La lista es atributo de CLASE: la comparten todos los objetos. Debía crearse dentro de __init__."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "Al llamar c.consignar(100) da TypeError. ¿En qué línea está el error?",
+    "data": { "lines": ["class Cuenta:", "    def __init__(self, saldo):", "        self.saldo = saldo", "", "    def consignar(monto):", "        self.saldo += monto"] },
+    "correct": { "line_number": 5 },
+    "explanation": "Falta self como primer parámetro: debía ser def consignar(self, monto)."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Todos los estudiantes terminan con las mismas notas. ¿En qué línea está el error?",
+    "data": { "lines": ["class Estudiante:", "    notas = []", "", "    def __init__(self, nombre):", "        self.nombre = nombre"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Esa lista es de la clase y la comparten todos. Va dentro de __init__ como self.notas = []."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme la clase CuentaBancaria con validación",
+    "data": { "lines": [
+      { "id": "l1", "text": "class CuentaBancaria:", "indent": 0 },
+      { "id": "l2", "text": "def __init__(self, titular, saldo=0):", "indent": 1 },
+      { "id": "l3", "text": "self.titular = titular", "indent": 2 },
+      { "id": "l4", "text": "self.saldo = saldo", "indent": 2 },
+      { "id": "l5", "text": "def retirar(self, monto):", "indent": 1 },
+      { "id": "l6", "text": "if monto > self.saldo:", "indent": 2 },
+      { "id": "l7", "text": "raise ValueError(\"Saldo insuficiente\")", "indent": 3 },
+      { "id": "l8", "text": "self.saldo -= monto", "indent": 2 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8"] },
+    "explanation": "Los métodos van indentados dentro de la clase, y la validación antes de tocar el saldo: si el raise se dispara, el descuento nunca ocurre."
+  }
+]
