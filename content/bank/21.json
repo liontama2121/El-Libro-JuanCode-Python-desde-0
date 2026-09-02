@@ -1,0 +1,141 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué tiene de especial SQLite frente a otras bases de datos?",
+    "data": { "options": [
+      { "id": "a", "text": "Es un solo archivo, no necesita servidor y viene incluida en Python" },
+      { "id": "b", "text": "Solo funciona en Windows" },
+      { "id": "c", "text": "Guarda los datos en la nube" },
+      { "id": "d", "text": "Hay que instalarla con pip" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es la misma base que usan tu celular y tu navegador. Para aprender y para proyectos pequeños sobra."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué pasa si se olvida el commit() después de un INSERT?",
+    "data": { "options": [
+      { "id": "a", "text": "El cambio no queda guardado" },
+      { "id": "b", "text": "Se guarda igual, el commit es opcional" },
+      { "id": "c", "text": "Se lanza un error" },
+      { "id": "d", "text": "Se guarda a medias" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Hasta el commit los cambios están en el aire. Es el equivalente al paso de guardar del capítulo 17."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué los valores van con ? y no pegados con f-strings?",
+    "data": { "options": [
+      { "id": "a", "text": "Para evitar inyección SQL: con ? el valor nunca se interpreta como instrucción" },
+      { "id": "b", "text": "Porque las f-strings no funcionan con sqlite3" },
+      { "id": "c", "text": "Porque es más rápido" },
+      { "id": "d", "text": "Por convención de estilo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Un nombre como '; DROP TABLE cuentas; -- borraría la tabla si la consulta se arma pegando texto."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué hace GROUP BY tipo?",
+    "data": { "options": [
+      { "id": "a", "text": "Agrupa las filas por ese valor para resumirlas con COUNT, SUM o AVG" },
+      { "id": "b", "text": "Ordena las filas por tipo" },
+      { "id": "c", "text": "Filtra las filas de ese tipo" },
+      { "id": "d", "text": "Crea una tabla nueva por cada tipo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es el patrón de conteo del capítulo 12, pero resuelto por la base sin traer los datos a Python."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Para qué sirve rollback()?",
+    "data": { "options": [
+      { "id": "a", "text": "Para deshacer todos los cambios pendientes desde el último commit" },
+      { "id": "b", "text": "Para volver a la versión anterior de la base" },
+      { "id": "c", "text": "Para cerrar la conexión" },
+      { "id": "d", "text": "Para borrar la última fila insertada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con commit y rollback, una transferencia queda completa o no queda: la atomicidad la garantiza la base."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import sqlite3\nc = sqlite3.connect(\":memory:\")\nc.execute(\"CREATE TABLE t (n INTEGER)\")\nc.executemany(\"INSERT INTO t VALUES (?)\", [(1,), (2,), (3,)])\nprint(c.execute(\"SELECT SUM(n) FROM t\").fetchone())",
+    "data": { "options": [
+      { "id": "a", "text": "(6,)" },
+      { "id": "b", "text": "6" },
+      { "id": "c", "text": "[6]" },
+      { "id": "d", "text": "[(1,), (2,), (3,)]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "fetchone() siempre devuelve una tupla, aunque la consulta traiga un solo valor: por eso el [0] al usarlo."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import sqlite3\nc = sqlite3.connect(\":memory:\")\nc.execute(\"CREATE TABLE p (nombre TEXT, precio INTEGER)\")\nc.executemany(\"INSERT INTO p VALUES (?, ?)\", [(\"pan\", 5000), (\"queso\", 15000)])\nfilas = c.execute(\"SELECT nombre FROM p WHERE precio > ?\", (6000,)).fetchall()\nprint(filas)",
+    "data": { "options": [
+      { "id": "a", "text": "[('queso',)]" },
+      { "id": "b", "text": "['queso']" },
+      { "id": "c", "text": "[('pan',), ('queso',)]" },
+      { "id": "d", "text": "queso" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "fetchall() devuelve una lista de tuplas, una por fila, aunque cada una tenga una sola columna."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import sqlite3\nc = sqlite3.connect(\":memory:\")\nc.execute(\"CREATE TABLE t (tipo TEXT, monto INTEGER)\")\nc.executemany(\"INSERT INTO t VALUES (?, ?)\", [(\"a\", 10), (\"b\", 20), (\"a\", 30)])\nprint(c.execute(\"SELECT tipo, SUM(monto) FROM t GROUP BY tipo\").fetchall())",
+    "data": { "options": [
+      { "id": "a", "text": "[('a', 40), ('b', 20)]" },
+      { "id": "b", "text": "[('a', 10), ('b', 20), ('a', 30)]" },
+      { "id": "c", "text": "[('a', 2), ('b', 1)]" },
+      { "id": "d", "text": "[60]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "GROUP BY junta las filas del mismo tipo y SUM las totaliza: la a suma 10 + 30."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "Este programa es vulnerable. ¿En qué línea está el problema?",
+    "data": { "lines": ["nombre = input(\"Titular: \")", "cursor.execute(f\"SELECT * FROM cuentas WHERE titular = '{nombre}'\")", "print(cursor.fetchall())"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Inyección SQL: el valor va pegado a la consulta. Debía ser execute(\"... = ?\", (nombre,))."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "El parámetro no funciona. ¿En qué línea está el error?",
+    "data": { "lines": ["cursor.execute(", "    \"SELECT * FROM cuentas WHERE numero = ?\",", "    (\"001\")", ")"] },
+    "correct": { "line_number": 3 },
+    "explanation": "Falta la coma: (\"001\") es un texto entre paréntesis, no una tupla. Debía ser (\"001\",)."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme la transferencia con transacción",
+    "data": { "lines": [
+      { "id": "l1", "text": "try:", "indent": 0 },
+      { "id": "l2", "text": "cur.execute(\"UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?\", (monto, origen))", "indent": 1 },
+      { "id": "l3", "text": "cur.execute(\"UPDATE cuentas SET saldo = saldo + ? WHERE numero = ?\", (monto, destino))", "indent": 1 },
+      { "id": "l4", "text": "conexion.commit()", "indent": 1 },
+      { "id": "l5", "text": "except Exception:", "indent": 0 },
+      { "id": "l6", "text": "conexion.rollback()", "indent": 1 },
+      { "id": "l7", "text": "raise", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7"] },
+    "explanation": "Los dos UPDATE van antes del único commit: si algo falla, el rollback deshace los dos y el raise avisa a quien llamó."
+  }
+]

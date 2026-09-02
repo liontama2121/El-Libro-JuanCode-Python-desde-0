@@ -1,0 +1,206 @@
+<p class="jc-gancho">El banco del capítulo 20 guarda todo en un JSON. Con 50 cuentas va bien. Con 50 mil, cada consulta lee el archivo entero, dos personas no pueden escribir a la vez y buscar "los retiros de marzo" obliga a recorrerlo todo. Para eso se inventaron las bases de datos.</p>
+
+<h2>SQLite: la base de datos que ya tienes</h2>
+
+<p>Python trae <code>sqlite3</code> incluido. Una base SQLite es <strong>un solo archivo</strong>, sin servidor ni instalación. Es la misma que usan tu celular, tu navegador y miles de aplicaciones.</p>
+
+<pre><code>import sqlite3
+
+# El archivo se crea solo si no existe
+conexion = sqlite3.connect("banco.db")
+cursor = conexion.cursor()
+
+cursor.execute("SELECT 1")
+print(cursor.fetchone())     # (1,)
+
+conexion.close()</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Pieza</th><th>Qué es</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>conexión</strong></td><td>La puerta al archivo</td></tr>
+    <tr><td><strong>cursor</strong></td><td>Quien ejecuta las órdenes y trae los resultados</td></tr>
+    <tr><td><code>commit()</code></td><td>Confirma los cambios: sin esto, no se guardan</td></tr>
+  </tbody>
+</table>
+
+<h2>Crear la tabla</h2>
+
+<p>Una tabla es una hoja de cálculo con reglas: columnas con tipo, y restricciones que la base hace cumplir.</p>
+
+<pre><code>cursor.execute('''
+    CREATE TABLE IF NOT EXISTS cuentas (
+        numero   TEXT PRIMARY KEY,
+        titular  TEXT NOT NULL,
+        tipo     TEXT NOT NULL DEFAULT 'ahorros',
+        saldo    INTEGER NOT NULL DEFAULT 0
+    )
+''')
+conexion.commit()</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Palabra</th><th>Qué obliga</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>PRIMARY KEY</code></td><td>Único y no repetido: identifica la fila</td></tr>
+    <tr><td><code>NOT NULL</code></td><td>Ese dato no puede faltar</td></tr>
+    <tr><td><code>DEFAULT</code></td><td>Valor si no se especifica</td></tr>
+    <tr><td><code>IF NOT EXISTS</code></td><td>No falla si la tabla ya estaba</td></tr>
+  </tbody>
+</table>
+
+<p>Esto es distinto al JSON: allá nada impedía guardar una cuenta sin titular o dos con el mismo número. Aquí la base lo <strong>rechaza</strong>.</p>
+
+<h2>Las cuatro operaciones</h2>
+
+<pre><code># INSERT — crear
+cursor.execute(
+    "INSERT INTO cuentas (numero, titular, tipo, saldo) VALUES (?, ?, ?, ?)",
+    ("001", "Ana", "ahorros", 200000),
+)
+
+# SELECT — leer
+cursor.execute("SELECT numero, titular, saldo FROM cuentas WHERE saldo &gt; ?", (100000,))
+print(cursor.fetchall())     # [('001', 'Ana', 200000)]
+
+# UPDATE — modificar
+cursor.execute("UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?", (50000, "001"))
+
+# DELETE — borrar
+cursor.execute("DELETE FROM cuentas WHERE numero = ?", ("001",))
+
+conexion.commit()</code></pre>
+
+<h3>Los signos de pregunta no son opcionales</h3>
+
+<p>Esto es lo más importante del capítulo:</p>
+
+<pre><code># ❌ NUNCA
+cursor.execute(f"SELECT * FROM cuentas WHERE titular = '{nombre}'")
+
+# ✅ SIEMPRE
+cursor.execute("SELECT * FROM cuentas WHERE titular = ?", (nombre,))</code></pre>
+
+<p>Si el usuario escribe <code>'; DROP TABLE cuentas; --</code> como nombre, la primera versión <strong>borra la tabla</strong>. Se llama <strong>inyección SQL</strong> y sigue siendo una de las formas más comunes de robar bases de datos.</p>
+
+<p>Con <code>?</code>, la base trata el valor como dato y nunca como instrucción, pase lo que pase. La coma de <code>(nombre,)</code> tampoco es opcional: sin ella no es una tupla.</p>
+
+<h2>Leer resultados</h2>
+
+<pre><code>cursor.execute("SELECT numero, titular, saldo FROM cuentas ORDER BY saldo DESC")
+
+fila = cursor.fetchone()      # una tupla, o None si no hay más
+filas = cursor.fetchall()     # lista de tuplas
+
+for numero, titular, saldo in cursor.execute("SELECT numero, titular, saldo FROM cuentas"):
+    print(f"{numero} {titular}: {saldo:,}")</code></pre>
+
+<p>Por defecto cada fila es una tupla y hay que acordarse del orden de las columnas. Con una línea se puede pedir algo mucho más cómodo:</p>
+
+<pre><code>conexion.row_factory = sqlite3.Row
+cursor = conexion.cursor()
+
+fila = cursor.execute("SELECT * FROM cuentas WHERE numero = ?", ("001",)).fetchone()
+print(fila["titular"], fila["saldo"])     # por nombre, como un diccionario</code></pre>
+
+<h2>Consultas que hacen el trabajo por ti</h2>
+
+<p>Aquí está la ganancia real: cosas que en Python serían un ciclo, en SQL son una línea.</p>
+
+<pre><code>-- ¿Cuánto hay en el banco?
+SELECT SUM(saldo) FROM cuentas;
+
+-- ¿Cuántas cuentas de cada tipo y cuánto suman?
+SELECT tipo, COUNT(*), SUM(saldo)
+FROM cuentas
+GROUP BY tipo;
+
+-- Los tres saldos más altos
+SELECT titular, saldo FROM cuentas ORDER BY saldo DESC LIMIT 3;
+
+-- Cuentas sin movimientos este mes
+SELECT titular FROM cuentas WHERE saldo BETWEEN 0 AND 100000;</code></pre>
+
+<p><code>GROUP BY</code> es el equivalente exacto del patrón de conteo del capítulo 12, pero lo resuelve la base y sin traer los datos a Python.</p>
+
+<h2>Dos tablas y un JOIN</h2>
+
+<p>Los movimientos no caben en la tabla de cuentas: son muchos por cuenta. Van en su propia tabla, apuntando a la cuenta con una <strong>clave foránea</strong>.</p>
+
+<pre><code>CREATE TABLE IF NOT EXISTS movimientos (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    cuenta   TEXT NOT NULL,
+    concepto TEXT NOT NULL,
+    monto    INTEGER NOT NULL,
+    fecha    TEXT NOT NULL,
+    FOREIGN KEY (cuenta) REFERENCES cuentas(numero)
+);</code></pre>
+
+<pre><code>-- Cada movimiento con el nombre de su titular
+SELECT c.titular, m.concepto, m.monto
+FROM movimientos m
+JOIN cuentas c ON c.numero = m.cuenta
+ORDER BY m.fecha;</code></pre>
+
+<p><code>JOIN</code> pega las dos tablas por la columna que tienen en común. Es lo que en Python sería buscar, por cada movimiento, la cuenta que le corresponde.</p>
+
+<h2>Transacciones: el commit del capítulo 20</h2>
+
+<p>La transferencia atómica que ordenamos a mano en el capítulo anterior, aquí la garantiza la base:</p>
+
+<pre><code>try:
+    cursor.execute("UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?", (monto, origen))
+    cursor.execute("UPDATE cuentas SET saldo = saldo + ? WHERE numero = ?", (monto, destino))
+    conexion.commit()          # las dos, juntas
+except Exception:
+    conexion.rollback()        # ninguna
+    raise</code></pre>
+
+<p>Hasta el <code>commit()</code>, los cambios están en el aire. <code>rollback()</code> los deshace todos. O quedan las dos operaciones, o no queda ninguna: aunque se vaya la luz en la mitad.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Armar la consulta con f-strings</h3>
+<pre><code>f"... WHERE titular = '{nombre}'"    # ❌ inyección SQL
+"... WHERE titular = ?", (nombre,)   # ✅</code></pre>
+
+<h3>2. Olvidar el <code>commit()</code></h3>
+<pre><code>cursor.execute("INSERT ...")
+conexion.close()     # ❌ el INSERT se perdió</code></pre>
+
+<h3>3. Olvidar la coma de la tupla</h3>
+<pre><code>cursor.execute("... WHERE numero = ?", ("001"))    # ❌ eso es un texto
+cursor.execute("... WHERE numero = ?", ("001",))   # ✅ tupla de uno</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Conectar, crear tablas con <code>IF NOT EXISTS</code>, trabajar, <code>commit()</code>, cerrar.</li>
+  <li>Los valores <strong>siempre</strong> con <code>?</code>. Sin excepciones.</li>
+  <li>Deja que la base filtre, ordene y agrupe: es lo que sabe hacer.</li>
+  <li>Un dato que se repite muchas veces por registro va en su propia tabla, unida por clave foránea.</li>
+  <li>Operaciones que van juntas, dentro de una transacción.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>sqlite3.connect("x.db")</code></td><td>Abre (o crea) la base</td></tr>
+    <tr><td><code>cursor.execute(sql, (a, b))</code></td><td>Ejecuta con parámetros seguros</td></tr>
+    <tr><td><code>fetchone()</code> · <code>fetchall()</code></td><td>Una fila · todas</td></tr>
+    <tr><td><code>conexion.commit()</code></td><td>Confirma los cambios</td></tr>
+    <tr><td><code>SELECT … WHERE … ORDER BY … LIMIT</code></td><td>Filtrar, ordenar, recortar</td></tr>
+    <tr><td><code>COUNT(*)</code> · <code>SUM(x)</code> · <code>AVG(x)</code></td><td>Contar, sumar, promediar</td></tr>
+    <tr><td><code>GROUP BY tipo</code></td><td>Agrupar y resumir</td></tr>
+    <tr><td><code>JOIN … ON …</code></td><td>Unir dos tablas</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Los valores nunca se pegan a la consulta: siempre van con <code>?</code>. Esa sola regla previene la vulnerabilidad más común y más costosa que existe.</blockquote>

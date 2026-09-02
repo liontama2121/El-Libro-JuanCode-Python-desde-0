@@ -1,0 +1,151 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Dónde corre el modelo de IA cuando lo usas desde Python?",
+    "data": { "options": [
+      { "id": "a", "text": "En un servidor de la empresa que lo entrenó; tu programa le habla por una API" },
+      { "id": "b", "text": "En tu computador, después de instalarlo con pip" },
+      { "id": "c", "text": "Dentro del intérprete de Python" },
+      { "id": "d", "text": "En la memoria RAM, mientras dure el programa" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Tú pones el prompt, la llave y el código que usa la respuesta. Ellos ponen el modelo y los computadores."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Dónde debe guardarse la API key?",
+    "data": { "options": [
+      { "id": "a", "text": "En un archivo .env que está en el .gitignore, leído con os.environ" },
+      { "id": "b", "text": "En una constante al inicio del programa" },
+      { "id": "c", "text": "En un comentario, para no confundirla con el código" },
+      { "id": "d", "text": "En la URL de la petición" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Una llave subida a GitHub la encuentran bots en horas y el consumo se cobra a tu cuenta."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué el prompt debe exigir el formato exacto de la respuesta?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque tu código va a leer esa respuesta y una frase de cortesía la rompe" },
+      { "id": "b", "text": "Porque el modelo responde más rápido" },
+      { "id": "c", "text": "Porque así cuesta menos" },
+      { "id": "d", "text": "Porque si no, la API devuelve error 400" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Si el modelo contesta \"¡Claro! Esto parece una queja porque…\", el if categoria == \"queja\" nunca se cumple."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Para qué sirve timeout=30 en requests.post?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que el programa no quede colgado esperando para siempre" },
+      { "id": "b", "text": "Para limitar el largo de la respuesta" },
+      { "id": "c", "text": "Para reintentar la llamada 30 veces" },
+      { "id": "d", "text": "Para que el modelo piense 30 segundos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El tope de largo (y de costo) es max_tokens. El timeout es cuánto se espera la respuesta antes de rendirse."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Para cuál de estas tareas NO sirve un modelo de lenguaje?",
+    "data": { "options": [
+      { "id": "a", "text": "Consultar el saldo real de una cuenta bancaria" },
+      { "id": "b", "text": "Clasificar mensajes en categorías" },
+      { "id": "c", "text": "Resumir un texto largo en una frase" },
+      { "id": "d", "text": "Extraer la ciudad y la fecha de un texto libre" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El modelo inventa con total seguridad. Los datos salen de la base de datos; el modelo pone el criterio, no los hechos."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "La variable de entorno API_KEY no está definida. ¿Qué imprime?",
+    "code_snippet": "import os\n\nllave = os.environ.get(\"API_KEY\")\nif not llave:\n    print(\"Falta API_KEY\")\nelse:\n    print(f\"{llave[:6]}...{llave[-4:]}\")",
+    "data": { "options": [
+      { "id": "a", "text": "Falta API_KEY" },
+      { "id": "b", "text": "None" },
+      { "id": "c", "text": "Lanza KeyError" },
+      { "id": "d", "text": "...  (sin nada alrededor)" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": ".get() devuelve None si no existe, y None es falso. Con os.environ[\"API_KEY\"] sí habría KeyError."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "El modelo respondió el texto '  Queja. '. ¿Qué imprime?",
+    "code_snippet": "CATEGORIAS = (\"queja\", \"peticion\", \"reclamo\", \"felicitacion\")\nrespuesta = \"  Queja. \"\n\ncategoria = respuesta.strip().lower().strip(\".\")\nprint(categoria if categoria in CATEGORIAS else \"sin_clasificar\")",
+    "data": { "options": [
+      { "id": "a", "text": "queja" },
+      { "id": "b", "text": "sin_clasificar" },
+      { "id": "c", "text": "Queja." },
+      { "id": "d", "text": "  queja. " }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "strip() quita los espacios, lower() unifica mayúsculas y el segundo strip(\".\") quita el punto final."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "El modelo devolvió 'Claro, aqui tienes: {\"a\": 1}'. ¿Qué imprime?",
+    "code_snippet": "import json\n\ntexto = 'Claro, aqui tienes: {\"a\": 1}'\n\ntry:\n    datos = json.loads(texto)\nexcept json.JSONDecodeError:\n    datos = None\n\nprint(datos)",
+    "data": { "options": [
+      { "id": "a", "text": "None" },
+      { "id": "b", "text": "{'a': 1}" },
+      { "id": "c", "text": "Claro, aqui tienes: {\"a\": 1}" },
+      { "id": "d", "text": "Lanza JSONDecodeError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El texto de cortesía adelante invalida el JSON completo. Por eso todo json.loads() de una respuesta del modelo va dentro de try/except."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "Este programa expone un secreto. ¿En qué línea está el problema?",
+    "data": { "lines": ["import requests", "API_KEY = \"sk-ant-api03-abc123xyz\"", "r = requests.post(URL, headers={\"x-api-key\": API_KEY}, json=cuerpo, timeout=30)", "print(r.json())"] },
+    "correct": { "line_number": 2 },
+    "explanation": "La llave está escrita en el código y viaja al repositorio. Va en el .env y se lee con os.environ."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Cuando la API responde 401, el programa falla con un error confuso. ¿En qué línea está el problema?",
+    "data": { "lines": ["r = requests.post(URL, headers=CABECERAS, json=cuerpo, timeout=30)", "texto = r.json()[\"content\"][0][\"text\"]", "print(texto)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Se lee la respuesta sin revisar r.status_code: con un error la respuesta no tiene 'content' y salta un KeyError que no explica nada."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "Todas las filas terminan con el mismo análisis. ¿En qué línea está el problema?",
+    "data": { "lines": ["VACIO = {\"categoria\": \"sin_clasificar\", \"urgencia\": 0}", "def analizar(mensaje):", "    texto = preguntar(PROMPT + mensaje)", "    if texto is None:", "        return VACIO"] },
+    "correct": { "line_number": 5 },
+    "explanation": "Devuelve siempre el mismo objeto: todas las filas comparten un diccionario y modificar una las modifica todas. Va return dict(VACIO)."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme la función que consulta el modelo y devuelve JSON validado",
+    "data": { "lines": [
+      { "id": "l1", "text": "def analizar(mensaje):", "indent": 0 },
+      { "id": "l2", "text": "r = requests.post(URL, headers=CABECERAS, timeout=30, json=cuerpo(mensaje))", "indent": 1 },
+      { "id": "l3", "text": "if r.status_code != 200:", "indent": 1 },
+      { "id": "l4", "text": "return None", "indent": 2 },
+      { "id": "l5", "text": "texto = r.json()[\"content\"][0][\"text\"]", "indent": 1 },
+      { "id": "l6", "text": "try:", "indent": 1 },
+      { "id": "l7", "text": "return json.loads(texto)", "indent": 2 },
+      { "id": "l8", "text": "except json.JSONDecodeError:", "indent": 1 },
+      { "id": "l9", "text": "return None", "indent": 2 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9"] },
+    "explanation": "Primero se revisa el status_code y se sale; solo entonces se lee el texto, y su conversión a JSON va envuelta en try/except."
+  }
+]

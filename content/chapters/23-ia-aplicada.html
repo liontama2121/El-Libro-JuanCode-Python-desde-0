@@ -1,0 +1,240 @@
+<p class="jc-gancho">Llegan 400 PQRs al correo de la empresa cada semana y alguien tiene que leerlas una por una para saber cuáles son quejas urgentes. Ese trabajo hoy lo hace un programa de treinta líneas. No porque sepamos construir un modelo de IA: porque sabemos <em>usarlo</em>, que es una habilidad distinta y mucho más útil.</p>
+
+<h2>Un modelo de IA es un servicio al que le hablas</h2>
+
+<p>El modelo no corre en tu computador. Vive en un servidor de la empresa que lo entrenó, y se le habla por una <strong>API</strong>: le mandas un mensaje por internet y te devuelve una respuesta.</p>
+
+<table>
+  <thead>
+    <tr><th>Tú pones</th><th>Ellos ponen</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>El texto de la pregunta (el <em>prompt</em>)</td><td>El modelo entrenado</td></tr>
+    <tr><td>Una llave que identifica tu cuenta</td><td>Los computadores que lo ejecutan</td></tr>
+    <tr><td>El código que usa la respuesta</td><td>El cobro por uso</td></tr>
+  </tbody>
+</table>
+
+<p>Es exactamente el mismo mecanismo de cualquier API: una petición HTTP con datos en JSON. Lo que cambia es que la respuesta la escribe un modelo de lenguaje en vez de una base de datos.</p>
+
+<h2>La llave nunca va en el código</h2>
+
+<p>Para usar la API te dan una <strong>API key</strong>: un texto largo que identifica y le cobra a tu cuenta. Si la subes a GitHub, en horas hay bots usándola con tu tarjeta.</p>
+
+<pre><code>pip install requests python-dotenv</code></pre>
+
+<p>La llave va en un archivo <code>.env</code>, y ese archivo va en el <code>.gitignore</code>:</p>
+
+<pre><code># .env  ← este archivo NO se sube nunca
+API_KEY=sk-tu-llave-secreta-aqui</code></pre>
+
+<pre><code>import os
+from dotenv import load_dotenv
+
+load_dotenv()                      # lee el .env y lo carga al entorno
+API_KEY = os.environ["API_KEY"]    # si falta, revienta aquí y no a mitad del programa</code></pre>
+
+<p>Usar <code>os.environ["API_KEY"]</code> y no <code>.get()</code> es a propósito: si la llave no está, quieres enterarte de una, no cincuenta líneas después con un error 401 confuso.</p>
+
+<h2>Tu primera llamada</h2>
+
+<pre><code>import requests
+
+respuesta = requests.post(
+    "https://api.anthropic.com/v1/messages",
+    headers={
+        "x-api-key": API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    },
+    json={
+        "model": "claude-sonnet-4-5",
+        "max_tokens": 500,
+        "messages": [
+            {"role": "user", "content": "Explica que es una variable en una frase."}
+        ],
+    },
+    timeout=30,
+)
+
+datos = respuesta.json()
+print(datos["content"][0]["text"])</code></pre>
+
+<p>Pieza por pieza:</p>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Para qué</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>headers</code></td><td>Quién eres: la llave viaja aquí, no en la URL</td></tr>
+    <tr><td><code>json=</code></td><td>Lo que preguntas, como diccionario de Python</td></tr>
+    <tr><td><code>messages</code></td><td>La conversación: lista de turnos con <code>role</code> y <code>content</code></td></tr>
+    <tr><td><code>max_tokens</code></td><td>Tope de largo de la respuesta: también es tope de costo</td></tr>
+    <tr><td><code>timeout=30</code></td><td>Sin esto, el programa puede quedarse colgado para siempre</td></tr>
+  </tbody>
+</table>
+
+<p><code>respuesta.json()</code> convierte la respuesta a un diccionario, igual que <code>json.loads()</code> del capítulo 17. Y como cualquier llamada por internet puede fallar, se revisa antes de usarla:</p>
+
+<pre><code>if respuesta.status_code != 200:
+    print(f"Error {respuesta.status_code}: {respuesta.text}")
+else:
+    print(respuesta.json()["content"][0]["text"])</code></pre>
+
+<h2>El prompt es el programa</h2>
+
+<p>Aquí está el cambio de mentalidad del capítulo: <strong>las instrucciones que le das al modelo son código</strong>. Un prompt vago da resultados vagos, y no hay forma de arreglarlo después.</p>
+
+<pre><code># ❌ Vago
+"Analiza este mensaje: " + mensaje
+
+# ✅ Preciso: rol, tarea, opciones y formato de salida
+'''Eres un clasificador de PQRs de una empresa de servicios.
+Clasifica el mensaje en exactamente una categoria: queja, peticion,
+reclamo o felicitacion.
+Responde UNICAMENTE con la palabra de la categoria, en minusculas,
+sin explicaciones.
+
+Mensaje: ''' + mensaje</code></pre>
+
+<p>Tres reglas que se cumplen siempre:</p>
+
+<ol>
+  <li><strong>Di qué rol tiene</strong> y qué tarea hace.</li>
+  <li><strong>Da las opciones cerradas</strong> cuando el resultado deba ser uno de varios valores.</li>
+  <li><strong>Exige el formato exacto</strong> de la salida, porque tu código la va a leer.</li>
+</ol>
+
+<p>Ese último punto es el que separa un juguete de un programa: si el modelo contesta <em>"¡Claro! Esta PQR parece una queja porque…"</em>, tu <code>if categoria == "queja"</code> nunca se cumple.</p>
+
+<h2>Pedir la respuesta en JSON</h2>
+
+<p>Cuando necesitas varios datos de una sola llamada, se pide JSON y se convierte con <code>json.loads()</code>:</p>
+
+<pre><code>import json
+
+PROMPT = '''Analiza la siguiente PQR y responde SOLO con un JSON valido,
+sin texto antes ni despues, con esta forma exacta:
+{"categoria": "queja|peticion|reclamo|felicitacion", "urgencia": 1-5, "resumen": "una frase"}
+
+PQR: '''
+
+
+def analizar(mensaje):
+    '''
+    Envia una PQR al modelo y devuelve su analisis.
+
+    Parametros:
+        mensaje (str): texto de la PQR
+
+    Retorna:
+        dict: categoria, urgencia y resumen, o None si algo fallo
+    '''
+    r = requests.post(URL, headers=CABECERAS, timeout=30, json={
+        "model": MODELO,
+        "max_tokens": 300,
+        "messages": [{"role": "user", "content": PROMPT + mensaje}],
+    })
+
+    if r.status_code != 200:
+        return None
+
+    texto = r.json()["content"][0]["text"]
+
+    # El modelo es texto: puede devolver algo que no sea JSON.
+    # Nunca se confia, siempre se envuelve
+    try:
+        return json.loads(texto)
+    except json.JSONDecodeError:
+        return None</code></pre>
+
+<p>Ese <code>try/except</code> no es paranoia. Un modelo de lenguaje <strong>no garantiza</strong> el formato: la mayoría de las veces obedece, y de vez en cuando agrega una frase de cortesía que rompe el <code>json.loads()</code>. El programa tiene que sobrevivir a eso.</p>
+
+<h2>El clasificador completo</h2>
+
+<p>Aquí se juntan los tres últimos capítulos: pandas para los datos, la API para el criterio, y un archivo de salida para el resultado.</p>
+
+<pre><code>import pandas as pd
+
+pqrs = pd.read_csv("pqrs.csv")           # columnas: fecha, cliente, mensaje
+
+resultados = []
+for mensaje in pqrs["mensaje"]:
+    analisis = analizar(mensaje)
+    if analisis is None:
+        analisis = {"categoria": "sin_clasificar", "urgencia": 0, "resumen": ""}
+    resultados.append(analisis)
+
+pqrs["categoria"] = [a["categoria"] for a in resultados]
+pqrs["urgencia"] = [a["urgencia"] for a in resultados]
+
+urgentes = pqrs[(pqrs["categoria"] == "reclamo") &amp; (pqrs["urgencia"] &gt;= 4)]
+print(f"Reclamos urgentes: {len(urgentes)}")
+print(pqrs.groupby("categoria").size())
+
+pqrs.to_csv("pqrs_clasificadas.csv", index=False)</code></pre>
+
+<p>Fíjate en el detalle importante: cuando el modelo falla, la fila <strong>no se pierde</strong>, queda como <code>sin_clasificar</code>. Un proceso que corre sobre 400 filas no puede caerse porque una respuesta llegó mal.</p>
+
+<p>Este es el único ciclo justificado sobre un DataFrame: cada llamada es una petición por internet, y de eso no hay versión vectorizada.</p>
+
+<h2>Lo que el modelo no sabe</h2>
+
+<p>Dos cosas que hay que tener claras antes de poner esto a trabajar en serio:</p>
+
+<ul>
+  <li><strong>El modelo inventa con total seguridad.</strong> Si le preguntas el saldo de una cuenta, se lo imagina. Sirve para clasificar, resumir, redactar y extraer; no es una fuente de datos.</li>
+  <li><strong>Todo lo que le mandas sale de tu computador.</strong> Cédulas, números de cuenta y datos de clientes no se envían a un servicio externo sin autorización.</li>
+</ul>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Dejar la API key en el código</h3>
+<pre><code>API_KEY = "sk-ant-abc123..."          # ❌ y encima subido a GitHub
+API_KEY = os.environ["API_KEY"]       # ✅ con el .env en .gitignore</code></pre>
+
+<h3>2. Confiar en que la respuesta viene como se pidió</h3>
+<pre><code>datos = json.loads(texto)             # ❌ un día trae "Claro, aqui tienes:" adelante
+
+try:                                  # ✅
+    datos = json.loads(texto)
+except json.JSONDecodeError:
+    datos = None</code></pre>
+
+<h3>3. Llamar sin timeout ni control de errores dentro de un ciclo</h3>
+<pre><code>for m in mensajes:                    # ❌ 400 llamadas, una falla, se cae todo
+    r = requests.post(URL, json=...)
+    resultados.append(r.json())</code></pre>
+<p>Cada llamada cuesta plata y tarda. Con 400 filas eso son 400 cobros: prueba primero con <code>pqrs.head(5)</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>La llave en el <code>.env</code>, cargada con <code>load_dotenv()</code>. El <code>.env</code> en el <code>.gitignore</code>.</li>
+  <li>El prompt dice rol, tarea, opciones cerradas y formato exacto de salida.</li>
+  <li>Toda llamada con <code>timeout</code> y revisando <code>status_code</code>.</li>
+  <li>Todo <code>json.loads()</code> de una respuesta del modelo, dentro de <code>try/except</code>.</li>
+  <li>Si una fila falla, se marca y el proceso sigue.</li>
+  <li>Probar con cinco filas antes de correr las cuatrocientas.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>load_dotenv()</code></td><td>Carga el <code>.env</code> al entorno</td></tr>
+    <tr><td><code>os.environ["API_KEY"]</code></td><td>Lee la llave (falla de una si no está)</td></tr>
+    <tr><td><code>requests.post(url, headers=…, json=…)</code></td><td>Envía la petición</td></tr>
+    <tr><td><code>r.status_code</code></td><td>200 éxito · 401 llave mala · 429 demasiadas llamadas</td></tr>
+    <tr><td><code>r.json()</code></td><td>La respuesta como diccionario</td></tr>
+    <tr><td><code>max_tokens</code></td><td>Tope de largo y de costo</td></tr>
+    <tr><td><code>timeout=30</code></td><td>No esperar para siempre</td></tr>
+    <tr><td><code>json.loads(texto)</code></td><td>Convierte la respuesta del modelo a diccionario</td></tr>
+  </tbody>
+</table>
+
+<blockquote>El modelo pone el criterio; tu programa pone las reglas. Un prompt sin formato exigido y una respuesta sin <code>try/except</code> son las dos formas de que esto funcione en la demo y falle el primer día real.</blockquote>

@@ -8152,9 +8152,306 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
   SELECT id, 'parsons', 'dificil', 'Arme la cuenta de ahorros que extiende la del padre', NULL, '{"lines":[{"id":"l1","text":"class CuentaAhorros(Cuenta):","indent":0},{"id":"l2","text":"def retirar(self, monto):","indent":1},{"id":"l3","text":"if monto > 1000000:","indent":2},{"id":"l4","text":"raise ValueError(\"Maximo un millon por retiro\")","indent":3},{"id":"l5","text":"return super().retirar(monto)","indent":2}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'La hija valida lo suyo primero y termina delegando en el padre, en vez de copiar su validación de saldo.', 1, 'seed'
     FROM chapters WHERE number = 19;
 
--- ── Capítulo 20: Proyecto integrador: Sistema Bancario (borrador)
+-- ── Capítulo 20: Proyecto integrador: Sistema Bancario (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 20, 'Proyecto integrador: Sistema Bancario', '🏗️', 'Todo lo aprendido en una sola aplicación.', '', 0
+  SELECT p.id, 20, 'Proyecto integrador: Sistema Bancario', '🏗️', 'Todo lo aprendido en una sola aplicación.', '<p class="jc-gancho">Diecinueve capítulos, cada uno con su pieza. Este capítulo no enseña nada nuevo: las junta todas en un programa que un banco pequeño podría usar de verdad. Cuentas, retiros, historial, persistencia y menú.</p>
+
+<h2>Qué vamos a construir</h2>
+
+<p>Un sistema bancario de consola con:</p>
+
+<ul>
+  <li>Clientes con cuentas de ahorros y corriente (capítulos 18 y 19)</li>
+  <li>Consignaciones, retiros y transferencias con sus validaciones (15)</li>
+  <li>Historial de movimientos con fecha (16)</li>
+  <li>Todo guardado en JSON, que sobrevive al cerrar (17)</li>
+  <li>Menú por consola con validación de entradas (6, 7, 15)</li>
+</ul>
+
+<h2>Cómo se reparte el trabajo</h2>
+
+<p>Un programa de este tamaño no va en un solo archivo. Se parte en módulos por <strong>responsabilidad</strong>:</p>
+
+<pre><code>banco/
+├── main.py            el menú: habla con el usuario
+├── cuentas.py         las clases Cuenta, Ahorros y Corriente
+├── banco.py           la clase Banco: administra clientes y cuentas
+├── almacenamiento.py  cargar y guardar en JSON
+└── datos.json         los datos (lo crea el programa)</code></pre>
+
+<p>La regla que ordena todo: <strong>solo <code>main.py</code> habla con el usuario</strong>. Ninguna otra parte hace <code>print()</code> ni <code>input()</code>. Así el mismo <code>banco.py</code> serviría mañana para una app web o una API sin tocar una línea.</p>
+
+<h2>Las cuentas</h2>
+
+<pre><code># cuentas.py
+import datetime
+
+
+class Cuenta:
+    ''''''Cuenta bancaria base. No permite quedar en negativo.''''''
+
+    tipo = "ahorros"
+
+    def __init__(self, numero, titular, saldo=0):
+        self.numero = numero
+        self.titular = titular
+        self.saldo = saldo
+        self.movimientos = []      # cada cuenta con su lista propia
+
+    def _registrar(self, concepto, monto):
+        ''''''Guarda el movimiento con su fecha. El _ dice: uso interno.''''''
+        self.movimientos.append({
+            "fecha": datetime.date.today().isoformat(),
+            "concepto": concepto,
+            "monto": monto,
+            "saldo": self.saldo,
+        })
+
+    def consignar(self, monto):
+        if monto &lt;= 0:
+            raise ValueError("El monto debe ser positivo")
+        self.saldo += monto
+        self._registrar("consignacion", monto)
+        return self.saldo
+
+    def puede_retirar(self, monto):
+        ''''''Cada tipo de cuenta define su propia regla.''''''
+        return monto &lt;= self.saldo
+
+    def retirar(self, monto):
+        if monto &lt;= 0:
+            raise ValueError("El monto debe ser positivo")
+        if not self.puede_retirar(monto):
+            raise ValueError("Fondos insuficientes")
+        self.saldo -= monto
+        self._registrar("retiro", -monto)
+        return self.saldo
+
+    def __str__(self):
+        return f"{self.numero} ({self.tipo}) {self.titular}: {self.saldo:,}"
+
+
+class CuentaCorriente(Cuenta):
+    ''''''Una corriente ES una cuenta, pero admite sobregiro.''''''
+
+    tipo = "corriente"
+
+    def __init__(self, numero, titular, saldo=0, sobregiro=500000):
+        super().__init__(numero, titular, saldo)
+        self.sobregiro = sobregiro
+
+    def puede_retirar(self, monto):
+        return monto &lt;= self.saldo + self.sobregiro</code></pre>
+
+<p>Fíjate en el detalle de diseño más importante del capítulo: <code>retirar()</code> se escribió <strong>una sola vez</strong>. Lo único que cambia entre los dos tipos de cuenta es <code>puede_retirar()</code>, así que eso es lo único que la hija sobrescribe. Ese método pequeño que las hijas redefinen se llama <em>gancho</em>, y es el patrón que evita duplicar código.</p>
+
+<h2>El banco</h2>
+
+<pre><code># banco.py
+from cuentas import Cuenta, CuentaCorriente
+
+
+class Banco:
+    ''''''Administra las cuentas. No sabe nada de pantallas ni archivos.''''''
+
+    def __init__(self):
+        self.cuentas = {}          # numero -> Cuenta
+
+    def abrir(self, numero, titular, tipo="ahorros", saldo=0):
+        if numero in self.cuentas:
+            raise ValueError(f"La cuenta {numero} ya existe")
+
+        if tipo == "corriente":
+            cuenta = CuentaCorriente(numero, titular, saldo)
+        else:
+            cuenta = Cuenta(numero, titular, saldo)
+
+        self.cuentas[numero] = cuenta
+        return cuenta
+
+    def buscar(self, numero):
+        if numero not in self.cuentas:
+            raise KeyError(f"No existe la cuenta {numero}")
+        return self.cuentas[numero]
+
+    def transferir(self, origen, destino, monto):
+        ''''''Mueve dinero entre dos cuentas. Si algo falla, no mueve nada.''''''
+        cuenta_origen = self.buscar(origen)
+        cuenta_destino = self.buscar(destino)
+
+        # El retiro va PRIMERO: si no alcanza, lanza y no se consigna nada
+        cuenta_origen.retirar(monto)
+        cuenta_destino.consignar(monto)
+
+    @property
+    def total_depositado(self):
+        return sum(c.saldo for c in self.cuentas.values())</code></pre>
+
+<p>El orden dentro de <code>transferir()</code> no es casual. Si se consignara primero y el retiro fallara, el banco habría <em>creado</em> dinero. Retirar primero significa que la operación falla completa o no falla.</p>
+
+<h2>La persistencia</h2>
+
+<pre><code># almacenamiento.py
+import json
+from cuentas import Cuenta, CuentaCorriente
+
+
+def guardar(banco, ruta="datos.json"):
+    ''''''Convierte los objetos en diccionarios y los escribe.''''''
+    datos = {}
+    for numero, cuenta in banco.cuentas.items():
+        datos[numero] = {
+            "titular": cuenta.titular,
+            "saldo": cuenta.saldo,
+            "tipo": cuenta.tipo,
+            "movimientos": cuenta.movimientos,
+        }
+
+    with open(ruta, "w", encoding="utf-8") as f:
+        json.dump(datos, f, indent=2, ensure_ascii=False)
+
+
+def cargar(banco, ruta="datos.json"):
+    ''''''Reconstruye los objetos desde el archivo. Si no existe, no hace nada.''''''
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            datos = json.load(f)
+    except FileNotFoundError:
+        return banco          # primera vez: el banco arranca vacío
+
+    for numero, d in datos.items():
+        cuenta = banco.abrir(numero, d["titular"], d["tipo"], d["saldo"])
+        cuenta.movimientos = d["movimientos"]
+
+    return banco</code></pre>
+
+<p>JSON no sabe guardar objetos de Python: guarda diccionarios, listas, números y textos. Por eso hay un paso de traducción en cada dirección. Se llama <strong>serializar</strong> (objeto → diccionario) y <strong>deserializar</strong> (diccionario → objeto), y es exactamente lo que hace cualquier programa que hable con una base de datos o con una API.</p>
+
+<h2>El menú</h2>
+
+<pre><code># main.py
+import banco as modulo_banco
+import almacenamiento
+
+
+def pedir_entero(mensaje, minimo=1):
+    ''''''Insiste hasta recibir un entero valido.''''''
+    while True:
+        try:
+            valor = int(input(mensaje))
+        except ValueError:
+            print("Debe ser un numero")
+            continue
+        if valor &lt; minimo:
+            print(f"Debe ser al menos {minimo}")
+            continue
+        return valor
+
+
+def menu():
+    print("\n1. Abrir cuenta   2. Consignar   3. Retirar")
+    print("4. Transferir     5. Extracto    6. Salir")
+
+
+def main():
+    banco = almacenamiento.cargar(modulo_banco.Banco())
+
+    while True:
+        menu()
+        opcion = input("Opcion: ").strip()
+
+        try:
+            if opcion == "1":
+                numero = input("Numero de cuenta: ").strip()
+                titular = input("Titular: ").strip()
+                tipo = input("Tipo (ahorros/corriente): ").strip()
+                banco.abrir(numero, titular, tipo)
+                print("Cuenta abierta")
+
+            elif opcion == "2":
+                cuenta = banco.buscar(input("Cuenta: ").strip())
+                cuenta.consignar(pedir_entero("Monto: "))
+                print(f"Nuevo saldo: {cuenta.saldo:,}")
+
+            elif opcion == "6":
+                almacenamiento.guardar(banco)
+                print("Datos guardados. Hasta luego")
+                break
+
+            else:
+                print("Opcion invalida")
+
+        except (ValueError, KeyError) as e:
+            # Cualquier regla del negocio que falle se reporta aquí
+            print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+
+<p>Todo el <code>try/except</code> vive en el menú, en un solo sitio. Las clases lanzan errores con mensajes claros; el menú los muestra. Ninguna clase imprime nada.</p>
+
+<h2>La película de una transferencia</h2>
+
+<p>Ana tiene 200000, Juan tiene 50000, y Ana le transfiere 300000:</p>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Qué pasa</th><th>Ana</th><th>Juan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><code>buscar("001")</code> y <code>buscar("002")</code>: existen</td><td>200000</td><td>50000</td></tr>
+    <tr><td>2</td><td><code>ana.retirar(300000)</code> → <code>puede_retirar</code> da False</td><td>200000</td><td>50000</td></tr>
+    <tr><td>3</td><td><code>raise ValueError("Fondos insuficientes")</code></td><td>200000</td><td>50000</td></tr>
+    <tr><td>4</td><td>El <code>consignar</code> de Juan <strong>nunca se ejecuta</strong></td><td>200000</td><td>50000</td></tr>
+    <tr><td>5</td><td>El menú atrapa el error y lo muestra</td><td>200000</td><td>50000</td></tr>
+  </tbody>
+</table>
+
+<p>Nadie perdió ni ganó dinero. Esa propiedad —o pasa todo, o no pasa nada— se llama <strong>atomicidad</strong>, y es la razón por la que el orden de esas dos líneas importa tanto.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Meterlo todo en un archivo</h3>
+<p>Funciona con 100 líneas y es un infierno con 500. Un módulo por responsabilidad, desde el principio.</p>
+
+<h3>2. Poner <code>print()</code> dentro de las clases</h3>
+<pre><code>def retirar(self, monto):
+    if monto &gt; self.saldo:
+        print("Saldo insuficiente")     # ❌ la clase no sabe si hay pantalla
+        raise ValueError(...)           # ✅ solo lanza</code></pre>
+
+<h3>3. Olvidar guardar al salir</h3>
+<p>Todo el trabajo de la sesión vive en memoria. Si el usuario cierra sin pasar por la opción 6, se perdió. Por eso <code>guardar()</code> va en el camino de salida.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Un módulo por responsabilidad: modelo, lógica, almacenamiento, interfaz.</li>
+  <li>Solo la interfaz habla con el usuario. El resto lanza errores y devuelve datos.</li>
+  <li>Las operaciones que tocan dos cosas se ordenan para que fallen antes de cambiar nada.</li>
+  <li>Cargar al arrancar, guardar al salir.</li>
+  <li>Lo que varía entre subclases va en un método pequeño; el grande se escribe una vez.</li>
+</ol>
+
+<h2>📋 Chuleta del proyecto</h2>
+
+<table>
+  <thead>
+    <tr><th>Capítulo</th><th>Qué aporta aquí</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>6, 7</td><td>Menú con <code>while</code> y <code>if/elif</code></td></tr>
+    <tr><td>12</td><td>Diccionario de cuentas por número</td></tr>
+    <tr><td>14</td><td><code>pedir_entero()</code> reutilizable</td></tr>
+    <tr><td>15</td><td><code>raise</code> en las clases, <code>try</code> en el menú</td></tr>
+    <tr><td>16</td><td>Módulos y <code>if __name__ == "__main__"</code></td></tr>
+    <tr><td>17</td><td>Serializar y deserializar en JSON</td></tr>
+    <tr><td>18, 19</td><td>Clases, herencia y el gancho <code>puede_retirar()</code></td></tr>
+  </tbody>
+</table>
+
+<blockquote>Un proyecto no es código más largo: es código <em>repartido</em>. Cuando cada archivo tiene un solo trabajo, agregar una función nueva deja de dar miedo.</blockquote>', 1
     FROM parts p WHERE p.number = 6
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -8166,11 +8463,736 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 20
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 20);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 20);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'El gancho puede_retirar', 'facil', '<p>Implementar <code>Cuenta</code> y <code>CuentaCorriente</code> de forma que <code>retirar()</code> se escriba <strong>una sola vez</strong> en el padre y lo único que cambie entre las dos sea el método <code>puede_retirar(monto)</code>.</p><pre><code>Ahorros: 150000
+Corriente: -250000
+Error: Fondos insuficientes</code></pre>', '<p><code>retirar()</code> valida llamando a <code>self.puede_retirar(monto)</code>. Como Python busca el método en la clase del objeto, cada cuenta usa su propia versión sin que el padre lo sepa.</p>', '<pre><code>''''''
+Programa: Cuentas con gancho de validacion
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Dos tipos de cuenta que comparten retirar() y solo cambian
+    la regla de cuanto se puede sacar.
+''''''
 
--- ── Capítulo 21: SQL desde cero (borrador)
+
+class Cuenta:
+    ''''''Cuenta base: no permite quedar en negativo.''''''
+
+    tipo = "ahorros"
+
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def puede_retirar(self, monto):
+        ''''''Gancho: cada tipo de cuenta redefine solo esto.''''''
+        return monto <= self.saldo
+
+    def retirar(self, monto):
+        ''''''Se escribe UNA vez y sirve para todas las subclases.''''''
+        if monto <= 0:
+            raise ValueError("El monto debe ser positivo")
+        if not self.puede_retirar(monto):
+            raise ValueError("Fondos insuficientes")
+        self.saldo -= monto
+        return self.saldo
+
+
+class CuentaCorriente(Cuenta):
+    ''''''Admite sobregiro: solo cambia la regla, no el retiro.''''''
+
+    tipo = "corriente"
+
+    def __init__(self, titular, saldo=0, sobregiro=500000):
+        super().__init__(titular, saldo)
+        self.sobregiro = sobregiro
+
+    def puede_retirar(self, monto):
+        return monto <= self.saldo + self.sobregiro
+
+
+# Inicio
+ahorros = Cuenta("Ana", 200000)
+corriente = CuentaCorriente("Juan", 100000)
+
+ahorros.retirar(50000)
+print(f"Ahorros: {ahorros.saldo}")
+
+corriente.retirar(350000)
+print(f"Corriente: {corriente.saldo}")
+
+try:
+    ahorros.retirar(999999)
+except ValueError as e:
+    print(f"Error: {e}")
+# Fin</code></pre><p>Compare con el capítulo 19, donde la hija sobrescribía <code>retirar()</code> entero y repetía la validación del monto positivo y el descuento del saldo.</p><p>Aquí el método largo vive una sola vez y las hijas solo redefinen la regla que de verdad cambia. Si mañana hay que agregar una comisión a todos los retiros, se toca <strong>una</strong> línea.</p>', '[{"stdin":"","expected_output":"Ahorros: 150000\nCorriente: -250000\nError: Fondos insuficientes"}]', '''''''
+Programa: Cuentas con gancho de validacion
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Transferencia atómica', 'facil', '<p>Sobre una clase <code>Banco</code> que guarda cuentas en un diccionario, implementar <code>transferir(origen, destino, monto)</code> de forma que, si el retiro falla, <strong>no se consigne nada</strong>.</p><pre><code>Antes  -> Ana: 200000  Juan: 50000
+Despues-> Ana: 120000  Juan: 130000
+Error: Fondos insuficientes
+Final  -> Ana: 120000  Juan: 130000</code></pre>', '<p>El truco es el orden: <code>retirar()</code> va primero. Si lanza la excepción, la línea del <code>consignar()</code> nunca se ejecuta.</p>', '<pre><code>''''''
+Programa: Transferencia entre cuentas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Mueve dinero entre dos cuentas garantizando que la operacion
+    ocurra completa o no ocurra.
+''''''
+
+
+class Cuenta:
+    ''''''Cuenta bancaria basica.''''''
+
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def consignar(self, monto):
+        self.saldo += monto
+        return self.saldo
+
+    def retirar(self, monto):
+        if monto > self.saldo:
+            raise ValueError("Fondos insuficientes")
+        self.saldo -= monto
+        return self.saldo
+
+
+class Banco:
+    ''''''Administra las cuentas del banco.''''''
+
+    def __init__(self):
+        self.cuentas = {}
+
+    def abrir(self, numero, titular, saldo=0):
+        self.cuentas[numero] = Cuenta(titular, saldo)
+        return self.cuentas[numero]
+
+    def buscar(self, numero):
+        if numero not in self.cuentas:
+            raise KeyError(f"No existe la cuenta {numero}")
+        return self.cuentas[numero]
+
+    def transferir(self, origen, destino, monto):
+        ''''''
+        Mueve dinero entre dos cuentas.
+
+        El retiro va PRIMERO: si no alcanza, lanza la excepcion
+        y la consignacion nunca ocurre. Asi el banco no crea ni
+        pierde dinero.
+        ''''''
+        cuenta_origen = self.buscar(origen)
+        cuenta_destino = self.buscar(destino)
+
+        cuenta_origen.retirar(monto)
+        cuenta_destino.consignar(monto)
+
+
+# Inicio
+banco = Banco()
+ana = banco.abrir("001", "Ana", 200000)
+juan = banco.abrir("002", "Juan", 50000)
+
+print(f"Antes  -> Ana: {ana.saldo}  Juan: {juan.saldo}")
+
+banco.transferir("001", "002", 80000)
+print(f"Despues-> Ana: {ana.saldo}  Juan: {juan.saldo}")
+
+try:
+    banco.transferir("001", "002", 999999)
+except ValueError as e:
+    print(f"Error: {e}")
+
+# Ninguno de los dos saldos cambio en la transferencia fallida
+print(f"Final  -> Ana: {ana.saldo}  Juan: {juan.saldo}")
+# Fin</code></pre><p>Esa propiedad de "o pasa todo o no pasa nada" se llama <strong>atomicidad</strong>, y es la primera cosa que se le exige a cualquier sistema que mueva plata.</p><p>Si las dos líneas estuvieran al revés, una transferencia fallida le habría regalado 999999 a Juan sin quitárselos a Ana. El orden no es estilo: es corrección.</p>', '[{"stdin":"","expected_output":"Antes  -> Ana: 200000  Juan: 50000\nDespues-> Ana: 120000  Juan: 130000\nError: Fondos insuficientes\nFinal  -> Ana: 120000  Juan: 130000"}]', '''''''
+Programa: Transferencia entre cuentas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Guardar y recuperar el banco', 'medio', '<p>Escribir <code>guardar(banco, ruta)</code> y <code>cargar(banco, ruta)</code> que conviertan las cuentas a JSON y las reconstruyan como objetos.</p><p>El programa debe abrir dos cuentas, hacer un movimiento, guardar, y volver a cargar en un banco nuevo para comprobar que todo sobrevivió:</p><pre><code>Guardadas 2 cuentas
+Recuperadas 2 cuentas
+001 Ana: 150000 (1 movimientos)
+002 Juan: 50000 (0 movimientos)</code></pre>', '<p>JSON no guarda objetos: hay que traducirlos a diccionarios al guardar y volver a crear las clases al cargar. <code>cargar()</code> debe soportar que el archivo no exista.</p>', '<pre><code>''''''
+Programa: Persistencia del banco
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Guarda las cuentas del banco en JSON y las reconstruye como
+    objetos al volver a cargarlas.
+''''''
+
+import json
+
+ARCHIVO = "banco.json"
+
+
+class Cuenta:
+    ''''''Cuenta bancaria con historial de movimientos.''''''
+
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+        self.movimientos = []
+
+    def retirar(self, monto):
+        if monto > self.saldo:
+            raise ValueError("Fondos insuficientes")
+        self.saldo -= monto
+        self.movimientos.append({"concepto": "retiro", "monto": -monto})
+        return self.saldo
+
+
+class Banco:
+    ''''''Administra las cuentas del banco.''''''
+
+    def __init__(self):
+        self.cuentas = {}
+
+    def abrir(self, numero, titular, saldo=0):
+        self.cuentas[numero] = Cuenta(titular, saldo)
+        return self.cuentas[numero]
+
+
+def guardar(banco, ruta):
+    ''''''
+    Serializa: convierte los objetos en diccionarios que JSON
+    si sabe escribir.
+    ''''''
+    datos = {}
+    for numero, cuenta in banco.cuentas.items():
+        datos[numero] = {
+            "titular": cuenta.titular,
+            "saldo": cuenta.saldo,
+            "movimientos": cuenta.movimientos,
+        }
+
+    with open(ruta, "w", encoding="utf-8") as f:
+        json.dump(datos, f, indent=2, ensure_ascii=False)
+
+    return len(datos)
+
+
+def cargar(banco, ruta):
+    ''''''
+    Deserializa: vuelve a crear los objetos a partir del archivo.
+    Si no existe todavia, devuelve el banco vacio.
+    ''''''
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            datos = json.load(f)
+    except FileNotFoundError:
+        return banco
+
+    for numero, d in datos.items():
+        cuenta = banco.abrir(numero, d["titular"], d["saldo"])
+        cuenta.movimientos = d["movimientos"]
+
+    return banco
+
+
+# Inicio
+banco = Banco()
+banco.abrir("001", "Ana", 200000)
+banco.abrir("002", "Juan", 50000)
+
+banco.cuentas["001"].retirar(50000)
+
+print(f"Guardadas {guardar(banco, ARCHIVO)} cuentas")
+
+# Un banco NUEVO, vacio, que se llena desde el archivo
+otro = cargar(Banco(), ARCHIVO)
+print(f"Recuperadas {len(otro.cuentas)} cuentas")
+
+for numero, cuenta in otro.cuentas.items():
+    print(f"{numero} {cuenta.titular}: {cuenta.saldo} ({len(cuenta.movimientos)} movimientos)")
+# Fin</code></pre><p>Lo que hay que entender aquí es que <strong>JSON no sabe de objetos</strong>. Solo maneja diccionarios, listas, números, textos y booleanos. Por eso hay dos traducciones:</p><table><thead><tr><th>Dirección</th><th>Nombre</th><th>Qué hace</th></tr></thead><tbody><tr><td>objeto → diccionario</td><td>serializar</td><td><code>guardar()</code></td></tr><tr><td>diccionario → objeto</td><td>deserializar</td><td><code>cargar()</code></td></tr></tbody></table><p>Es exactamente lo que hace por dentro cualquier programa que hable con una base de datos o con una API. Al cargar hay que <strong>volver a crear las clases</strong>: si uno se quedara con los diccionarios, el objeto recuperado no tendría los métodos.</p>', '[{"stdin":"","expected_output":"Guardadas 2 cuentas\nRecuperadas 2 cuentas\n001 Ana: 150000 (1 movimientos)\n002 Juan: 50000 (0 movimientos)"}]', '''''''
+Programa: Persistencia del banco
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+ARCHIVO = "banco.json"
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Sistema bancario completo', 'dificil', '<p>Armar el sistema completo con menú por consola. Debe soportar las opciones:</p><ol><li>Abrir cuenta (ahorros o corriente)</li><li>Consignar</li><li>Retirar</li><li>Transferir</li><li>Extracto (saldo e historial)</li><li>Salir</li></ol><p>Con esta secuencia de entradas:</p><pre><code>1 / 001 / Ana / ahorros
+1 / 002 / Juan / corriente
+2 / 001 / 200000
+3 / 001 / 50000
+4 / 001 / 002 / 100000
+5 / 001
+6</code></pre><p>La salida esperada es:</p><pre><code>Cuenta 001 abierta
+Cuenta 002 abierta
+Nuevo saldo: 200,000
+Nuevo saldo: 150,000
+Transferencia realizada
+--- Extracto 001 (Ana) ---
+consignacion  +200000
+retiro        -50000
+transferencia -100000
+Saldo: 50,000
+Total en el banco: 150,000
+Hasta luego</code></pre>', '<p>Todo el <code>try/except</code> va en un solo sitio, alrededor del cuerpo del menú. Las clases solo lanzan errores; el menú los muestra. Use <code>input().strip()</code> para todas las entradas.</p>', '<pre><code>''''''
+Programa: Sistema bancario
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Sistema bancario de consola con cuentas de ahorros y
+    corriente, movimientos, transferencias y extracto.
+''''''
+
+
+class Cuenta:
+    ''''''Cuenta de ahorros: no permite quedar en negativo.''''''
+
+    tipo = "ahorros"
+
+    def __init__(self, numero, titular, saldo=0):
+        self.numero = numero
+        self.titular = titular
+        self.saldo = saldo
+        self.movimientos = []
+
+    def _registrar(self, concepto, monto):
+        ''''''Uso interno: deja constancia del movimiento.''''''
+        self.movimientos.append((concepto, monto))
+
+    def puede_retirar(self, monto):
+        ''''''Gancho que redefine cada tipo de cuenta.''''''
+        return monto <= self.saldo
+
+    def consignar(self, monto, concepto="consignacion"):
+        if monto <= 0:
+            raise ValueError("El monto debe ser positivo")
+        self.saldo += monto
+        self._registrar(concepto, monto)
+        return self.saldo
+
+    def retirar(self, monto, concepto="retiro"):
+        if monto <= 0:
+            raise ValueError("El monto debe ser positivo")
+        if not self.puede_retirar(monto):
+            raise ValueError("Fondos insuficientes")
+        self.saldo -= monto
+        self._registrar(concepto, -monto)
+        return self.saldo
+
+
+class CuentaCorriente(Cuenta):
+    ''''''Cuenta corriente: admite sobregiro.''''''
+
+    tipo = "corriente"
+
+    def __init__(self, numero, titular, saldo=0, sobregiro=500000):
+        super().__init__(numero, titular, saldo)
+        self.sobregiro = sobregiro
+
+    def puede_retirar(self, monto):
+        return monto <= self.saldo + self.sobregiro
+
+
+class Banco:
+    ''''''Administra las cuentas. No habla con el usuario.''''''
+
+    def __init__(self):
+        self.cuentas = {}
+
+    def abrir(self, numero, titular, tipo="ahorros"):
+        if numero in self.cuentas:
+            raise ValueError(f"La cuenta {numero} ya existe")
+
+        if tipo == "corriente":
+            cuenta = CuentaCorriente(numero, titular)
+        else:
+            cuenta = Cuenta(numero, titular)
+
+        self.cuentas[numero] = cuenta
+        return cuenta
+
+    def buscar(self, numero):
+        if numero not in self.cuentas:
+            raise KeyError(f"No existe la cuenta {numero}")
+        return self.cuentas[numero]
+
+    def transferir(self, origen, destino, monto):
+        ''''''El retiro va primero: si falla, no se consigna nada.''''''
+        salida = self.buscar(origen)
+        entrada = self.buscar(destino)
+        salida.retirar(monto, "transferencia")
+        entrada.consignar(monto, "transferencia")
+
+    @property
+    def total(self):
+        return sum(c.saldo for c in self.cuentas.values())
+
+
+def extracto(cuenta):
+    ''''''Arma el texto del extracto. No imprime: devuelve.''''''
+    lineas = [f"--- Extracto {cuenta.numero} ({cuenta.titular}) ---"]
+    for concepto, monto in cuenta.movimientos:
+        lineas.append(f"{concepto:<13} {monto:+d}")
+    lineas.append(f"Saldo: {cuenta.saldo:,}")
+    return "\n".join(lineas)
+
+
+def main():
+    ''''''El unico sitio que habla con el usuario.''''''
+    banco = Banco()
+
+    while True:
+        opcion = input().strip()
+
+        # Un solo try para todas las reglas del negocio
+        try:
+            if opcion == "1":
+                numero = input().strip()
+                titular = input().strip()
+                tipo = input().strip()
+                banco.abrir(numero, titular, tipo)
+                print(f"Cuenta {numero} abierta")
+
+            elif opcion == "2":
+                cuenta = banco.buscar(input().strip())
+                cuenta.consignar(int(input()))
+                print(f"Nuevo saldo: {cuenta.saldo:,}")
+
+            elif opcion == "3":
+                cuenta = banco.buscar(input().strip())
+                cuenta.retirar(int(input()))
+                print(f"Nuevo saldo: {cuenta.saldo:,}")
+
+            elif opcion == "4":
+                origen = input().strip()
+                destino = input().strip()
+                banco.transferir(origen, destino, int(input()))
+                print("Transferencia realizada")
+
+            elif opcion == "5":
+                print(extracto(banco.buscar(input().strip())))
+
+            elif opcion == "6":
+                print(f"Total en el banco: {banco.total:,}")
+                print("Hasta luego")
+                break
+
+            else:
+                print("Opcion invalida")
+
+        except (ValueError, KeyError) as e:
+            print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    main()</code></pre><p>Este es el programa más largo del libro y no tiene nada nuevo: son las piezas de los diecinueve capítulos anteriores puestas en su sitio.</p><p>Tres decisiones que lo sostienen:</p><ul><li><strong>Nadie imprime salvo <code>main()</code>.</strong> Ni las clases ni <code>extracto()</code>. Por eso el mismo <code>Banco</code> serviría tal cual para una API web: solo habría que cambiar quién llama a los métodos.</li><li><strong>Un solo <code>try</code>.</strong> Las clases lanzan <code>ValueError</code> y <code>KeyError</code> con mensajes claros; el menú los atrapa en un punto. Nada de <code>try</code> repartidos por todas partes.</li><li><strong><code>consignar()</code> y <code>retirar()</code> reciben el concepto.</strong> Así la transferencia queda registrada como transferencia y no como un retiro y una consignación sueltos. El historial cuenta la verdad de lo que pasó.</li></ul><p>Fíjese en <code>{monto:+d}</code>: el <code>+</code> obliga a mostrar el signo, así que las entradas salen con <code>+</code> y las salidas con <code>-</code>. Un detalle de tres caracteres que hace legible un extracto.</p>', '[{"stdin":"1\n001\nAna\nahorros\n1\n002\nJuan\ncorriente\n2\n001\n200000\n3\n001\n50000\n4\n001\n002\n100000\n5\n001\n6\n","expected_output":"Cuenta 001 abierta\nCuenta 002 abierta\nNuevo saldo: 200,000\nNuevo saldo: 150,000\nTransferencia realizada\n--- Extracto 001 (Ana) ---\nconsignacion  +200000\nretiro        -50000\ntransferencia -100000\nSaldo: 50,000\nTotal en el banco: 150,000\nHasta luego"}]', '''''''
+Programa: Sistema bancario
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 20;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 20);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Por qué un proyecto se reparte en varios archivos en vez de uno solo?', NULL, '{"options":[{"id":"a","text":"Porque cada archivo con una sola responsabilidad es más fácil de cambiar y de probar"},{"id":"b","text":"Porque Python no admite archivos largos"},{"id":"c","text":"Porque así el programa corre más rápido"},{"id":"d","text":"Porque lo exige el sistema operativo"}]}', '{"option_id":"a"}', 'Con 100 líneas da igual; con 500 la diferencia entre un archivo ordenado y uno revuelto es enorme.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué parte del sistema bancario debe hacer print() e input()?', NULL, '{"options":[{"id":"a","text":"Solo el menú (main.py)"},{"id":"b","text":"Todas, cada una reporta lo suyo"},{"id":"c","text":"Las clases de cuenta"},{"id":"d","text":"El módulo de almacenamiento"}]}', '{"option_id":"a"}', 'Así el mismo Banco sirve tal cual para una API web: solo cambia quién llama a sus métodos.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', 'En transferir(), ¿por qué el retiro va antes que la consignación?', NULL, '{"options":[{"id":"a","text":"Para que, si el retiro falla, la consignación nunca ocurra y el banco no cree dinero"},{"id":"b","text":"Porque retirar es más rápido"},{"id":"c","text":"Por convención de los bancos"},{"id":"d","text":"Da lo mismo el orden"}]}', '{"option_id":"a"}', 'Esa propiedad de "o pasa todo o no pasa nada" se llama atomicidad, y aquí sale gratis con solo ordenar bien.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué es serializar?', NULL, '{"options":[{"id":"a","text":"Convertir objetos en diccionarios y listas que JSON sí sabe guardar"},{"id":"b","text":"Ordenar los datos por fecha"},{"id":"c","text":"Numerar las cuentas en serie"},{"id":"d","text":"Comprimir el archivo"}]}', '{"option_id":"a"}', 'JSON solo maneja diccionarios, listas, números, textos y booleanos: los objetos hay que traducirlos en las dos direcciones.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Qué gana el diseño al poner la regla variable en puede_retirar() en vez de sobrescribir retirar() entero?', NULL, '{"options":[{"id":"a","text":"Que el método largo se escribe una sola vez y las hijas solo redefinen lo que de verdad cambia"},{"id":"b","text":"Que se ejecuta más rápido"},{"id":"c","text":"Que no hace falta usar super()"},{"id":"d","text":"Que se pueden tener más subclases"}]}', '{"option_id":"a"}', 'Ese método pequeño que las hijas redefinen se llama gancho, y es lo que evita duplicar validaciones.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class C:
+    def puede(self, m):
+        return m <= self.saldo
+
+    def __init__(self, s):
+        self.saldo = s
+
+    def retirar(self, m):
+        if not self.puede(m):
+            raise ValueError("no alcanza")
+        self.saldo -= m
+
+class Corriente(C):
+    def puede(self, m):
+        return m <= self.saldo + 100
+
+c = Corriente(50)
+c.retirar(120)
+print(c.saldo)', '{"options":[{"id":"a","text":"-70"},{"id":"b","text":"50"},{"id":"c","text":"no alcanza"},{"id":"d","text":"ValueError"}]}', '{"option_id":"a"}', 'retirar() está en el padre pero llama a self.puede(), y self es una Corriente: usa la versión de la hija.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', 'Ana tiene 100 y Juan 50. ¿Cuánto queda en cada uno?', 'def transferir(a, b, monto):
+    a.retirar(monto)
+    b.consignar(monto)
+
+try:
+    transferir(ana, juan, 500)
+except ValueError:
+    pass
+
+print(ana.saldo, juan.saldo)', '{"options":[{"id":"a","text":"100 50"},{"id":"b","text":"-400 550"},{"id":"c","text":"100 550"},{"id":"d","text":"0 50"}]}', '{"option_id":"a"}', 'El retiro lanza la excepción y la consignación nunca corre: ninguno de los dos saldos cambia.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Una transferencia fallida le regala dinero al destino. ¿En qué línea está el error?', NULL, '{"lines":["def transferir(self, origen, destino, monto):","    o = self.buscar(origen)","    d = self.buscar(destino)","    d.consignar(monto)","    o.retirar(monto)"]}', '{"line_number":4}', 'La consignación va después del retiro. Así, si el retiro falla, el destino ya recibió el dinero.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'La clase no debería hablar con el usuario. ¿En qué línea está el problema de diseño?', NULL, '{"lines":["def retirar(self, monto):","    if monto > self.saldo:","        print(\"Saldo insuficiente\")","        raise ValueError(\"Saldo insuficiente\")","    self.saldo -= monto"]}', '{"line_number":3}', 'La clase no sabe si hay pantalla: solo debe lanzar. Mostrar el mensaje es trabajo del menú.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme la transferencia atómica del banco', NULL, '{"lines":[{"id":"l1","text":"def transferir(self, origen, destino, monto):","indent":0},{"id":"l2","text":"salida = self.buscar(origen)","indent":1},{"id":"l3","text":"entrada = self.buscar(destino)","indent":1},{"id":"l4","text":"salida.retirar(monto)","indent":1},{"id":"l5","text":"entrada.consignar(monto)","indent":1}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Primero se buscan las dos cuentas (si alguna no existe, falla antes de tocar nada) y después el retiro antes de la consignación.', 1, 'seed'
+    FROM chapters WHERE number = 20;
+
+-- ── Capítulo 21: SQL desde cero (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 21, 'SQL desde cero', '🗄️', 'Bases de datos relacionales y consultas desde Python.', '', 0
+  SELECT p.id, 21, 'SQL desde cero', '🗄️', 'Bases de datos relacionales y consultas desde Python.', '<p class="jc-gancho">El banco del capítulo 20 guarda todo en un JSON. Con 50 cuentas va bien. Con 50 mil, cada consulta lee el archivo entero, dos personas no pueden escribir a la vez y buscar "los retiros de marzo" obliga a recorrerlo todo. Para eso se inventaron las bases de datos.</p>
+
+<h2>SQLite: la base de datos que ya tienes</h2>
+
+<p>Python trae <code>sqlite3</code> incluido. Una base SQLite es <strong>un solo archivo</strong>, sin servidor ni instalación. Es la misma que usan tu celular, tu navegador y miles de aplicaciones.</p>
+
+<pre><code>import sqlite3
+
+# El archivo se crea solo si no existe
+conexion = sqlite3.connect("banco.db")
+cursor = conexion.cursor()
+
+cursor.execute("SELECT 1")
+print(cursor.fetchone())     # (1,)
+
+conexion.close()</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Pieza</th><th>Qué es</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>conexión</strong></td><td>La puerta al archivo</td></tr>
+    <tr><td><strong>cursor</strong></td><td>Quien ejecuta las órdenes y trae los resultados</td></tr>
+    <tr><td><code>commit()</code></td><td>Confirma los cambios: sin esto, no se guardan</td></tr>
+  </tbody>
+</table>
+
+<h2>Crear la tabla</h2>
+
+<p>Una tabla es una hoja de cálculo con reglas: columnas con tipo, y restricciones que la base hace cumplir.</p>
+
+<pre><code>cursor.execute(''''''
+    CREATE TABLE IF NOT EXISTS cuentas (
+        numero   TEXT PRIMARY KEY,
+        titular  TEXT NOT NULL,
+        tipo     TEXT NOT NULL DEFAULT ''ahorros'',
+        saldo    INTEGER NOT NULL DEFAULT 0
+    )
+'''''')
+conexion.commit()</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Palabra</th><th>Qué obliga</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>PRIMARY KEY</code></td><td>Único y no repetido: identifica la fila</td></tr>
+    <tr><td><code>NOT NULL</code></td><td>Ese dato no puede faltar</td></tr>
+    <tr><td><code>DEFAULT</code></td><td>Valor si no se especifica</td></tr>
+    <tr><td><code>IF NOT EXISTS</code></td><td>No falla si la tabla ya estaba</td></tr>
+  </tbody>
+</table>
+
+<p>Esto es distinto al JSON: allá nada impedía guardar una cuenta sin titular o dos con el mismo número. Aquí la base lo <strong>rechaza</strong>.</p>
+
+<h2>Las cuatro operaciones</h2>
+
+<pre><code># INSERT — crear
+cursor.execute(
+    "INSERT INTO cuentas (numero, titular, tipo, saldo) VALUES (?, ?, ?, ?)",
+    ("001", "Ana", "ahorros", 200000),
+)
+
+# SELECT — leer
+cursor.execute("SELECT numero, titular, saldo FROM cuentas WHERE saldo &gt; ?", (100000,))
+print(cursor.fetchall())     # [(''001'', ''Ana'', 200000)]
+
+# UPDATE — modificar
+cursor.execute("UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?", (50000, "001"))
+
+# DELETE — borrar
+cursor.execute("DELETE FROM cuentas WHERE numero = ?", ("001",))
+
+conexion.commit()</code></pre>
+
+<h3>Los signos de pregunta no son opcionales</h3>
+
+<p>Esto es lo más importante del capítulo:</p>
+
+<pre><code># ❌ NUNCA
+cursor.execute(f"SELECT * FROM cuentas WHERE titular = ''{nombre}''")
+
+# ✅ SIEMPRE
+cursor.execute("SELECT * FROM cuentas WHERE titular = ?", (nombre,))</code></pre>
+
+<p>Si el usuario escribe <code>''; DROP TABLE cuentas; --</code> como nombre, la primera versión <strong>borra la tabla</strong>. Se llama <strong>inyección SQL</strong> y sigue siendo una de las formas más comunes de robar bases de datos.</p>
+
+<p>Con <code>?</code>, la base trata el valor como dato y nunca como instrucción, pase lo que pase. La coma de <code>(nombre,)</code> tampoco es opcional: sin ella no es una tupla.</p>
+
+<h2>Leer resultados</h2>
+
+<pre><code>cursor.execute("SELECT numero, titular, saldo FROM cuentas ORDER BY saldo DESC")
+
+fila = cursor.fetchone()      # una tupla, o None si no hay más
+filas = cursor.fetchall()     # lista de tuplas
+
+for numero, titular, saldo in cursor.execute("SELECT numero, titular, saldo FROM cuentas"):
+    print(f"{numero} {titular}: {saldo:,}")</code></pre>
+
+<p>Por defecto cada fila es una tupla y hay que acordarse del orden de las columnas. Con una línea se puede pedir algo mucho más cómodo:</p>
+
+<pre><code>conexion.row_factory = sqlite3.Row
+cursor = conexion.cursor()
+
+fila = cursor.execute("SELECT * FROM cuentas WHERE numero = ?", ("001",)).fetchone()
+print(fila["titular"], fila["saldo"])     # por nombre, como un diccionario</code></pre>
+
+<h2>Consultas que hacen el trabajo por ti</h2>
+
+<p>Aquí está la ganancia real: cosas que en Python serían un ciclo, en SQL son una línea.</p>
+
+<pre><code>-- ¿Cuánto hay en el banco?
+SELECT SUM(saldo) FROM cuentas;
+
+-- ¿Cuántas cuentas de cada tipo y cuánto suman?
+SELECT tipo, COUNT(*), SUM(saldo)
+FROM cuentas
+GROUP BY tipo;
+
+-- Los tres saldos más altos
+SELECT titular, saldo FROM cuentas ORDER BY saldo DESC LIMIT 3;
+
+-- Cuentas sin movimientos este mes
+SELECT titular FROM cuentas WHERE saldo BETWEEN 0 AND 100000;</code></pre>
+
+<p><code>GROUP BY</code> es el equivalente exacto del patrón de conteo del capítulo 12, pero lo resuelve la base y sin traer los datos a Python.</p>
+
+<h2>Dos tablas y un JOIN</h2>
+
+<p>Los movimientos no caben en la tabla de cuentas: son muchos por cuenta. Van en su propia tabla, apuntando a la cuenta con una <strong>clave foránea</strong>.</p>
+
+<pre><code>CREATE TABLE IF NOT EXISTS movimientos (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    cuenta   TEXT NOT NULL,
+    concepto TEXT NOT NULL,
+    monto    INTEGER NOT NULL,
+    fecha    TEXT NOT NULL,
+    FOREIGN KEY (cuenta) REFERENCES cuentas(numero)
+);</code></pre>
+
+<pre><code>-- Cada movimiento con el nombre de su titular
+SELECT c.titular, m.concepto, m.monto
+FROM movimientos m
+JOIN cuentas c ON c.numero = m.cuenta
+ORDER BY m.fecha;</code></pre>
+
+<p><code>JOIN</code> pega las dos tablas por la columna que tienen en común. Es lo que en Python sería buscar, por cada movimiento, la cuenta que le corresponde.</p>
+
+<h2>Transacciones: el commit del capítulo 20</h2>
+
+<p>La transferencia atómica que ordenamos a mano en el capítulo anterior, aquí la garantiza la base:</p>
+
+<pre><code>try:
+    cursor.execute("UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?", (monto, origen))
+    cursor.execute("UPDATE cuentas SET saldo = saldo + ? WHERE numero = ?", (monto, destino))
+    conexion.commit()          # las dos, juntas
+except Exception:
+    conexion.rollback()        # ninguna
+    raise</code></pre>
+
+<p>Hasta el <code>commit()</code>, los cambios están en el aire. <code>rollback()</code> los deshace todos. O quedan las dos operaciones, o no queda ninguna: aunque se vaya la luz en la mitad.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Armar la consulta con f-strings</h3>
+<pre><code>f"... WHERE titular = ''{nombre}''"    # ❌ inyección SQL
+"... WHERE titular = ?", (nombre,)   # ✅</code></pre>
+
+<h3>2. Olvidar el <code>commit()</code></h3>
+<pre><code>cursor.execute("INSERT ...")
+conexion.close()     # ❌ el INSERT se perdió</code></pre>
+
+<h3>3. Olvidar la coma de la tupla</h3>
+<pre><code>cursor.execute("... WHERE numero = ?", ("001"))    # ❌ eso es un texto
+cursor.execute("... WHERE numero = ?", ("001",))   # ✅ tupla de uno</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Conectar, crear tablas con <code>IF NOT EXISTS</code>, trabajar, <code>commit()</code>, cerrar.</li>
+  <li>Los valores <strong>siempre</strong> con <code>?</code>. Sin excepciones.</li>
+  <li>Deja que la base filtre, ordene y agrupe: es lo que sabe hacer.</li>
+  <li>Un dato que se repite muchas veces por registro va en su propia tabla, unida por clave foránea.</li>
+  <li>Operaciones que van juntas, dentro de una transacción.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>sqlite3.connect("x.db")</code></td><td>Abre (o crea) la base</td></tr>
+    <tr><td><code>cursor.execute(sql, (a, b))</code></td><td>Ejecuta con parámetros seguros</td></tr>
+    <tr><td><code>fetchone()</code> · <code>fetchall()</code></td><td>Una fila · todas</td></tr>
+    <tr><td><code>conexion.commit()</code></td><td>Confirma los cambios</td></tr>
+    <tr><td><code>SELECT … WHERE … ORDER BY … LIMIT</code></td><td>Filtrar, ordenar, recortar</td></tr>
+    <tr><td><code>COUNT(*)</code> · <code>SUM(x)</code> · <code>AVG(x)</code></td><td>Contar, sumar, promediar</td></tr>
+    <tr><td><code>GROUP BY tipo</code></td><td>Agrupar y resumir</td></tr>
+    <tr><td><code>JOIN … ON …</code></td><td>Unir dos tablas</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Los valores nunca se pegan a la consulta: siempre van con <code>?</code>. Esa sola regla previene la vulnerabilidad más común y más costosa que existe.</blockquote>', 1
     FROM parts p WHERE p.number = 6
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -8182,11 +9204,627 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 21
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 21);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 21);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Primera tabla', 'facil', '<p>Crear una base <code>tienda.db</code> con una tabla <code>productos</code> (<code>codigo</code> como clave primaria, <code>nombre</code>, <code>precio</code>), insertar tres productos y listarlos ordenados por precio:</p><pre><code>P3 Queso        15,000
+P2 Leche         7,000
+P1 Pan           5,000
+Total: 27,000</code></pre>', '<p>Los valores del <code>INSERT</code> van con <code>?</code>, nunca pegados con f-string. No olvide el <code>commit()</code> antes de leer.</p>', '<pre><code>''''''
+Programa: Primera tabla en SQLite
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Crea la tabla de productos de la tienda, inserta datos y los
+    consulta ordenados por precio.
+''''''
 
--- ── Capítulo 22: Pandas y datos (borrador)
+import sqlite3
+
+BASE = "tienda.db"
+
+# Inicio
+conexion = sqlite3.connect(BASE)
+cursor = conexion.cursor()
+
+# IF NOT EXISTS: el programa se puede correr varias veces
+cursor.execute(''''''
+    CREATE TABLE IF NOT EXISTS productos (
+        codigo TEXT PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        precio INTEGER NOT NULL
+    )
+'''''')
+
+productos = [
+    ("P1", "Pan", 5000),
+    ("P2", "Leche", 7000),
+    ("P3", "Queso", 15000),
+]
+
+# Los valores SIEMPRE con ?, nunca pegados a la consulta
+cursor.executemany(
+    "INSERT OR REPLACE INTO productos (codigo, nombre, precio) VALUES (?, ?, ?)",
+    productos,
+)
+conexion.commit()
+
+for codigo, nombre, precio in cursor.execute(
+    "SELECT codigo, nombre, precio FROM productos ORDER BY precio DESC"
+):
+    print(f"{codigo} {nombre:<12} {precio:>6,}")
+
+total = cursor.execute("SELECT SUM(precio) FROM productos").fetchone()[0]
+print(f"Total: {total:,}")
+
+conexion.close()
+# Fin</code></pre><p>Tres cosas del oficio:</p><ul><li><code>executemany()</code> inserta varias filas de un tirón con la misma consulta.</li><li><code>INSERT OR REPLACE</code> hace el programa repetible: si ya existía ese código, lo actualiza en vez de fallar por la clave primaria.</li><li><code>fetchone()</code> devuelve una <strong>tupla</strong>, por eso el <code>[0]</code> para sacar el único valor del <code>SUM</code>.</li></ul>', '[{"stdin":"","expected_output":"P3 Queso        15,000\nP2 Leche         7,000\nP1 Pan           5,000\nTotal: 27,000"}]', '''''''
+Programa: Primera tabla en SQLite
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+BASE = "tienda.db"
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Consultas con filtro', 'facil', '<p>Sobre la tabla de productos, responder tres preguntas usando SQL (no ciclos de Python):</p><ul><li>los que cuestan más de 6000,</li><li>cuántos productos hay y cuál es el precio promedio,</li><li>y el más caro.</li></ul><pre><code>Caros: [''Leche'', ''Queso'']
+3 productos, promedio 9000.0
+El mas caro es Queso (15,000)</code></pre>', '<p><code>WHERE precio &gt; ?</code> filtra, <code>COUNT(*)</code> y <code>AVG(precio)</code> resumen, y <code>ORDER BY precio DESC LIMIT 1</code> da el mayor.</p>', '<pre><code>''''''
+Programa: Consultas sobre la tienda
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Responde preguntas sobre el inventario dejando que la base
+    haga el filtrado y los calculos.
+''''''
+
+import sqlite3
+
+BASE = "tienda2.db"
+CARO = 6000
+
+# Inicio
+conexion = sqlite3.connect(BASE)
+cursor = conexion.cursor()
+
+cursor.execute(''''''
+    CREATE TABLE IF NOT EXISTS productos (
+        codigo TEXT PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        precio INTEGER NOT NULL
+    )
+'''''')
+cursor.executemany(
+    "INSERT OR REPLACE INTO productos VALUES (?, ?, ?)",
+    [("P1", "Pan", 5000), ("P2", "Leche", 7000), ("P3", "Queso", 15000)],
+)
+conexion.commit()
+
+# El parametro va con ?: nunca pegado a la consulta
+filas = cursor.execute(
+    "SELECT nombre FROM productos WHERE precio > ? ORDER BY precio", (CARO,)
+).fetchall()
+print(f"Caros: {[f[0] for f in filas]}")
+
+cuantos, promedio = cursor.execute(
+    "SELECT COUNT(*), AVG(precio) FROM productos"
+).fetchone()
+print(f"{cuantos} productos, promedio {promedio}")
+
+nombre, precio = cursor.execute(
+    "SELECT nombre, precio FROM productos ORDER BY precio DESC LIMIT 1"
+).fetchone()
+print(f"El mas caro es {nombre} ({precio:,})")
+
+conexion.close()
+# Fin</code></pre><p>Todo esto se podría hacer en Python trayendo las filas y recorriéndolas, pero sería traer datos para botarlos. La base está hecha justo para filtrar, contar y ordenar: con tres mil productos la diferencia se nota, y con tres millones es abismal.</p><p>Fíjese en <code>[f[0] for f in filas]</code>: cada fila es una tupla de un elemento, y la comprehension del capítulo 13 saca solo los nombres.</p>', '[{"stdin":"","expected_output":"Caros: [''Leche'', ''Queso'']\n3 productos, promedio 9000.0\nEl mas caro es Queso (15,000)"}]', '''''''
+Programa: Consultas sobre la tienda
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+BASE = "tienda2.db"
+CARO = 6000
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Dos tablas y un JOIN', 'medio', '<p>Crear las tablas <code>cuentas</code> y <code>movimientos</code> (con clave foránea a la cuenta) y mostrar cada movimiento con el nombre de su titular, más el resumen por cuenta:</p><pre><code>Ana   consignacion   200000
+Ana   retiro         -50000
+Juan  consignacion    80000
+---
+001 Ana: 2 movimientos, neto 150000
+002 Juan: 1 movimientos, neto 80000</code></pre>', '<p>El <code>JOIN ... ON c.numero = m.cuenta</code> pega las dos tablas. Para el resumen, <code>GROUP BY</code> con <code>COUNT(*)</code> y <code>SUM(monto)</code>.</p>', '<pre><code>''''''
+Programa: Movimientos con JOIN
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Relaciona cuentas y movimientos en dos tablas y consulta el
+    historial y el resumen por cuenta.
+''''''
+
+import sqlite3
+
+BASE = "banco_sql.db"
+
+# Inicio
+conexion = sqlite3.connect(BASE)
+cursor = conexion.cursor()
+
+cursor.execute(''''''
+    CREATE TABLE IF NOT EXISTS cuentas (
+        numero  TEXT PRIMARY KEY,
+        titular TEXT NOT NULL
+    )
+'''''')
+
+# Los movimientos son muchos por cuenta: van en su propia tabla,
+# apuntando a la cuenta con una clave foranea
+cursor.execute(''''''
+    CREATE TABLE IF NOT EXISTS movimientos (
+        id       INTEGER PRIMARY KEY AUTOINCREMENT,
+        cuenta   TEXT NOT NULL,
+        concepto TEXT NOT NULL,
+        monto    INTEGER NOT NULL,
+        FOREIGN KEY (cuenta) REFERENCES cuentas(numero)
+    )
+'''''')
+
+cursor.execute("DELETE FROM movimientos")
+cursor.executemany(
+    "INSERT OR REPLACE INTO cuentas VALUES (?, ?)",
+    [("001", "Ana"), ("002", "Juan")],
+)
+cursor.executemany(
+    "INSERT INTO movimientos (cuenta, concepto, monto) VALUES (?, ?, ?)",
+    [
+        ("001", "consignacion", 200000),
+        ("001", "retiro", -50000),
+        ("002", "consignacion", 80000),
+    ],
+)
+conexion.commit()
+
+# JOIN: pega cada movimiento con la cuenta a la que pertenece
+for titular, concepto, monto in cursor.execute(''''''
+    SELECT c.titular, m.concepto, m.monto
+    FROM movimientos m
+    JOIN cuentas c ON c.numero = m.cuenta
+    ORDER BY m.id
+''''''):
+    print(f"{titular:<5} {concepto:<14} {monto:>6}")
+
+print("---")
+
+# GROUP BY: la base agrupa y resume sin traer los datos a Python
+for numero, titular, cuantos, neto in cursor.execute(''''''
+    SELECT c.numero, c.titular, COUNT(*), SUM(m.monto)
+    FROM movimientos m
+    JOIN cuentas c ON c.numero = m.cuenta
+    GROUP BY c.numero, c.titular
+    ORDER BY c.numero
+''''''):
+    print(f"{numero} {titular}: {cuantos} movimientos, neto {neto}")
+
+conexion.close()
+# Fin</code></pre><p>Dos ideas centrales de las bases relacionales:</p><ul><li><strong>Un dato que se repite por registro va en su propia tabla.</strong> El nombre de Ana se escribe una vez en <code>cuentas</code>, no en cada uno de sus movimientos. Si se corrige el nombre, se corrige en un solo sitio.</li><li><strong><code>GROUP BY</code> es el patrón de conteo del capítulo 12</strong>, pero lo hace la base. En Python habría que traer todos los movimientos y recorrerlos.</li></ul><p>Las letras <code>m</code> y <code>c</code> después del nombre de la tabla son <em>alias</em>: ahorran escribir y dejan claro de qué tabla sale cada columna.</p>', '[{"stdin":"","expected_output":"Ana   consignacion   200000\nAna   retiro         -50000\nJuan  consignacion    80000\n---\n001 Ana: 2 movimientos, neto 150000\n002 Juan: 1 movimientos, neto 80000"}]', '''''''
+Programa: Movimientos con JOIN
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+BASE = "banco_sql.db"
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'El banco sobre SQLite', 'dificil', '<p>Reescribir el banco del capítulo 20 guardando en SQLite en vez de JSON. La clase <code>BancoSQL</code> debe tener <code>abrir()</code>, <code>consignar()</code>, <code>retirar()</code>, <code>transferir()</code> y <code>extracto()</code>.</p><p>La transferencia debe usar una transacción: si el retiro falla, no se consigna nada.</p><pre><code>001 Ana: 200,000
+002 Juan: 50,000
+Transferencia OK
+Error: Fondos insuficientes en 001
+--- Extracto 001 ---
+consignacion   +200000
+transferencia  -80000
+Saldo: 120,000
+Total en el banco: 250,000</code></pre>', '<p>Cada operación es un <code>UPDATE</code> más un <code>INSERT</code> en movimientos. En <code>transferir()</code>, valide primero el saldo, haga los dos <code>UPDATE</code> y solo entonces <code>commit()</code>; si algo falla, <code>rollback()</code>.</p>', '<pre><code>''''''
+Programa: Banco sobre SQLite
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    El sistema bancario del capitulo 20, pero guardando en una
+    base de datos relacional en vez de un archivo JSON.
+''''''
+
+import sqlite3
+
+BASE = "banco_final.db"
+
+
+class BancoSQL:
+    ''''''Banco cuyos datos viven en SQLite.''''''
+
+    def __init__(self, ruta):
+        self.conexion = sqlite3.connect(ruta)
+        self.conexion.row_factory = sqlite3.Row   # filas por nombre
+        self._crear_tablas()
+
+    def _crear_tablas(self):
+        ''''''Uso interno: prepara el esquema si es la primera vez.''''''
+        cur = self.conexion.cursor()
+        cur.execute(''''''
+            CREATE TABLE IF NOT EXISTS cuentas (
+                numero  TEXT PRIMARY KEY,
+                titular TEXT NOT NULL,
+                saldo   INTEGER NOT NULL DEFAULT 0
+            )
+        '''''')
+        cur.execute(''''''
+            CREATE TABLE IF NOT EXISTS movimientos (
+                id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                cuenta   TEXT NOT NULL,
+                concepto TEXT NOT NULL,
+                monto    INTEGER NOT NULL,
+                FOREIGN KEY (cuenta) REFERENCES cuentas(numero)
+            )
+        '''''')
+        cur.execute("DELETE FROM movimientos")
+        cur.execute("DELETE FROM cuentas")
+        self.conexion.commit()
+
+    def abrir(self, numero, titular, saldo=0):
+        self.conexion.execute(
+            "INSERT INTO cuentas (numero, titular, saldo) VALUES (?, ?, ?)",
+            (numero, titular, saldo),
+        )
+        self.conexion.commit()
+
+    def saldo(self, numero):
+        fila = self.conexion.execute(
+            "SELECT saldo FROM cuentas WHERE numero = ?", (numero,)
+        ).fetchone()
+        if fila is None:
+            raise KeyError(f"No existe la cuenta {numero}")
+        return fila["saldo"]
+
+    def _mover(self, numero, monto, concepto):
+        ''''''Uso interno: aplica el movimiento SIN hacer commit.''''''
+        self.conexion.execute(
+            "UPDATE cuentas SET saldo = saldo + ? WHERE numero = ?", (monto, numero)
+        )
+        self.conexion.execute(
+            "INSERT INTO movimientos (cuenta, concepto, monto) VALUES (?, ?, ?)",
+            (numero, concepto, monto),
+        )
+
+    def consignar(self, numero, monto, concepto="consignacion"):
+        if monto <= 0:
+            raise ValueError("El monto debe ser positivo")
+        self.saldo(numero)          # valida que exista
+        self._mover(numero, monto, concepto)
+        self.conexion.commit()
+
+    def retirar(self, numero, monto, concepto="retiro"):
+        if monto > self.saldo(numero):
+            raise ValueError(f"Fondos insuficientes en {numero}")
+        self._mover(numero, -monto, concepto)
+        self.conexion.commit()
+
+    def transferir(self, origen, destino, monto):
+        ''''''
+        Las dos operaciones van en UNA transaccion: o quedan las
+        dos, o no queda ninguna.
+        ''''''
+        try:
+            if monto > self.saldo(origen):
+                raise ValueError(f"Fondos insuficientes en {origen}")
+            self.saldo(destino)     # valida que exista
+
+            self._mover(origen, -monto, "transferencia")
+            self._mover(destino, monto, "transferencia")
+            self.conexion.commit()
+        except Exception:
+            self.conexion.rollback()
+            raise
+
+    def extracto(self, numero):
+        lineas = [f"--- Extracto {numero} ---"]
+        for fila in self.conexion.execute(
+            "SELECT concepto, monto FROM movimientos WHERE cuenta = ? ORDER BY id",
+            (numero,),
+        ):
+            lineas.append(f"{fila[''concepto'']:<14} {fila[''monto'']:+d}")
+        lineas.append(f"Saldo: {self.saldo(numero):,}")
+        return "\n".join(lineas)
+
+    @property
+    def total(self):
+        return self.conexion.execute("SELECT SUM(saldo) FROM cuentas").fetchone()[0]
+
+
+# Inicio
+banco = BancoSQL(BASE)
+
+banco.abrir("001", "Ana")
+banco.abrir("002", "Juan")
+
+banco.consignar("001", 200000)
+banco.consignar("002", 50000)
+
+print(f"001 Ana: {banco.saldo(''001''):,}")
+print(f"002 Juan: {banco.saldo(''002''):,}")
+
+banco.transferir("001", "002", 80000)
+print("Transferencia OK")
+
+try:
+    banco.transferir("001", "002", 999999)
+except ValueError as e:
+    print(f"Error: {e}")
+
+print(banco.extracto("001"))
+print(f"Total en el banco: {banco.total:,}")
+# Fin</code></pre><p>Comparado con la versión en JSON del capítulo 20, se ganan cuatro cosas:</p><ul><li><strong>No hay que cargar ni guardar todo.</strong> Cada operación toca solo las filas que necesita, aunque haya un millón de cuentas.</li><li><strong>La atomicidad la garantiza la base.</strong> En el capítulo 20 dependía de que ordenáramos bien dos líneas; aquí <code>commit()</code> y <code>rollback()</code> lo aseguran incluso si el programa muere en la mitad.</li><li><strong>Las reglas las hace cumplir el esquema.</strong> <code>PRIMARY KEY</code> impide dos cuentas con el mismo número; <code>NOT NULL</code> impide una cuenta sin titular.</li><li><strong>Consultar es una línea.</strong> <code>SUM(saldo)</code> reemplaza el ciclo del capítulo 20.</li></ul><p>Y algo de estilo que se repite en todo el capítulo: <code>_mover()</code> <strong>no hace <code>commit()</code></strong>. Es una pieza interna, y quien la llama decide cuándo confirmar. Por eso <code>transferir()</code> puede llamarla dos veces y confirmar una sola vez.</p>', '[{"stdin":"","expected_output":"001 Ana: 200,000\n002 Juan: 50,000\nTransferencia OK\nError: Fondos insuficientes en 001\n--- Extracto 001 ---\nconsignacion   +200000\ntransferencia  -80000\nSaldo: 120,000\nTotal en el banco: 250,000"}]', '''''''
+Programa: Banco sobre SQLite
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+
+BASE = "banco_final.db"
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 21;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 21);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué tiene de especial SQLite frente a otras bases de datos?', NULL, '{"options":[{"id":"a","text":"Es un solo archivo, no necesita servidor y viene incluida en Python"},{"id":"b","text":"Solo funciona en Windows"},{"id":"c","text":"Guarda los datos en la nube"},{"id":"d","text":"Hay que instalarla con pip"}]}', '{"option_id":"a"}', 'Es la misma base que usan tu celular y tu navegador. Para aprender y para proyectos pequeños sobra.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué pasa si se olvida el commit() después de un INSERT?', NULL, '{"options":[{"id":"a","text":"El cambio no queda guardado"},{"id":"b","text":"Se guarda igual, el commit es opcional"},{"id":"c","text":"Se lanza un error"},{"id":"d","text":"Se guarda a medias"}]}', '{"option_id":"a"}', 'Hasta el commit los cambios están en el aire. Es el equivalente al paso de guardar del capítulo 17.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Por qué los valores van con ? y no pegados con f-strings?', NULL, '{"options":[{"id":"a","text":"Para evitar inyección SQL: con ? el valor nunca se interpreta como instrucción"},{"id":"b","text":"Porque las f-strings no funcionan con sqlite3"},{"id":"c","text":"Porque es más rápido"},{"id":"d","text":"Por convención de estilo"}]}', '{"option_id":"a"}', 'Un nombre como ''; DROP TABLE cuentas; -- borraría la tabla si la consulta se arma pegando texto.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué hace GROUP BY tipo?', NULL, '{"options":[{"id":"a","text":"Agrupa las filas por ese valor para resumirlas con COUNT, SUM o AVG"},{"id":"b","text":"Ordena las filas por tipo"},{"id":"c","text":"Filtra las filas de ese tipo"},{"id":"d","text":"Crea una tabla nueva por cada tipo"}]}', '{"option_id":"a"}', 'Es el patrón de conteo del capítulo 12, pero resuelto por la base sin traer los datos a Python.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Para qué sirve rollback()?', NULL, '{"options":[{"id":"a","text":"Para deshacer todos los cambios pendientes desde el último commit"},{"id":"b","text":"Para volver a la versión anterior de la base"},{"id":"c","text":"Para cerrar la conexión"},{"id":"d","text":"Para borrar la última fila insertada"}]}', '{"option_id":"a"}', 'Con commit y rollback, una transferencia queda completa o no queda: la atomicidad la garantiza la base.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import sqlite3
+c = sqlite3.connect(":memory:")
+c.execute("CREATE TABLE t (n INTEGER)")
+c.executemany("INSERT INTO t VALUES (?)", [(1,), (2,), (3,)])
+print(c.execute("SELECT SUM(n) FROM t").fetchone())', '{"options":[{"id":"a","text":"(6,)"},{"id":"b","text":"6"},{"id":"c","text":"[6]"},{"id":"d","text":"[(1,), (2,), (3,)]"}]}', '{"option_id":"a"}', 'fetchone() siempre devuelve una tupla, aunque la consulta traiga un solo valor: por eso el [0] al usarlo.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import sqlite3
+c = sqlite3.connect(":memory:")
+c.execute("CREATE TABLE p (nombre TEXT, precio INTEGER)")
+c.executemany("INSERT INTO p VALUES (?, ?)", [("pan", 5000), ("queso", 15000)])
+filas = c.execute("SELECT nombre FROM p WHERE precio > ?", (6000,)).fetchall()
+print(filas)', '{"options":[{"id":"a","text":"[(''queso'',)]"},{"id":"b","text":"[''queso'']"},{"id":"c","text":"[(''pan'',), (''queso'',)]"},{"id":"d","text":"queso"}]}', '{"option_id":"a"}', 'fetchall() devuelve una lista de tuplas, una por fila, aunque cada una tenga una sola columna.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'import sqlite3
+c = sqlite3.connect(":memory:")
+c.execute("CREATE TABLE t (tipo TEXT, monto INTEGER)")
+c.executemany("INSERT INTO t VALUES (?, ?)", [("a", 10), ("b", 20), ("a", 30)])
+print(c.execute("SELECT tipo, SUM(monto) FROM t GROUP BY tipo").fetchall())', '{"options":[{"id":"a","text":"[(''a'', 40), (''b'', 20)]"},{"id":"b","text":"[(''a'', 10), (''b'', 20), (''a'', 30)]"},{"id":"c","text":"[(''a'', 2), (''b'', 1)]"},{"id":"d","text":"[60]"}]}', '{"option_id":"a"}', 'GROUP BY junta las filas del mismo tipo y SUM las totaliza: la a suma 10 + 30.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'Este programa es vulnerable. ¿En qué línea está el problema?', NULL, '{"lines":["nombre = input(\"Titular: \")","cursor.execute(f\"SELECT * FROM cuentas WHERE titular = ''{nombre}''\")","print(cursor.fetchall())"]}', '{"line_number":2}', 'Inyección SQL: el valor va pegado a la consulta. Debía ser execute("... = ?", (nombre,)).', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'El parámetro no funciona. ¿En qué línea está el error?', NULL, '{"lines":["cursor.execute(","    \"SELECT * FROM cuentas WHERE numero = ?\",","    (\"001\")",")"]}', '{"line_number":3}', 'Falta la coma: ("001") es un texto entre paréntesis, no una tupla. Debía ser ("001",).', 1, 'seed'
+    FROM chapters WHERE number = 21;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme la transferencia con transacción', NULL, '{"lines":[{"id":"l1","text":"try:","indent":0},{"id":"l2","text":"cur.execute(\"UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?\", (monto, origen))","indent":1},{"id":"l3","text":"cur.execute(\"UPDATE cuentas SET saldo = saldo + ? WHERE numero = ?\", (monto, destino))","indent":1},{"id":"l4","text":"conexion.commit()","indent":1},{"id":"l5","text":"except Exception:","indent":0},{"id":"l6","text":"conexion.rollback()","indent":1},{"id":"l7","text":"raise","indent":1}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7"]}', 'Los dos UPDATE van antes del único commit: si algo falla, el rollback deshace los dos y el raise avisa a quien llamó.', 1, 'seed'
+    FROM chapters WHERE number = 21;
+
+-- ── Capítulo 22: Pandas y datos (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 22, 'Pandas y datos', '🐼', 'Cargar, limpiar y analizar datos reales.', '', 0
+  SELECT p.id, 22, 'Pandas y datos', '🐼', 'Cargar, limpiar y analizar datos reales.', '<p class="jc-gancho">Te pasan el CSV de ventas del año: 80 mil filas. Con el módulo <code>csv</code> del capítulo 17 y un par de ciclos lo sacas… en cuarenta líneas. Con pandas, el mismo análisis son cuatro. Esta es la herramienta con la que trabaja todo el que vive de datos.</p>
+
+<h2>Instalar y arrancar</h2>
+
+<pre><code>pip install pandas</code></pre>
+
+<pre><code>import pandas as pd     # el apodo "pd" es la convención universal</code></pre>
+
+<h2>El DataFrame: una tabla con superpoderes</h2>
+
+<p>Un <strong>DataFrame</strong> es una tabla: filas y columnas con nombre. Una <strong>Series</strong> es una sola columna.</p>
+
+<pre><code>datos = {
+    "producto": ["pan", "leche", "queso", "cafe"],
+    "precio": [5000, 7000, 15000, 12000],
+    "cantidad": [30, 20, 8, 15],
+}
+
+df = pd.DataFrame(datos)
+print(df)</code></pre>
+
+<pre><code>  producto  precio  cantidad
+0      pan    5000        30
+1    leche    7000        20
+2    queso   15000         8
+3     cafe   12000        15</code></pre>
+
+<p>Lo normal es cargarlo de un archivo:</p>
+
+<pre><code>df = pd.read_csv("ventas.csv")
+df = pd.read_excel("ventas.xlsx")
+df = pd.read_json("ventas.json")</code></pre>
+
+<h3>Mirar antes de tocar</h3>
+
+<pre><code>df.head()        # las primeras 5 filas
+df.tail(3)       # las últimas 3
+df.shape         # (4, 3) — filas y columnas
+df.columns       # los nombres
+df.info()        # tipos y cuántos nulos hay
+df.describe()    # media, mínimo, máximo, cuartiles</code></pre>
+
+<p>Ese <code>df.info()</code> es lo primero que se corre siempre: dice cuántos datos faltan y si los números llegaron como texto.</p>
+
+<h2>Seleccionar y filtrar</h2>
+
+<pre><code>df["precio"]                    # una columna (Series)
+df[["producto", "precio"]]      # varias (DataFrame)
+
+df.loc[0]                       # la fila con etiqueta 0
+df.loc[0, "precio"]             # una celda
+df.iloc[0]                      # la primera fila por posición</code></pre>
+
+<p>El filtrado es lo que reemplaza los ciclos:</p>
+
+<pre><code># Todos los productos que cuestan más de 10000
+caros = df[df["precio"] &gt; 10000]
+
+# Dos condiciones: & es "y", | es "o", y cada una va en paréntesis
+df[(df["precio"] &gt; 6000) &amp; (df["cantidad"] &lt; 20)]</code></pre>
+
+<p>Los paréntesis no son opcionales y se usa <code>&amp;</code> en vez de <code>and</code>: pandas compara columnas enteras a la vez, no valores sueltos.</p>
+
+<h2>Columnas calculadas</h2>
+
+<pre><code>df["total"] = df["precio"] * df["cantidad"]</code></pre>
+
+<p>Esa línea multiplica <strong>las cuatro filas de una vez</strong>. Sin ciclo. Se llama <em>operación vectorizada</em>, y es de donde sale la velocidad de pandas.</p>
+
+<pre><code>df["con_iva"] = (df["precio"] * 1.19).round()
+df["categoria"] = df["precio"].apply(lambda p: "caro" if p &gt; 10000 else "barato")</code></pre>
+
+<h2>Agrupar: el <code>GROUP BY</code> de pandas</h2>
+
+<pre><code>ventas = pd.read_csv("ventas.csv")   # columnas: fecha, vendedor, producto, monto
+
+ventas.groupby("vendedor")["monto"].sum()
+ventas.groupby("vendedor")["monto"].mean()
+ventas.groupby("producto")["monto"].agg(["count", "sum", "mean"])</code></pre>
+
+<p>Es la misma idea del capítulo 12 (contar con diccionarios) y del 21 (<code>GROUP BY</code> en SQL), en una línea.</p>
+
+<pre><code># Los tres vendedores que más vendieron
+ventas.groupby("vendedor")["monto"].sum().sort_values(ascending=False).head(3)</code></pre>
+
+<p>Se lee de izquierda a derecha como una cadena de pasos: agrupa, suma, ordena, toma tres.</p>
+
+<h2>Datos sucios: lo que de verdad ocupa el tiempo</h2>
+
+<p>Los datos reales llegan con celdas vacías, tipos equivocados y filas repetidas. Limpiar es el 80% del trabajo:</p>
+
+<pre><code>df.isnull().sum()              # cuántos nulos por columna
+
+df = df.dropna()               # borrar filas con nulos
+df["monto"] = df["monto"].fillna(0)          # o rellenarlos
+df["monto"] = df["monto"].fillna(df["monto"].mean())
+
+df = df.drop_duplicates()      # quitar filas repetidas
+
+# Los números que llegaron como texto
+df["monto"] = pd.to_numeric(df["monto"], errors="coerce")
+df["fecha"] = pd.to_datetime(df["fecha"])
+
+# Espacios y mayúsculas en las columnas de texto
+df["vendedor"] = df["vendedor"].str.strip().str.title()</code></pre>
+
+<p><code>errors="coerce"</code> convierte lo que no sea número en <code>NaN</code> en vez de reventar. Es la versión pandas del <code>try/except</code> del capítulo 15.</p>
+
+<h2>Un análisis completo, de principio a fin</h2>
+
+<pre><code>import pandas as pd
+
+# 1. Cargar
+ventas = pd.read_csv("ventas.csv")
+
+# 2. Limpiar
+ventas["monto"] = pd.to_numeric(ventas["monto"], errors="coerce")
+ventas = ventas.dropna(subset=["monto"])
+ventas["vendedor"] = ventas["vendedor"].str.strip().str.title()
+
+# 3. Enriquecer
+ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+ventas["mes"] = ventas["fecha"].dt.month
+
+# 4. Analizar
+por_vendedor = ventas.groupby("vendedor")["monto"].agg(["count", "sum"])
+por_mes = ventas.groupby("mes")["monto"].sum()
+
+# 5. Guardar
+por_vendedor.to_csv("reporte_vendedores.csv")</code></pre>
+
+<p><strong>Cargar → limpiar → enriquecer → analizar → guardar.</strong> Ese es el orden de cualquier trabajo con datos, y no cambia con el tamaño del archivo.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Usar <code>and</code> en vez de <code>&amp;</code></h3>
+<pre><code>df[df["a"] &gt; 1 and df["b"] &lt; 2]        # ❌ ValueError
+df[(df["a"] &gt; 1) &amp; (df["b"] &lt; 2)]      # ✅ con paréntesis</code></pre>
+
+<h3>2. Creer que los métodos modifican el DataFrame</h3>
+<pre><code>df.dropna()          # ❌ devuelve una copia y se pierde
+df = df.dropna()     # ✅</code></pre>
+<p>Es el mismo error de <code>texto.upper()</code> del capítulo 5, con otro disfraz.</p>
+
+<h3>3. Recorrer el DataFrame con un ciclo</h3>
+<pre><code>for i, fila in df.iterrows():          # ❌ lentísimo
+    df.loc[i, "total"] = fila["precio"] * fila["cantidad"]
+
+df["total"] = df["precio"] * df["cantidad"]   # ✅ vectorizado</code></pre>
+<p>Si estás escribiendo un <code>for</code> sobre un DataFrame, casi siempre hay una forma sin ciclo que es cien veces más rápida.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Cargar, y de una <code>df.info()</code> y <code>df.head()</code> para ver qué llegó.</li>
+  <li>Limpiar: nulos, tipos, duplicados, espacios.</li>
+  <li>Enriquecer con columnas calculadas, sin ciclos.</li>
+  <li>Analizar con <code>groupby</code> y <code>agg</code>.</li>
+  <li>Guardar el resultado, no dejarlo en la consola.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>pd.read_csv("x.csv")</code></td><td>Carga la tabla</td></tr>
+    <tr><td><code>df.head()</code> · <code>df.info()</code></td><td>Primeras filas · tipos y nulos</td></tr>
+    <tr><td><code>df["col"]</code></td><td>Una columna</td></tr>
+    <tr><td><code>df[df["col"] &gt; 10]</code></td><td>Filtrar filas</td></tr>
+    <tr><td><code>df["nueva"] = df["a"] * df["b"]</code></td><td>Columna calculada, sin ciclo</td></tr>
+    <tr><td><code>df.groupby("x")["y"].sum()</code></td><td>Agrupar y sumar</td></tr>
+    <tr><td><code>df.dropna()</code> · <code>df.fillna(0)</code></td><td>Quitar o rellenar nulos</td></tr>
+    <tr><td><code>df.sort_values("col")</code></td><td>Ordenar</td></tr>
+    <tr><td><code>df.to_csv("out.csv", index=False)</code></td><td>Guardar</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Si estás escribiendo un ciclo sobre un DataFrame, probablemente hay una línea de pandas que hace lo mismo cien veces más rápido.</blockquote>', 1
     FROM parts p WHERE p.number = 6
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -8198,11 +9836,527 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 22
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 22);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 22);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Primer DataFrame', 'facil', '<p>Crear un DataFrame con el inventario de la tienda (producto, precio, cantidad), agregar una columna <code>total</code> y mostrar la tabla, el valor del inventario y el producto más caro.</p><pre><code>  producto  precio  cantidad   total
+0      pan    5000        30  150000
+1    leche    7000        20  140000
+2    queso   15000         8  120000
+3     cafe   12000        15  180000
+Valor del inventario: 590,000
+El mas caro: queso</code></pre><p><em>Nota:</em> la columna <code>total</code> se calcula sin ciclos.</p>', '<p><code>df["total"] = df["precio"] * df["cantidad"]</code> multiplica todas las filas de una vez. Para el más caro, <code>df.loc[df["precio"].idxmax(), "producto"]</code>.</p>', '<pre><code>''''''
+Programa: Inventario con pandas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Arma el inventario de la tienda como DataFrame y calcula el
+    valor total y el producto mas caro.
+''''''
 
--- ── Capítulo 23: IA aplicada con Python (borrador)
+import pandas as pd
+
+# Inicio
+datos = {
+    "producto": ["pan", "leche", "queso", "cafe"],
+    "precio": [5000, 7000, 15000, 12000],
+    "cantidad": [30, 20, 8, 15],
+}
+
+df = pd.DataFrame(datos)
+
+# Operacion vectorizada: multiplica las cuatro filas a la vez,
+# sin escribir un solo ciclo
+df["total"] = df["precio"] * df["cantidad"]
+
+print(df)
+print(f"Valor del inventario: {df[''total''].sum():,}")
+print(f"El mas caro: {df.loc[df[''precio''].idxmax(), ''producto'']}")
+# Fin</code></pre><p>La línea del <code>total</code> es la que muestra de qué se trata pandas: en el capítulo 10 esto habría sido un <code>for</code> recorriendo dos listas paralelas. Aquí es una operación sobre columnas enteras.</p><p><code>idxmax()</code> devuelve la <strong>etiqueta de la fila</strong> con el valor más alto, y <code>df.loc[etiqueta, columna]</code> saca la celda.</p>', NULL, '''''''
+Programa: Inventario con pandas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+import pandas as pd
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Filtrar ventas', 'facil', '<p>Con un DataFrame de ventas (vendedor, producto, monto), mostrar:</p><ul><li>las ventas mayores a 100000,</li><li>las ventas de "Ana" de más de 50000,</li><li>y cuántas ventas hubo en total.</li></ul><p><em>Nota:</em> use filtrado de pandas, no ciclos ni <code>if</code>.</p>', '<p>Un filtro es <code>df[df["monto"] > 100000]</code>. Para dos condiciones, cada una entre paréntesis y unidas con <code>&amp;</code>, nunca con <code>and</code>.</p>', '<pre><code>''''''
+Programa: Filtros sobre las ventas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Consulta un DataFrame de ventas usando filtros booleanos.
+''''''
+
+import pandas as pd
+
+# Inicio
+ventas = pd.DataFrame({
+    "vendedor": ["Ana", "Juan", "Ana", "Sofia", "Juan"],
+    "producto": ["pan", "queso", "cafe", "leche", "pan"],
+    "monto": [150000, 80000, 45000, 120000, 200000],
+})
+
+grandes = ventas[ventas["monto"] > 100000]
+print("Ventas grandes:")
+print(grandes)
+
+# Dos condiciones: cada una en parentesis y unidas con &
+# (con "and" pandas lanza ValueError)
+de_ana = ventas[(ventas["vendedor"] == "Ana") & (ventas["monto"] > 50000)]
+print("\nVentas de Ana sobre 50000:")
+print(de_ana)
+
+print(f"\nTotal de ventas registradas: {len(ventas)}")
+# Fin</code></pre><p>La razón de usar <code>&amp;</code> y no <code>and</code>: pandas no compara dos valores, compara <strong>dos columnas enteras</strong> y devuelve una columna de <code>True</code>/<code>False</code>. El <code>and</code> de Python no sabe qué hacer con eso y lanza <code>ValueError</code>.</p><p>Los paréntesis tampoco son opcionales: <code>&amp;</code> tiene más prioridad que <code>&gt;</code>, así que sin ellos la comparación se agrupa al revés.</p>', NULL, '''''''
+Programa: Filtros sobre las ventas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+import pandas as pd
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Limpiar datos sucios', 'medio', '<p>Un CSV de ventas llegó con problemas: montos como texto, celdas vacías, nombres con espacios y mayúsculas inconsistentes, y filas duplicadas.</p><p>Escribir el proceso de limpieza y reportar cuántas filas se descartaron y el total limpio.</p><p><em>Nota:</em> los montos que no sean números deben descartarse, no romper el programa.</p>', '<p><code>pd.to_numeric(col, errors="coerce")</code> convierte y pone <code>NaN</code> en lo que no sirva. Después <code>dropna()</code>, <code>drop_duplicates()</code> y <code>.str.strip().str.title()</code> para los nombres.</p>', '<pre><code>''''''
+Programa: Limpieza de datos de ventas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Toma un DataFrame de ventas con datos sucios y lo deja listo
+    para analizar, reportando cuanto se descarto.
+''''''
+
+import pandas as pd
+
+# Inicio
+crudo = pd.DataFrame({
+    "vendedor": [" ana ", "JUAN", "Ana", "sofia", "JUAN", "Ana"],
+    "monto": ["150000", "80000", "sin dato", "120000", "80000", None],
+})
+
+filas_iniciales = len(crudo)
+df = crudo.copy()
+
+# 1. Los montos llegaron como texto. errors="coerce" pone NaN en
+#    lo que no sea numero, en vez de reventar
+df["monto"] = pd.to_numeric(df["monto"], errors="coerce")
+
+# 2. Fuera las filas sin monto valido
+df = df.dropna(subset=["monto"])
+
+# 3. Normalizar los nombres antes de comparar o agrupar
+df["vendedor"] = df["vendedor"].str.strip().str.title()
+
+# 4. Quitar filas repetidas (ya con los nombres normalizados)
+df = df.drop_duplicates()
+
+print(df)
+print(f"Filas iniciales: {filas_iniciales}")
+print(f"Filas limpias: {len(df)}")
+print(f"Descartadas: {filas_iniciales - len(df)}")
+print(f"Total limpio: {df[''monto''].sum():,.0f}")
+# Fin</code></pre><p>El orden de los pasos importa:</p><ul><li><strong>Convertir antes de descartar.</strong> Si se hiciera <code>dropna()</code> primero, el texto <code>"sin dato"</code> seguiría ahí porque no es nulo: es un texto.</li><li><strong>Normalizar antes de <code>drop_duplicates()</code>.</strong> <code>" ana "</code> y <code>"Ana"</code> son distintos para el computador hasta que se les quita el espacio y se unifican las mayúsculas. Es la misma lección del capítulo 5.</li></ul><p>Limpiar es lo que más tiempo toma en un trabajo real con datos. El análisis en sí suele ser la parte corta.</p>', NULL, '''''''
+Programa: Limpieza de datos de ventas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+import pandas as pd
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Reporte de ventas del año', 'dificil', '<p>Escribir el análisis completo de un archivo <code>ventas.csv</code> con columnas <code>fecha</code>, <code>vendedor</code>, <code>producto</code> y <code>monto</code>. El programa debe:</p><ol><li>cargar y limpiar los datos,</li><li>agregar una columna con el mes,</li><li>calcular el total y el número de ventas por vendedor,</li><li>el mejor mes,</li><li>el producto más vendido,</li><li>y guardar el reporte por vendedor en <code>reporte.csv</code>.</li></ol><p><em>Nota:</em> el programa debe funcionar aunque el CSV traiga montos inválidos o celdas vacías.</p>', '<p>Siga el orden cargar → limpiar → enriquecer → analizar → guardar. Para el mes, <code>df["fecha"].dt.month</code> después de convertir con <code>pd.to_datetime()</code>. Para varios cálculos a la vez, <code>.agg(["count", "sum"])</code>.</p>', '<pre><code>''''''
+Programa: Reporte anual de ventas
+Autor:    Ana Gomez
+Fecha:    2026-03-14
+Descripcion:
+    Carga el historico de ventas, lo limpia y produce el reporte
+    por vendedor, por mes y por producto.
+''''''
+
+import pandas as pd
+
+ARCHIVO = "ventas.csv"
+SALIDA = "reporte.csv"
+
+
+def cargar_y_limpiar(ruta):
+    ''''''
+    Carga el CSV y lo deja listo para analizar.
+
+    Parametros:
+        ruta (str): archivo de ventas
+
+    Retorna:
+        DataFrame: solo las filas utilizables
+    ''''''
+    df = pd.read_csv(ruta)
+
+    # Los montos pueden venir como texto o vacios
+    df["monto"] = pd.to_numeric(df["monto"], errors="coerce")
+    df = df.dropna(subset=["monto"])
+
+    # Nombres normalizados antes de agrupar: " ana " y "Ana"
+    # deben contar como la misma persona
+    df["vendedor"] = df["vendedor"].str.strip().str.title()
+    df["producto"] = df["producto"].str.strip().str.lower()
+
+    df = df.drop_duplicates()
+
+    return df
+
+
+# Inicio
+# Se crea un archivo de ejemplo para que el programa sea autocontenido
+pd.DataFrame({
+    "fecha": ["2026-01-15", "2026-01-20", "2026-02-03", "2026-02-14", "2026-03-01"],
+    "vendedor": [" ana ", "JUAN", "Ana", "Sofia", "juan"],
+    "producto": ["Pan", "queso", "pan", "cafe", "PAN"],
+    "monto": ["150000", "80000", "sin dato", "120000", "200000"],
+}).to_csv(ARCHIVO, index=False)
+
+ventas = cargar_y_limpiar(ARCHIVO)
+
+# Enriquecer: la fecha como fecha de verdad, y el mes aparte
+ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+ventas["mes"] = ventas["fecha"].dt.month
+
+# Analizar
+por_vendedor = ventas.groupby("vendedor")["monto"].agg(["count", "sum"])
+por_mes = ventas.groupby("mes")["monto"].sum()
+por_producto = ventas.groupby("producto")["monto"].sum()
+
+print("Por vendedor:")
+print(por_vendedor)
+
+print(f"\nMejor mes: {por_mes.idxmax()} con {por_mes.max():,.0f}")
+print(f"Producto mas vendido: {por_producto.idxmax()}")
+print(f"Total del periodo: {ventas[''monto''].sum():,.0f}")
+
+# Guardar: un reporte que se queda en la consola no le sirve a nadie
+por_vendedor.to_csv(SALIDA)
+print(f"\nReporte guardado en {SALIDA}")
+# Fin</code></pre><p>Este es el flujo completo de cualquier trabajo con datos, y no cambia con el tamaño del archivo: con cinco filas o con ochenta mil, el programa es el mismo.</p><ul><li><strong>La limpieza va en su propia función.</strong> Es la parte que más se retoca cuando aparecen datos nuevos, y tenerla aparte evita revolverla con el análisis.</li><li><strong>Normalizar antes de agrupar es obligatorio.</strong> Sin el <code>.str.title()</code>, " ana " y "Ana" saldrían como dos vendedoras distintas y el reporte estaría mal sin que nadie lo note.</li><li><strong><code>.agg(["count", "sum"])</code></strong> calcula varias cosas de un tirón, en vez de agrupar dos veces.</li><li><strong>El reporte se guarda.</strong> El análisis termina en un archivo que alguien pueda abrir, no en la pantalla.</li></ul>', NULL, '''''''
+Programa: Reporte anual de ventas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+import pandas as pd
+
+ARCHIVO = "ventas.csv"
+SALIDA = "reporte.csv"
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 22;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 22);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué es un DataFrame?', NULL, '{"options":[{"id":"a","text":"Una tabla con filas y columnas con nombre"},{"id":"b","text":"Una lista de listas"},{"id":"c","text":"Un archivo CSV abierto"},{"id":"d","text":"Una función de pandas"}]}', '{"option_id":"a"}', 'Es la estructura central de pandas. Una sola columna de un DataFrame es una Series.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué muestra df.info()?', NULL, '{"options":[{"id":"a","text":"Los tipos de cada columna y cuántos valores no nulos hay"},{"id":"b","text":"Las primeras cinco filas"},{"id":"c","text":"La media y los cuartiles"},{"id":"d","text":"El nombre del archivo cargado"}]}', '{"option_id":"a"}', 'Es lo primero que se corre siempre: dice si faltan datos y si los números llegaron como texto.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Por qué se usa & y no and para combinar dos filtros?', NULL, '{"options":[{"id":"a","text":"Porque pandas compara columnas enteras y and no sabe qué hacer con eso"},{"id":"b","text":"Porque and no existe en pandas"},{"id":"c","text":"Porque & es más rápido"},{"id":"d","text":"Porque and solo sirve con números"}]}', '{"option_id":"a"}', 'Cada comparación devuelve una columna de True/False. Con and pandas lanza ValueError, y cada condición debe ir entre paréntesis.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Qué hace pd.to_numeric(col, errors="coerce")?', NULL, '{"options":[{"id":"a","text":"Convierte a número y pone NaN en lo que no se pueda convertir"},{"id":"b","text":"Lanza un error si algo no es número"},{"id":"c","text":"Borra las filas que no sean números"},{"id":"d","text":"Convierte los números a texto"}]}', '{"option_id":"a"}', 'Es la versión pandas del try/except del capítulo 15: en vez de reventar, marca lo inválido para descartarlo después con dropna().', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Cuál es el orden correcto de un trabajo con datos?', NULL, '{"options":[{"id":"a","text":"Cargar, limpiar, enriquecer, analizar, guardar"},{"id":"b","text":"Cargar, analizar, limpiar, guardar"},{"id":"c","text":"Limpiar, cargar, guardar, analizar"},{"id":"d","text":"Cargar, guardar, limpiar, analizar"}]}', '{"option_id":"a"}', 'Analizar antes de limpiar da resultados falsos: un mismo vendedor escrito de dos formas cuenta como dos personas.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'import pandas as pd
+df = pd.DataFrame({"a": [1, 2, 3], "b": [10, 20, 30]})
+df["c"] = df["a"] * df["b"]
+print(df["c"].sum())', '{"options":[{"id":"a","text":"140"},{"id":"b","text":"60"},{"id":"c","text":"6"},{"id":"d","text":"[10, 40, 90]"}]}', '{"option_id":"a"}', 'La columna c es [10, 40, 90] calculada de una sola vez, sin ciclo, y su suma es 140.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import pandas as pd
+df = pd.DataFrame({"p": ["pan", "queso", "cafe"], "v": [5000, 15000, 12000]})
+print(len(df[df["v"] > 10000]))', '{"options":[{"id":"a","text":"2"},{"id":"b","text":"1"},{"id":"c","text":"3"},{"id":"d","text":"27000"}]}', '{"option_id":"a"}', 'El filtro deja las filas de queso y cafe, y len() cuenta filas del DataFrame resultante.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'import pandas as pd
+df = pd.DataFrame({"v": ["Ana", "Juan", "Ana"], "m": [100, 200, 300]})
+print(df.groupby("v")["m"].sum().idxmax())', '{"options":[{"id":"a","text":"Ana"},{"id":"b","text":"Juan"},{"id":"c","text":"400"},{"id":"d","text":"0"}]}', '{"option_id":"a"}', 'Ana suma 400 y Juan 200. idxmax() devuelve la etiqueta del grupo más alto, no el valor.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'El filtro lanza ValueError. ¿En qué línea está el error?', NULL, '{"lines":["import pandas as pd","df = pd.DataFrame({\"a\": [1, 2], \"b\": [3, 4]})","print(df[df[\"a\"] > 1 and df[\"b\"] < 4])"]}', '{"line_number":3}', 'Con dos condiciones va (df["a"] > 1) & (df["b"] < 4): paréntesis y & en vez de and.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Las filas nulas siguen ahí. ¿En qué línea está el error?', NULL, '{"lines":["df = pd.read_csv(\"ventas.csv\")","df.dropna()","print(df.isnull().sum())"]}', '{"line_number":2}', 'dropna() devuelve una copia; hay que reasignar con df = df.dropna(). Mismo error de texto.upper() del capítulo 5.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'dificil', 'El reporte cuenta a la misma vendedora dos veces. ¿En qué línea está el problema?', NULL, '{"lines":["df = pd.read_csv(\"ventas.csv\")","resumen = df.groupby(\"vendedor\")[\"monto\"].sum()","df[\"vendedor\"] = df[\"vendedor\"].str.strip().str.title()","print(resumen)"]}', '{"line_number":2}', 'Se agrupa antes de normalizar los nombres, así que '' ana '' y ''Ana'' quedan como dos grupos. La limpieza va primero.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme el análisis de ventas en el orden correcto', NULL, '{"lines":[{"id":"l1","text":"ventas = pd.read_csv(\"ventas.csv\")","indent":0},{"id":"l2","text":"ventas[\"monto\"] = pd.to_numeric(ventas[\"monto\"], errors=\"coerce\")","indent":0},{"id":"l3","text":"ventas = ventas.dropna(subset=[\"monto\"])","indent":0},{"id":"l4","text":"ventas[\"vendedor\"] = ventas[\"vendedor\"].str.strip().str.title()","indent":0},{"id":"l5","text":"por_vendedor = ventas.groupby(\"vendedor\")[\"monto\"].sum()","indent":0},{"id":"l6","text":"por_vendedor.to_csv(\"reporte.csv\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'Cargar, convertir, descartar lo inválido, normalizar el texto, agrupar y guardar. Convertir va antes de dropna porque ''sin dato'' es texto, no nulo.', 1, 'seed'
+    FROM chapters WHERE number = 22;
+
+-- ── Capítulo 23: IA aplicada con Python (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 23, 'IA aplicada con Python', '🤖', 'Consumir modelos y construir algo útil con ellos.', '', 0
+  SELECT p.id, 23, 'IA aplicada con Python', '🤖', 'Consumir modelos y construir algo útil con ellos.', '<p class="jc-gancho">Llegan 400 PQRs al correo de la empresa cada semana y alguien tiene que leerlas una por una para saber cuáles son quejas urgentes. Ese trabajo hoy lo hace un programa de treinta líneas. No porque sepamos construir un modelo de IA: porque sabemos <em>usarlo</em>, que es una habilidad distinta y mucho más útil.</p>
+
+<h2>Un modelo de IA es un servicio al que le hablas</h2>
+
+<p>El modelo no corre en tu computador. Vive en un servidor de la empresa que lo entrenó, y se le habla por una <strong>API</strong>: le mandas un mensaje por internet y te devuelve una respuesta.</p>
+
+<table>
+  <thead>
+    <tr><th>Tú pones</th><th>Ellos ponen</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>El texto de la pregunta (el <em>prompt</em>)</td><td>El modelo entrenado</td></tr>
+    <tr><td>Una llave que identifica tu cuenta</td><td>Los computadores que lo ejecutan</td></tr>
+    <tr><td>El código que usa la respuesta</td><td>El cobro por uso</td></tr>
+  </tbody>
+</table>
+
+<p>Es exactamente el mismo mecanismo de cualquier API: una petición HTTP con datos en JSON. Lo que cambia es que la respuesta la escribe un modelo de lenguaje en vez de una base de datos.</p>
+
+<h2>La llave nunca va en el código</h2>
+
+<p>Para usar la API te dan una <strong>API key</strong>: un texto largo que identifica y le cobra a tu cuenta. Si la subes a GitHub, en horas hay bots usándola con tu tarjeta.</p>
+
+<pre><code>pip install requests python-dotenv</code></pre>
+
+<p>La llave va en un archivo <code>.env</code>, y ese archivo va en el <code>.gitignore</code>:</p>
+
+<pre><code># .env  ← este archivo NO se sube nunca
+API_KEY=sk-tu-llave-secreta-aqui</code></pre>
+
+<pre><code>import os
+from dotenv import load_dotenv
+
+load_dotenv()                      # lee el .env y lo carga al entorno
+API_KEY = os.environ["API_KEY"]    # si falta, revienta aquí y no a mitad del programa</code></pre>
+
+<p>Usar <code>os.environ["API_KEY"]</code> y no <code>.get()</code> es a propósito: si la llave no está, quieres enterarte de una, no cincuenta líneas después con un error 401 confuso.</p>
+
+<h2>Tu primera llamada</h2>
+
+<pre><code>import requests
+
+respuesta = requests.post(
+    "https://api.anthropic.com/v1/messages",
+    headers={
+        "x-api-key": API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    },
+    json={
+        "model": "claude-sonnet-4-5",
+        "max_tokens": 500,
+        "messages": [
+            {"role": "user", "content": "Explica que es una variable en una frase."}
+        ],
+    },
+    timeout=30,
+)
+
+datos = respuesta.json()
+print(datos["content"][0]["text"])</code></pre>
+
+<p>Pieza por pieza:</p>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Para qué</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>headers</code></td><td>Quién eres: la llave viaja aquí, no en la URL</td></tr>
+    <tr><td><code>json=</code></td><td>Lo que preguntas, como diccionario de Python</td></tr>
+    <tr><td><code>messages</code></td><td>La conversación: lista de turnos con <code>role</code> y <code>content</code></td></tr>
+    <tr><td><code>max_tokens</code></td><td>Tope de largo de la respuesta: también es tope de costo</td></tr>
+    <tr><td><code>timeout=30</code></td><td>Sin esto, el programa puede quedarse colgado para siempre</td></tr>
+  </tbody>
+</table>
+
+<p><code>respuesta.json()</code> convierte la respuesta a un diccionario, igual que <code>json.loads()</code> del capítulo 17. Y como cualquier llamada por internet puede fallar, se revisa antes de usarla:</p>
+
+<pre><code>if respuesta.status_code != 200:
+    print(f"Error {respuesta.status_code}: {respuesta.text}")
+else:
+    print(respuesta.json()["content"][0]["text"])</code></pre>
+
+<h2>El prompt es el programa</h2>
+
+<p>Aquí está el cambio de mentalidad del capítulo: <strong>las instrucciones que le das al modelo son código</strong>. Un prompt vago da resultados vagos, y no hay forma de arreglarlo después.</p>
+
+<pre><code># ❌ Vago
+"Analiza este mensaje: " + mensaje
+
+# ✅ Preciso: rol, tarea, opciones y formato de salida
+''''''Eres un clasificador de PQRs de una empresa de servicios.
+Clasifica el mensaje en exactamente una categoria: queja, peticion,
+reclamo o felicitacion.
+Responde UNICAMENTE con la palabra de la categoria, en minusculas,
+sin explicaciones.
+
+Mensaje: '''''' + mensaje</code></pre>
+
+<p>Tres reglas que se cumplen siempre:</p>
+
+<ol>
+  <li><strong>Di qué rol tiene</strong> y qué tarea hace.</li>
+  <li><strong>Da las opciones cerradas</strong> cuando el resultado deba ser uno de varios valores.</li>
+  <li><strong>Exige el formato exacto</strong> de la salida, porque tu código la va a leer.</li>
+</ol>
+
+<p>Ese último punto es el que separa un juguete de un programa: si el modelo contesta <em>"¡Claro! Esta PQR parece una queja porque…"</em>, tu <code>if categoria == "queja"</code> nunca se cumple.</p>
+
+<h2>Pedir la respuesta en JSON</h2>
+
+<p>Cuando necesitas varios datos de una sola llamada, se pide JSON y se convierte con <code>json.loads()</code>:</p>
+
+<pre><code>import json
+
+PROMPT = ''''''Analiza la siguiente PQR y responde SOLO con un JSON valido,
+sin texto antes ni despues, con esta forma exacta:
+{"categoria": "queja|peticion|reclamo|felicitacion", "urgencia": 1-5, "resumen": "una frase"}
+
+PQR: ''''''
+
+
+def analizar(mensaje):
+    ''''''
+    Envia una PQR al modelo y devuelve su analisis.
+
+    Parametros:
+        mensaje (str): texto de la PQR
+
+    Retorna:
+        dict: categoria, urgencia y resumen, o None si algo fallo
+    ''''''
+    r = requests.post(URL, headers=CABECERAS, timeout=30, json={
+        "model": MODELO,
+        "max_tokens": 300,
+        "messages": [{"role": "user", "content": PROMPT + mensaje}],
+    })
+
+    if r.status_code != 200:
+        return None
+
+    texto = r.json()["content"][0]["text"]
+
+    # El modelo es texto: puede devolver algo que no sea JSON.
+    # Nunca se confia, siempre se envuelve
+    try:
+        return json.loads(texto)
+    except json.JSONDecodeError:
+        return None</code></pre>
+
+<p>Ese <code>try/except</code> no es paranoia. Un modelo de lenguaje <strong>no garantiza</strong> el formato: la mayoría de las veces obedece, y de vez en cuando agrega una frase de cortesía que rompe el <code>json.loads()</code>. El programa tiene que sobrevivir a eso.</p>
+
+<h2>El clasificador completo</h2>
+
+<p>Aquí se juntan los tres últimos capítulos: pandas para los datos, la API para el criterio, y un archivo de salida para el resultado.</p>
+
+<pre><code>import pandas as pd
+
+pqrs = pd.read_csv("pqrs.csv")           # columnas: fecha, cliente, mensaje
+
+resultados = []
+for mensaje in pqrs["mensaje"]:
+    analisis = analizar(mensaje)
+    if analisis is None:
+        analisis = {"categoria": "sin_clasificar", "urgencia": 0, "resumen": ""}
+    resultados.append(analisis)
+
+pqrs["categoria"] = [a["categoria"] for a in resultados]
+pqrs["urgencia"] = [a["urgencia"] for a in resultados]
+
+urgentes = pqrs[(pqrs["categoria"] == "reclamo") &amp; (pqrs["urgencia"] &gt;= 4)]
+print(f"Reclamos urgentes: {len(urgentes)}")
+print(pqrs.groupby("categoria").size())
+
+pqrs.to_csv("pqrs_clasificadas.csv", index=False)</code></pre>
+
+<p>Fíjate en el detalle importante: cuando el modelo falla, la fila <strong>no se pierde</strong>, queda como <code>sin_clasificar</code>. Un proceso que corre sobre 400 filas no puede caerse porque una respuesta llegó mal.</p>
+
+<p>Este es el único ciclo justificado sobre un DataFrame: cada llamada es una petición por internet, y de eso no hay versión vectorizada.</p>
+
+<h2>Lo que el modelo no sabe</h2>
+
+<p>Dos cosas que hay que tener claras antes de poner esto a trabajar en serio:</p>
+
+<ul>
+  <li><strong>El modelo inventa con total seguridad.</strong> Si le preguntas el saldo de una cuenta, se lo imagina. Sirve para clasificar, resumir, redactar y extraer; no es una fuente de datos.</li>
+  <li><strong>Todo lo que le mandas sale de tu computador.</strong> Cédulas, números de cuenta y datos de clientes no se envían a un servicio externo sin autorización.</li>
+</ul>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Dejar la API key en el código</h3>
+<pre><code>API_KEY = "sk-ant-abc123..."          # ❌ y encima subido a GitHub
+API_KEY = os.environ["API_KEY"]       # ✅ con el .env en .gitignore</code></pre>
+
+<h3>2. Confiar en que la respuesta viene como se pidió</h3>
+<pre><code>datos = json.loads(texto)             # ❌ un día trae "Claro, aqui tienes:" adelante
+
+try:                                  # ✅
+    datos = json.loads(texto)
+except json.JSONDecodeError:
+    datos = None</code></pre>
+
+<h3>3. Llamar sin timeout ni control de errores dentro de un ciclo</h3>
+<pre><code>for m in mensajes:                    # ❌ 400 llamadas, una falla, se cae todo
+    r = requests.post(URL, json=...)
+    resultados.append(r.json())</code></pre>
+<p>Cada llamada cuesta plata y tarda. Con 400 filas eso son 400 cobros: prueba primero con <code>pqrs.head(5)</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>La llave en el <code>.env</code>, cargada con <code>load_dotenv()</code>. El <code>.env</code> en el <code>.gitignore</code>.</li>
+  <li>El prompt dice rol, tarea, opciones cerradas y formato exacto de salida.</li>
+  <li>Toda llamada con <code>timeout</code> y revisando <code>status_code</code>.</li>
+  <li>Todo <code>json.loads()</code> de una respuesta del modelo, dentro de <code>try/except</code>.</li>
+  <li>Si una fila falla, se marca y el proceso sigue.</li>
+  <li>Probar con cinco filas antes de correr las cuatrocientas.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>load_dotenv()</code></td><td>Carga el <code>.env</code> al entorno</td></tr>
+    <tr><td><code>os.environ["API_KEY"]</code></td><td>Lee la llave (falla de una si no está)</td></tr>
+    <tr><td><code>requests.post(url, headers=…, json=…)</code></td><td>Envía la petición</td></tr>
+    <tr><td><code>r.status_code</code></td><td>200 éxito · 401 llave mala · 429 demasiadas llamadas</td></tr>
+    <tr><td><code>r.json()</code></td><td>La respuesta como diccionario</td></tr>
+    <tr><td><code>max_tokens</code></td><td>Tope de largo y de costo</td></tr>
+    <tr><td><code>timeout=30</code></td><td>No esperar para siempre</td></tr>
+    <tr><td><code>json.loads(texto)</code></td><td>Convierte la respuesta del modelo a diccionario</td></tr>
+  </tbody>
+</table>
+
+<blockquote>El modelo pone el criterio; tu programa pone las reglas. Un prompt sin formato exigido y una respuesta sin <code>try/except</code> son las dos formas de que esto funcione en la demo y falle el primer día real.</blockquote>', 1
     FROM parts p WHERE p.number = 6
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -8214,11 +10368,663 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 23
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 23);
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 23);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'La llave segura', 'facil', '<p>Escribir el arranque de un programa que use una API: cargar el <code>.env</code>, leer <code>API_KEY</code> del entorno y avisar con un mensaje claro si no está configurada, en vez de fallar más adelante.</p><p>Cuando sí esté, mostrarla <strong>enmascarada</strong>: los primeros 6 caracteres, tres puntos y los últimos 4.</p><pre><code>Llave cargada: sk-ant...9f2c</code></pre><p><em>Nota:</em> la llave nunca se imprime completa ni se escribe en el código.</p>', '<p><code>load_dotenv()</code> primero, luego <code>os.environ.get("API_KEY")</code>. Para enmascarar, <em>slicing</em> del capítulo 5: <code>llave[:6]</code> y <code>llave[-4:]</code>.</p>', '<pre><code>''''''
+Programa: Carga segura de la API key
+Autor:    Ana Gomez
+Fecha:    2026-03-21
+Descripcion:
+    Lee la llave de la API desde el entorno y valida que exista
+    antes de que el programa siga.
+''''''
 
--- ── Capítulo 24: APIs con FastAPI y despliegue (borrador)
+import os
+import sys
+
+from dotenv import load_dotenv
+
+
+def enmascarar(llave):
+    ''''''
+    Oculta el centro de una llave para poder mostrarla en pantalla.
+
+    Parametros:
+        llave (str): la llave completa
+
+    Retorna:
+        str: primeros 6 caracteres, puntos y ultimos 4
+    ''''''
+    return f"{llave[:6]}...{llave[-4:]}"
+
+
+# Inicio
+load_dotenv()                       # lee el archivo .env y lo pasa al entorno
+
+llave = os.environ.get("API_KEY")
+
+if not llave:
+    print("Falta API_KEY. Cree un archivo .env con API_KEY=su-llave")
+    sys.exit(1)                     # se corta aqui, no cincuenta lineas despues
+
+print(f"Llave cargada: {enmascarar(llave)}")
+# Fin</code></pre><p>Tres decisiones que valen para cualquier programa que use una API:</p><ul><li><strong>La llave se valida al arrancar.</strong> Un error 401 a mitad de un proceso de 400 filas es mucho más difícil de entender que un mensaje al principio.</li><li><strong><code>sys.exit(1)</code></strong> corta el programa con código de error. Si esto corre en un servidor, ese 1 le dice al sistema que algo falló.</li><li><strong>Enmascarar.</strong> Los logs y las capturas de pantalla se comparten. La llave completa no sale nunca a la consola.</li></ul>', NULL, '''''''
+Programa: Carga segura de la API key
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+import os
+import sys
+
+from dotenv import load_dotenv
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Primera pregunta al modelo', 'facil', '<p>Escribir una función <code>preguntar(texto)</code> que envíe el texto al modelo y devuelva su respuesta.</p><p>Requisitos:</p><ul><li><code>timeout</code> en la petición,</li><li>revisar <code>status_code</code> antes de leer la respuesta,</li><li>devolver <code>None</code> si algo salió mal, sin tumbar el programa.</li></ul>', '<p><code>requests.post(url, headers=…, json=…, timeout=30)</code>. El texto de la respuesta está en <code>r.json()["content"][0]["text"]</code>.</p>', '<pre><code>''''''
+Programa: Primera llamada a la API del modelo
+Autor:    Ana Gomez
+Fecha:    2026-03-21
+Descripcion:
+    Envia una pregunta al modelo y devuelve su respuesta, sin dejar
+    que un fallo de red tumbe el programa.
+''''''
+
+import os
+
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+URL = "https://api.anthropic.com/v1/messages"
+MODELO = "claude-sonnet-4-5"
+CABECERAS = {
+    "x-api-key": os.environ["API_KEY"],
+    "anthropic-version": "2023-06-01",
+    "content-type": "application/json",
+}
+
+
+def preguntar(texto, max_tokens=500):
+    ''''''
+    Envia un texto al modelo y devuelve su respuesta.
+
+    Parametros:
+        texto (str): la pregunta
+        max_tokens (int): tope de largo de la respuesta
+
+    Retorna:
+        str: la respuesta del modelo, o None si la llamada fallo
+    ''''''
+    try:
+        r = requests.post(
+            URL,
+            headers=CABECERAS,
+            timeout=30,             # sin esto el programa puede colgarse
+            json={
+                "model": MODELO,
+                "max_tokens": max_tokens,
+                "messages": [{"role": "user", "content": texto}],
+            },
+        )
+    except requests.RequestException as e:
+        print(f"Fallo de red: {e}")
+        return None
+
+    if r.status_code != 200:
+        print(f"Error {r.status_code}: {r.text}")
+        return None
+
+    return r.json()["content"][0]["text"]
+
+
+# Inicio
+respuesta = preguntar("Explica que es una variable en una frase.")
+
+if respuesta is None:
+    print("No se pudo consultar el modelo")
+else:
+    print(respuesta)
+# Fin</code></pre><p>Hay dos cosas distintas que pueden fallar y por eso se manejan por separado:</p><ul><li><strong>La red</strong> (no hay internet, el servidor no responde): eso lanza una excepción, y se atrapa con <code>except requests.RequestException</code>.</li><li><strong>El servidor respondió, pero con error</strong> (401 llave mala, 429 demasiadas llamadas): ahí no hay excepción, hay que mirar <code>status_code</code>.</li></ul><p>Un programa que solo revisa uno de los dos falla el día que ocurre el otro.</p>', NULL, '''''''
+Programa: Primera llamada a la API del modelo
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+import os
+
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+URL = "https://api.anthropic.com/v1/messages"
+MODELO = "claude-sonnet-4-5"
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Clasificador de PQRs', 'medio', '<p>Escribir una función <code>clasificar(mensaje)</code> que devuelva una de cuatro categorías: <code>queja</code>, <code>peticion</code>, <code>reclamo</code> o <code>felicitacion</code>.</p><p>El prompt debe exigir el formato exacto, y la función debe <strong>validar</strong> la respuesta: si el modelo devuelve algo distinto a las cuatro categorías, retornar <code>"sin_clasificar"</code>.</p>', '<p>Al prompt: rol, opciones cerradas y "responde únicamente con la palabra". A la respuesta: <code>.strip().lower()</code> y luego comprobar que esté en la lista de categorías válidas.</p>', '<pre><code>''''''
+Programa: Clasificador de PQRs
+Autor:    Ana Gomez
+Fecha:    2026-03-21
+Descripcion:
+    Clasifica el texto de una PQR en una de cuatro categorias usando
+    un modelo de lenguaje, validando siempre lo que responde.
+''''''
+
+CATEGORIAS = ("queja", "peticion", "reclamo", "felicitacion")
+
+PROMPT = ''''''Eres un clasificador de PQRs de una empresa de servicios
+publicos en Colombia.
+Clasifica el siguiente mensaje en exactamente una categoria:
+queja, peticion, reclamo o felicitacion.
+Responde UNICAMENTE con la palabra de la categoria, en minusculas,
+sin explicaciones ni puntuacion.
+
+Mensaje: ''''''
+
+
+def clasificar(mensaje):
+    ''''''
+    Clasifica una PQR.
+
+    Parametros:
+        mensaje (str): texto de la PQR
+
+    Retorna:
+        str: una de CATEGORIAS, o "sin_clasificar" si no se pudo
+    ''''''
+    respuesta = preguntar(PROMPT + mensaje, max_tokens=10)
+
+    if respuesta is None:
+        return "sin_clasificar"
+
+    # El modelo puede devolver "Queja." o " queja ": se normaliza
+    # antes de comparar, igual que en el capitulo 5
+    categoria = respuesta.strip().lower().strip(".")
+
+    # Y aunque se le pidio, puede inventar una categoria nueva:
+    # nunca se confia sin validar
+    if categoria not in CATEGORIAS:
+        return "sin_clasificar"
+
+    return categoria
+
+
+# Inicio
+ejemplos = [
+    "Llevo tres dias sin agua y nadie contesta el telefono",
+    "Solicito copia de la factura de febrero",
+    "Excelente atencion del tecnico que vino ayer",
+]
+
+for texto in ejemplos:
+    print(f"{clasificar(texto):15} | {texto[:40]}")
+# Fin</code></pre><p>La función hace dos cosas que el prompt por sí solo no garantiza:</p><ul><li><strong>Normaliza</strong> lo que llegue: <code>"Queja."</code> y <code>" queja "</code> deben contar como la misma categoría.</li><li><strong>Valida contra una lista cerrada.</strong> Si el modelo se inventa <code>"solicitud"</code>, el programa no la propaga a la base de datos: la marca como <code>sin_clasificar</code> y alguien la revisa.</li></ul><p>Pedir el formato en el prompt reduce los errores; validarlo en el código los elimina. Se hacen las dos cosas.</p>', NULL, '''''''
+Programa: Clasificador de PQRs
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+CATEGORIAS = ("queja", "peticion", "reclamo", "felicitacion")
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'Reporte automático de PQRs', 'dificil', '<p>Escribir el proceso completo que la empresa correría cada lunes: leer <code>pqrs.csv</code> (columnas <code>fecha</code>, <code>cliente</code>, <code>mensaje</code>), pedirle al modelo categoría, urgencia (1 a 5) y un resumen de una frase por cada PQR, y producir:</p><ul><li>el conteo por categoría,</li><li>la lista de los casos urgentes (reclamo con urgencia ≥ 4),</li><li>y el archivo <code>pqrs_clasificadas.csv</code>.</li></ul><p><em>Nota:</em> una PQR que el modelo no logre analizar no puede tumbar el proceso ni desaparecer del reporte. Debe existir un modo de prueba que procese solo las primeras filas.</p>', '<p>Pida el resultado en JSON y conviértalo con <code>json.loads()</code> dentro de <code>try/except</code>. Para el modo de prueba, una constante <code>LIMITE</code> y <code>df.head(LIMITE)</code>.</p>', '<pre><code>''''''
+Programa: Reporte semanal de PQRs
+Autor:    Ana Gomez
+Fecha:    2026-03-21
+Descripcion:
+    Clasifica las PQRs de la semana con un modelo de lenguaje y
+    genera el reporte por categoria y la lista de casos urgentes.
+''''''
+
+import json
+
+import pandas as pd
+
+ENTRADA = "pqrs.csv"
+SALIDA = "pqrs_clasificadas.csv"
+LIMITE = 5          # None para procesar todo. Cada llamada cuesta
+
+VACIO = {"categoria": "sin_clasificar", "urgencia": 0, "resumen": ""}
+
+PROMPT = ''''''Analiza la siguiente PQR de una empresa de servicios publicos.
+Responde SOLO con un JSON valido, sin texto antes ni despues,
+con esta forma exacta:
+{"categoria": "queja|peticion|reclamo|felicitacion",
+ "urgencia": 1,
+ "resumen": "una frase"}
+La urgencia va de 1 (puede esperar) a 5 (atender hoy).
+
+PQR: ''''''
+
+
+def analizar(mensaje):
+    ''''''
+    Pide al modelo el analisis de una PQR.
+
+    Parametros:
+        mensaje (str): texto de la PQR
+
+    Retorna:
+        dict: categoria, urgencia y resumen. Nunca None: si algo
+              falla devuelve el registro VACIO
+    ''''''
+    texto = preguntar(PROMPT + mensaje, max_tokens=300)
+
+    if texto is None:
+        return dict(VACIO)
+
+    # El modelo es texto libre: puede colar una frase de cortesia
+    # y romper el json.loads(). Se envuelve siempre
+    try:
+        datos = json.loads(texto)
+    except json.JSONDecodeError:
+        return dict(VACIO)
+
+    # Y puede omitir una clave: se leen con .get() y valor por defecto
+    return {
+        "categoria": str(datos.get("categoria", "sin_clasificar")).lower(),
+        "urgencia": int(datos.get("urgencia", 0)),
+        "resumen": str(datos.get("resumen", "")),
+    }
+
+
+# Inicio
+pqrs = pd.read_csv(ENTRADA)
+
+if LIMITE:
+    print(f"MODO PRUEBA: solo las primeras {LIMITE} filas")
+    pqrs = pqrs.head(LIMITE).copy()
+
+# Un ciclo sobre el DataFrame: aqui si va, porque cada fila es una
+# llamada por internet y de eso no hay version vectorizada
+analisis = [analizar(m) for m in pqrs["mensaje"]]
+
+pqrs["categoria"] = [a["categoria"] for a in analisis]
+pqrs["urgencia"] = [a["urgencia"] for a in analisis]
+pqrs["resumen"] = [a["resumen"] for a in analisis]
+
+print("\nPQRs por categoria:")
+print(pqrs.groupby("categoria").size())
+
+urgentes = pqrs[(pqrs["categoria"] == "reclamo") &amp; (pqrs["urgencia"] &gt;= 4)]
+print(f"\nCasos urgentes: {len(urgentes)}")
+for _, fila in urgentes.iterrows():
+    print(f"  [{fila[''urgencia'']}] {fila[''cliente'']}: {fila[''resumen'']}")
+
+sin_clasificar = (pqrs["categoria"] == "sin_clasificar").sum()
+if sin_clasificar:
+    print(f"\n{sin_clasificar} PQR(s) quedaron sin clasificar y hay que revisarlas")
+
+pqrs.to_csv(SALIDA, index=False)
+print(f"\nReporte guardado en {SALIDA}")
+# Fin</code></pre><p>Este ejercicio junta todo el libro, y las decisiones que importan no son las de la IA:</p><ul><li><strong><code>analizar()</code> nunca devuelve <code>None</code>.</strong> Devuelve el registro <code>VACIO</code>. Quien la llama no tiene que preguntarse nada: siempre recibe un diccionario con las tres claves, y la fila conserva su lugar en el DataFrame.</li><li><strong><code>dict(VACIO)</code> y no <code>VACIO</code> a secas.</strong> Devolver el mismo diccionario a todas las filas las dejaría compartiendo un solo objeto, y modificar una modificaría todas. Es la trampa de las listas del capítulo 10.</li><li><strong><code>.get()</code> con valor por defecto</strong> para cada clave: el modelo puede olvidar una y no vale la pena tumbar el proceso por eso.</li><li><strong>El modo prueba primero.</strong> 400 filas son 400 cobros. Se corre con <code>LIMITE = 5</code>, se revisa que las categorías tengan sentido, y solo entonces se pone en <code>None</code>.</li><li><strong>Lo que no se pudo clasificar se reporta.</strong> Un proceso que esconde sus fallas es peor que uno que se cae: nadie se entera de que el reporte está incompleto.</li></ul>', NULL, '''''''
+Programa: Reporte semanal de PQRs
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+import json
+
+import pandas as pd
+
+ENTRADA = "pqrs.csv"
+SALIDA = "pqrs_clasificadas.csv"
+LIMITE = 5          # None para procesar todo
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 23;
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 23);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Dónde corre el modelo de IA cuando lo usas desde Python?', NULL, '{"options":[{"id":"a","text":"En un servidor de la empresa que lo entrenó; tu programa le habla por una API"},{"id":"b","text":"En tu computador, después de instalarlo con pip"},{"id":"c","text":"Dentro del intérprete de Python"},{"id":"d","text":"En la memoria RAM, mientras dure el programa"}]}', '{"option_id":"a"}', 'Tú pones el prompt, la llave y el código que usa la respuesta. Ellos ponen el modelo y los computadores.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Dónde debe guardarse la API key?', NULL, '{"options":[{"id":"a","text":"En un archivo .env que está en el .gitignore, leído con os.environ"},{"id":"b","text":"En una constante al inicio del programa"},{"id":"c","text":"En un comentario, para no confundirla con el código"},{"id":"d","text":"En la URL de la petición"}]}', '{"option_id":"a"}', 'Una llave subida a GitHub la encuentran bots en horas y el consumo se cobra a tu cuenta.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Por qué el prompt debe exigir el formato exacto de la respuesta?', NULL, '{"options":[{"id":"a","text":"Porque tu código va a leer esa respuesta y una frase de cortesía la rompe"},{"id":"b","text":"Porque el modelo responde más rápido"},{"id":"c","text":"Porque así cuesta menos"},{"id":"d","text":"Porque si no, la API devuelve error 400"}]}', '{"option_id":"a"}', 'Si el modelo contesta "¡Claro! Esto parece una queja porque…", el if categoria == "queja" nunca se cumple.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Para qué sirve timeout=30 en requests.post?', NULL, '{"options":[{"id":"a","text":"Para que el programa no quede colgado esperando para siempre"},{"id":"b","text":"Para limitar el largo de la respuesta"},{"id":"c","text":"Para reintentar la llamada 30 veces"},{"id":"d","text":"Para que el modelo piense 30 segundos"}]}', '{"option_id":"a"}', 'El tope de largo (y de costo) es max_tokens. El timeout es cuánto se espera la respuesta antes de rendirse.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Para cuál de estas tareas NO sirve un modelo de lenguaje?', NULL, '{"options":[{"id":"a","text":"Consultar el saldo real de una cuenta bancaria"},{"id":"b","text":"Clasificar mensajes en categorías"},{"id":"c","text":"Resumir un texto largo en una frase"},{"id":"d","text":"Extraer la ciudad y la fecha de un texto libre"}]}', '{"option_id":"a"}', 'El modelo inventa con total seguridad. Los datos salen de la base de datos; el modelo pone el criterio, no los hechos.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', 'La variable de entorno API_KEY no está definida. ¿Qué imprime?', 'import os
+
+llave = os.environ.get("API_KEY")
+if not llave:
+    print("Falta API_KEY")
+else:
+    print(f"{llave[:6]}...{llave[-4:]}")', '{"options":[{"id":"a","text":"Falta API_KEY"},{"id":"b","text":"None"},{"id":"c","text":"Lanza KeyError"},{"id":"d","text":"...  (sin nada alrededor)"}]}', '{"option_id":"a"}', '.get() devuelve None si no existe, y None es falso. Con os.environ["API_KEY"] sí habría KeyError.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', 'El modelo respondió el texto ''  Queja. ''. ¿Qué imprime?', 'CATEGORIAS = ("queja", "peticion", "reclamo", "felicitacion")
+respuesta = "  Queja. "
+
+categoria = respuesta.strip().lower().strip(".")
+print(categoria if categoria in CATEGORIAS else "sin_clasificar")', '{"options":[{"id":"a","text":"queja"},{"id":"b","text":"sin_clasificar"},{"id":"c","text":"Queja."},{"id":"d","text":"  queja. "}]}', '{"option_id":"a"}', 'strip() quita los espacios, lower() unifica mayúsculas y el segundo strip(".") quita el punto final.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'dificil', 'El modelo devolvió ''Claro, aqui tienes: {"a": 1}''. ¿Qué imprime?', 'import json
+
+texto = ''Claro, aqui tienes: {"a": 1}''
+
+try:
+    datos = json.loads(texto)
+except json.JSONDecodeError:
+    datos = None
+
+print(datos)', '{"options":[{"id":"a","text":"None"},{"id":"b","text":"{''a'': 1}"},{"id":"c","text":"Claro, aqui tienes: {\"a\": 1}"},{"id":"d","text":"Lanza JSONDecodeError"}]}', '{"option_id":"a"}', 'El texto de cortesía adelante invalida el JSON completo. Por eso todo json.loads() de una respuesta del modelo va dentro de try/except.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'Este programa expone un secreto. ¿En qué línea está el problema?', NULL, '{"lines":["import requests","API_KEY = \"sk-ant-api03-abc123xyz\"","r = requests.post(URL, headers={\"x-api-key\": API_KEY}, json=cuerpo, timeout=30)","print(r.json())"]}', '{"line_number":2}', 'La llave está escrita en el código y viaja al repositorio. Va en el .env y se lee con os.environ.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'Cuando la API responde 401, el programa falla con un error confuso. ¿En qué línea está el problema?', NULL, '{"lines":["r = requests.post(URL, headers=CABECERAS, json=cuerpo, timeout=30)","texto = r.json()[\"content\"][0][\"text\"]","print(texto)"]}', '{"line_number":2}', 'Se lee la respuesta sin revisar r.status_code: con un error la respuesta no tiene ''content'' y salta un KeyError que no explica nada.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'dificil', 'Todas las filas terminan con el mismo análisis. ¿En qué línea está el problema?', NULL, '{"lines":["VACIO = {\"categoria\": \"sin_clasificar\", \"urgencia\": 0}","def analizar(mensaje):","    texto = preguntar(PROMPT + mensaje)","    if texto is None:","        return VACIO"]}', '{"line_number":5}', 'Devuelve siempre el mismo objeto: todas las filas comparten un diccionario y modificar una las modifica todas. Va return dict(VACIO).', 1, 'seed'
+    FROM chapters WHERE number = 23;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme la función que consulta el modelo y devuelve JSON validado', NULL, '{"lines":[{"id":"l1","text":"def analizar(mensaje):","indent":0},{"id":"l2","text":"r = requests.post(URL, headers=CABECERAS, timeout=30, json=cuerpo(mensaje))","indent":1},{"id":"l3","text":"if r.status_code != 200:","indent":1},{"id":"l4","text":"return None","indent":2},{"id":"l5","text":"texto = r.json()[\"content\"][0][\"text\"]","indent":1},{"id":"l6","text":"try:","indent":1},{"id":"l7","text":"return json.loads(texto)","indent":2},{"id":"l8","text":"except json.JSONDecodeError:","indent":1},{"id":"l9","text":"return None","indent":2}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8","l9"]}', 'Primero se revisa el status_code y se sale; solo entonces se lee el texto, y su conversión a JSON va envuelta en try/except.', 1, 'seed'
+    FROM chapters WHERE number = 23;
+
+-- ── Capítulo 24: APIs con FastAPI y despliegue (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
-  SELECT p.id, 24, 'APIs con FastAPI y despliegue', '🚀', 'Publicar tu propio backend en internet.', '', 0
+  SELECT p.id, 24, 'APIs con FastAPI y despliegue', '🚀', 'Publicar tu propio backend en internet.', '<p class="jc-gancho">Todo lo que has escrito hasta aquí corre en tu computador y lo usas tú. En este capítulo eso cambia: el sistema bancario del capítulo 20 va a quedar en internet, con una dirección que cualquiera puede abrir, y una app de celular podría consumirlo. Ese salto es lo que separa un ejercicio de un producto.</p>
+
+<h2>De script a servicio</h2>
+
+<p>Un script arranca, hace algo y termina. Una <strong>API</strong> queda encendida esperando peticiones, y responde a cada una.</p>
+
+<table>
+  <thead>
+    <tr><th>Verbo</th><th>Significa</th><th>Ejemplo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>GET</code></td><td>Dame información</td><td>Consultar un saldo</td></tr>
+    <tr><td><code>POST</code></td><td>Crea algo</td><td>Abrir una cuenta</td></tr>
+    <tr><td><code>PUT</code></td><td>Modifica algo</td><td>Cambiar el titular</td></tr>
+    <tr><td><code>DELETE</code></td><td>Bórralo</td><td>Cerrar la cuenta</td></tr>
+  </tbody>
+</table>
+
+<p>Y la respuesta trae un <strong>código de estado</strong> que dice cómo salió:</p>
+
+<table>
+  <thead>
+    <tr><th>Código</th><th>Quiere decir</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>200</code> · <code>201</code></td><td>Salió bien · se creó algo</td></tr>
+    <tr><td><code>400</code> · <code>422</code></td><td>El cliente mandó algo mal</td></tr>
+    <tr><td><code>401</code> · <code>403</code></td><td>No se identificó · no tiene permiso</td></tr>
+    <tr><td><code>404</code></td><td>Eso no existe</td></tr>
+    <tr><td><code>500</code></td><td>Se rompió el servidor: la culpa es tuya</td></tr>
+  </tbody>
+</table>
+
+<h2>Tu primera API</h2>
+
+<pre><code>pip install fastapi uvicorn</code></pre>
+
+<pre><code># main.py
+from fastapi import FastAPI
+
+app = FastAPI(title="Banco JuanCode")
+
+
+@app.get("/")
+def inicio():
+    return {"mensaje": "API del banco funcionando"}</code></pre>
+
+<pre><code>uvicorn main:app --reload</code></pre>
+
+<p><code>main:app</code> significa "en el archivo <code>main.py</code>, la variable <code>app</code>". Con <code>--reload</code> el servidor se reinicia solo cada vez que guardas.</p>
+
+<p>Abre <code>http://127.0.0.1:8000</code> y ahí está el JSON. Ahora abre <code>http://127.0.0.1:8000/docs</code>: FastAPI generó una <strong>documentación interactiva</strong> donde puedes probar cada ruta sin escribir una línea de código extra. No hay que configurar nada para tenerla.</p>
+
+<p>Fíjate en que la función devuelve un diccionario de Python y llega como JSON. FastAPI lo convierte solo.</p>
+
+<h2>Parámetros: en la ruta y en la consulta</h2>
+
+<pre><code>@app.get("/cuentas/{numero}")
+def ver_cuenta(numero: str):
+    return {"numero": numero}
+
+
+@app.get("/cuentas")
+def listar(tipo: str = "todos", limite: int = 10):
+    return {"tipo": tipo, "limite": limite}</code></pre>
+
+<ul>
+  <li><code>/cuentas/001</code> → el valor va <strong>en la ruta</strong>, para identificar un recurso.</li>
+  <li><code>/cuentas?tipo=ahorros&amp;limite=5</code> → va <strong>en la consulta</strong>, para filtrar u ordenar.</li>
+</ul>
+
+<p>Esas anotaciones de tipo (<code>numero: str</code>, <code>limite: int</code>) no son decoración: FastAPI <strong>convierte y valida</strong> con ellas. Si alguien pide <code>?limite=hola</code>, la respuesta es un 422 con el detalle del error, y tu función nunca llega a ejecutarse.</p>
+
+<h2>Recibir datos: los modelos de Pydantic</h2>
+
+<p>Para un <code>POST</code> hay que describir qué se espera recibir:</p>
+
+<pre><code>from pydantic import BaseModel, Field
+
+
+class CuentaNueva(BaseModel):
+    numero: str = Field(min_length=3, max_length=10)
+    titular: str = Field(min_length=3)
+    tipo: str = "ahorros"
+    saldo: int = Field(default=0, ge=0)          # ge = mayor o igual
+
+
+@app.post("/cuentas", status_code=201)
+def crear_cuenta(cuenta: CuentaNueva):
+    return {"creada": cuenta.numero, "saldo": cuenta.saldo}</code></pre>
+
+<p>Esa clase reemplaza todas las validaciones a mano que escribíamos en el capítulo 15. Si llega un saldo negativo, o falta el titular, o el número viene como número en vez de texto, FastAPI responde 422 con el campo exacto que está mal, <strong>antes</strong> de entrar a tu función.</p>
+
+<p>Es la misma idea del <code>NOT NULL</code> del capítulo 21, pero en la puerta de entrada del programa: la regla se declara una vez y se aplica sola.</p>
+
+<h2>La API del banco</h2>
+
+<p>Ahora sí, con la base de datos del capítulo 21 detrás:</p>
+
+<pre><code>import sqlite3
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+
+app = FastAPI(title="Banco JuanCode")
+BASE = "banco.db"
+
+
+class Movimiento(BaseModel):
+    monto: int = Field(gt=0)          # gt = mayor que: no hay retiros de 0
+
+
+def conectar():
+    ''''''
+    Abre una conexión a la base con filas accesibles por nombre.
+    ''''''
+    conexion = sqlite3.connect(BASE)
+    conexion.row_factory = sqlite3.Row
+    return conexion
+
+
+@app.get("/cuentas/{numero}")
+def ver_cuenta(numero: str):
+    conexion = conectar()
+    try:
+        fila = conexion.execute(
+            "SELECT numero, titular, tipo, saldo FROM cuentas WHERE numero = ?",
+            (numero,),
+        ).fetchone()
+    finally:
+        conexion.close()          # se cierra pase lo que pase
+
+    if fila is None:
+        raise HTTPException(status_code=404, detail="La cuenta no existe")
+
+    return dict(fila)
+
+
+@app.post("/cuentas/{numero}/retiros", status_code=201)
+def retirar(numero: str, movimiento: Movimiento):
+    conexion = conectar()
+    try:
+        fila = conexion.execute(
+            "SELECT saldo FROM cuentas WHERE numero = ?", (numero,)
+        ).fetchone()
+
+        if fila is None:
+            raise HTTPException(status_code=404, detail="La cuenta no existe")
+
+        if fila["saldo"] &lt; movimiento.monto:
+            raise HTTPException(status_code=400, detail="Saldo insuficiente")
+
+        conexion.execute(
+            "UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?",
+            (movimiento.monto, numero),
+        )
+        conexion.commit()
+        nuevo = fila["saldo"] - movimiento.monto
+    finally:
+        conexion.close()
+
+    return {"numero": numero, "retirado": movimiento.monto, "saldo": nuevo}</code></pre>
+
+<p>Dos cosas que hay que ver aquí:</p>
+
+<ul>
+  <li><strong><code>raise HTTPException</code>, no <code>return</code>.</strong> Devolver <code>{"error": "no existe"}</code> con código 200 es mentir: el cliente cree que salió bien. El código de estado <em>es</em> parte de la respuesta.</li>
+  <li><strong>La conexión se cierra en un <code>finally</code>.</strong> Un servidor no termina nunca; una conexión que se queda abierta en cada petición tumba el proceso a las pocas horas.</li>
+</ul>
+
+<h2>Antes de publicar</h2>
+
+<h3>Las dependencias, por escrito</h3>
+
+<pre><code>pip freeze &gt; requirements.txt</code></pre>
+
+<p>El servidor no tiene tu entorno virtual. Ese archivo es la lista con la que se reconstruye, tal como se vio en el capítulo 16.</p>
+
+<h3>La configuración, en el entorno</h3>
+
+<pre><code>import os
+
+BASE = os.environ.get("DATABASE_PATH", "banco.db")
+PUERTO = int(os.environ.get("PORT", 8000))</code></pre>
+
+<p>Nada de rutas ni llaves escritas en el código: lo que cambia entre tu computador y el servidor viaja por variables de entorno. Y el puerto <strong>lo asigna el servicio</strong>, por eso se lee de <code>PORT</code> en vez de fijarlo.</p>
+
+<h3>Levantar en producción</h3>
+
+<pre><code>uvicorn main:app --host 0.0.0.0 --port $PORT</code></pre>
+
+<p><code>--host 0.0.0.0</code> significa "acepta conexiones de afuera". El <code>127.0.0.1</code> de desarrollo solo escucha a tu propia máquina, y en un servidor eso equivale a no estar publicado. Y <strong>sin <code>--reload</code></strong>: eso es una herramienta de desarrollo.</p>
+
+<h3>Permitir que un navegador la consuma</h3>
+
+<pre><code>from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://mi-frontend.com"],   # no "*" en producción
+    allow_methods=["*"],
+    allow_headers=["*"],
+)</code></pre>
+
+<p>Sin esto, una página web en otro dominio no puede llamar a tu API: el navegador lo bloquea. El error clásico de "funciona con curl pero no desde la web" es casi siempre CORS.</p>
+
+<h3>Publicarla</h3>
+
+<p>Servicios como Render, Railway o Fly.io despliegan desde un repositorio de GitHub: conectas el repo, ellos leen el <code>requirements.txt</code>, corren el comando de arranque y te dan una dirección pública. La lista de pasos es siempre la misma:</p>
+
+<ol>
+  <li>El código en GitHub, con <code>.env</code> en el <code>.gitignore</code>.</li>
+  <li><code>requirements.txt</code> actualizado.</li>
+  <li>Comando de arranque: <code>uvicorn main:app --host 0.0.0.0 --port $PORT</code>.</li>
+  <li>Las variables de entorno cargadas en el panel del servicio.</li>
+  <li>Probar la dirección pública y su <code>/docs</code>.</li>
+</ol>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Devolver el error con código 200</h3>
+<pre><code>return {"error": "no existe"}                          # ❌ el cliente cree que salió bien
+raise HTTPException(status_code=404, detail="...")     # ✅</code></pre>
+
+<h3>2. Dejar el puerto y el host de desarrollo</h3>
+<pre><code>uvicorn main:app --reload                              # ❌ en producción
+uvicorn main:app --host 0.0.0.0 --port $PORT           # ✅</code></pre>
+
+<h3>3. Subir el <code>.env</code> o la base de datos al repositorio</h3>
+<pre><code># .gitignore
+.env
+*.db
+__pycache__/
+venv/</code></pre>
+<p>Una llave publicada hay que rotarla, no borrarla: en el historial de git sigue ahí.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Una función por ruta, con el verbo que corresponde a lo que hace.</li>
+  <li>Los tipos y los modelos de Pydantic validan la entrada; no se valida a mano.</li>
+  <li>Los errores se lanzan con <code>HTTPException</code> y su código real.</li>
+  <li>Los recursos (conexiones, archivos) se cierran en <code>finally</code>.</li>
+  <li>Lo que cambia entre máquinas va en variables de entorno.</li>
+  <li>Probar en <code>/docs</code> antes de publicar, y volver a probarlo en la dirección pública.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>app = FastAPI()</code></td><td>Crea la aplicación</td></tr>
+    <tr><td><code>@app.get("/ruta")</code></td><td>Responde a un GET en esa ruta</td></tr>
+    <tr><td><code>@app.post("/ruta", status_code=201)</code></td><td>Crea algo y responde 201</td></tr>
+    <tr><td><code>{numero}</code> en la ruta</td><td>Parámetro que identifica un recurso</td></tr>
+    <tr><td><code>limite: int = 10</code></td><td>Parámetro de consulta con valor por defecto</td></tr>
+    <tr><td><code>class X(BaseModel)</code></td><td>Describe y valida el cuerpo de la petición</td></tr>
+    <tr><td><code>raise HTTPException(404, "…")</code></td><td>Responde con un error de verdad</td></tr>
+    <tr><td><code>uvicorn main:app --reload</code></td><td>Levanta el servidor en desarrollo</td></tr>
+    <tr><td><code>/docs</code></td><td>Documentación interactiva, gratis</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Hace veinticuatro capítulos, un <code>print</code> era todo lo que sabías hacer. Ahora tienes un servicio con base de datos, validaciones y una dirección pública. Lo que sigue no es otro capítulo: es tu propio proyecto.</blockquote>', 1
     FROM parts p WHERE p.number = 6
   ON CONFLICT(number) DO UPDATE SET
     part_id      = excluded.part_id,
@@ -8230,5 +11036,503 @@ INSERT INTO chapters (part_id, number, title, emoji, description, content_html, 
 INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 24
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
 DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 24);
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 1, 'Hola API', 'facil', '<p>Crear una API con FastAPI que tenga dos rutas:</p><ul><li><code>GET /</code> → <code>{"mensaje": "API del banco funcionando"}</code></li><li><code>GET /saludo/{nombre}</code> → <code>{"saludo": "Hola, Ana"}</code></li></ul><p>Levantarla con uvicorn y probarla en <code>/docs</code>.</p>', '<p><code>app = FastAPI()</code>, y cada ruta es una función con el decorador <code>@app.get("...")</code>. La función devuelve un diccionario y FastAPI lo convierte a JSON.</p>', '<pre><code>''''''
+Programa: API del banco - primeras rutas
+Autor:    Ana Gomez
+Fecha:    2026-03-28
+Descripcion:
+    API minima con FastAPI para verificar que el servicio responde.
+
+Uso:
+    uvicorn main:app --reload
+    Documentacion interactiva en http://127.0.0.1:8000/docs
+''''''
+
+from fastapi import FastAPI
+
+# Inicio
+app = FastAPI(title="Banco JuanCode")
+
+
+@app.get("/")
+def inicio():
+    ''''''
+    Ruta de verificacion: confirma que el servicio esta arriba.
+
+    Retorna:
+        dict: mensaje de estado
+    ''''''
+    return {"mensaje": "API del banco funcionando"}
+
+
+@app.get("/saludo/{nombre}")
+def saludar(nombre: str):
+    ''''''
+    Saluda a quien se identifique en la ruta.
+
+    Parametros:
+        nombre (str): viene de la URL, por ejemplo /saludo/Ana
+
+    Retorna:
+        dict: el saludo armado
+    ''''''
+    return {"saludo": f"Hola, {nombre.title()}"}
+# Fin</code></pre><p>Tres detalles que ya son distintos a todo lo anterior:</p><ul><li><strong>No hay <code>print</code>.</strong> La función <code>return</code>-a un diccionario y FastAPI lo convierte a JSON y lo manda por la red.</li><li><strong>Nadie llama a las funciones.</strong> Las llama el servidor cuando entra una petición a esa ruta.</li><li><strong><code>nombre: str</code></strong> no es un comentario: es lo que FastAPI usa para convertir y validar el valor de la URL.</li></ul><p>Y sin escribir nada más, <code>/docs</code> ya tiene la documentación de las dos rutas y un botón para probarlas.</p>', NULL, '''''''
+Programa: API del banco - primeras rutas
+Autor:
+Fecha:
+Descripcion:
+
+Uso:
+    uvicorn main:app --reload
+''''''
+
+from fastapi import FastAPI
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 2, 'Consultar una cuenta', 'facil', '<p>Agregar la ruta <code>GET /cuentas/{numero}</code> que devuelva los datos de la cuenta desde un diccionario en memoria.</p><p>Si el número no existe, la respuesta debe ser un <strong>404 real</strong>, no un 200 con un mensaje de error.</p><p>Agregar también <code>GET /cuentas</code> que liste todas, con un parámetro opcional <code>tipo</code> para filtrar.</p>', '<p><code>raise HTTPException(status_code=404, detail="...")</code>. El filtro opcional es un parámetro con valor por defecto: <code>tipo: str = "todos"</code>.</p>', '<pre><code>''''''
+Programa: API del banco - consulta de cuentas
+Autor:    Ana Gomez
+Fecha:    2026-03-28
+Descripcion:
+    Expone la consulta de una cuenta y el listado filtrado por tipo.
+''''''
+
+from fastapi import FastAPI, HTTPException
+
+app = FastAPI(title="Banco JuanCode")
+
+CUENTAS = {
+    "001": {"numero": "001", "titular": "Ana", "tipo": "ahorros", "saldo": 200000},
+    "002": {"numero": "002", "titular": "Juan", "tipo": "corriente", "saldo": 850000},
+    "003": {"numero": "003", "titular": "Sofia", "tipo": "ahorros", "saldo": 45000},
+}
+
+
+# Inicio
+@app.get("/cuentas")
+def listar_cuentas(tipo: str = "todos"):
+    ''''''
+    Lista las cuentas, opcionalmente filtradas por tipo.
+
+    Parametros:
+        tipo (str): "ahorros", "corriente" o "todos"
+
+    Retorna:
+        dict: total y lista de cuentas
+    ''''''
+    if tipo == "todos":
+        cuentas = list(CUENTAS.values())
+    else:
+        cuentas = [c for c in CUENTAS.values() if c["tipo"] == tipo]
+
+    return {"total": len(cuentas), "cuentas": cuentas}
+
+
+@app.get("/cuentas/{numero}")
+def ver_cuenta(numero: str):
+    ''''''
+    Devuelve una cuenta por su numero.
+
+    Parametros:
+        numero (str): identificador de la cuenta
+
+    Retorna:
+        dict: los datos de la cuenta
+
+    Lanza:
+        HTTPException 404: si la cuenta no existe
+    ''''''
+    if numero not in CUENTAS:
+        # No se devuelve {"error": ...} con codigo 200: el codigo
+        # de estado ES parte de la respuesta
+        raise HTTPException(status_code=404, detail="La cuenta no existe")
+
+    return CUENTAS[numero]
+# Fin</code></pre><p>La diferencia entre <code>return {"error": "no existe"}</code> y <code>raise HTTPException(404)</code> parece cosmética y no lo es. Quien consume la API —una app de celular, otro programa, un tablero— revisa el código de estado antes que el contenido. Un 200 le dice "salió bien", así el cuerpo diga lo contrario, y termina guardando el mensaje de error como si fuera una cuenta.</p><p>El orden de las dos rutas tampoco es casual: <code>/cuentas</code> y <code>/cuentas/{numero}</code> son direcciones distintas, y conviene declarar la fija antes que la variable para que quede claro cuál atiende qué.</p>', NULL, '''''''
+Programa: API del banco - consulta de cuentas
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+from fastapi import FastAPI, HTTPException
+
+app = FastAPI(title="Banco JuanCode")
+
+CUENTAS = {
+    "001": {"numero": "001", "titular": "Ana", "tipo": "ahorros", "saldo": 200000},
+    "002": {"numero": "002", "titular": "Juan", "tipo": "corriente", "saldo": 850000},
+}
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 3, 'Abrir cuenta y retirar', 'medio', '<p>Agregar dos rutas que <em>modifican</em> datos:</p><ul><li><code>POST /cuentas</code> → crea una cuenta. Responde <strong>201</strong>. Si el número ya existe, <strong>409</strong>.</li><li><code>POST /cuentas/{numero}/retiros</code> → retira un monto. <strong>404</strong> si la cuenta no existe y <strong>400</strong> si el saldo no alcanza.</li></ul><p><em>Nota:</em> la validación de los datos que llegan (saldo no negativo, monto mayor que cero, titular no vacío) no se escribe a mano: se declara con Pydantic.</p>', '<p>Una clase que herede de <code>BaseModel</code> por cada cuerpo que reciba. <code>Field(ge=0)</code> es "mayor o igual a 0" y <code>Field(gt=0)</code> es "mayor que 0".</p>', '<pre><code>''''''
+Programa: API del banco - operaciones
+Autor:    Ana Gomez
+Fecha:    2026-03-28
+Descripcion:
+    Rutas que crean cuentas y registran retiros, con validacion
+    declarada en modelos de Pydantic.
+''''''
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+
+app = FastAPI(title="Banco JuanCode")
+
+CUENTAS = {}
+
+
+class CuentaNueva(BaseModel):
+    ''''''Datos necesarios para abrir una cuenta.''''''
+    numero: str = Field(min_length=3, max_length=10)
+    titular: str = Field(min_length=3)
+    tipo: str = "ahorros"
+    saldo: int = Field(default=0, ge=0)        # ge: mayor o igual que 0
+
+
+class Movimiento(BaseModel):
+    ''''''Monto de un retiro o consignacion.''''''
+    monto: int = Field(gt=0)                   # gt: mayor que 0
+
+
+# Inicio
+@app.post("/cuentas", status_code=201)
+def crear_cuenta(cuenta: CuentaNueva):
+    ''''''
+    Abre una cuenta nueva.
+
+    Parametros:
+        cuenta (CuentaNueva): datos ya validados por Pydantic
+
+    Retorna:
+        dict: la cuenta creada
+
+    Lanza:
+        HTTPException 409: si el numero ya esta ocupado
+    ''''''
+    if cuenta.numero in CUENTAS:
+        raise HTTPException(status_code=409, detail="Ese numero ya existe")
+
+    CUENTAS[cuenta.numero] = cuenta.model_dump()
+
+    return CUENTAS[cuenta.numero]
+
+
+@app.post("/cuentas/{numero}/retiros", status_code=201)
+def retirar(numero: str, movimiento: Movimiento):
+    ''''''
+    Retira un monto de una cuenta.
+
+    Parametros:
+        numero (str): cuenta de la que se retira
+        movimiento (Movimiento): monto solicitado
+
+    Retorna:
+        dict: lo retirado y el saldo que queda
+
+    Lanza:
+        HTTPException 404: la cuenta no existe
+        HTTPException 400: el saldo no alcanza
+    ''''''
+    cuenta = CUENTAS.get(numero)
+
+    if cuenta is None:
+        raise HTTPException(status_code=404, detail="La cuenta no existe")
+
+    if cuenta["saldo"] &lt; movimiento.monto:
+        raise HTTPException(status_code=400, detail="Saldo insuficiente")
+
+    cuenta["saldo"] -= movimiento.monto
+
+    return {
+        "numero": numero,
+        "retirado": movimiento.monto,
+        "saldo": cuenta["saldo"],
+    }
+# Fin</code></pre><p>Compare esta versión con el sistema bancario del capítulo 20: allá cada operación empezaba con veinte líneas de <code>if</code> comprobando que el monto fuera un número, que fuera positivo, que el titular no estuviera vacío. Aquí eso son dos clases, y las reglas se aplican <strong>antes</strong> de que la función arranque. Un monto de <code>-5000</code> nunca llega al cuerpo de <code>retirar()</code>: FastAPI ya respondió 422 con el campo exacto que está mal.</p><p>Los códigos también dicen cosas distintas y por eso se usan distintos:</p><ul><li><strong>409</strong> (conflicto): los datos son válidos, pero chocan con lo que ya existe.</li><li><strong>400</strong>: la petición es válida, pero la operación no se puede hacer con el estado actual.</li><li><strong>404</strong>: lo que se pide no existe.</li></ul><p>Quien consume la API puede reaccionar distinto a cada uno sin leer el mensaje.</p>', NULL, '''''''
+Programa: API del banco - operaciones
+Autor:
+Fecha:
+Descripcion:
+''''''
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+
+app = FastAPI(title="Banco JuanCode")
+
+CUENTAS = {}
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
+  SELECT id, 4, 'La API lista para publicar', 'dificil', '<p>Escribir la versión final de la API del banco, la que sí se puede subir a un servidor:</p><ol><li>los datos en SQLite (capítulo 21), no en memoria;</li><li>la ruta de la base y el puerto leídos de variables de entorno;</li><li>una transferencia entre dos cuentas que quede completa o no quede (transacción);</li><li>CORS habilitado para el dominio del frontend;</li><li>y un <code>GET /salud</code> que el servicio de despliegue pueda consultar para saber si la API está viva.</li></ol><p>Incluir en el comentario de encabezado los pasos para desplegarla.</p>', '<p><code>os.environ.get("DATABASE_PATH", "banco.db")</code> para la ruta. La transferencia va con <code>try/except</code>, dos <code>UPDATE</code>, un solo <code>commit()</code> y <code>rollback()</code> si algo falla.</p>', '<pre><code>''''''
+Programa: API del banco - version desplegable
+Autor:    Ana Gomez
+Fecha:    2026-03-28
+Descripcion:
+    API del sistema bancario sobre SQLite, configurada por variables
+    de entorno y lista para publicarse en un servidor.
+
+Despliegue:
+    1. pip freeze > requirements.txt
+    2. Subir el repo a GitHub con .env y *.db en el .gitignore
+    3. Variables de entorno en el panel del servicio:
+       DATABASE_PATH y ORIGEN_PERMITIDO
+    4. Comando de arranque:
+       uvicorn main:app --host 0.0.0.0 --port $PORT
+    5. Verificar la direccion publica y su /docs
+''''''
+
+import os
+import sqlite3
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+# Todo lo que cambia entre el portatil y el servidor, en el entorno
+BASE = os.environ.get("DATABASE_PATH", "banco.db")
+ORIGEN = os.environ.get("ORIGEN_PERMITIDO", "http://localhost:5173")
+
+app = FastAPI(title="Banco JuanCode", version="1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[ORIGEN],        # nunca "*" en produccion
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+class Transferencia(BaseModel):
+    ''''''Datos de una transferencia entre dos cuentas.''''''
+    destino: str = Field(min_length=3)
+    monto: int = Field(gt=0)
+
+
+def conectar():
+    ''''''
+    Abre una conexion a la base con filas accesibles por nombre.
+
+    Retorna:
+        Connection: conexion lista para usar
+    ''''''
+    conexion = sqlite3.connect(BASE)
+    conexion.row_factory = sqlite3.Row
+    return conexion
+
+
+def buscar_saldo(conexion, numero):
+    ''''''
+    Devuelve el saldo de una cuenta.
+
+    Parametros:
+        conexion (Connection): conexion abierta
+        numero (str): cuenta consultada
+
+    Retorna:
+        int: el saldo
+
+    Lanza:
+        HTTPException 404: si la cuenta no existe
+    ''''''
+    fila = conexion.execute(
+        "SELECT saldo FROM cuentas WHERE numero = ?", (numero,)
+    ).fetchone()
+
+    if fila is None:
+        raise HTTPException(status_code=404, detail=f"La cuenta {numero} no existe")
+
+    return fila["saldo"]
+
+
+# Inicio
+@app.get("/salud")
+def salud():
+    ''''''
+    Ruta que consulta el servicio de despliegue para saber si la API
+    responde y si la base esta accesible.
+
+    Retorna:
+        dict: estado del servicio
+    ''''''
+    try:
+        conexion = conectar()
+        conexion.execute("SELECT 1").fetchone()
+        conexion.close()
+    except sqlite3.Error:
+        raise HTTPException(status_code=500, detail="Base de datos no disponible")
+
+    return {"estado": "ok"}
+
+
+@app.get("/cuentas/{numero}")
+def ver_cuenta(numero: str):
+    ''''''
+    Devuelve los datos de una cuenta.
+
+    Parametros:
+        numero (str): identificador de la cuenta
+
+    Retorna:
+        dict: numero, titular, tipo y saldo
+    ''''''
+    conexion = conectar()
+    try:
+        fila = conexion.execute(
+            "SELECT numero, titular, tipo, saldo FROM cuentas WHERE numero = ?",
+            (numero,),                    # siempre con ?, nunca con f-string
+        ).fetchone()
+    finally:
+        conexion.close()                  # el servidor no termina nunca:
+                                          # una conexion perdida por peticion
+                                          # lo tumba en unas horas
+
+    if fila is None:
+        raise HTTPException(status_code=404, detail="La cuenta no existe")
+
+    return dict(fila)
+
+
+@app.post("/cuentas/{numero}/transferencias", status_code=201)
+def transferir(numero: str, datos: Transferencia):
+    ''''''
+    Transfiere un monto de una cuenta a otra.
+
+    Parametros:
+        numero (str): cuenta origen
+        datos (Transferencia): destino y monto
+
+    Retorna:
+        dict: resultado de la operacion y saldo del origen
+
+    Lanza:
+        HTTPException 400: mismo origen y destino, o saldo insuficiente
+        HTTPException 404: alguna de las dos cuentas no existe
+    ''''''
+    if numero == datos.destino:
+        raise HTTPException(status_code=400, detail="Origen y destino son la misma cuenta")
+
+    conexion = conectar()
+    try:
+        saldo_origen = buscar_saldo(conexion, numero)
+        buscar_saldo(conexion, datos.destino)      # valida que exista
+
+        if saldo_origen &lt; datos.monto:
+            raise HTTPException(status_code=400, detail="Saldo insuficiente")
+
+        try:
+            conexion.execute(
+                "UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?",
+                (datos.monto, numero),
+            )
+            conexion.execute(
+                "UPDATE cuentas SET saldo = saldo + ? WHERE numero = ?",
+                (datos.monto, datos.destino),
+            )
+            conexion.commit()              # las dos operaciones, juntas
+        except sqlite3.Error:
+            conexion.rollback()            # o ninguna
+            raise HTTPException(status_code=500, detail="No se pudo completar la transferencia")
+    finally:
+        conexion.close()
+
+    return {
+        "origen": numero,
+        "destino": datos.destino,
+        "monto": datos.monto,
+        "saldo_origen": saldo_origen - datos.monto,
+    }
+# Fin</code></pre><p>Este es el cierre del libro y vale la pena mirar de dónde salió cada pieza:</p><ul><li><strong>Los <code>?</code> de las consultas</strong> (capítulo 21): en una API la inyección SQL deja de ser teórica, porque cualquiera en internet puede mandar lo que quiera en la URL.</li><li><strong>La transacción</strong> (capítulos 20 y 21): dos <code>UPDATE</code> y un solo <code>commit()</code>. Si el segundo falla, el <code>rollback()</code> deshace el primero y nadie pierde plata.</li><li><strong>El <code>finally</code></strong> (capítulo 15): la conexión se cierra aunque se haya lanzado una <code>HTTPException</code> en la mitad.</li><li><strong>Las funciones auxiliares</strong> (capítulo 14): <code>buscar_saldo()</code> valida y lanza el 404 en un solo lugar, en vez de repetir la comprobación en cada ruta.</li><li><strong>La configuración en el entorno</strong> (capítulo 16): el mismo archivo corre en tu portátil y en el servidor sin tocar una línea.</li><li><strong><code>/salud</code></strong>: el servicio de despliegue la consulta cada minuto; si deja de responder 200, reinicia la aplicación sola.</li></ul><p>Nada de esto es "código de FastAPI". Es todo lo del libro, expuesto por una dirección pública.</p>', NULL, '''''''
+Programa: API del banco - version desplegable
+Autor:
+Fecha:
+Descripcion:
+
+Despliegue:
+    1.
+    2.
+''''''
+
+import os
+import sqlite3
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+BASE = os.environ.get("DATABASE_PATH", "banco.db")
+
+app = FastAPI(title="Banco JuanCode", version="1.0")
+
+
+# Inicio
+
+# Fin
+', 'seed'
+    FROM chapters WHERE number = 24;
 DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 24);
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué diferencia hay entre un script y una API?', NULL, '{"options":[{"id":"a","text":"El script arranca, hace algo y termina; la API queda encendida esperando peticiones"},{"id":"b","text":"Ninguna, es el mismo programa con otro nombre"},{"id":"c","text":"La API no puede usar base de datos"},{"id":"d","text":"El script necesita internet y la API no"}]}', '{"option_id":"a"}', 'Por eso en una API los recursos se cierran siempre: el proceso no termina nunca y lo que se queda abierto se acumula.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'facil', '¿Qué hay en /docs de una aplicación FastAPI?', NULL, '{"options":[{"id":"a","text":"Documentación interactiva generada sola, con un botón para probar cada ruta"},{"id":"b","text":"El código fuente del proyecto"},{"id":"c","text":"Los registros de errores"},{"id":"d","text":"Nada, hay que escribirla a mano"}]}', '{"option_id":"a"}', 'Sale de las anotaciones de tipo y los modelos de Pydantic, sin configurar nada.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', 'Se pide una cuenta que no existe. ¿Qué debe responder la API?', NULL, '{"options":[{"id":"a","text":"404 con raise HTTPException"},{"id":"b","text":"200 con {\"error\": \"no existe\"}"},{"id":"c","text":"500, porque algo salió mal"},{"id":"d","text":"Nada, para no dar información"}]}', '{"option_id":"a"}', 'Quien consume la API mira el código de estado antes que el cuerpo: un 200 le dice que salió bien aunque el texto diga lo contrario.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'medio', '¿Para qué sirve un modelo de Pydantic (BaseModel) en una ruta POST?', NULL, '{"options":[{"id":"a","text":"Describe y valida el cuerpo de la petición antes de que la función se ejecute"},{"id":"b","text":"Crea la tabla en la base de datos"},{"id":"c","text":"Convierte la respuesta a JSON"},{"id":"d","text":"Documenta la ruta, sin efecto real"}]}', '{"option_id":"a"}', 'Reemplaza las validaciones a mano: un saldo negativo se responde con 422 y el campo exacto, sin llegar al cuerpo de la función.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', 'La API funciona con curl, pero la página web no puede llamarla. ¿Qué falta?', NULL, '{"options":[{"id":"a","text":"Habilitar CORS con el dominio del frontend"},{"id":"b","text":"Cambiar los GET por POST"},{"id":"c","text":"Agregar más rutas"},{"id":"d","text":"Levantar el servidor con --reload"}]}', '{"option_id":"a"}', 'El bloqueo lo hace el navegador, no el servidor. Por eso curl pasa y la página no.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'mcq', 'dificil', '¿Por qué en producción se usa --host 0.0.0.0 y el puerto de la variable PORT?', NULL, '{"options":[{"id":"a","text":"0.0.0.0 acepta conexiones de afuera y el puerto lo asigna el servicio de despliegue"},{"id":"b","text":"Porque es más rápido que 127.0.0.1"},{"id":"c","text":"Porque 127.0.0.1 solo funciona en Windows"},{"id":"d","text":"Porque así se activa HTTPS"}]}', '{"option_id":"a"}', 'Con 127.0.0.1 la API solo se escucha a sí misma, y con un puerto fijo el servicio no la encuentra.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'facil', 'Se pide GET /cuentas?limite=3 . ¿Qué devuelve la API?', '@app.get("/cuentas")
+def listar(tipo: str = "todos", limite: int = 10):
+    return {"tipo": tipo, "limite": limite}', '{"options":[{"id":"a","text":"{\"tipo\": \"todos\", \"limite\": 3}"},{"id":"b","text":"{\"tipo\": \"todos\", \"limite\": 10}"},{"id":"c","text":"{\"tipo\": null, \"limite\": \"3\"}"},{"id":"d","text":"Un error 422 porque falta tipo"}]}', '{"option_id":"a"}', 'tipo conserva su valor por defecto y limite llega como texto "3" pero la anotación int lo convierte.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'predict_output', 'medio', 'Llega un POST /cuentas con {"numero": "001", "titular": "Ana", "saldo": -5000}. ¿Qué pasa?', 'class CuentaNueva(BaseModel):
+    numero: str
+    titular: str
+    saldo: int = Field(default=0, ge=0)
+
+@app.post("/cuentas", status_code=201)
+def crear(cuenta: CuentaNueva):
+    return {"creada": cuenta.numero}', '{"options":[{"id":"a","text":"Responde 422 y la función crear() nunca se ejecuta"},{"id":"b","text":"Responde 201 con {\"creada\": \"001\"}"},{"id":"c","text":"Responde 201 y guarda el saldo como 0"},{"id":"d","text":"Responde 500"}]}', '{"option_id":"a"}', 'ge=0 rechaza el saldo negativo. La validación ocurre antes del cuerpo de la función, con el campo exacto en el detalle.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'facil', 'El cliente cree que todo salió bien aunque la cuenta no exista. ¿En qué línea está el problema?', NULL, '{"lines":["@app.get(\"/cuentas/{numero}\")","def ver_cuenta(numero: str):","    if numero not in CUENTAS:","        return {\"error\": \"La cuenta no existe\"}","    return CUENTAS[numero]"]}', '{"line_number":4}', 'Ese return sale con código 200. Va raise HTTPException(status_code=404, detail="La cuenta no existe").', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'medio', 'A las pocas horas el servidor deja de responder. ¿En qué línea está el problema?', NULL, '{"lines":["def ver_cuenta(numero: str):","    conexion = sqlite3.connect(BASE)","    fila = conexion.execute(\"SELECT * FROM cuentas WHERE numero = ?\", (numero,)).fetchone()","    return dict(fila)"]}', '{"line_number":4}', 'Se retorna sin cerrar la conexión: cada petición deja una abierta. El close() va en un finally.', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'find_bug', 'dificil', 'Esta API queda expuesta a inyección SQL. ¿En qué línea está el problema?', NULL, '{"lines":["@app.get(\"/cuentas/{numero}\")","def ver_cuenta(numero: str):","    sql = f\"SELECT * FROM cuentas WHERE numero = ''{numero}''\"","    fila = conexion.execute(sql).fetchone()","    return dict(fila)"]}', '{"line_number":3}', 'El valor viene de la URL y cualquiera en internet puede escribir lo que quiera ahí. Va execute("... = ?", (numero,)).', 1, 'seed'
+    FROM chapters WHERE number = 24;
+INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
+  SELECT id, 'parsons', 'dificil', 'Arme la ruta que consulta una cuenta en la base de datos', NULL, '{"lines":[{"id":"l1","text":"@app.get(\"/cuentas/{numero}\")","indent":0},{"id":"l2","text":"def ver_cuenta(numero: str):","indent":0},{"id":"l3","text":"conexion = conectar()","indent":1},{"id":"l4","text":"try:","indent":1},{"id":"l5","text":"fila = conexion.execute(SQL, (numero,)).fetchone()","indent":2},{"id":"l6","text":"finally:","indent":1},{"id":"l7","text":"conexion.close()","indent":2},{"id":"l8","text":"if fila is None:","indent":1},{"id":"l9","text":"raise HTTPException(status_code=404, detail=\"La cuenta no existe\")","indent":2},{"id":"l10","text":"return dict(fila)","indent":1}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8","l9","l10"]}', 'La conexión se cierra en el finally antes de decidir la respuesta; solo entonces se revisa si hubo fila y se lanza el 404.', 1, 'seed'
+    FROM chapters WHERE number = 24;
 

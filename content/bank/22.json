@@ -1,0 +1,148 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué es un DataFrame?",
+    "data": { "options": [
+      { "id": "a", "text": "Una tabla con filas y columnas con nombre" },
+      { "id": "b", "text": "Una lista de listas" },
+      { "id": "c", "text": "Un archivo CSV abierto" },
+      { "id": "d", "text": "Una función de pandas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es la estructura central de pandas. Una sola columna de un DataFrame es una Series."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué muestra df.info()?",
+    "data": { "options": [
+      { "id": "a", "text": "Los tipos de cada columna y cuántos valores no nulos hay" },
+      { "id": "b", "text": "Las primeras cinco filas" },
+      { "id": "c", "text": "La media y los cuartiles" },
+      { "id": "d", "text": "El nombre del archivo cargado" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es lo primero que se corre siempre: dice si faltan datos y si los números llegaron como texto."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué se usa & y no and para combinar dos filtros?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque pandas compara columnas enteras y and no sabe qué hacer con eso" },
+      { "id": "b", "text": "Porque and no existe en pandas" },
+      { "id": "c", "text": "Porque & es más rápido" },
+      { "id": "d", "text": "Porque and solo sirve con números" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cada comparación devuelve una columna de True/False. Con and pandas lanza ValueError, y cada condición debe ir entre paréntesis."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué hace pd.to_numeric(col, errors=\"coerce\")?",
+    "data": { "options": [
+      { "id": "a", "text": "Convierte a número y pone NaN en lo que no se pueda convertir" },
+      { "id": "b", "text": "Lanza un error si algo no es número" },
+      { "id": "c", "text": "Borra las filas que no sean números" },
+      { "id": "d", "text": "Convierte los números a texto" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es la versión pandas del try/except del capítulo 15: en vez de reventar, marca lo inválido para descartarlo después con dropna()."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Cuál es el orden correcto de un trabajo con datos?",
+    "data": { "options": [
+      { "id": "a", "text": "Cargar, limpiar, enriquecer, analizar, guardar" },
+      { "id": "b", "text": "Cargar, analizar, limpiar, guardar" },
+      { "id": "c", "text": "Limpiar, cargar, guardar, analizar" },
+      { "id": "d", "text": "Cargar, guardar, limpiar, analizar" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Analizar antes de limpiar da resultados falsos: un mismo vendedor escrito de dos formas cuenta como dos personas."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import pandas as pd\ndf = pd.DataFrame({\"a\": [1, 2, 3], \"b\": [10, 20, 30]})\ndf[\"c\"] = df[\"a\"] * df[\"b\"]\nprint(df[\"c\"].sum())",
+    "data": { "options": [
+      { "id": "a", "text": "140" },
+      { "id": "b", "text": "60" },
+      { "id": "c", "text": "6" },
+      { "id": "d", "text": "[10, 40, 90]" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La columna c es [10, 40, 90] calculada de una sola vez, sin ciclo, y su suma es 140."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import pandas as pd\ndf = pd.DataFrame({\"p\": [\"pan\", \"queso\", \"cafe\"], \"v\": [5000, 15000, 12000]})\nprint(len(df[df[\"v\"] > 10000]))",
+    "data": { "options": [
+      { "id": "a", "text": "2" },
+      { "id": "b", "text": "1" },
+      { "id": "c", "text": "3" },
+      { "id": "d", "text": "27000" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El filtro deja las filas de queso y cafe, y len() cuenta filas del DataFrame resultante."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "import pandas as pd\ndf = pd.DataFrame({\"v\": [\"Ana\", \"Juan\", \"Ana\"], \"m\": [100, 200, 300]})\nprint(df.groupby(\"v\")[\"m\"].sum().idxmax())",
+    "data": { "options": [
+      { "id": "a", "text": "Ana" },
+      { "id": "b", "text": "Juan" },
+      { "id": "c", "text": "400" },
+      { "id": "d", "text": "0" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Ana suma 400 y Juan 200. idxmax() devuelve la etiqueta del grupo más alto, no el valor."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El filtro lanza ValueError. ¿En qué línea está el error?",
+    "data": { "lines": ["import pandas as pd", "df = pd.DataFrame({\"a\": [1, 2], \"b\": [3, 4]})", "print(df[df[\"a\"] > 1 and df[\"b\"] < 4])"] },
+    "correct": { "line_number": 3 },
+    "explanation": "Con dos condiciones va (df[\"a\"] > 1) & (df[\"b\"] < 4): paréntesis y & en vez de and."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Las filas nulas siguen ahí. ¿En qué línea está el error?",
+    "data": { "lines": ["df = pd.read_csv(\"ventas.csv\")", "df.dropna()", "print(df.isnull().sum())"] },
+    "correct": { "line_number": 2 },
+    "explanation": "dropna() devuelve una copia; hay que reasignar con df = df.dropna(). Mismo error de texto.upper() del capítulo 5."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "El reporte cuenta a la misma vendedora dos veces. ¿En qué línea está el problema?",
+    "data": { "lines": ["df = pd.read_csv(\"ventas.csv\")", "resumen = df.groupby(\"vendedor\")[\"monto\"].sum()", "df[\"vendedor\"] = df[\"vendedor\"].str.strip().str.title()", "print(resumen)"] },
+    "correct": { "line_number": 2 },
+    "explanation": "Se agrupa antes de normalizar los nombres, así que ' ana ' y 'Ana' quedan como dos grupos. La limpieza va primero."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme el análisis de ventas en el orden correcto",
+    "data": { "lines": [
+      { "id": "l1", "text": "ventas = pd.read_csv(\"ventas.csv\")", "indent": 0 },
+      { "id": "l2", "text": "ventas[\"monto\"] = pd.to_numeric(ventas[\"monto\"], errors=\"coerce\")", "indent": 0 },
+      { "id": "l3", "text": "ventas = ventas.dropna(subset=[\"monto\"])", "indent": 0 },
+      { "id": "l4", "text": "ventas[\"vendedor\"] = ventas[\"vendedor\"].str.strip().str.title()", "indent": 0 },
+      { "id": "l5", "text": "por_vendedor = ventas.groupby(\"vendedor\")[\"monto\"].sum()", "indent": 0 },
+      { "id": "l6", "text": "por_vendedor.to_csv(\"reporte.csv\")", "indent": 0 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6"] },
+    "explanation": "Cargar, convertir, descartar lo inválido, normalizar el texto, agrupar y guardar. Convertir va antes de dropna porque 'sin dato' es texto, no nulo."
+  }
+]

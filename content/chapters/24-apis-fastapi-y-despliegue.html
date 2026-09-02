@@ -1,0 +1,267 @@
+<p class="jc-gancho">Todo lo que has escrito hasta aquí corre en tu computador y lo usas tú. En este capítulo eso cambia: el sistema bancario del capítulo 20 va a quedar en internet, con una dirección que cualquiera puede abrir, y una app de celular podría consumirlo. Ese salto es lo que separa un ejercicio de un producto.</p>
+
+<h2>De script a servicio</h2>
+
+<p>Un script arranca, hace algo y termina. Una <strong>API</strong> queda encendida esperando peticiones, y responde a cada una.</p>
+
+<table>
+  <thead>
+    <tr><th>Verbo</th><th>Significa</th><th>Ejemplo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>GET</code></td><td>Dame información</td><td>Consultar un saldo</td></tr>
+    <tr><td><code>POST</code></td><td>Crea algo</td><td>Abrir una cuenta</td></tr>
+    <tr><td><code>PUT</code></td><td>Modifica algo</td><td>Cambiar el titular</td></tr>
+    <tr><td><code>DELETE</code></td><td>Bórralo</td><td>Cerrar la cuenta</td></tr>
+  </tbody>
+</table>
+
+<p>Y la respuesta trae un <strong>código de estado</strong> que dice cómo salió:</p>
+
+<table>
+  <thead>
+    <tr><th>Código</th><th>Quiere decir</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>200</code> · <code>201</code></td><td>Salió bien · se creó algo</td></tr>
+    <tr><td><code>400</code> · <code>422</code></td><td>El cliente mandó algo mal</td></tr>
+    <tr><td><code>401</code> · <code>403</code></td><td>No se identificó · no tiene permiso</td></tr>
+    <tr><td><code>404</code></td><td>Eso no existe</td></tr>
+    <tr><td><code>500</code></td><td>Se rompió el servidor: la culpa es tuya</td></tr>
+  </tbody>
+</table>
+
+<h2>Tu primera API</h2>
+
+<pre><code>pip install fastapi uvicorn</code></pre>
+
+<pre><code># main.py
+from fastapi import FastAPI
+
+app = FastAPI(title="Banco JuanCode")
+
+
+@app.get("/")
+def inicio():
+    return {"mensaje": "API del banco funcionando"}</code></pre>
+
+<pre><code>uvicorn main:app --reload</code></pre>
+
+<p><code>main:app</code> significa "en el archivo <code>main.py</code>, la variable <code>app</code>". Con <code>--reload</code> el servidor se reinicia solo cada vez que guardas.</p>
+
+<p>Abre <code>http://127.0.0.1:8000</code> y ahí está el JSON. Ahora abre <code>http://127.0.0.1:8000/docs</code>: FastAPI generó una <strong>documentación interactiva</strong> donde puedes probar cada ruta sin escribir una línea de código extra. No hay que configurar nada para tenerla.</p>
+
+<p>Fíjate en que la función devuelve un diccionario de Python y llega como JSON. FastAPI lo convierte solo.</p>
+
+<h2>Parámetros: en la ruta y en la consulta</h2>
+
+<pre><code>@app.get("/cuentas/{numero}")
+def ver_cuenta(numero: str):
+    return {"numero": numero}
+
+
+@app.get("/cuentas")
+def listar(tipo: str = "todos", limite: int = 10):
+    return {"tipo": tipo, "limite": limite}</code></pre>
+
+<ul>
+  <li><code>/cuentas/001</code> → el valor va <strong>en la ruta</strong>, para identificar un recurso.</li>
+  <li><code>/cuentas?tipo=ahorros&amp;limite=5</code> → va <strong>en la consulta</strong>, para filtrar u ordenar.</li>
+</ul>
+
+<p>Esas anotaciones de tipo (<code>numero: str</code>, <code>limite: int</code>) no son decoración: FastAPI <strong>convierte y valida</strong> con ellas. Si alguien pide <code>?limite=hola</code>, la respuesta es un 422 con el detalle del error, y tu función nunca llega a ejecutarse.</p>
+
+<h2>Recibir datos: los modelos de Pydantic</h2>
+
+<p>Para un <code>POST</code> hay que describir qué se espera recibir:</p>
+
+<pre><code>from pydantic import BaseModel, Field
+
+
+class CuentaNueva(BaseModel):
+    numero: str = Field(min_length=3, max_length=10)
+    titular: str = Field(min_length=3)
+    tipo: str = "ahorros"
+    saldo: int = Field(default=0, ge=0)          # ge = mayor o igual
+
+
+@app.post("/cuentas", status_code=201)
+def crear_cuenta(cuenta: CuentaNueva):
+    return {"creada": cuenta.numero, "saldo": cuenta.saldo}</code></pre>
+
+<p>Esa clase reemplaza todas las validaciones a mano que escribíamos en el capítulo 15. Si llega un saldo negativo, o falta el titular, o el número viene como número en vez de texto, FastAPI responde 422 con el campo exacto que está mal, <strong>antes</strong> de entrar a tu función.</p>
+
+<p>Es la misma idea del <code>NOT NULL</code> del capítulo 21, pero en la puerta de entrada del programa: la regla se declara una vez y se aplica sola.</p>
+
+<h2>La API del banco</h2>
+
+<p>Ahora sí, con la base de datos del capítulo 21 detrás:</p>
+
+<pre><code>import sqlite3
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+
+app = FastAPI(title="Banco JuanCode")
+BASE = "banco.db"
+
+
+class Movimiento(BaseModel):
+    monto: int = Field(gt=0)          # gt = mayor que: no hay retiros de 0
+
+
+def conectar():
+    '''
+    Abre una conexión a la base con filas accesibles por nombre.
+    '''
+    conexion = sqlite3.connect(BASE)
+    conexion.row_factory = sqlite3.Row
+    return conexion
+
+
+@app.get("/cuentas/{numero}")
+def ver_cuenta(numero: str):
+    conexion = conectar()
+    try:
+        fila = conexion.execute(
+            "SELECT numero, titular, tipo, saldo FROM cuentas WHERE numero = ?",
+            (numero,),
+        ).fetchone()
+    finally:
+        conexion.close()          # se cierra pase lo que pase
+
+    if fila is None:
+        raise HTTPException(status_code=404, detail="La cuenta no existe")
+
+    return dict(fila)
+
+
+@app.post("/cuentas/{numero}/retiros", status_code=201)
+def retirar(numero: str, movimiento: Movimiento):
+    conexion = conectar()
+    try:
+        fila = conexion.execute(
+            "SELECT saldo FROM cuentas WHERE numero = ?", (numero,)
+        ).fetchone()
+
+        if fila is None:
+            raise HTTPException(status_code=404, detail="La cuenta no existe")
+
+        if fila["saldo"] &lt; movimiento.monto:
+            raise HTTPException(status_code=400, detail="Saldo insuficiente")
+
+        conexion.execute(
+            "UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?",
+            (movimiento.monto, numero),
+        )
+        conexion.commit()
+        nuevo = fila["saldo"] - movimiento.monto
+    finally:
+        conexion.close()
+
+    return {"numero": numero, "retirado": movimiento.monto, "saldo": nuevo}</code></pre>
+
+<p>Dos cosas que hay que ver aquí:</p>
+
+<ul>
+  <li><strong><code>raise HTTPException</code>, no <code>return</code>.</strong> Devolver <code>{"error": "no existe"}</code> con código 200 es mentir: el cliente cree que salió bien. El código de estado <em>es</em> parte de la respuesta.</li>
+  <li><strong>La conexión se cierra en un <code>finally</code>.</strong> Un servidor no termina nunca; una conexión que se queda abierta en cada petición tumba el proceso a las pocas horas.</li>
+</ul>
+
+<h2>Antes de publicar</h2>
+
+<h3>Las dependencias, por escrito</h3>
+
+<pre><code>pip freeze &gt; requirements.txt</code></pre>
+
+<p>El servidor no tiene tu entorno virtual. Ese archivo es la lista con la que se reconstruye, tal como se vio en el capítulo 16.</p>
+
+<h3>La configuración, en el entorno</h3>
+
+<pre><code>import os
+
+BASE = os.environ.get("DATABASE_PATH", "banco.db")
+PUERTO = int(os.environ.get("PORT", 8000))</code></pre>
+
+<p>Nada de rutas ni llaves escritas en el código: lo que cambia entre tu computador y el servidor viaja por variables de entorno. Y el puerto <strong>lo asigna el servicio</strong>, por eso se lee de <code>PORT</code> en vez de fijarlo.</p>
+
+<h3>Levantar en producción</h3>
+
+<pre><code>uvicorn main:app --host 0.0.0.0 --port $PORT</code></pre>
+
+<p><code>--host 0.0.0.0</code> significa "acepta conexiones de afuera". El <code>127.0.0.1</code> de desarrollo solo escucha a tu propia máquina, y en un servidor eso equivale a no estar publicado. Y <strong>sin <code>--reload</code></strong>: eso es una herramienta de desarrollo.</p>
+
+<h3>Permitir que un navegador la consuma</h3>
+
+<pre><code>from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://mi-frontend.com"],   # no "*" en producción
+    allow_methods=["*"],
+    allow_headers=["*"],
+)</code></pre>
+
+<p>Sin esto, una página web en otro dominio no puede llamar a tu API: el navegador lo bloquea. El error clásico de "funciona con curl pero no desde la web" es casi siempre CORS.</p>
+
+<h3>Publicarla</h3>
+
+<p>Servicios como Render, Railway o Fly.io despliegan desde un repositorio de GitHub: conectas el repo, ellos leen el <code>requirements.txt</code>, corren el comando de arranque y te dan una dirección pública. La lista de pasos es siempre la misma:</p>
+
+<ol>
+  <li>El código en GitHub, con <code>.env</code> en el <code>.gitignore</code>.</li>
+  <li><code>requirements.txt</code> actualizado.</li>
+  <li>Comando de arranque: <code>uvicorn main:app --host 0.0.0.0 --port $PORT</code>.</li>
+  <li>Las variables de entorno cargadas en el panel del servicio.</li>
+  <li>Probar la dirección pública y su <code>/docs</code>.</li>
+</ol>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Devolver el error con código 200</h3>
+<pre><code>return {"error": "no existe"}                          # ❌ el cliente cree que salió bien
+raise HTTPException(status_code=404, detail="...")     # ✅</code></pre>
+
+<h3>2. Dejar el puerto y el host de desarrollo</h3>
+<pre><code>uvicorn main:app --reload                              # ❌ en producción
+uvicorn main:app --host 0.0.0.0 --port $PORT           # ✅</code></pre>
+
+<h3>3. Subir el <code>.env</code> o la base de datos al repositorio</h3>
+<pre><code># .gitignore
+.env
+*.db
+__pycache__/
+venv/</code></pre>
+<p>Una llave publicada hay que rotarla, no borrarla: en el historial de git sigue ahí.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Una función por ruta, con el verbo que corresponde a lo que hace.</li>
+  <li>Los tipos y los modelos de Pydantic validan la entrada; no se valida a mano.</li>
+  <li>Los errores se lanzan con <code>HTTPException</code> y su código real.</li>
+  <li>Los recursos (conexiones, archivos) se cierran en <code>finally</code>.</li>
+  <li>Lo que cambia entre máquinas va en variables de entorno.</li>
+  <li>Probar en <code>/docs</code> antes de publicar, y volver a probarlo en la dirección pública.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>app = FastAPI()</code></td><td>Crea la aplicación</td></tr>
+    <tr><td><code>@app.get("/ruta")</code></td><td>Responde a un GET en esa ruta</td></tr>
+    <tr><td><code>@app.post("/ruta", status_code=201)</code></td><td>Crea algo y responde 201</td></tr>
+    <tr><td><code>{numero}</code> en la ruta</td><td>Parámetro que identifica un recurso</td></tr>
+    <tr><td><code>limite: int = 10</code></td><td>Parámetro de consulta con valor por defecto</td></tr>
+    <tr><td><code>class X(BaseModel)</code></td><td>Describe y valida el cuerpo de la petición</td></tr>
+    <tr><td><code>raise HTTPException(404, "…")</code></td><td>Responde con un error de verdad</td></tr>
+    <tr><td><code>uvicorn main:app --reload</code></td><td>Levanta el servidor en desarrollo</td></tr>
+    <tr><td><code>/docs</code></td><td>Documentación interactiva, gratis</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Hace veinticuatro capítulos, un <code>print</code> era todo lo que sabías hacer. Ahora tienes un servicio con base de datos, validaciones y una dirección pública. Lo que sigue no es otro capítulo: es tu propio proyecto.</blockquote>

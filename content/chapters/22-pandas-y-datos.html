@@ -1,0 +1,181 @@
+<p class="jc-gancho">Te pasan el CSV de ventas del año: 80 mil filas. Con el módulo <code>csv</code> del capítulo 17 y un par de ciclos lo sacas… en cuarenta líneas. Con pandas, el mismo análisis son cuatro. Esta es la herramienta con la que trabaja todo el que vive de datos.</p>
+
+<h2>Instalar y arrancar</h2>
+
+<pre><code>pip install pandas</code></pre>
+
+<pre><code>import pandas as pd     # el apodo "pd" es la convención universal</code></pre>
+
+<h2>El DataFrame: una tabla con superpoderes</h2>
+
+<p>Un <strong>DataFrame</strong> es una tabla: filas y columnas con nombre. Una <strong>Series</strong> es una sola columna.</p>
+
+<pre><code>datos = {
+    "producto": ["pan", "leche", "queso", "cafe"],
+    "precio": [5000, 7000, 15000, 12000],
+    "cantidad": [30, 20, 8, 15],
+}
+
+df = pd.DataFrame(datos)
+print(df)</code></pre>
+
+<pre><code>  producto  precio  cantidad
+0      pan    5000        30
+1    leche    7000        20
+2    queso   15000         8
+3     cafe   12000        15</code></pre>
+
+<p>Lo normal es cargarlo de un archivo:</p>
+
+<pre><code>df = pd.read_csv("ventas.csv")
+df = pd.read_excel("ventas.xlsx")
+df = pd.read_json("ventas.json")</code></pre>
+
+<h3>Mirar antes de tocar</h3>
+
+<pre><code>df.head()        # las primeras 5 filas
+df.tail(3)       # las últimas 3
+df.shape         # (4, 3) — filas y columnas
+df.columns       # los nombres
+df.info()        # tipos y cuántos nulos hay
+df.describe()    # media, mínimo, máximo, cuartiles</code></pre>
+
+<p>Ese <code>df.info()</code> es lo primero que se corre siempre: dice cuántos datos faltan y si los números llegaron como texto.</p>
+
+<h2>Seleccionar y filtrar</h2>
+
+<pre><code>df["precio"]                    # una columna (Series)
+df[["producto", "precio"]]      # varias (DataFrame)
+
+df.loc[0]                       # la fila con etiqueta 0
+df.loc[0, "precio"]             # una celda
+df.iloc[0]                      # la primera fila por posición</code></pre>
+
+<p>El filtrado es lo que reemplaza los ciclos:</p>
+
+<pre><code># Todos los productos que cuestan más de 10000
+caros = df[df["precio"] &gt; 10000]
+
+# Dos condiciones: & es "y", | es "o", y cada una va en paréntesis
+df[(df["precio"] &gt; 6000) &amp; (df["cantidad"] &lt; 20)]</code></pre>
+
+<p>Los paréntesis no son opcionales y se usa <code>&amp;</code> en vez de <code>and</code>: pandas compara columnas enteras a la vez, no valores sueltos.</p>
+
+<h2>Columnas calculadas</h2>
+
+<pre><code>df["total"] = df["precio"] * df["cantidad"]</code></pre>
+
+<p>Esa línea multiplica <strong>las cuatro filas de una vez</strong>. Sin ciclo. Se llama <em>operación vectorizada</em>, y es de donde sale la velocidad de pandas.</p>
+
+<pre><code>df["con_iva"] = (df["precio"] * 1.19).round()
+df["categoria"] = df["precio"].apply(lambda p: "caro" if p &gt; 10000 else "barato")</code></pre>
+
+<h2>Agrupar: el <code>GROUP BY</code> de pandas</h2>
+
+<pre><code>ventas = pd.read_csv("ventas.csv")   # columnas: fecha, vendedor, producto, monto
+
+ventas.groupby("vendedor")["monto"].sum()
+ventas.groupby("vendedor")["monto"].mean()
+ventas.groupby("producto")["monto"].agg(["count", "sum", "mean"])</code></pre>
+
+<p>Es la misma idea del capítulo 12 (contar con diccionarios) y del 21 (<code>GROUP BY</code> en SQL), en una línea.</p>
+
+<pre><code># Los tres vendedores que más vendieron
+ventas.groupby("vendedor")["monto"].sum().sort_values(ascending=False).head(3)</code></pre>
+
+<p>Se lee de izquierda a derecha como una cadena de pasos: agrupa, suma, ordena, toma tres.</p>
+
+<h2>Datos sucios: lo que de verdad ocupa el tiempo</h2>
+
+<p>Los datos reales llegan con celdas vacías, tipos equivocados y filas repetidas. Limpiar es el 80% del trabajo:</p>
+
+<pre><code>df.isnull().sum()              # cuántos nulos por columna
+
+df = df.dropna()               # borrar filas con nulos
+df["monto"] = df["monto"].fillna(0)          # o rellenarlos
+df["monto"] = df["monto"].fillna(df["monto"].mean())
+
+df = df.drop_duplicates()      # quitar filas repetidas
+
+# Los números que llegaron como texto
+df["monto"] = pd.to_numeric(df["monto"], errors="coerce")
+df["fecha"] = pd.to_datetime(df["fecha"])
+
+# Espacios y mayúsculas en las columnas de texto
+df["vendedor"] = df["vendedor"].str.strip().str.title()</code></pre>
+
+<p><code>errors="coerce"</code> convierte lo que no sea número en <code>NaN</code> en vez de reventar. Es la versión pandas del <code>try/except</code> del capítulo 15.</p>
+
+<h2>Un análisis completo, de principio a fin</h2>
+
+<pre><code>import pandas as pd
+
+# 1. Cargar
+ventas = pd.read_csv("ventas.csv")
+
+# 2. Limpiar
+ventas["monto"] = pd.to_numeric(ventas["monto"], errors="coerce")
+ventas = ventas.dropna(subset=["monto"])
+ventas["vendedor"] = ventas["vendedor"].str.strip().str.title()
+
+# 3. Enriquecer
+ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+ventas["mes"] = ventas["fecha"].dt.month
+
+# 4. Analizar
+por_vendedor = ventas.groupby("vendedor")["monto"].agg(["count", "sum"])
+por_mes = ventas.groupby("mes")["monto"].sum()
+
+# 5. Guardar
+por_vendedor.to_csv("reporte_vendedores.csv")</code></pre>
+
+<p><strong>Cargar → limpiar → enriquecer → analizar → guardar.</strong> Ese es el orden de cualquier trabajo con datos, y no cambia con el tamaño del archivo.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Usar <code>and</code> en vez de <code>&amp;</code></h3>
+<pre><code>df[df["a"] &gt; 1 and df["b"] &lt; 2]        # ❌ ValueError
+df[(df["a"] &gt; 1) &amp; (df["b"] &lt; 2)]      # ✅ con paréntesis</code></pre>
+
+<h3>2. Creer que los métodos modifican el DataFrame</h3>
+<pre><code>df.dropna()          # ❌ devuelve una copia y se pierde
+df = df.dropna()     # ✅</code></pre>
+<p>Es el mismo error de <code>texto.upper()</code> del capítulo 5, con otro disfraz.</p>
+
+<h3>3. Recorrer el DataFrame con un ciclo</h3>
+<pre><code>for i, fila in df.iterrows():          # ❌ lentísimo
+    df.loc[i, "total"] = fila["precio"] * fila["cantidad"]
+
+df["total"] = df["precio"] * df["cantidad"]   # ✅ vectorizado</code></pre>
+<p>Si estás escribiendo un <code>for</code> sobre un DataFrame, casi siempre hay una forma sin ciclo que es cien veces más rápida.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Cargar, y de una <code>df.info()</code> y <code>df.head()</code> para ver qué llegó.</li>
+  <li>Limpiar: nulos, tipos, duplicados, espacios.</li>
+  <li>Enriquecer con columnas calculadas, sin ciclos.</li>
+  <li>Analizar con <code>groupby</code> y <code>agg</code>.</li>
+  <li>Guardar el resultado, no dejarlo en la consola.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>pd.read_csv("x.csv")</code></td><td>Carga la tabla</td></tr>
+    <tr><td><code>df.head()</code> · <code>df.info()</code></td><td>Primeras filas · tipos y nulos</td></tr>
+    <tr><td><code>df["col"]</code></td><td>Una columna</td></tr>
+    <tr><td><code>df[df["col"] &gt; 10]</code></td><td>Filtrar filas</td></tr>
+    <tr><td><code>df["nueva"] = df["a"] * df["b"]</code></td><td>Columna calculada, sin ciclo</td></tr>
+    <tr><td><code>df.groupby("x")["y"].sum()</code></td><td>Agrupar y sumar</td></tr>
+    <tr><td><code>df.dropna()</code> · <code>df.fillna(0)</code></td><td>Quitar o rellenar nulos</td></tr>
+    <tr><td><code>df.sort_values("col")</code></td><td>Ordenar</td></tr>
+    <tr><td><code>df.to_csv("out.csv", index=False)</code></td><td>Guardar</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Si estás escribiendo un ciclo sobre un DataFrame, probablemente hay una línea de pandas que hace lo mismo cien veces más rápido.</blockquote>

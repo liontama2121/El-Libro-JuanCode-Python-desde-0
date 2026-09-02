@@ -1,0 +1,151 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué diferencia hay entre un script y una API?",
+    "data": { "options": [
+      { "id": "a", "text": "El script arranca, hace algo y termina; la API queda encendida esperando peticiones" },
+      { "id": "b", "text": "Ninguna, es el mismo programa con otro nombre" },
+      { "id": "c", "text": "La API no puede usar base de datos" },
+      { "id": "d", "text": "El script necesita internet y la API no" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Por eso en una API los recursos se cierran siempre: el proceso no termina nunca y lo que se queda abierto se acumula."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué hay en /docs de una aplicación FastAPI?",
+    "data": { "options": [
+      { "id": "a", "text": "Documentación interactiva generada sola, con un botón para probar cada ruta" },
+      { "id": "b", "text": "El código fuente del proyecto" },
+      { "id": "c", "text": "Los registros de errores" },
+      { "id": "d", "text": "Nada, hay que escribirla a mano" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sale de las anotaciones de tipo y los modelos de Pydantic, sin configurar nada."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Se pide una cuenta que no existe. ¿Qué debe responder la API?",
+    "data": { "options": [
+      { "id": "a", "text": "404 con raise HTTPException" },
+      { "id": "b", "text": "200 con {\"error\": \"no existe\"}" },
+      { "id": "c", "text": "500, porque algo salió mal" },
+      { "id": "d", "text": "Nada, para no dar información" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Quien consume la API mira el código de estado antes que el cuerpo: un 200 le dice que salió bien aunque el texto diga lo contrario."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Para qué sirve un modelo de Pydantic (BaseModel) en una ruta POST?",
+    "data": { "options": [
+      { "id": "a", "text": "Describe y valida el cuerpo de la petición antes de que la función se ejecute" },
+      { "id": "b", "text": "Crea la tabla en la base de datos" },
+      { "id": "c", "text": "Convierte la respuesta a JSON" },
+      { "id": "d", "text": "Documenta la ruta, sin efecto real" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Reemplaza las validaciones a mano: un saldo negativo se responde con 422 y el campo exacto, sin llegar al cuerpo de la función."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "La API funciona con curl, pero la página web no puede llamarla. ¿Qué falta?",
+    "data": { "options": [
+      { "id": "a", "text": "Habilitar CORS con el dominio del frontend" },
+      { "id": "b", "text": "Cambiar los GET por POST" },
+      { "id": "c", "text": "Agregar más rutas" },
+      { "id": "d", "text": "Levantar el servidor con --reload" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El bloqueo lo hace el navegador, no el servidor. Por eso curl pasa y la página no."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué en producción se usa --host 0.0.0.0 y el puerto de la variable PORT?",
+    "data": { "options": [
+      { "id": "a", "text": "0.0.0.0 acepta conexiones de afuera y el puerto lo asigna el servicio de despliegue" },
+      { "id": "b", "text": "Porque es más rápido que 127.0.0.1" },
+      { "id": "c", "text": "Porque 127.0.0.1 solo funciona en Windows" },
+      { "id": "d", "text": "Porque así se activa HTTPS" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con 127.0.0.1 la API solo se escucha a sí misma, y con un puerto fijo el servicio no la encuentra."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "facil",
+    "prompt": "Se pide GET /cuentas?limite=3 . ¿Qué devuelve la API?",
+    "code_snippet": "@app.get(\"/cuentas\")\ndef listar(tipo: str = \"todos\", limite: int = 10):\n    return {\"tipo\": tipo, \"limite\": limite}",
+    "data": { "options": [
+      { "id": "a", "text": "{\"tipo\": \"todos\", \"limite\": 3}" },
+      { "id": "b", "text": "{\"tipo\": \"todos\", \"limite\": 10}" },
+      { "id": "c", "text": "{\"tipo\": null, \"limite\": \"3\"}" },
+      { "id": "d", "text": "Un error 422 porque falta tipo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "tipo conserva su valor por defecto y limite llega como texto \"3\" pero la anotación int lo convierte."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "Llega un POST /cuentas con {\"numero\": \"001\", \"titular\": \"Ana\", \"saldo\": -5000}. ¿Qué pasa?",
+    "code_snippet": "class CuentaNueva(BaseModel):\n    numero: str\n    titular: str\n    saldo: int = Field(default=0, ge=0)\n\n@app.post(\"/cuentas\", status_code=201)\ndef crear(cuenta: CuentaNueva):\n    return {\"creada\": cuenta.numero}",
+    "data": { "options": [
+      { "id": "a", "text": "Responde 422 y la función crear() nunca se ejecuta" },
+      { "id": "b", "text": "Responde 201 con {\"creada\": \"001\"}" },
+      { "id": "c", "text": "Responde 201 y guarda el saldo como 0" },
+      { "id": "d", "text": "Responde 500" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "ge=0 rechaza el saldo negativo. La validación ocurre antes del cuerpo de la función, con el campo exacto en el detalle."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "El cliente cree que todo salió bien aunque la cuenta no exista. ¿En qué línea está el problema?",
+    "data": { "lines": ["@app.get(\"/cuentas/{numero}\")", "def ver_cuenta(numero: str):", "    if numero not in CUENTAS:", "        return {\"error\": \"La cuenta no existe\"}", "    return CUENTAS[numero]"] },
+    "correct": { "line_number": 4 },
+    "explanation": "Ese return sale con código 200. Va raise HTTPException(status_code=404, detail=\"La cuenta no existe\")."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "A las pocas horas el servidor deja de responder. ¿En qué línea está el problema?",
+    "data": { "lines": ["def ver_cuenta(numero: str):", "    conexion = sqlite3.connect(BASE)", "    fila = conexion.execute(\"SELECT * FROM cuentas WHERE numero = ?\", (numero,)).fetchone()", "    return dict(fila)"] },
+    "correct": { "line_number": 4 },
+    "explanation": "Se retorna sin cerrar la conexión: cada petición deja una abierta. El close() va en un finally."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "Esta API queda expuesta a inyección SQL. ¿En qué línea está el problema?",
+    "data": { "lines": ["@app.get(\"/cuentas/{numero}\")", "def ver_cuenta(numero: str):", "    sql = f\"SELECT * FROM cuentas WHERE numero = '{numero}'\"", "    fila = conexion.execute(sql).fetchone()", "    return dict(fila)"] },
+    "correct": { "line_number": 3 },
+    "explanation": "El valor viene de la URL y cualquiera en internet puede escribir lo que quiera ahí. Va execute(\"... = ?\", (numero,))."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme la ruta que consulta una cuenta en la base de datos",
+    "data": { "lines": [
+      { "id": "l1", "text": "@app.get(\"/cuentas/{numero}\")", "indent": 0 },
+      { "id": "l2", "text": "def ver_cuenta(numero: str):", "indent": 0 },
+      { "id": "l3", "text": "conexion = conectar()", "indent": 1 },
+      { "id": "l4", "text": "try:", "indent": 1 },
+      { "id": "l5", "text": "fila = conexion.execute(SQL, (numero,)).fetchone()", "indent": 2 },
+      { "id": "l6", "text": "finally:", "indent": 1 },
+      { "id": "l7", "text": "conexion.close()", "indent": 2 },
+      { "id": "l8", "text": "if fila is None:", "indent": 1 },
+      { "id": "l9", "text": "raise HTTPException(status_code=404, detail=\"La cuenta no existe\")", "indent": 2 },
+      { "id": "l10", "text": "return dict(fila)", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9", "l10"] },
+    "explanation": "La conexión se cierra en el finally antes de decidir la respuesta; solo entonces se revisa si hubo fila y se lanza el 404."
+  }
+]

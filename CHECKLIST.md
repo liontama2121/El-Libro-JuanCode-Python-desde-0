@@ -132,8 +132,14 @@
 - [x] 17 📁 Archivos
 - [x] 18 🏛️ Clases y objetos
 - [x] 19 🧬 Herencia y métodos especiales
-- [ ] 20 🏗️ Proyecto: Sistema Bancario
-- [ ] 21 🗄️ SQL desde cero
-- [ ] 22 🐼 Pandas
-- [ ] 23 🤖 IA aplicada
-- [ ] 24 🚀 FastAPI y despliegue
+- [x] 20 🏗️ Proyecto: Sistema Bancario
+- [x] 21 🗄️ SQL desde cero
+- [x] 22 🐼 Pandas
+- [x] 23 🤖 IA aplicada
+- [x] 24 🚀 FastAPI y despliegue
+
+### Estado del contenido
+- 24/24 capítulos publicados · 314 preguntas de banco · 96 ejercicios
+- `npm run content:verificar`: 102/102 casos en verde
+- 15 ejercicios sin tests automáticos: los 3 de salida libre de los capítulos 1 y 5,
+  y los 12 de los capítulos 22–24 (pandas, red/API key y fastapi no corren en el verificador)

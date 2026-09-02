@@ -1,0 +1,298 @@
+<p class="jc-gancho">Diecinueve capítulos, cada uno con su pieza. Este capítulo no enseña nada nuevo: las junta todas en un programa que un banco pequeño podría usar de verdad. Cuentas, retiros, historial, persistencia y menú.</p>
+
+<h2>Qué vamos a construir</h2>
+
+<p>Un sistema bancario de consola con:</p>
+
+<ul>
+  <li>Clientes con cuentas de ahorros y corriente (capítulos 18 y 19)</li>
+  <li>Consignaciones, retiros y transferencias con sus validaciones (15)</li>
+  <li>Historial de movimientos con fecha (16)</li>
+  <li>Todo guardado en JSON, que sobrevive al cerrar (17)</li>
+  <li>Menú por consola con validación de entradas (6, 7, 15)</li>
+</ul>
+
+<h2>Cómo se reparte el trabajo</h2>
+
+<p>Un programa de este tamaño no va en un solo archivo. Se parte en módulos por <strong>responsabilidad</strong>:</p>
+
+<pre><code>banco/
+├── main.py            el menú: habla con el usuario
+├── cuentas.py         las clases Cuenta, Ahorros y Corriente
+├── banco.py           la clase Banco: administra clientes y cuentas
+├── almacenamiento.py  cargar y guardar en JSON
+└── datos.json         los datos (lo crea el programa)</code></pre>
+
+<p>La regla que ordena todo: <strong>solo <code>main.py</code> habla con el usuario</strong>. Ninguna otra parte hace <code>print()</code> ni <code>input()</code>. Así el mismo <code>banco.py</code> serviría mañana para una app web o una API sin tocar una línea.</p>
+
+<h2>Las cuentas</h2>
+
+<pre><code># cuentas.py
+import datetime
+
+
+class Cuenta:
+    '''Cuenta bancaria base. No permite quedar en negativo.'''
+
+    tipo = "ahorros"
+
+    def __init__(self, numero, titular, saldo=0):
+        self.numero = numero
+        self.titular = titular
+        self.saldo = saldo
+        self.movimientos = []      # cada cuenta con su lista propia
+
+    def _registrar(self, concepto, monto):
+        '''Guarda el movimiento con su fecha. El _ dice: uso interno.'''
+        self.movimientos.append({
+            "fecha": datetime.date.today().isoformat(),
+            "concepto": concepto,
+            "monto": monto,
+            "saldo": self.saldo,
+        })
+
+    def consignar(self, monto):
+        if monto &lt;= 0:
+            raise ValueError("El monto debe ser positivo")
+        self.saldo += monto
+        self._registrar("consignacion", monto)
+        return self.saldo
+
+    def puede_retirar(self, monto):
+        '''Cada tipo de cuenta define su propia regla.'''
+        return monto &lt;= self.saldo
+
+    def retirar(self, monto):
+        if monto &lt;= 0:
+            raise ValueError("El monto debe ser positivo")
+        if not self.puede_retirar(monto):
+            raise ValueError("Fondos insuficientes")
+        self.saldo -= monto
+        self._registrar("retiro", -monto)
+        return self.saldo
+
+    def __str__(self):
+        return f"{self.numero} ({self.tipo}) {self.titular}: {self.saldo:,}"
+
+
+class CuentaCorriente(Cuenta):
+    '''Una corriente ES una cuenta, pero admite sobregiro.'''
+
+    tipo = "corriente"
+
+    def __init__(self, numero, titular, saldo=0, sobregiro=500000):
+        super().__init__(numero, titular, saldo)
+        self.sobregiro = sobregiro
+
+    def puede_retirar(self, monto):
+        return monto &lt;= self.saldo + self.sobregiro</code></pre>
+
+<p>Fíjate en el detalle de diseño más importante del capítulo: <code>retirar()</code> se escribió <strong>una sola vez</strong>. Lo único que cambia entre los dos tipos de cuenta es <code>puede_retirar()</code>, así que eso es lo único que la hija sobrescribe. Ese método pequeño que las hijas redefinen se llama <em>gancho</em>, y es el patrón que evita duplicar código.</p>
+
+<h2>El banco</h2>
+
+<pre><code># banco.py
+from cuentas import Cuenta, CuentaCorriente
+
+
+class Banco:
+    '''Administra las cuentas. No sabe nada de pantallas ni archivos.'''
+
+    def __init__(self):
+        self.cuentas = {}          # numero -> Cuenta
+
+    def abrir(self, numero, titular, tipo="ahorros", saldo=0):
+        if numero in self.cuentas:
+            raise ValueError(f"La cuenta {numero} ya existe")
+
+        if tipo == "corriente":
+            cuenta = CuentaCorriente(numero, titular, saldo)
+        else:
+            cuenta = Cuenta(numero, titular, saldo)
+
+        self.cuentas[numero] = cuenta
+        return cuenta
+
+    def buscar(self, numero):
+        if numero not in self.cuentas:
+            raise KeyError(f"No existe la cuenta {numero}")
+        return self.cuentas[numero]
+
+    def transferir(self, origen, destino, monto):
+        '''Mueve dinero entre dos cuentas. Si algo falla, no mueve nada.'''
+        cuenta_origen = self.buscar(origen)
+        cuenta_destino = self.buscar(destino)
+
+        # El retiro va PRIMERO: si no alcanza, lanza y no se consigna nada
+        cuenta_origen.retirar(monto)
+        cuenta_destino.consignar(monto)
+
+    @property
+    def total_depositado(self):
+        return sum(c.saldo for c in self.cuentas.values())</code></pre>
+
+<p>El orden dentro de <code>transferir()</code> no es casual. Si se consignara primero y el retiro fallara, el banco habría <em>creado</em> dinero. Retirar primero significa que la operación falla completa o no falla.</p>
+
+<h2>La persistencia</h2>
+
+<pre><code># almacenamiento.py
+import json
+from cuentas import Cuenta, CuentaCorriente
+
+
+def guardar(banco, ruta="datos.json"):
+    '''Convierte los objetos en diccionarios y los escribe.'''
+    datos = {}
+    for numero, cuenta in banco.cuentas.items():
+        datos[numero] = {
+            "titular": cuenta.titular,
+            "saldo": cuenta.saldo,
+            "tipo": cuenta.tipo,
+            "movimientos": cuenta.movimientos,
+        }
+
+    with open(ruta, "w", encoding="utf-8") as f:
+        json.dump(datos, f, indent=2, ensure_ascii=False)
+
+
+def cargar(banco, ruta="datos.json"):
+    '''Reconstruye los objetos desde el archivo. Si no existe, no hace nada.'''
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            datos = json.load(f)
+    except FileNotFoundError:
+        return banco          # primera vez: el banco arranca vacío
+
+    for numero, d in datos.items():
+        cuenta = banco.abrir(numero, d["titular"], d["tipo"], d["saldo"])
+        cuenta.movimientos = d["movimientos"]
+
+    return banco</code></pre>
+
+<p>JSON no sabe guardar objetos de Python: guarda diccionarios, listas, números y textos. Por eso hay un paso de traducción en cada dirección. Se llama <strong>serializar</strong> (objeto → diccionario) y <strong>deserializar</strong> (diccionario → objeto), y es exactamente lo que hace cualquier programa que hable con una base de datos o con una API.</p>
+
+<h2>El menú</h2>
+
+<pre><code># main.py
+import banco as modulo_banco
+import almacenamiento
+
+
+def pedir_entero(mensaje, minimo=1):
+    '''Insiste hasta recibir un entero valido.'''
+    while True:
+        try:
+            valor = int(input(mensaje))
+        except ValueError:
+            print("Debe ser un numero")
+            continue
+        if valor &lt; minimo:
+            print(f"Debe ser al menos {minimo}")
+            continue
+        return valor
+
+
+def menu():
+    print("\n1. Abrir cuenta   2. Consignar   3. Retirar")
+    print("4. Transferir     5. Extracto    6. Salir")
+
+
+def main():
+    banco = almacenamiento.cargar(modulo_banco.Banco())
+
+    while True:
+        menu()
+        opcion = input("Opcion: ").strip()
+
+        try:
+            if opcion == "1":
+                numero = input("Numero de cuenta: ").strip()
+                titular = input("Titular: ").strip()
+                tipo = input("Tipo (ahorros/corriente): ").strip()
+                banco.abrir(numero, titular, tipo)
+                print("Cuenta abierta")
+
+            elif opcion == "2":
+                cuenta = banco.buscar(input("Cuenta: ").strip())
+                cuenta.consignar(pedir_entero("Monto: "))
+                print(f"Nuevo saldo: {cuenta.saldo:,}")
+
+            elif opcion == "6":
+                almacenamiento.guardar(banco)
+                print("Datos guardados. Hasta luego")
+                break
+
+            else:
+                print("Opcion invalida")
+
+        except (ValueError, KeyError) as e:
+            # Cualquier regla del negocio que falle se reporta aquí
+            print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+
+<p>Todo el <code>try/except</code> vive en el menú, en un solo sitio. Las clases lanzan errores con mensajes claros; el menú los muestra. Ninguna clase imprime nada.</p>
+
+<h2>La película de una transferencia</h2>
+
+<p>Ana tiene 200000, Juan tiene 50000, y Ana le transfiere 300000:</p>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Qué pasa</th><th>Ana</th><th>Juan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><code>buscar("001")</code> y <code>buscar("002")</code>: existen</td><td>200000</td><td>50000</td></tr>
+    <tr><td>2</td><td><code>ana.retirar(300000)</code> → <code>puede_retirar</code> da False</td><td>200000</td><td>50000</td></tr>
+    <tr><td>3</td><td><code>raise ValueError("Fondos insuficientes")</code></td><td>200000</td><td>50000</td></tr>
+    <tr><td>4</td><td>El <code>consignar</code> de Juan <strong>nunca se ejecuta</strong></td><td>200000</td><td>50000</td></tr>
+    <tr><td>5</td><td>El menú atrapa el error y lo muestra</td><td>200000</td><td>50000</td></tr>
+  </tbody>
+</table>
+
+<p>Nadie perdió ni ganó dinero. Esa propiedad —o pasa todo, o no pasa nada— se llama <strong>atomicidad</strong>, y es la razón por la que el orden de esas dos líneas importa tanto.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Meterlo todo en un archivo</h3>
+<p>Funciona con 100 líneas y es un infierno con 500. Un módulo por responsabilidad, desde el principio.</p>
+
+<h3>2. Poner <code>print()</code> dentro de las clases</h3>
+<pre><code>def retirar(self, monto):
+    if monto &gt; self.saldo:
+        print("Saldo insuficiente")     # ❌ la clase no sabe si hay pantalla
+        raise ValueError(...)           # ✅ solo lanza</code></pre>
+
+<h3>3. Olvidar guardar al salir</h3>
+<p>Todo el trabajo de la sesión vive en memoria. Si el usuario cierra sin pasar por la opción 6, se perdió. Por eso <code>guardar()</code> va en el camino de salida.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Un módulo por responsabilidad: modelo, lógica, almacenamiento, interfaz.</li>
+  <li>Solo la interfaz habla con el usuario. El resto lanza errores y devuelve datos.</li>
+  <li>Las operaciones que tocan dos cosas se ordenan para que fallen antes de cambiar nada.</li>
+  <li>Cargar al arrancar, guardar al salir.</li>
+  <li>Lo que varía entre subclases va en un método pequeño; el grande se escribe una vez.</li>
+</ol>
+
+<h2>📋 Chuleta del proyecto</h2>
+
+<table>
+  <thead>
+    <tr><th>Capítulo</th><th>Qué aporta aquí</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>6, 7</td><td>Menú con <code>while</code> y <code>if/elif</code></td></tr>
+    <tr><td>12</td><td>Diccionario de cuentas por número</td></tr>
+    <tr><td>14</td><td><code>pedir_entero()</code> reutilizable</td></tr>
+    <tr><td>15</td><td><code>raise</code> en las clases, <code>try</code> en el menú</td></tr>
+    <tr><td>16</td><td>Módulos y <code>if __name__ == "__main__"</code></td></tr>
+    <tr><td>17</td><td>Serializar y deserializar en JSON</td></tr>
+    <tr><td>18, 19</td><td>Clases, herencia y el gancho <code>puede_retirar()</code></td></tr>
+  </tbody>
+</table>
+
+<blockquote>Un proyecto no es código más largo: es código <em>repartido</em>. Cuando cada archivo tiene un solo trabajo, agregar una función nueva deja de dar miedo.</blockquote>

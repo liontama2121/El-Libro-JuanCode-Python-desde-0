@@ -1,0 +1,125 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Por qué un proyecto se reparte en varios archivos en vez de uno solo?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque cada archivo con una sola responsabilidad es más fácil de cambiar y de probar" },
+      { "id": "b", "text": "Porque Python no admite archivos largos" },
+      { "id": "c", "text": "Porque así el programa corre más rápido" },
+      { "id": "d", "text": "Porque lo exige el sistema operativo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con 100 líneas da igual; con 500 la diferencia entre un archivo ordenado y uno revuelto es enorme."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué parte del sistema bancario debe hacer print() e input()?",
+    "data": { "options": [
+      { "id": "a", "text": "Solo el menú (main.py)" },
+      { "id": "b", "text": "Todas, cada una reporta lo suyo" },
+      { "id": "c", "text": "Las clases de cuenta" },
+      { "id": "d", "text": "El módulo de almacenamiento" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Así el mismo Banco sirve tal cual para una API web: solo cambia quién llama a sus métodos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En transferir(), ¿por qué el retiro va antes que la consignación?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que, si el retiro falla, la consignación nunca ocurra y el banco no cree dinero" },
+      { "id": "b", "text": "Porque retirar es más rápido" },
+      { "id": "c", "text": "Por convención de los bancos" },
+      { "id": "d", "text": "Da lo mismo el orden" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Esa propiedad de \"o pasa todo o no pasa nada\" se llama atomicidad, y aquí sale gratis con solo ordenar bien."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué es serializar?",
+    "data": { "options": [
+      { "id": "a", "text": "Convertir objetos en diccionarios y listas que JSON sí sabe guardar" },
+      { "id": "b", "text": "Ordenar los datos por fecha" },
+      { "id": "c", "text": "Numerar las cuentas en serie" },
+      { "id": "d", "text": "Comprimir el archivo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "JSON solo maneja diccionarios, listas, números, textos y booleanos: los objetos hay que traducirlos en las dos direcciones."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Qué gana el diseño al poner la regla variable en puede_retirar() en vez de sobrescribir retirar() entero?",
+    "data": { "options": [
+      { "id": "a", "text": "Que el método largo se escribe una sola vez y las hijas solo redefinen lo que de verdad cambia" },
+      { "id": "b", "text": "Que se ejecuta más rápido" },
+      { "id": "c", "text": "Que no hace falta usar super()" },
+      { "id": "d", "text": "Que se pueden tener más subclases" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Ese método pequeño que las hijas redefinen se llama gancho, y es lo que evita duplicar validaciones."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "class C:\n    def puede(self, m):\n        return m <= self.saldo\n\n    def __init__(self, s):\n        self.saldo = s\n\n    def retirar(self, m):\n        if not self.puede(m):\n            raise ValueError(\"no alcanza\")\n        self.saldo -= m\n\nclass Corriente(C):\n    def puede(self, m):\n        return m <= self.saldo + 100\n\nc = Corriente(50)\nc.retirar(120)\nprint(c.saldo)",
+    "data": { "options": [
+      { "id": "a", "text": "-70" },
+      { "id": "b", "text": "50" },
+      { "id": "c", "text": "no alcanza" },
+      { "id": "d", "text": "ValueError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "retirar() está en el padre pero llama a self.puede(), y self es una Corriente: usa la versión de la hija."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "Ana tiene 100 y Juan 50. ¿Cuánto queda en cada uno?",
+    "code_snippet": "def transferir(a, b, monto):\n    a.retirar(monto)\n    b.consignar(monto)\n\ntry:\n    transferir(ana, juan, 500)\nexcept ValueError:\n    pass\n\nprint(ana.saldo, juan.saldo)",
+    "data": { "options": [
+      { "id": "a", "text": "100 50" },
+      { "id": "b", "text": "-400 550" },
+      { "id": "c", "text": "100 550" },
+      { "id": "d", "text": "0 50" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El retiro lanza la excepción y la consignación nunca corre: ninguno de los dos saldos cambia."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Una transferencia fallida le regala dinero al destino. ¿En qué línea está el error?",
+    "data": { "lines": ["def transferir(self, origen, destino, monto):", "    o = self.buscar(origen)", "    d = self.buscar(destino)", "    d.consignar(monto)", "    o.retirar(monto)"] },
+    "correct": { "line_number": 4 },
+    "explanation": "La consignación va después del retiro. Así, si el retiro falla, el destino ya recibió el dinero."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "La clase no debería hablar con el usuario. ¿En qué línea está el problema de diseño?",
+    "data": { "lines": ["def retirar(self, monto):", "    if monto > self.saldo:", "        print(\"Saldo insuficiente\")", "        raise ValueError(\"Saldo insuficiente\")", "    self.saldo -= monto"] },
+    "correct": { "line_number": 3 },
+    "explanation": "La clase no sabe si hay pantalla: solo debe lanzar. Mostrar el mensaje es trabajo del menú."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arme la transferencia atómica del banco",
+    "data": { "lines": [
+      { "id": "l1", "text": "def transferir(self, origen, destino, monto):", "indent": 0 },
+      { "id": "l2", "text": "salida = self.buscar(origen)", "indent": 1 },
+      { "id": "l3", "text": "entrada = self.buscar(destino)", "indent": 1 },
+      { "id": "l4", "text": "salida.retirar(monto)", "indent": 1 },
+      { "id": "l5", "text": "entrada.consignar(monto)", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5"] },
+    "explanation": "Primero se buscan las dos cuentas (si alguna no existe, falla antes de tocar nada) y después el retiro antes de la consignación."
+  }
+]
