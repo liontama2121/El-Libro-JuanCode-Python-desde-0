@@ -25,13 +25,22 @@ export async function bootstrapUsuarios(env: Env, request: Request) {
 			.limit(1);
 
 		if (!teacher) {
-			await crearUsuario(env, request, {
+			const res = await crearUsuario(env, request, {
 				name: "JuanCode",
 				username: teacherUsername,
 				password: teacherPassword,
 				role: "teacher",
 				mustChangePassword: false,
 			});
+
+			// Antes esto fallaba en silencio: el profe no se creaba y el login
+			// decia "usuario o contrasena incorrectos" sin pista de por que.
+			if (!res.ok) {
+				console.error(
+					`[bootstrap] no se pudo crear al profe "${teacherUsername}" ` +
+						`(clave de ${teacherPassword.length} caracteres): ${res.error}`,
+				);
+			}
 		} else {
 			const [cuenta] = await db
 				.select({ password: schema.accounts.password })
