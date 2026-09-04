@@ -18,7 +18,14 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), "..");
-const dirEjercicios = join(raiz, "content", "exercises");
+/**
+ * Sin argumentos verifica el libro básico. Con uno, ese otro libro:
+ *   node scripts/verificar-soluciones.mjs avanzado
+ */
+const carpetaLibro = process.argv[2] ?? "";
+const dirEjercicios = carpetaLibro
+	? join(raiz, "content", carpetaLibro, "exercises")
+	: join(raiz, "content", "exercises");
 
 /* Los ejercicios del capitulo 17 escriben archivos: se corren en una carpeta
    temporal para no ensuciar el proyecto. */

@@ -11,7 +11,7 @@ import { requireUser } from "~/lib/auth.server";
 import { formatoReloj } from "~/lib/format";
 import { otorgar } from "~/lib/gamification.server";
 import { correrTests, leerTests, modoCodigoActivo } from "~/lib/piston.server";
-import { cargarLibro } from "~/lib/progress.server";
+import { cargarCapitulosVisibles } from "~/lib/progress.server";
 import { firmar, verificar } from "~/lib/sign.server";
 import type { Route } from "./+types/practica.simulacro-parcial";
 
@@ -40,7 +40,12 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	const user = await requireUser(env, request);
 	const db = getDb(env);
 
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const capitulos = await cargarCapitulosVisibles(
+		db,
+		user.id,
+		user.role === "teacher",
+		user.track,
+	);
 	const abiertos = capitulos.filter((c) => c.estado !== "bloqueado");
 	const chapterIds = abiertos.map((c) => c.id);
 

@@ -5,7 +5,7 @@ import { Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
 import { requireUser } from "~/lib/auth.server";
 import { cargarStats, nivelDe } from "~/lib/gamification.server";
-import { cargarLibro } from "~/lib/progress.server";
+import { cargarCapitulosVisibles } from "~/lib/progress.server";
 import type { Route } from "./+types/practica";
 
 export const meta: Route.MetaFunction = () => [
@@ -17,7 +17,12 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	const user = await requireUser(env, request);
 	const db = getDb(env);
 
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const capitulos = await cargarCapitulosVisibles(
+		db,
+		user.id,
+		user.role === "teacher",
+		user.track,
+	);
 	const abiertos = capitulos.filter((c) => c.estado !== "bloqueado");
 
 	const [{ preguntas }] = await db

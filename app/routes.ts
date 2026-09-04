@@ -7,10 +7,17 @@ export default [
 	route("logout", "routes/logout.tsx"),
 	route("cambiar-password", "routes/cambiar-password.tsx"),
 
-	// Estudiante
+	// Estudiante — track básico (las URLs de siempre)
 	route("libro", "routes/libro.tsx"),
 	route("libro/capitulo/:number", "routes/capitulo.tsx"),
 	route("libro/capitulo/:number/quiz", "routes/quiz.tsx"),
+
+	// Estudiante — track avanzado. Mismos módulos: el track sale de la URL,
+	// así que no hay una sola línea de lógica duplicada.
+	route("tracks", "routes/tracks.tsx"),
+	route("avanzado", "routes/libro.tsx", { id: "libro-avanzado" }),
+	route("avanzado/modulo/:number", "routes/capitulo.tsx", { id: "capitulo-avanzado" }),
+	route("avanzado/modulo/:number/quiz", "routes/quiz.tsx", { id: "quiz-avanzado" }),
 
 	// Práctica (no desbloquea capítulos)
 	route("practica", "routes/practica.tsx"),

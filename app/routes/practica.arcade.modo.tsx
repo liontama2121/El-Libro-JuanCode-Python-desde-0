@@ -18,7 +18,7 @@ import {
 } from "~/lib/bank.server";
 import { formatoReloj } from "~/lib/format";
 import { otorgar, xpDeArcade } from "~/lib/gamification.server";
-import { cargarLibro } from "~/lib/progress.server";
+import { cargarCapitulosVisibles } from "~/lib/progress.server";
 import { firmar, verificar } from "~/lib/sign.server";
 import type { Route } from "./+types/practica.arcade.modo";
 
@@ -40,7 +40,12 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 	const modo = MODOS[params.modo ?? ""];
 	if (!modo) throw redirect("/practica/arcade");
 
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const capitulos = await cargarCapitulosVisibles(
+		db,
+		user.id,
+		user.role === "teacher",
+		user.track,
+	);
 	const chapterIds = capitulos
 		.filter((c) => c.estado !== "bloqueado")
 		.map((c) => c.id);

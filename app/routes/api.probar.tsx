@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { getDb, schema } from "~/db";
 import { requireUser } from "~/lib/auth.server";
 import { correrTests, leerTests, modoCodigoActivo } from "~/lib/piston.server";
-import { cargarLibro } from "~/lib/progress.server";
+import { cargarCapitulosVisibles } from "~/lib/progress.server";
 import type { Route } from "./+types/api.probar";
 
 /**
@@ -46,7 +46,12 @@ export async function action({ context, request }: Route.ActionArgs) {
 	}
 
 	// Solo se puede probar código de capítulos que el estudiante tenga abiertos.
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const capitulos = await cargarCapitulosVisibles(
+		db,
+		user.id,
+		user.role === "teacher",
+		user.track,
+	);
 	const capitulo = capitulos.find((c) => c.id === ejercicio.chapterId);
 	if (!capitulo || capitulo.estado === "bloqueado") {
 		return {

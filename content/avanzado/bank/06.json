@@ -1,0 +1,186 @@
+[
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arma merge_sort. Ojo con el orden: hay una línea que si va en otro lugar, la función no para nunca.",
+    "data": { "lines": [
+      { "id": "l1", "text": "def merge_sort(lista):", "indent": 0 },
+      { "id": "l2", "text": "if len(lista) <= 1:", "indent": 1 },
+      { "id": "l3", "text": "return lista", "indent": 2 },
+      { "id": "l4", "text": "medio = len(lista) // 2", "indent": 1 },
+      { "id": "l5", "text": "izquierda = merge_sort(lista[:medio])", "indent": 1 },
+      { "id": "l6", "text": "derecha = merge_sort(lista[medio:])", "indent": 1 },
+      { "id": "l7", "text": "return merge(izquierda, derecha)", "indent": 1 }
+    ]},
+    "correct": { "order": ["l1", "l2", "l3", "l4", "l5", "l6", "l7"] },
+    "explanation": "El caso base va de primero: es la condición de parada. Si se pregunta después de las llamadas recursivas, la función se llama para siempre y revienta con RecursionError."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa la división de merge_sort. Son las tres piezas que más se equivocan.",
+    "data": {
+      "code": "medio = len(lista) ___1___ 2\nizquierda = merge_sort(lista[___2___])\nderecha = merge_sort(lista[___3___])",
+      "blanks": [
+        { "id": "1", "pista": "división entera, no decimal" },
+        { "id": "2", "pista": "desde el principio hasta el medio" },
+        { "id": "3", "pista": "desde el medio hasta el final" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["//"],
+      "2": [":medio"],
+      "3": ["medio:"]
+    }},
+    "explanation": "Con / el medio queda decimal y lista[:3.5] lanza TypeError. Los dos cortes se tocan en 'medio' sin solaparse: [:medio] no incluye esa posición y [medio:] sí, así que no se pierde ni se repite ningún elemento."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa el corazón de la mezcla.",
+    "data": {
+      "code": "while i < len(izquierda) ___1___ j < len(derecha):\n    if izquierda[i] ___2___ derecha[j]:\n        resultado.append(izquierda[i])\n        ___3___\n    else:\n        resultado.append(derecha[j])\n        j = j + 1",
+      "blanks": [
+        { "id": "1", "pista": "los DOS índices tienen que estar dentro" },
+        { "id": "2", "pista": "el que conserva el orden de los iguales" },
+        { "id": "3", "pista": "avanzar el índice de la izquierda" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["and"],
+      "2": ["<="],
+      "3": ["i = i + 1", "i += 1"]
+    }},
+    "explanation": "Con 'or' basta que un índice esté dentro para entrar, y el otro se sale de la lista: IndexError. Con '<' en vez de '<=', dos elementos iguales se voltean y el algoritmo deja de ser estable."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el corazón del burbuja.",
+    "data": {
+      "code": "for j in range(0, n - i - 1):\n    if ___1___:\n        ___2___\n        intercambio = True",
+      "blanks": [
+        { "id": "1", "pista": "compara la casilla con su vecina de la derecha" },
+        { "id": "2", "pista": "el intercambio de Python, en una sola línea" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["lista[j] > lista[j + 1]", "lista[j + 1] < lista[j]"],
+      "2": ["lista[j], lista[j + 1] = lista[j + 1], lista[j]"]
+    }},
+    "explanation": "El burbuja solo compara vecinos. El intercambio con una sola asignación no necesita variable auxiliar: Python arma la tupla de la derecha antes de asignar."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "Este merge no falla, no lanza ningún error... y devuelve listas incompletas. ¿Qué línea falta o sobra?",
+    "data": { "lines": [
+      "while i < len(izquierda) and j < len(derecha):",
+      "    ...",
+      "while i < len(izquierda):",
+      "    resultado.append(izquierda[i])",
+      "    i = i + 1",
+      "return resultado"
+    ]},
+    "correct": { "line_number": 6 },
+    "explanation": "Antes del return falta el while que vacía los restos de la derecha. Cuando la izquierda se acaba primero, lo que queda en la derecha nunca se copia: la lista sale con menos elementos y sin ningún mensaje de error. Es el peor error posible, porque parece funcionar."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué merge usa <= y no < al comparar?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que sea estable: dos elementos iguales conservan el orden en que venían" },
+      { "id": "b", "text": "Para que no se salga de la lista" },
+      { "id": "c", "text": "Porque con < el resultado sale al revés" },
+      { "id": "d", "text": "Da exactamente lo mismo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con <= los empates los gana la izquierda, que es la mitad que venía primero. Importa cuando ordenas objetos por un campo: 'ordenar por nota' no debería revolver a los que tienen la misma nota."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Ordenar 1.000 números con burbuja tarda 0,06 s. ¿Cuánto tardarán 4.000, aproximadamente?",
+    "data": { "options": [
+      { "id": "a", "text": "Alrededor de 1 segundo: 16 veces más" },
+      { "id": "b", "text": "Alrededor de 0,24 s: 4 veces más" },
+      { "id": "c", "text": "Casi lo mismo, 0,06 s" },
+      { "id": "d", "text": "Alrededor de 0,12 s: el doble" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El burbuja es O(N²): al multiplicar N por 4, el tiempo se multiplica por 4² = 16. Medido de verdad: 0,058 s con 1.000 y 1,002 s con 4.000. Esa es la trampa de O(N²) — no crece, se dispara."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "El burbuja de este módulo tiene una bandera 'intercambio'. ¿Para qué sirve?",
+    "data": { "options": [
+      { "id": "a", "text": "Si una pasada completa no intercambia nada, la lista ya está ordenada y sale: eso lo hace O(N) en el mejor caso" },
+      { "id": "b", "text": "Para contar cuántos intercambios hubo" },
+      { "id": "c", "text": "Para saber si la lista tenía repetidos" },
+      { "id": "d", "text": "Para que el algoritmo sea estable" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sin bandera, el burbuja hace siempre sus N pasadas aunque ya esté ordenado. Con bandera, una lista ya ordenada se resuelve en una sola pasada. La complejidad depende del caso: no es un sello pegado al algoritmo."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def merge(izquierda, derecha):\n    resultado = []\n    i = j = 0\n    while i < len(izquierda) and j < len(derecha):\n        if izquierda[i] <= derecha[j]:\n            resultado.append(izquierda[i]); i += 1\n        else:\n            resultado.append(derecha[j]); j += 1\n    return resultado\n\nprint(merge([1, 4, 9], [2, 3]))",
+    "data": { "options": [
+      { "id": "a", "text": "[1, 2, 3, 4]" },
+      { "id": "b", "text": "[1, 2, 3, 4, 9]" },
+      { "id": "c", "text": "[1, 4, 9, 2, 3]" },
+      { "id": "d", "text": "Lanza IndexError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "A este merge le quitaron los while de restos. Cuando la derecha se agota (j llega a 2), el while termina y el 9 se queda sin copiar. No hay error: solo un resultado incompleto, que es lo difícil de detectar."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué necesita la búsqueda binaria para funcionar?",
+    "data": { "options": [
+      { "id": "a", "text": "Que la lista esté ordenada" },
+      { "id": "b", "text": "Que la lista no tenga repetidos" },
+      { "id": "c", "text": "Que la lista tenga tamaño par" },
+      { "id": "d", "text": "Que los números sean positivos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Descartar media lista solo tiene sentido si el orden garantiza de qué lado está lo que buscas. Sobre una lista desordenada, la búsqueda binaria responde cualquier cosa."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "El enunciado dice: N puede llegar a 200.000. ¿Qué implica?",
+    "data": { "options": [
+      { "id": "a", "text": "Que el burbuja no cabe en el tiempo: toca O(N log N)" },
+      { "id": "b", "text": "Que hay que usar más memoria" },
+      { "id": "c", "text": "Que hay que leer la entrada con input() en vez de sys.stdin" },
+      { "id": "d", "text": "Que no se puede usar recursión" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "N² con 200.000 son 40.000 millones de comparaciones. El límite de N en el enunciado no es un dato de adorno: te está diciendo qué complejidad tienes permitida."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arma la búsqueda binaria",
+    "data": { "lines": [
+      { "id": "b1", "text": "izq, der = 0, len(lista) - 1", "indent": 0 },
+      { "id": "b2", "text": "while izq <= der:", "indent": 0 },
+      { "id": "b3", "text": "medio = (izq + der) // 2", "indent": 1 },
+      { "id": "b4", "text": "if lista[medio] == objetivo:", "indent": 1 },
+      { "id": "b5", "text": "return medio", "indent": 2 },
+      { "id": "b6", "text": "if lista[medio] < objetivo:", "indent": 1 },
+      { "id": "b7", "text": "izq = medio + 1", "indent": 2 },
+      { "id": "b8", "text": "else:", "indent": 1 },
+      { "id": "b9", "text": "der = medio - 1", "indent": 2 },
+      { "id": "b10", "text": "return -1", "indent": 0 }
+    ]},
+    "correct": { "order": ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10"] },
+    "explanation": "El return -1 va afuera del while: solo se llega ahí cuando el rango se agotó sin encontrar nada. Y los +1 / -1 son los que evitan el ciclo infinito cuando izq y der se juntan."
+  }
+]

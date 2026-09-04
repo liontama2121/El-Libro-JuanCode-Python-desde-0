@@ -10,7 +10,7 @@ import { requireUser } from "~/lib/auth.server";
 import { formatoReloj } from "~/lib/format";
 import { otorgar, XP_ARCADE } from "~/lib/gamification.server";
 import { leerTests, modoCodigoActivo } from "~/lib/piston.server";
-import { cargarLibro } from "~/lib/progress.server";
+import { cargarCapitulosVisibles } from "~/lib/progress.server";
 import type { Route } from "./+types/practica.arcade.codigo";
 
 export const meta: Route.MetaFunction = () => [
@@ -34,7 +34,12 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		);
 	}
 
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const capitulos = await cargarCapitulosVisibles(
+		db,
+		user.id,
+		user.role === "teacher",
+		user.track,
+	);
 	const chapterIds = capitulos
 		.filter((c) => c.estado !== "bloqueado")
 		.map((c) => c.id);

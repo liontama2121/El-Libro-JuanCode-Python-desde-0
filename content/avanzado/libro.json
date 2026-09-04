@@ -1,0 +1,77 @@
+{
+	"titulo": "El Libro JuanCode — Algoritmos y competitiva",
+	"autor": "JuanCode",
+	"track": "avanzado",
+	"partes": [
+		{ "number": 1, "title": "Entrada y salida", "emoji": "⚙️" },
+		{ "number": 2, "title": "Estructuras", "emoji": "🧱" },
+		{ "number": 3, "title": "Recursión y búsqueda", "emoji": "🌳" },
+		{ "number": 4, "title": "Técnicas de diseño", "emoji": "🧠" }
+	],
+	"capitulos": [
+		{
+			"number": 1,
+			"part": 1,
+			"slug": "setup-domjudge",
+			"title": "Setup DOMjudge",
+			"emoji": "⚙️",
+			"description": "Leer hasta EOF y responder casos múltiples como los pide el juez."
+		},
+		{
+			"number": 2,
+			"part": 1,
+			"slug": "strings-avanzados",
+			"title": "Strings avanzados",
+			"emoji": "🔤",
+			"description": "split, join e indexado por posición sobre varias líneas."
+		},
+		{
+			"number": 3,
+			"part": 2,
+			"slug": "matrices-y-vecinos",
+			"title": "Matrices y vecinos",
+			"emoji": "🗺️",
+			"description": "Listas de listas y el recorrido de las 8 direcciones."
+		},
+		{
+			"number": 4,
+			"part": 3,
+			"slug": "recursion",
+			"title": "Recursión",
+			"emoji": "🌀",
+			"description": "Caso base, caso recursivo y qué pasa en el stack de llamadas."
+		},
+		{
+			"number": 5,
+			"part": 3,
+			"slug": "backtracking",
+			"title": "Backtracking",
+			"emoji": "🌳",
+			"description": "El árbol de decisión y la poda de ramas que no llevan a nada."
+		},
+		{
+			"number": 6,
+			"part": 4,
+			"slug": "dividir-y-conquistar",
+			"title": "Dividir y Conquistar",
+			"emoji": "✂️",
+			"description": "Burbuja contra Merge Sort: O(N²) contra O(N log N), y búsqueda binaria."
+		},
+		{
+			"number": 7,
+			"part": 4,
+			"slug": "programacion-dinamica",
+			"title": "Programación Dinámica",
+			"emoji": "📊",
+			"description": "La tabla DP y la diferencia entre construirla hacia adelante o hacia atrás."
+		},
+		{
+			"number": 8,
+			"part": 4,
+			"slug": "greedy-y-simulacion",
+			"title": "Greedy y simulación",
+			"emoji": "🎯",
+			"description": "Cuándo la decisión codiciosa es correcta, y cuándo toca simular."
+		}
+	]
+}

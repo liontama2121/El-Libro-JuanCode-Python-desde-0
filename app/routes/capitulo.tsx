@@ -9,6 +9,15 @@ import type { Exercise } from "~/db/schema";
 import { requireUser } from "~/lib/auth.server";
 import { leerTests, modoCodigoActivo } from "~/lib/piston.server";
 import { cargarLibro } from "~/lib/progress.server";
+import {
+	palabraCapitulo,
+	puedeVerTrack,
+	rutaCapitulo,
+	rutaLibro,
+	rutaQuiz,
+	trackDeRuta,
+	tracksVisibles,
+} from "~/lib/tracks";
 import { aPelicula } from "~/lib/traces";
 import type { Route } from "./+types/capitulo";
 
@@ -26,16 +35,22 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 	const db = getDb(env);
 
 	const numero = Number(params.number);
-	if (!Number.isInteger(numero)) throw redirect("/libro");
+	if (!Number.isInteger(numero)) throw redirect(rutaLibro(trackDeRuta(request.url)));
 
 	const esProfesor = user.role === "teacher";
-	const { capitulos } = await cargarLibro(db, user.id, esProfesor);
+
+	const track = trackDeRuta(request.url);
+	if (!puedeVerTrack(user.track, track, esProfesor)) {
+		throw redirect(rutaLibro(tracksVisibles(user.track)[0]));
+	}
+
+	const { capitulos } = await cargarLibro(db, user.id, esProfesor, track);
 	const capitulo = capitulos.find((c) => c.number === numero);
 
 	// Bloqueado o inexistente -> de vuelta al índice con aviso.
 	if (!capitulo || capitulo.estado === "bloqueado") {
 		throw redirect(
-			`/libro?toast=${encodeURIComponent(
+			`${rutaLibro(track)}?toast=${encodeURIComponent(
 				"Aprueba el quiz del capítulo anterior 🔒",
 			)}`,
 		);
@@ -78,6 +93,7 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 
 	return {
 		user,
+		track,
 		capitulo,
 		capitulos,
 		modoCodigo: modoCodigoActivo(env),
@@ -97,6 +113,7 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 export default function Capitulo({ loaderData }: Route.ComponentProps) {
 	const {
 		user,
+		track,
 		capitulo,
 		capitulos,
 		ejercicios,
@@ -116,7 +133,7 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 				{/* Sidebar ------------------------------------------------------- */}
 				<aside className="sticky top-24 hidden h-[calc(100dvh-8rem)] w-72 shrink-0 overflow-y-auto pr-2 lg:block">
 					<p className="jc-mono mb-3 text-[0.66rem] tracking-[0.24em] text-[var(--color-tinta-2)] uppercase">
-						Índice del libro
+						{track === "avanzado" ? "🚀 Track avanzado" : "Índice del libro"}
 					</p>
 					<ul className="space-y-1">
 						{capitulos.map((c) => {
@@ -151,7 +168,7 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 									{bloqueado ? (
 										<span className={`${clase} cursor-not-allowed`}>{inner}</span>
 									) : (
-										<Link to={`/libro/capitulo/${c.number}`} className={clase}>
+										<Link to={rutaCapitulo(track, c.number)} className={clase}>
 											{inner}
 										</Link>
 									)}
@@ -164,16 +181,29 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 				{/* Lector -------------------------------------------------------- */}
 				<main className="jc-anim-in mx-auto w-full max-w-[800px] min-w-0">
 					<Link
-						to="/libro"
+						to={rutaLibro(track)}
 						className="jc-mono text-xs tracking-[0.18em] text-[var(--color-tinta-2)] uppercase hover:text-[var(--color-cyan)]"
 					>
 						← índice
 					</Link>
 
 					<header className="mt-5 border-b border-[var(--color-borde)] pb-8">
-						<p className="jc-mono text-xs tracking-[0.26em] text-[var(--color-cyan)] uppercase">
-							Capítulo {capitulo.number}
-						</p>
+						<div className="flex flex-wrap items-center gap-3">
+							<p
+								className={`jc-mono text-xs tracking-[0.26em] uppercase ${
+									track === "avanzado"
+										? "text-[var(--color-magenta)]"
+										: "text-[var(--color-cyan)]"
+								}`}
+							>
+								{palabraCapitulo(track)} {capitulo.number}
+							</p>
+							{track === "avanzado" && (
+								<span className="jc-mono rounded-full border border-[rgba(255,77,255,.4)] bg-[rgba(255,77,255,.12)] px-2.5 py-0.5 text-[0.62rem] tracking-[0.16em] text-[var(--color-magenta)] uppercase">
+									🚀 Avanzado
+								</span>
+							)}
+						</div>
 						<h1 className="jc-display jc-grad mt-3 text-5xl">
 							{capitulo.emoji} {capitulo.title}
 						</h1>
@@ -253,7 +283,7 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 										: "Apruébalo y desbloqueas el siguiente capítulo. Intentos ilimitados."}
 								</p>
 								<Link
-									to={`/libro/capitulo/${capitulo.number}/quiz`}
+									to={rutaQuiz(track, capitulo.number)}
 									className="jc-btn jc-btn-primary mt-6 text-lg"
 								>
 									🎯 Presentar quiz del capítulo
@@ -267,7 +297,7 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 
 						{siguiente && siguiente.estado !== "bloqueado" && (
 							<Link
-								to={`/libro/capitulo/${siguiente.number}`}
+								to={rutaCapitulo(track, siguiente.number)}
 								className="jc-btn jc-btn-ghost mt-6"
 							>
 								Siguiente: {siguiente.emoji} {siguiente.title} →

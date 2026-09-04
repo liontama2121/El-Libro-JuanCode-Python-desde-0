@@ -1,5 +1,7 @@
 import { Form, Link, NavLink } from "react-router";
+import type { Track } from "~/db/schema";
 import type { SessionUser } from "~/lib/auth.server";
+import { rutaLibro, tracksVisibles } from "~/lib/tracks";
 
 export function Logo({ size = "md" }: { size?: "md" | "lg" }) {
 	return (
@@ -30,15 +32,22 @@ export type NavStats = {
 export function Nav({ user, stats }: { user: SessionUser; stats?: NavStats }) {
 	const esProfe = user.role === "teacher";
 
+	// Con los dos libros asignados, el link lleva al selector; con uno solo,
+	// directo a ese libro. Nadie ve una puerta que no puede abrir.
+	const libros = esProfe ? ["basico", "avanzado"] : tracksVisibles(user.track);
+	const destinoLibro = libros.length > 1 ? "/tracks" : rutaLibro(libros[0] as Track);
+
 	return (
 		<header className="sticky top-0 z-40 border-b border-[var(--color-borde)] bg-[#0b0b16]/80 backdrop-blur-xl">
 			<div className="mx-auto flex max-w-6xl items-center gap-4 px-5 py-3">
-				<Link to="/libro" className="shrink-0">
+				<Link to={destinoLibro} className="shrink-0">
 					<Logo />
 				</Link>
 
 				<nav className="ml-2 hidden items-center gap-1 sm:flex">
-					<NavItem to="/libro">📚 El libro</NavItem>
+					<NavItem to={destinoLibro}>
+						{libros.length > 1 ? "📚 Mis libros" : "📚 El libro"}
+					</NavItem>
 					<NavItem to="/practica">🎮 Práctica</NavItem>
 					{!esProfe && <NavItem to="/ranking">🏆 Ranking</NavItem>}
 					{esProfe && <NavItem to="/admin">🧑‍🏫 Panel</NavItem>}

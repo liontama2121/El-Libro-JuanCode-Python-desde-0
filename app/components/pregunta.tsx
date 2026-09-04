@@ -11,6 +11,7 @@ export const NOMBRE_TIPO: Record<string, string> = {
 	predict_output: "¿Qué imprime?",
 	find_bug: "Caza el bug",
 	parsons: "Arma el código",
+	fill_blank: "Complétalo de memoria",
 };
 
 export const EMOJI_TIPO: Record<string, string> = {
@@ -18,6 +19,7 @@ export const EMOJI_TIPO: Record<string, string> = {
 	predict_output: "⚡",
 	find_bug: "🕵️",
 	parsons: "🧩",
+	fill_blank: "✍️",
 };
 
 /* -------------------------------------------------------------------------- */
@@ -89,6 +91,16 @@ export function Pregunta({
 
 			{pregunta.type === "parsons" && (
 				<Parsons
+					pregunta={pregunta}
+					respuesta={respuesta}
+					onRespuesta={onRespuesta}
+					correccion={correccion}
+					bloqueada={bloqueada}
+				/>
+			)}
+
+			{pregunta.type === "fill_blank" && (
+				<Huecos
 					pregunta={pregunta}
 					respuesta={respuesta}
 					onRespuesta={onRespuesta}
@@ -401,6 +413,103 @@ function Explicacion({
 				<p className="mt-2 text-[0.95rem] leading-relaxed text-[var(--color-tinta-2)]">
 					{correccion.explanation}
 				</p>
+			)}
+		</div>
+	);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  fill_blank — escribir lo que falta                                         */
+/* -------------------------------------------------------------------------- */
+
+type DetalleHueco = { id: string; escrita: string; acerto: boolean; correcta: string };
+
+/**
+ * El código aparece con marcas ___1___ y el estudiante escribe encima. Es el
+ * ejercicio de memoria: se lo damos casi entero y tiene que poner las piezas
+ * que de verdad hay que saberse.
+ */
+function Huecos({
+	pregunta,
+	respuesta,
+	onRespuesta,
+	correccion,
+	bloqueada,
+}: SubProps) {
+	const huecos = pregunta.huecos ?? [];
+	const codigo = pregunta.codigoHuecos ?? "";
+	const escritas = (respuesta as { blanks?: Record<string, string> } | null)?.blanks ?? {};
+	const detalle = (correccion?.correcta as DetalleHueco[] | undefined) ?? [];
+
+	const escribir = (id: string, valor: string) =>
+		onRespuesta({ blanks: { ...escritas, [id]: valor } });
+
+	// El código se parte por las marcas ___N___ para intercalar los campos.
+	const trozos = codigo.split(/___(\w+)___/g);
+
+	return (
+		<div className="mt-4">
+			<pre className="jc-mono overflow-x-auto rounded-xl border border-[var(--color-borde)] bg-black/50 p-4 text-[0.82rem] leading-[1.9] whitespace-pre-wrap">
+				{trozos.map((trozo, i) => {
+					// Los índices impares son los ids de los huecos
+					if (i % 2 === 0) return <span key={`t-${i}`}>{trozo}</span>;
+
+					const id = String(trozo);
+					const d = detalle.find((x) => x.id === id);
+					const estado = !d
+						? "border-[var(--color-borde)] bg-white/[0.06] text-[var(--color-cyan)]"
+						: d.acerto
+							? "border-[rgba(52,224,122,.5)] bg-[rgba(52,224,122,.12)] text-[var(--color-verde)]"
+							: "border-[rgba(255,77,255,.5)] bg-[rgba(255,77,255,.12)] text-[var(--color-magenta)]";
+
+					return (
+						<input
+							key={`h-${id}`}
+							value={escritas[id] ?? ""}
+							disabled={bloqueada}
+							onChange={(ev) => escribir(id, ev.target.value)}
+							size={Math.max(8, (escritas[id] ?? "").length + 2)}
+							spellCheck={false}
+							autoCapitalize="off"
+							autoCorrect="off"
+							aria-label={`Hueco ${id}`}
+							className={`jc-mono mx-1 inline-block rounded-md border px-2 py-0.5 text-[0.82rem] outline-none focus:border-[rgba(0,229,255,.6)] ${estado}`}
+						/>
+					);
+				})}
+			</pre>
+
+			{/* Pistas de cada hueco */}
+			{huecos.some((h) => h.pista) && !correccion && (
+				<ul className="mt-3 space-y-1">
+					{huecos.map(
+						(h) =>
+							h.pista && (
+								<li
+									key={String(h.id)}
+									className="jc-mono text-xs text-[var(--color-tinta-2)]"
+								>
+									<span className="text-[var(--color-cyan)]">{h.id}</span> · {h.pista}
+								</li>
+							),
+					)}
+				</ul>
+			)}
+
+			{/* Al calificar: qué se esperaba en los que falló */}
+			{detalle.some((d) => !d.acerto) && (
+				<ul className="mt-3 space-y-1">
+					{detalle
+						.filter((d) => !d.acerto)
+						.map((d) => (
+							<li key={d.id} className="jc-mono text-xs">
+								<span className="text-[var(--color-tinta-2)]">
+									Hueco {d.id} — era:{" "}
+								</span>
+								<span className="text-[var(--color-verde)]">{d.correcta}</span>
+							</li>
+						))}
+				</ul>
 			)}
 		</div>
 	);

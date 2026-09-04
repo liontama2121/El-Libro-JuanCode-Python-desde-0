@@ -26,7 +26,17 @@ import {
 	XP_QUIZ_CAPITULO,
 } from "~/lib/gamification.server";
 import { cargarLibro, otorgarDesbloqueo } from "~/lib/progress.server";
+import {
+	palabraCapitulo,
+	puedeVerTrack,
+	rutaCapitulo,
+	rutaLibro,
+	rutaQuiz,
+	trackDeRuta,
+	tracksVisibles,
+} from "~/lib/tracks";
 import { firmar, verificar } from "~/lib/sign.server";
+import type { Track } from "~/db/schema";
 import type { Route } from "./+types/quiz";
 
 export const meta: Route.MetaFunction = ({ data }) => [
@@ -52,12 +62,19 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 	const db = getDb(env);
 
 	const numero = Number(params.number);
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const esProfesor = user.role === "teacher";
+
+	const track = trackDeRuta(request.url);
+	if (!puedeVerTrack(user.track, track, esProfesor)) {
+		throw redirect(rutaLibro(tracksVisibles(user.track)[0]));
+	}
+
+	const { capitulos } = await cargarLibro(db, user.id, esProfesor, track);
 	const capitulo = capitulos.find((c) => c.number === numero);
 
 	if (!capitulo || capitulo.estado === "bloqueado") {
 		throw redirect(
-			`/libro?toast=${encodeURIComponent("Aprueba el quiz del capítulo anterior 🔒")}`,
+			`${rutaLibro(track)}?toast=${encodeURIComponent("Aprueba el quiz del capítulo anterior 🔒")}`,
 		);
 	}
 
@@ -69,7 +86,7 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 
 	if (!quiz) {
 		throw redirect(
-			`/libro/capitulo/${numero}?toast=${encodeURIComponent(
+			`${rutaCapitulo(track, numero)}?toast=${encodeURIComponent(
 				"Este capítulo todavía no tiene quiz 🙃",
 			)}`,
 		);
@@ -78,7 +95,13 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 	// 5 preguntas al azar del banco del capítulo: cada intento es distinto.
 	const elegidas = await elegirPreguntas(db, {
 		chapterIds: [capitulo.id],
-		tipos: ["mcq", "predict_output"],
+		// El libro básico pregunta con opción múltiple: el estudiante apenas
+		// está entendiendo qué hace el código. El avanzado además lo hace
+		// escribir y armar — ahí el objetivo es que se sepa los algoritmos.
+		tipos:
+			track === "avanzado"
+				? ["mcq", "predict_output", "find_bug", "parsons", "fill_blank"]
+				: ["mcq", "predict_output"],
 		limite: PREGUNTAS_POR_QUIZ,
 	});
 
@@ -95,6 +118,7 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 
 	return {
 		user,
+		track,
 		capitulo,
 		passingScore: quiz.passingScore,
 		preguntas,
@@ -127,12 +151,23 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 	const db = getDb(env);
 
 	const numero = Number(params.number);
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const track = trackDeRuta(request.url);
+
+	if (!puedeVerTrack(user.track, track, user.role === "teacher")) {
+		throw redirect(rutaLibro(tracksVisibles(user.track)[0]));
+	}
+
+	const { capitulos } = await cargarLibro(
+		db,
+		user.id,
+		user.role === "teacher",
+		track,
+	);
 	const capitulo = capitulos.find((c) => c.number === numero);
 
 	if (!capitulo || capitulo.estado === "bloqueado") {
 		throw redirect(
-			`/libro?toast=${encodeURIComponent("Aprueba el quiz del capítulo anterior 🔒")}`,
+			`${rutaLibro(track)}?toast=${encodeURIComponent("Aprueba el quiz del capítulo anterior 🔒")}`,
 		);
 	}
 
@@ -141,7 +176,7 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 
 	// Sin firma válida no se califica: son preguntas que este servidor no sirvió.
 	if (!sobre || sobre.chapterId !== capitulo.id) {
-		throw redirect(`/libro/capitulo/${numero}/quiz`);
+		throw redirect(rutaQuiz(track, numero));
 	}
 
 	const [quiz] = await db
@@ -149,7 +184,7 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 		.from(schema.quizzes)
 		.where(eq(schema.quizzes.id, sobre.quizId))
 		.limit(1);
-	if (!quiz) throw redirect(`/libro/capitulo/${numero}`);
+	if (!quiz) throw redirect(rutaCapitulo(track, numero));
 
 	let enviadas: Record<string, Respuesta> = {};
 	try {
@@ -163,7 +198,7 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 		.from(schema.questionBank)
 		.where(inArray(schema.questionBank.id, sobre.ids));
 
-	if (preguntas.length === 0) throw redirect(`/libro/capitulo/${numero}`);
+	if (preguntas.length === 0) throw redirect(rutaCapitulo(track, numero));
 
 	const feedback: Feedback[] = sobre.ids.flatMap((id) => {
 		const q = preguntas.find((p) => p.id === id);
@@ -196,13 +231,20 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 		answersJson: JSON.stringify(enviadas),
 	});
 
-	// Aprobar el quiz del capítulo N desbloquea el capítulo N+1.
+	// Aprobar el quiz del capítulo N desbloquea el N+1 DEL MISMO LIBRO.
+	// Sin el filtro por track, el quiz del último capítulo básico abriría el
+	// primer módulo del avanzado.
 	let desbloqueado: number | null = null;
 	if (passed) {
 		const [siguiente] = await db
 			.select({ id: schema.chapters.id, number: schema.chapters.number })
 			.from(schema.chapters)
-			.where(eq(schema.chapters.number, numero + 1))
+			.where(
+				and(
+					eq(schema.chapters.track, capitulo.track),
+					eq(schema.chapters.number, numero + 1),
+				),
+			)
 			.limit(1);
 
 		if (siguiente) {
@@ -240,7 +282,8 @@ export async function action({ context, request, params }: Route.ActionArgs) {
 /* -------------------------------------------------------------------------- */
 
 export default function Quiz({ loaderData }: Route.ComponentProps) {
-	const { user, capitulo, preguntas, passingScore, siguiente, token } = loaderData;
+	const { user, track, capitulo, preguntas, passingScore, siguiente, token } =
+		loaderData;
 	const fetcher = useFetcher<typeof action>();
 
 	const [resultado, setResultado] = useState<ResultadoQuiz | null>(null);
@@ -271,6 +314,7 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 		return (
 			<Resultado
 				user={user}
+				track={track}
 				capituloNumero={capitulo.number}
 				capituloTitulo={capitulo.title}
 				resultado={resultado}
@@ -289,7 +333,7 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 					<p className="text-[var(--color-tinta-2)]">
 						El banco de este capítulo todavía no tiene preguntas.
 					</p>
-					<Link to={`/libro/capitulo/${capitulo.number}`} className="jc-btn mt-6">
+					<Link to={rutaCapitulo(track, capitulo.number)} className="jc-btn mt-6">
 						Volver al capítulo
 					</Link>
 				</main>
@@ -307,7 +351,7 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 			<main className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-10">
 				<header className="mb-7">
 					<Link
-						to={`/libro/capitulo/${capitulo.number}`}
+						to={rutaCapitulo(track, capitulo.number)}
 						className="jc-mono text-xs tracking-[0.18em] text-[var(--color-tinta-2)] uppercase hover:text-[var(--color-cyan)]"
 					>
 						← salir del quiz
@@ -379,6 +423,7 @@ export default function Quiz({ loaderData }: Route.ComponentProps) {
 
 function Resultado({
 	user,
+	track,
 	capituloNumero,
 	capituloTitulo,
 	resultado,
@@ -387,6 +432,7 @@ function Resultado({
 	siguienteNumero,
 }: {
 	user: Route.ComponentProps["loaderData"]["user"];
+	track: Track;
 	capituloNumero: number;
 	capituloTitulo: string;
 	resultado: ResultadoQuiz;
@@ -416,7 +462,7 @@ function Resultado({
 
 					{passed && siguienteNumero && (
 						<p className="jc-mono mt-4 text-sm text-[var(--color-verde)]">
-							🔓 Capítulo {siguienteNumero} desbloqueado
+							🔓 {palabraCapitulo(track)} {siguienteNumero} desbloqueado
 						</p>
 					)}
 					{resultado.xp > 0 && (
@@ -428,26 +474,26 @@ function Resultado({
 					<div className="mt-8 flex flex-wrap justify-center gap-3">
 						{passed && siguienteNumero ? (
 							<Link
-								to={`/libro/capitulo/${siguienteNumero}`}
+								to={rutaCapitulo(track, siguienteNumero)}
 								className="jc-btn jc-btn-verde text-lg"
 							>
 								Ir al capítulo siguiente 🚀
 							</Link>
 						) : passed ? (
-							<Link to="/libro" className="jc-btn jc-btn-verde text-lg">
+							<Link to={rutaLibro(track)} className="jc-btn jc-btn-verde text-lg">
 								Volver al libro 📚
 							</Link>
 						) : (
 							<>
 								<Link
-									to={`/libro/capitulo/${capituloNumero}`}
+									to={rutaCapitulo(track, capituloNumero)}
 									className="jc-btn jc-btn-ghost"
 								>
 									📖 Repasar capítulo
 								</Link>
 								{/* Recargar el quiz trae 5 preguntas nuevas del banco */}
 								<a
-									href={`/libro/capitulo/${capituloNumero}/quiz`}
+									href={rutaQuiz(track, capituloNumero)}
 									className="jc-btn jc-btn-primary"
 								>
 									🔁 Reintentar quiz

@@ -64,7 +64,7 @@ export function createAuth(env: Env, request: Request) {
 
 export type SessionUser = Pick<
 	User,
-	"id" | "name" | "username" | "role" | "mustChangePassword"
+	"id" | "name" | "username" | "role" | "mustChangePassword" | "track"
 >;
 
 export async function getSessionUser(
@@ -84,6 +84,7 @@ export async function getSessionUser(
 			username: schema.users.username,
 			role: schema.users.role,
 			mustChangePassword: schema.users.mustChangePassword,
+			track: schema.users.track,
 		})
 		.from(schema.users)
 		.where(eq(schema.users.id, session.user.id))

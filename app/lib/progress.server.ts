@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { type Db, schema } from "~/db";
-import type { Chapter, Part } from "~/db/schema";
+import type { Chapter, Part, Track } from "~/db/schema";
+import { tracksVisibles } from "~/lib/tracks";
 
 export type EstadoCapitulo = "completado" | "disponible" | "bloqueado";
 
@@ -57,25 +58,41 @@ export function estadoDeCapitulo(
 	return progreso.unlocked.has(capitulo.id) ? "disponible" : "bloqueado";
 }
 
-/** Índice completo del libro agrupado por partes, con el estado de cada capítulo. */
+/**
+ * Índice de UN libro agrupado por partes, con el estado de cada capítulo.
+ * El track decide cuál: 'basico' (el de siempre) o 'avanzado'.
+ */
 export async function cargarLibro(
 	db: Db,
 	userId: string,
 	esProfesor: boolean,
+	track: Track = "basico",
 ): Promise<{ partes: ParteConCapitulos[]; capitulos: CapituloConEstado[] }> {
 	const progreso = await cargarProgreso(db, userId);
 
 	const partes = await db
 		.select()
 		.from(schema.parts)
+		.where(eq(schema.parts.track, track))
 		.orderBy(asc(schema.parts.number));
 
+	// Los dos libros son paralelos: uno nunca ve los capítulos del otro, ni
+	// siquiera el profe. Para cambiar de libro se cambia de URL.
 	const filas = esProfesor
-		? await db.select().from(schema.chapters).orderBy(asc(schema.chapters.number))
+		? await db
+				.select()
+				.from(schema.chapters)
+				.where(eq(schema.chapters.track, track))
+				.orderBy(asc(schema.chapters.number))
 		: await db
 				.select()
 				.from(schema.chapters)
-				.where(eq(schema.chapters.published, true))
+				.where(
+					and(
+						eq(schema.chapters.track, track),
+						eq(schema.chapters.published, true),
+					),
+				)
 				.orderBy(asc(schema.chapters.number));
 
 	const conQuiz = filas.length
@@ -152,4 +169,26 @@ export async function ultimoIntento(db: Db, userId: string) {
 		.limit(1);
 
 	return fila ?? null;
+}
+
+/**
+ * Todos los capítulos que este estudiante puede ver, de los dos libros si
+ * tiene los dos. Lo usa la práctica: alguien del track avanzado no debería
+ * recibir simulacros del libro básico, que ni siquiera puede abrir.
+ */
+export async function cargarCapitulosVisibles(
+	db: Db,
+	userId: string,
+	esProfesor: boolean,
+	trackUsuario: string,
+): Promise<CapituloConEstado[]> {
+	const tracks = esProfesor
+		? (["basico", "avanzado"] as Track[])
+		: tracksVisibles(trackUsuario);
+
+	const libros = await Promise.all(
+		tracks.map((t) => cargarLibro(db, userId, esProfesor, t)),
+	);
+
+	return libros.flatMap((l) => l.capitulos);
 }

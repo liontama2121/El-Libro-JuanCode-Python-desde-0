@@ -4,21 +4,21 @@
 --  Solo toca las filas con source = 'seed'.
 -- ============================================================================
 
-INSERT INTO parts (number, title, emoji) VALUES (1, 'Fundamentos', '🌱')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
-INSERT INTO parts (number, title, emoji) VALUES (2, 'Control de flujo', '🔀')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
-INSERT INTO parts (number, title, emoji) VALUES (3, 'Estructuras de datos', '📚')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
-INSERT INTO parts (number, title, emoji) VALUES (4, 'Código organizado', '🧰')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
-INSERT INTO parts (number, title, emoji) VALUES (5, 'Programación orientada a objetos', '🏛️')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
-INSERT INTO parts (number, title, emoji) VALUES (6, 'Mundo real', '🚀')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
+INSERT INTO parts (number, title, emoji, track) VALUES (1, 'Fundamentos', '🌱', 'basico')
+  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+INSERT INTO parts (number, title, emoji, track) VALUES (2, 'Control de flujo', '🔀', 'basico')
+  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+INSERT INTO parts (number, title, emoji, track) VALUES (3, 'Estructuras de datos', '📚', 'basico')
+  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+INSERT INTO parts (number, title, emoji, track) VALUES (4, 'Código organizado', '🧰', 'basico')
+  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+INSERT INTO parts (number, title, emoji, track) VALUES (5, 'Programación orientada a objetos', '🏛️', 'basico')
+  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+INSERT INTO parts (number, title, emoji, track) VALUES (6, 'Mundo real', '🚀', 'basico')
+  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
 
 -- ── Capítulo 1: ¿Qué es programar? (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 1, '¿Qué es programar?', '🐍', 'La idea más importante del libro: darle instrucciones exactas a una máquina.', '<p class="jc-gancho">Son las 11 de la noche y tienes que sumar las ventas del día de la tienda: 340 tirillas de papel. A mano son dos horas y un dolor de cabeza. Con seis líneas de Python son dos segundos. La diferencia entre esas dos noches se llama <strong>programar</strong>.</p>
 
 <h2>Programar es dar instrucciones exactas</h2>
@@ -126,24 +126,24 @@ print("Total:", 340)   # bien: el conteo del día lo entrega la caja registrador
   </tbody>
 </table>
 
-<blockquote>Programar no es memorizar comandos. Es aprender a partir un problema grande en pasos tan pequeños que hasta una máquina los pueda seguir.</blockquote>', 1
+<blockquote>Programar no es memorizar comandos. Es aprender a partir un problema grande en pasos tan pequeños que hasta una máquina los pueda seguir.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 1
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 1
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 1 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 1);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 1 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Ficha de presentación', 'facil', '<p>Escriba un programa que muestre en pantalla, en <strong>tres líneas separadas</strong>:</p><ul><li>Su nombre completo.</li><li>Su ciudad.</li><li>Una razón por la que quiere aprender a programar.</li></ul><p><em>Nota:</em> el contenido de los textos es libre, pero deben salir exactamente tres renglones.</p>', '<p>Necesitas tres llamadas a <code>print()</code>, una debajo de la otra. Cada <code>print()</code> baja el cursor a la línea siguiente, así que no hay que hacer nada extra.</p>', '<pre><code># Ficha de presentación del estudiante
 print("Ana Gómez")
 print("Bogotá")
 print("Quiero automatizar el inventario de la tienda de mi mamá")</code></pre><p>Línea por línea:</p><ol><li>Un comentario para que se sepa de qué es el programa. Python lo ignora.</li><li><code>print("Ana Gómez")</code> escribe el nombre y baja de línea.</li><li>Lo mismo con la ciudad.</li><li>Lo mismo con la razón. Tres <code>print()</code>, tres renglones.</li></ol>', NULL, NULL, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Recibo de la tienda', 'facil', '<p>Una tienda vendió hoy <strong>340</strong> unidades. Escriba un programa que muestre exactamente:</p><pre><code>TIENDA LA ESQUINA
 Ventas del dia: 340 unidades
@@ -152,7 +152,7 @@ print("TIENDA LA ESQUINA")
 print("Ventas del dia:", 340, "unidades")
 print("Gracias por su compra")</code></pre><p>La línea 3 es la interesante: <code>print()</code> recibe <strong>tres argumentos</strong> y los une con un espacio entre cada uno. Por eso no hay que escribir el espacio a mano dentro de las comillas. El <code>340</code> va sin comillas porque es un número.</p>', '[{"stdin":"","expected_output":"TIENDA LA ESQUINA\nVentas del dia: 340 unidades\nGracias por su compra"}]', '# Recibo simple de cierre del día
 ', 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Caza el error', 'medio', '<p>El siguiente programa no ejecuta. Encuentre los <strong>tres</strong> errores, corríjalos y entregue el programa funcionando.</p><pre><code>Print("Inicio")
 print("Mitad"
@@ -162,7 +162,7 @@ print("Fin")</code></pre><p>Los tres errores eran:</p><ol><li><code>Print</code>
 print("Mitad"
 print(Fin)
 ', 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Volante de la panadería', 'dificil', '<p>Arme el volante de una panadería. El programa debe mostrar exactamente:</p><pre><code>==============================
      PANADERIA EL TRIGAL
@@ -181,60 +181,60 @@ print("Avena         2500")
 print("-" * 30)
 print("Abrimos de 6 a 8")</code></pre><p>Dos cosas nuevas:</p><ul><li><code>"=" * 30</code> repite el carácter treinta veces. Multiplicar un texto por un número lo repite; lo veremos a fondo en el capítulo 5.</li><li>La alineación se logra contando espacios dentro de las comillas. Es incómodo, y por eso en el capítulo 5 aprenderás a alinear de verdad con f-strings.</li></ul>', NULL, '# Volante de precios de la panadería
 ', 'seed'
-    FROM chapters WHERE number = 1;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 1);
+    FROM chapters WHERE number = 1 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 1 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué es programar, en una frase?', NULL, '{"options":[{"id":"a","text":"Escribir instrucciones exactas para que una máquina las ejecute en orden"},{"id":"b","text":"Memorizar todos los comandos de un lenguaje"},{"id":"c","text":"Reparar computadores que fallan"},{"id":"d","text":"Diseñar la parte visual de una página web"}]}', '{"option_id":"a"}', 'La máquina no adivina: hace exactamente lo que le pides, en el orden en que se lo pides.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Para qué sirven las comillas en print("Hola")?', NULL, '{"options":[{"id":"a","text":"Le indican a Python dónde empieza y termina el texto"},{"id":"b","text":"Hacen que el texto salga en negrilla"},{"id":"c","text":"Son decorativas, se pueden quitar"},{"id":"d","text":"Convierten el texto en número"}]}', '{"option_id":"a"}', 'Sin comillas Python cree que Hola es el nombre de un dato guardado y lanza NameError.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué hace Python con una línea que empieza por #?', NULL, '{"options":[{"id":"a","text":"La ignora por completo: es un comentario"},{"id":"b","text":"La imprime en pantalla"},{"id":"c","text":"La ejecuta más rápido"},{"id":"d","text":"Lanza un error de sintaxis"}]}', '{"option_id":"a"}', 'Los comentarios son notas para humanos. Python los salta.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuál de estas líneas está escrita correctamente?', NULL, '{"options":[{"id":"a","text":"print(\"Hola\")"},{"id":"b","text":"Print(\"Hola\")"},{"id":"c","text":"print \"Hola\""},{"id":"d","text":"print(Hola)"}]}', '{"option_id":"a"}', 'print en minúscula, con paréntesis y con el texto entre comillas. Las otras tres fallan en una de esas tres cosas.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Cuál de estos comentarios es realmente útil?', NULL, '{"options":[{"id":"a","text":"# el conteo del día lo entrega la caja registradora"},{"id":"b","text":"# imprime el total"},{"id":"c","text":"# print"},{"id":"d","text":"# línea 3"}]}', '{"option_id":"a"}', 'Un buen comentario explica el porqué, no repite lo que el código ya dice.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', 'El computador ejecuta las instrucciones…', NULL, '{"options":[{"id":"a","text":"En el orden en que están escritas, de arriba hacia abajo"},{"id":"b","text":"En el orden que él considere más rápido"},{"id":"c","text":"Todas al mismo tiempo"},{"id":"d","text":"Empezando por la última línea"}]}', '{"option_id":"a"}', 'El orden importa: por eso hay que romper el huevo antes de echarlo.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'print("Hola")
 print("JuanCode")', '{"options":[{"id":"a","text":"Hola\nJuanCode"},{"id":"b","text":"HolaJuanCode"},{"id":"c","text":"Hola JuanCode"},{"id":"d","text":"Solo Hola"}]}', '{"option_id":"a"}', 'Cada print() escribe y baja de línea, así que salen dos renglones.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'print("Total:", 340, "unidades")', '{"options":[{"id":"a","text":"Total: 340 unidades"},{"id":"b","text":"Total:340unidades"},{"id":"c","text":"Total: , 340 , unidades"},{"id":"d","text":"Error: no se puede mezclar texto y número"}]}', '{"option_id":"a"}', 'Las comas de print() separan argumentos y meten un espacio entre cada uno.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', '# print("Uno")
 print("Dos")', '{"options":[{"id":"a","text":"Dos"},{"id":"b","text":"Uno\nDos"},{"id":"c","text":"Uno"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'La primera línea es un comentario: Python la ignora por completo.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'print("A")
 print()
 print("B")', '{"options":[{"id":"a","text":"A, un renglón en blanco, y B"},{"id":"b","text":"A y B pegados"},{"id":"c","text":"A B"},{"id":"d","text":"Error: print() necesita argumentos"}]}', '{"option_id":"a"}', 'print() sin argumentos solo baja de línea: sirve para separar bloques de salida.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'print("-" * 5)', '{"options":[{"id":"a","text":"-----"},{"id":"b","text":"- * 5"},{"id":"c","text":"-5"},{"id":"d","text":"Error: no se puede multiplicar texto"}]}', '{"option_id":"a"}', 'Multiplicar un texto por un número lo repite. Sirve para dibujar separadores.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'Este programa no corre. ¿En qué línea está el error?', NULL, '{"lines":["print(\"Inicio\")","Print(\"Mitad\")","print(\"Fin\")"]}', '{"line_number":2}', 'Python distingue mayúsculas: la función es print, no Print. Da NameError.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["print(\"Menu del dia\")","print(\"Sopa\")","print(Jugo)","print(\"Postre\")"]}', '{"line_number":3}', 'Jugo va sin comillas, así que Python lo busca como un dato guardado y no existe.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["print(\"Cierre de caja\")","print(\"Total:\", 340","print(\"Gracias\")"]}', '{"line_number":2}', 'Falta cerrar el paréntesis. Python sigue leyendo esperando el cierre y termina en SyntaxError.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que imprime el recibo de la tienda', NULL, '{"lines":[{"id":"l1","text":"# Recibo de cierre del día","indent":0},{"id":"l2","text":"print(\"TIENDA LA ESQUINA\")","indent":0},{"id":"l3","text":"print(\"Ventas del dia:\", 340, \"unidades\")","indent":0},{"id":"l4","text":"print(\"Gracias por su compra\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'Primero el comentario que explica el programa, y después las tres líneas del recibo en el orden en que deben salir.', 1, 'seed'
-    FROM chapters WHERE number = 1;
+    FROM chapters WHERE number = 1 AND track = 'basico';
 
 -- ── Capítulo 2: Variables y tipos de datos (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 2, 'Variables y tipos de datos', '📦', 'Cajas con nombre para guardar información, y los cuatro tipos básicos.', '<p class="jc-gancho">Estás calculando cuánto le queda a un cliente después de pagar tres cuotas. Sin variables tendrías que volver a escribir el saldo en cada línea, y si el número cambia, cambiarlo en diez sitios. Con variables lo escribes una vez y el programa se encarga del resto.</p>
 
 <h2>Una variable es una caja con nombre</h2>
@@ -396,18 +396,18 @@ print(precio + 500)    # TypeError</code></pre>
   </tbody>
 </table>
 
-<blockquote>Regla de oro: si vas a mostrarlo, es texto. Si vas a hacer cuentas con eso, es número. Convierte cuando cruces de un lado al otro.</blockquote>', 1
+<blockquote>Regla de oro: si vas a mostrarlo, es texto. Si vas a hacer cuentas con eso, es número. Convierte cuando cruces de un lado al otro.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 1
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 2
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 2 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 2);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 2 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Ficha del estudiante', 'facil', '<p>Cree tres variables: <code>nombre</code> (texto), <code>edad</code> (entero) y <code>estatura</code> (decimal). Luego muestre una sola línea con el formato:</p><pre><code>Ana tiene 17 anios y mide 1.62 metros</code></pre><p><em>Nota:</em> use las comas de <code>print()</code>, no concatenación con <code>+</code>.</p>', '<p>Las comas de <code>print()</code> aceptan textos y números mezclados y ponen un espacio entre cada argumento. Por eso no necesitas <code>str()</code>.</p>', '<pre><code># Ficha basica del estudiante
 nombre = "Ana"
@@ -416,7 +416,7 @@ estatura = 1.62
 
 print(nombre, "tiene", edad, "anios y mide", estatura, "metros")</code></pre><p>Las tres primeras líneas crean las cajas. La última las usa: <code>print()</code> recibe seis argumentos y los pega con un espacio entre cada uno. Si hubieras usado <code>+</code> tendrías que convertir <code>edad</code> y <code>estatura</code> con <code>str()</code>.</p>', '[{"stdin":"","expected_output":"Ana tiene 17 anios y mide 1.62 metros"}]', '# Ficha basica del estudiante
 ', 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Movimientos de la cuenta', 'facil', '<p>Una cuenta de ahorros arranca con <strong>250000</strong> pesos. Se hace un retiro de <strong>80000</strong> y luego una consignación de <strong>30000</strong>.</p><p>Escriba un programa que muestre el saldo después de cada movimiento:</p><pre><code>Saldo inicial: 250000
 Despues del retiro: 170000
@@ -431,7 +431,7 @@ saldo = saldo + 30000     # consignacion
 print("Saldo final:", saldo)</code></pre><p>La clave es que la caja <code>saldo</code> es siempre la misma; lo que cambia es su contenido. Python primero resuelve el lado derecho (<code>250000 - 80000</code>) y después guarda el resultado en la misma variable.</p>', '[{"stdin":"","expected_output":"Saldo inicial: 250000\nDespues del retiro: 170000\nSaldo final: 200000"}]', '# Movimientos de una cuenta de ahorros
 saldo = 250000
 ', 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'La calculadora que se rompió', 'medio', '<p>Este programa debería sumar dos números pero imprime <code>1020</code> en vez de <code>30</code>:</p><pre><code>a = "10"
 b = "20"
@@ -444,7 +444,7 @@ print(int(a) + int(b))   # 30</code></pre><p>La primera es mejor cuando el dato 
 b = "20"
 print(a + b)
 ', 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Liquidación de la quincena', 'dificil', '<p>Un empleado de una tienda gana <strong>7000</strong> pesos la hora y trabajó <strong>96</strong> horas en la quincena. Le descuentan el <strong>4%</strong> de salud y el <strong>4%</strong> de pensión sobre el total.</p><p>Escriba un programa que calcule y muestre:</p><pre><code>Total devengado: 672000
 Salud: 26880.0
@@ -467,64 +467,64 @@ print("Neto a pagar:", neto)</code></pre><p>Por qué queda así de largo y está
 valor_hora = 7000
 horas_trabajadas = 96
 ', 'seed'
-    FROM chapters WHERE number = 2;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 2);
+    FROM chapters WHERE number = 2 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 2 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué significa el signo = en Python?', NULL, '{"options":[{"id":"a","text":"Guarda en la variable de la izquierda el valor de la derecha"},{"id":"b","text":"Compara si los dos lados son iguales"},{"id":"c","text":"Suma los dos lados"},{"id":"d","text":"Declara una constante que no se puede cambiar"}]}', '{"option_id":"a"}', 'El = es asignación. Comparar es == , que verás en el capítulo 4.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿De qué tipo es la variable precio en precio = "1990"?', NULL, '{"options":[{"id":"a","text":"str, porque está entre comillas"},{"id":"b","text":"int, porque solo tiene dígitos"},{"id":"c","text":"float, porque representa dinero"},{"id":"d","text":"bool"}]}', '{"option_id":"a"}', 'Las comillas mandan: todo lo que va entre comillas es texto, aunque parezca número.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuál de estos nombres de variable es válido?', NULL, '{"options":[{"id":"a","text":"nota_final"},{"id":"b","text":"2do_intento"},{"id":"c","text":"nota final"},{"id":"d","text":"nota-final"}]}', '{"option_id":"a"}', 'Solo letras, números y guion bajo, y sin empezar por número. El guion medio Python lo lee como una resta.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', 'En Python, ¿qué representa el literal 1.500?', NULL, '{"options":[{"id":"a","text":"Uno coma cinco: el punto es el separador decimal"},{"id":"b","text":"Mil quinientos"},{"id":"c","text":"Un error de sintaxis"},{"id":"d","text":"El texto \"1.500\""}]}', '{"option_id":"a"}', 'Mil quinientos se escribe 1500 o 1_500. El punto siempre es decimal.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué tipo devuelve la operación 7000 * 0.04?', NULL, '{"options":[{"id":"a","text":"float"},{"id":"b","text":"int"},{"id":"c","text":"str"},{"id":"d","text":"bool"}]}', '{"option_id":"a"}', 'Si uno de los dos es float, el resultado es float. Por eso los descuentos salen con .0', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'x = 5
 x = x + 3
 print(x)', '{"options":[{"id":"a","text":"8"},{"id":"b","text":"5"},{"id":"c","text":"53"},{"id":"d","text":"Error: no se puede usar x en su propia asignación"}]}', '{"option_id":"a"}', 'Python resuelve primero el lado derecho (5 + 3) y después guarda el 8 en la misma caja.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'print("2" + "3")', '{"options":[{"id":"a","text":"23"},{"id":"b","text":"5"},{"id":"c","text":"2 3"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'Con textos el + pega en vez de sumar. Para sumar habría que convertir con int().', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'saldo = 250000
 saldo - 80000
 print(saldo)', '{"options":[{"id":"a","text":"250000"},{"id":"b","text":"170000"},{"id":"c","text":"0"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'La línea 2 calcula 170000 y lo bota: sin una asignación, el resultado se pierde.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'edad = 17
 print("Edad:", edad)', '{"options":[{"id":"a","text":"Edad: 17"},{"id":"b","text":"TypeError"},{"id":"c","text":"Edad:17"},{"id":"d","text":"Edad: edad"}]}', '{"option_id":"a"}', 'Las comas de print() aceptan tipos mezclados: no hace falta str(). Con + sí daría TypeError.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'a = 10
 b = a
 a = 99
 print(b)', '{"options":[{"id":"a","text":"10"},{"id":"b","text":"99"},{"id":"c","text":"1099"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'b se llevó una copia del valor que a tenía en ese momento. Cambiar a después no afecta a b.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'print(type(4.5))', '{"options":[{"id":"a","text":"class ''float''"},{"id":"b","text":"class ''int''"},{"id":"c","text":"class ''str''"},{"id":"d","text":"4.5"}]}', '{"option_id":"a"}', 'type() dice de qué tipo es el dato. Con decimales, siempre float.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', '¿En qué línea está el error?', NULL, '{"lines":["edad = 17","print(\"Edad: \" + edad)","print(\"fin\")"]}', '{"line_number":2}', 'No se puede pegar texto con número usando +. Faltaba str(edad), o usar las comas de print().', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["print(total)","total = 100","print(total)"]}', '{"line_number":1}', 'Python lee de arriba hacia abajo: cuando llegó al primer print, la variable total todavía no existía.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que calcula el neto de la quincena', NULL, '{"lines":[{"id":"l1","text":"valor_hora = 7000","indent":0},{"id":"l2","text":"horas = 96","indent":0},{"id":"l3","text":"total = valor_hora * horas","indent":0},{"id":"l4","text":"descuentos = total * 0.08","indent":0},{"id":"l5","text":"print(\"Neto:\", total - descuentos)","indent":0}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Una variable no se puede usar antes de crearse: primero los datos de entrada, luego los cálculos que dependen de ellos y al final la salida.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme el programa que muestra el saldo tras dos movimientos', NULL, '{"lines":[{"id":"l1","text":"saldo = 250000","indent":0},{"id":"l2","text":"saldo = saldo - 80000","indent":0},{"id":"l3","text":"saldo = saldo + 30000","indent":0},{"id":"l4","text":"print(\"Saldo final:\", saldo)","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'El orden de los movimientos cambia el resultado intermedio, y el print va de último para ver el saldo ya actualizado.', 1, 'seed'
-    FROM chapters WHERE number = 2;
+    FROM chapters WHERE number = 2 AND track = 'basico';
 
 -- ── Capítulo 3: input() y conversiones (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 3, 'input() y conversiones', '⌨️', 'Pedirle datos al usuario y convertirlos al tipo correcto.', '<p class="jc-gancho">Hasta ahora tus programas siempre hacen lo mismo porque los datos están escritos adentro. Un cajero que solo sabe retirar 80000 pesos no le sirve a nadie. Lo que falta es que el programa <strong>pregunte</strong>.</p>
 
 <h2><code>input()</code>: el programa pregunta y espera</h2>
@@ -682,18 +682,18 @@ edad = int(input())     # funciona, pero el cursor queda en otra línea</code></
   </tbody>
 </table>
 
-<blockquote>Todo lo que entra por el teclado es texto. Si vas a hacer cuentas con eso, conviértelo en la misma línea en que lo pides.</blockquote>', 1
+<blockquote>Todo lo que entra por el teclado es texto. Si vas a hacer cuentas con eso, conviértelo en la misma línea en que lo pides.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 1
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 3
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 3 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 3);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 3 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Saludo personalizado', 'facil', '<p>Solicitar al usuario su nombre y su ciudad. Mostrar un saludo con el formato:</p><pre><code>Hola Ana , bienvenida desde Bogota</code></pre><p><em>Nota:</em> use las comas de <code>print()</code>. El programa debe ir documentado con encabezado y secciones <code>#Inicio</code> / <code>#Fin</code>.</p>', '<p>Dos <code>input()</code>, dos variables y un <code>print()</code> con varios argumentos. Aquí no hay que convertir nada: nombre y ciudad son textos.</p>', '<pre><code>''''''
 Programa: Saludo personalizado
@@ -719,7 +719,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Total de la compra', 'facil', '<p>Solicitar el precio unitario de un producto y la cantidad comprada. Calcular y mostrar el total:</p><pre><code>Total a pagar: 36000</code></pre><p><em>Nota:</em> el precio y la cantidad son enteros. Recuerde que <code>input()</code> entrega texto.</p>', '<p>Envuelve cada <code>input()</code> en <code>int()</code> desde el momento en que pides el dato. Si no, <code>precio * cantidad</code> repetirá el texto en vez de multiplicar.</p>', '<pre><code>''''''
 Programa: Total de la compra
@@ -747,7 +747,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Descuento del almacén', 'medio', '<p>Solicitar el precio de un producto (puede tener decimales) y el porcentaje de descuento. Calcular y mostrar cuánto se ahorra el cliente y cuánto debe pagar:</p><pre><code>Te ahorras: 15000.0
 Total a pagar: 85000.0</code></pre><p><em>Nota:</em> el porcentaje se recibe como número entre 0 y 100.</p>', '<p>Use <code>float()</code> porque el precio puede llevar centavos. Para pasar de porcentaje a proporción, divida entre 100: un 15% es <code>15 / 100</code>, o sea <code>0.15</code>.</p>', '<pre><code>''''''
@@ -780,7 +780,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Cambio del cajero', 'dificil', '<p>Un cajero de tienda necesita saber con cuántos billetes devolver el cambio. Solicitar el valor de la compra y con cuánto paga el cliente. Calcular el cambio y descomponerlo en billetes de <strong>50000</strong>, <strong>20000</strong>, <strong>10000</strong> y el resto suelto:</p><pre><code>Cambio: 87000
 Billetes de 50000: 1
@@ -827,60 +827,60 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 3;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 3);
+    FROM chapters WHERE number = 3 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 3 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué tipo devuelve siempre input()?', NULL, '{"options":[{"id":"a","text":"str, sin importar lo que escriba el usuario"},{"id":"b","text":"int si el usuario escribe dígitos"},{"id":"c","text":"El tipo que Python adivine del contenido"},{"id":"d","text":"float, para poder hacer cuentas"}]}', '{"option_id":"a"}', 'input() siempre entrega texto. Por eso hay que convertir con int() o float() cuando el dato es numérico.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Dónde va el mensaje que ve el usuario al pedir un dato?', NULL, '{"options":[{"id":"a","text":"Dentro del paréntesis del input()"},{"id":"b","text":"En un print() de la línea anterior"},{"id":"c","text":"En un comentario"},{"id":"d","text":"En el encabezado del programa"}]}', '{"option_id":"a"}', 'input("Edad: ") muestra el mensaje y deja el cursor a continuación. Con print() aparte el cursor baja de línea.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', 'El usuario debe escribir un precio que puede llevar centavos. ¿Cómo se pide?', NULL, '{"options":[{"id":"a","text":"float(input(\"Precio: \"))"},{"id":"b","text":"int(input(\"Precio: \"))"},{"id":"c","text":"input(float(\"Precio: \"))"},{"id":"d","text":"str(input(\"Precio: \"))"}]}', '{"option_id":"a"}', 'int() revienta con "12500.50". Para decimales se usa float(), y la conversión envuelve al input().', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué error lanza int("veinte")?', NULL, '{"options":[{"id":"a","text":"ValueError"},{"id":"b","text":"TypeError"},{"id":"c","text":"NameError"},{"id":"d","text":"SyntaxError"}]}', '{"option_id":"a"}', 'El tipo es correcto (un texto), pero el contenido no representa un entero: eso es ValueError.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué debe llevar el encabezado documentado de un programa?', NULL, '{"options":[{"id":"a","text":"Nombre del programa, autor, fecha y descripción, entre comillas triples"},{"id":"b","text":"Solo el nombre del archivo"},{"id":"c","text":"La lista completa de variables usadas"},{"id":"d","text":"El resultado esperado del programa"}]}', '{"option_id":"a"}', 'El bloque entre '''''' documenta qué es el programa y quién lo hizo. Adentro van las secciones #Inicio y #Fin.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', 'El usuario escribe 3. ¿Qué imprime este programa?', 'cantidad = input("Cantidad: ")
 print(cantidad * 2)', '{"options":[{"id":"a","text":"33"},{"id":"b","text":"6"},{"id":"c","text":"3 3"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'Falta el int(): multiplicar un texto por 2 lo repite. Corre sin error y entrega basura, que es lo peligroso.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', 'El usuario escribe 25. ¿Qué imprime este programa?', 'edad = int(input("Edad: "))
 print(edad + 1)', '{"options":[{"id":"a","text":"26"},{"id":"b","text":"251"},{"id":"c","text":"TypeError"},{"id":"d","text":"ValueError"}]}', '{"option_id":"a"}', 'Con el int() la suma es aritmética. Sin él, sería TypeError al mezclar texto y número.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'print(int(" 25 "))', '{"options":[{"id":"a","text":"25"},{"id":"b","text":"ValueError"},{"id":"c","text":"\" 25 \""},{"id":"d","text":"2 5"}]}', '{"option_id":"a"}', 'int() ignora los espacios de sobra a lado y lado. Lo que no acepta son letras ni decimales.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'print(int(float("25.7")))', '{"options":[{"id":"a","text":"25"},{"id":"b","text":"26"},{"id":"c","text":"25.7"},{"id":"d","text":"ValueError"}]}', '{"option_id":"a"}', 'float() acepta el decimal y int() recorta la parte decimal: no redondea, la corta.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', 'El usuario escribe 12000 y luego 3. ¿Qué imprime?', 'precio = input("Precio: ")
 cantidad = int(input("Cantidad: "))
 print(precio * cantidad)', '{"options":[{"id":"a","text":"120001200012000"},{"id":"b","text":"36000"},{"id":"c","text":"TypeError"},{"id":"d","text":"12000 3"}]}', '{"option_id":"a"}', 'precio quedó como texto: texto por entero repite el texto tres veces. El error está en la línea 1, no en la 3.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa debe sumar 1 a la edad. ¿En qué línea está el error?', NULL, '{"lines":["edad = input(\"Edad: \")","print(edad + 1)"]}', '{"line_number":1}', 'Falta convertir: debía ser int(input("Edad: ")). El síntoma sale en la línea 2, pero el error se cometió en la 1.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El precio puede tener centavos. ¿En qué línea está el error?', NULL, '{"lines":["''''''","Programa: Compra","''''''","# Inicio","precio = int(input(\"Precio: \"))","print(\"Precio:\", precio)","# Fin"]}', '{"line_number":5}', 'Con centavos, int() lanza ValueError. Ahí va float().', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["nombre = input(\"Nombre: \")","edad = int(input(\"Edad: \")","print(nombre, edad)"]}', '{"line_number":2}', 'Falta un paréntesis de cierre: se abrieron int( e input( y solo se cerró uno.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que calcula el total de una compra', NULL, '{"lines":[{"id":"l1","text":"precio = int(input(\"Precio unitario: \"))","indent":0},{"id":"l2","text":"cantidad = int(input(\"Cantidad: \"))","indent":0},{"id":"l3","text":"total = precio * cantidad","indent":0},{"id":"l4","text":"print(\"Total a pagar:\", total)","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'Primero se piden los dos datos, después se calcula con ellos y de último se muestra. No se puede calcular con algo que aún no se pidió.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme el programa documentado que calcula el descuento', NULL, '{"lines":[{"id":"l1","text":"''''''","indent":0},{"id":"l2","text":"Programa: Descuento del almacen","indent":0},{"id":"l3","text":"''''''","indent":0},{"id":"l4","text":"# Inicio","indent":0},{"id":"l5","text":"precio = float(input(\"Precio: \"))","indent":0},{"id":"l6","text":"descuento = float(input(\"Descuento (%): \"))","indent":0},{"id":"l7","text":"total = precio - precio * (descuento / 100)","indent":0},{"id":"l8","text":"print(\"Total a pagar:\", total)","indent":0},{"id":"l9","text":"# Fin","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8","l9"]}', 'El encabezado abre y cierra con '''''', y toda la lógica queda encerrada entre #Inicio y #Fin.', 1, 'seed'
-    FROM chapters WHERE number = 3;
+    FROM chapters WHERE number = 3 AND track = 'basico';
 
 -- ── Capítulo 4: Operadores (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 4, 'Operadores', '🧮', 'Aritméticos, de comparación y lógicos, con su orden de precedencia.', '<p class="jc-gancho">Un parqueadero cobra 3000 la primera hora y 1500 cada hora adicional. ¿Cuánto le cobras a alguien que estuvo 4 horas y 20 minutos? Todo eso son operadores: dividir, sacar el resto, comparar y decidir.</p>
 
 <h2>Los aritméticos</h2>
@@ -1077,18 +1077,18 @@ if nota == 3 or nota == 4:  # ✅</code></pre>
   </tbody>
 </table>
 
-<blockquote>Un signo igual guarda. Dos signos igual preguntan. Esa sola frase te ahorra la mitad de los errores del próximo capítulo.</blockquote>', 1
+<blockquote>Un signo igual guarda. Dos signos igual preguntan. Esa sola frase te ahorra la mitad de los errores del próximo capítulo.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 1
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 4
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 4 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 4);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 4 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Promedio de tres notas', 'facil', '<p>Solicitar tres notas de un estudiante (de 0.0 a 5.0). Calcular y mostrar el promedio:</p><pre><code>Promedio: 3.5</code></pre><p><em>Nota:</em> cuidado con la precedencia de operadores.</p>', '<p>Las tres notas se suman <strong>primero</strong> y el resultado se divide entre 3. Sin paréntesis, Python solo divide la última nota.</p>', '<pre><code>''''''
 Programa: Promedio de tres notas
@@ -1118,7 +1118,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Minutos a horas y minutos', 'facil', '<p>Solicitar una cantidad de minutos y mostrarla en horas y minutos:</p><pre><code>260 minutos son 4 horas y 20 minutos</code></pre><p><em>Nota:</em> use división entera y módulo. No use decimales.</p>', '<p><code>260 // 60</code> dice cuántas horas completas caben, y <code>260 % 60</code> dice cuántos minutos sobran. Son la misma pareja de siempre.</p>', '<pre><code>''''''
 Programa: Conversor de minutos
@@ -1146,7 +1146,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Verificaciones de un cliente', 'medio', '<p>Solicitar la edad de un cliente y el saldo de su cuenta. Mostrar, con <code>True</code> o <code>False</code>, tres verificaciones:</p><pre><code>Es mayor de edad: True
 Tiene saldo suficiente (>= 50000): True
@@ -1182,7 +1182,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Tarifa del parqueadero', 'dificil', '<p>Un parqueadero cobra <strong>3000</strong> pesos la primera hora y <strong>1500</strong> cada hora adicional. Se cobra por <strong>hora empezada</strong>.</p><p>Solicitar los minutos que estuvo el vehículo y mostrar:</p><pre><code>Horas cobradas: 5
 Total a pagar: 9000</code></pre><p><em>Nota:</em> 260 minutos son 4 horas y 20 minutos, así que se cobran 5 horas. No use <code>if</code>: resuélvalo con aritmética.</p>', '<p>Truco clásico para redondear hacia arriba con enteros: <code>(minutos + 59) // 60</code>. Sumar 59 hace que cualquier sobrante empuje a la siguiente hora, y si es exacto no cambia nada.</p>', '<pre><code>''''''
@@ -1220,62 +1220,62 @@ HORA_ADICIONAL = 1500
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 4;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 4);
+    FROM chapters WHERE number = 4 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 4 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuál es la diferencia entre / y // ?', NULL, '{"options":[{"id":"a","text":"/ siempre da decimal; // da solo la parte entera"},{"id":"b","text":"Son lo mismo, // es más rápido"},{"id":"c","text":"// divide y / saca el resto"},{"id":"d","text":"// solo sirve con números negativos"}]}', '{"option_id":"a"}', '10 / 2 da 5.0 (float) y 10 // 3 da 3. Para el resto está el %.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cómo se pregunta si un número es par?', NULL, '{"options":[{"id":"a","text":"numero % 2 == 0"},{"id":"b","text":"numero / 2 == 0"},{"id":"c","text":"numero // 2 == 0"},{"id":"d","text":"numero == par"}]}', '{"option_id":"a"}', 'Un número es par cuando al dividirlo entre 2 no sobra nada, o sea cuando el resto es 0.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué diferencia hay entre = y == ?', NULL, '{"options":[{"id":"a","text":"= guarda un valor; == pregunta si dos cosas son iguales"},{"id":"b","text":"Son equivalentes"},{"id":"c","text":"= compara y == asigna"},{"id":"d","text":"== solo sirve con textos"}]}', '{"option_id":"a"}', 'Un signo igual guarda, dos preguntan. Usar = dentro de un if da SyntaxError.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Cuándo es verdadero A and B?', NULL, '{"options":[{"id":"a","text":"Solo cuando A y B son verdaderos los dos"},{"id":"b","text":"Cuando al menos uno es verdadero"},{"id":"c","text":"Cuando los dos son falsos"},{"id":"d","text":"Siempre que A sea verdadero"}]}', '{"option_id":"a"}', 'and es exigente: si una parte falla, todo falla. El conforme es or.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué if nota == 3 or 4: está mal?', NULL, '{"options":[{"id":"a","text":"Porque el 4 solo se evalúa como \"distinto de cero\", así que la condición siempre es verdadera"},{"id":"b","text":"Porque or no se puede usar con números"},{"id":"c","text":"Porque falta un paréntesis"},{"id":"d","text":"Porque nota debería ir después del or"}]}', '{"option_id":"a"}', 'Cada lado de un or tiene que ser una comparación completa: nota == 3 or nota == 4.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'print(7 // 2, 7 % 2, 7 / 2)', '{"options":[{"id":"a","text":"3 1 3.5"},{"id":"b","text":"3.5 1 3"},{"id":"c","text":"3 3 3"},{"id":"d","text":"3.5 3.5 3.5"}]}', '{"option_id":"a"}', '// da cuántas veces cabe (3), % lo que sobra (1) y / el resultado exacto (3.5).', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'print(2 + 3 * 4)', '{"options":[{"id":"a","text":"14"},{"id":"b","text":"20"},{"id":"c","text":"24"},{"id":"d","text":"9"}]}', '{"option_id":"a"}', 'La multiplicación va antes que la suma: 3*4 = 12, y 2 + 12 = 14.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'nota1 = 4.0
 nota2 = 3.0
 print(nota1 + nota2 / 2)', '{"options":[{"id":"a","text":"5.5"},{"id":"b","text":"3.5"},{"id":"c","text":"7.0"},{"id":"d","text":"3.0"}]}', '{"option_id":"a"}', 'Sin paréntesis solo se divide nota2: 4.0 + 1.5 = 5.5. El promedio correcto sería (nota1 + nota2) / 2.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'print(10 / 2)', '{"options":[{"id":"a","text":"5.0"},{"id":"b","text":"5"},{"id":"c","text":"5.5"},{"id":"d","text":"2"}]}', '{"option_id":"a"}', 'El operador / siempre entrega float, aunque la división sea exacta.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'edad = 20
 tiene_cedula = False
 print(edad >= 18 and tiene_cedula)', '{"options":[{"id":"a","text":"False"},{"id":"b","text":"True"},{"id":"c","text":"20"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'La primera parte es True pero la segunda es False, y con and basta con que una falle.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'minutos = 260
 print((minutos + 59) // 60)', '{"options":[{"id":"a","text":"5"},{"id":"b","text":"4"},{"id":"c","text":"4.33"},{"id":"d","text":"319"}]}', '{"option_id":"a"}', 'Sumar 59 antes de la división entera redondea hacia arriba: es el truco de la hora empezada.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'nota = 3.8
 print(3.0 <= nota <= 5.0)', '{"options":[{"id":"a","text":"True"},{"id":"b","text":"False"},{"id":"c","text":"3.8"},{"id":"d","text":"SyntaxError"}]}', '{"option_id":"a"}', 'Python permite encadenar comparaciones igual que en matemáticas: pregunta si nota está dentro del rango.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa debe mostrar el promedio de dos notas. ¿En qué línea está el error?', NULL, '{"lines":["nota1 = 4.0","nota2 = 3.0","promedio = nota1 + nota2 / 2","print(promedio)"]}', '{"line_number":3}', 'Faltan los paréntesis: debía ser (nota1 + nota2) / 2. Corre sin error pero da un resultado equivocado.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["edad = int(input(\"Edad: \"))","es_mayor = edad => 18","print(es_mayor)"]}', '{"line_number":2}', 'El operador se escribe >=, no =>. El signo de comparación va primero.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que convierte minutos a horas y minutos', NULL, '{"lines":[{"id":"l1","text":"total_minutos = int(input(\"Minutos: \"))","indent":0},{"id":"l2","text":"horas = total_minutos // 60","indent":0},{"id":"l3","text":"minutos = total_minutos % 60","indent":0},{"id":"l4","text":"print(horas, \"horas y\", minutos, \"minutos\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', '// y % trabajan sobre el mismo dato de entrada, así que ambos van después de pedirlo y antes de mostrar.', 1, 'seed'
-    FROM chapters WHERE number = 4;
+    FROM chapters WHERE number = 4 AND track = 'basico';
 
 -- ── Capítulo 5: Strings a fondo (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 5, 'Strings a fondo', '📝', 'Indexación, slicing, métodos y f-strings.', '<p class="jc-gancho">El extracto bancario dice <code>ana gomez</code> y tiene que salir <code>Ana Gomez</code>. El precio es <code>1250000</code> y debe verse <code>$ 1,250,000</code>. Nada de eso es cuenta: es manejo de texto, y en programación se hace todo el día.</p>
 
 <h2>Un string es una fila de casillas</h2>
@@ -1455,18 +1455,18 @@ print(f"{nombre} tiene {saldo}")    # ✅</code></pre>
   </tbody>
 </table>
 
-<blockquote>Los métodos de texto no cambian la variable: devuelven una copia arreglada. Si no la guardas, se pierde.</blockquote>', 1
+<blockquote>Los métodos de texto no cambian la variable: devuelven una copia arreglada. Si no la guardas, se pierde.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 1
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 5
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 5 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 5);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 5 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Limpiar el nombre del formulario', 'facil', '<p>Solicitar el nombre completo de una persona tal como llega de un formulario (puede traer espacios de sobra y mayúsculas desordenadas). Mostrarlo limpio y con cada palabra en mayúscula inicial, entre corchetes:</p><pre><code>[Ana Gomez]</code></pre><p><em>Nota:</em> use f-string para la salida.</p>', '<p>Tres métodos encadenados: <code>.strip()</code> para los espacios, <code>.lower()</code> para partir parejo y <code>.title()</code> para las iniciales. Recuerde guardar el resultado.</p>', '<pre><code>''''''
 Programa: Limpieza de nombres
@@ -1496,7 +1496,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Datos de la cédula', 'facil', '<p>Solicitar un número de cédula. Mostrar cuántos dígitos tiene, su primer dígito y sus últimos cuatro:</p><pre><code>Digitos: 10
 Primero: 1
@@ -1526,7 +1526,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Factura formateada', 'medio', '<p>Solicitar el nombre de un producto, su precio unitario y la cantidad. Mostrar una línea de factura con el nombre alineado a la izquierda en 15 espacios y el total alineado a la derecha en 12, con separador de miles:</p><pre><code>Producto       Total
 Bunuelo           15,000</code></pre><p><em>Nota:</em> use f-strings con especificadores de formato.</p>', '<p><code>f"{texto:&lt;15}"</code> alinea a la izquierda rellenando hasta 15 caracteres. <code>f"{numero:&gt;12,}"</code> alinea a la derecha y mete el separador de miles.</p>', '<pre><code>''''''
@@ -1558,7 +1558,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Validador de correo', 'dificil', '<p>Solicitar un correo electrónico y mostrar un informe:</p><pre><code>Correo: ana@juancode.co
 Usuario: ana
@@ -1599,63 +1599,63 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 5;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 5);
+    FROM chapters WHERE number = 5 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 5 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Desde qué número se cuentan las posiciones de un string?', NULL, '{"options":[{"id":"a","text":"Desde 0"},{"id":"b","text":"Desde 1"},{"id":"c","text":"Desde -1"},{"id":"d","text":"Depende del largo del texto"}]}', '{"option_id":"a"}', 'La primera casilla es la 0, así que en un texto de 9 letras la última es la 8.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuál es la forma más segura de obtener el último carácter de un texto?', NULL, '{"options":[{"id":"a","text":"texto[-1]"},{"id":"b","text":"texto[len(texto)]"},{"id":"c","text":"texto[1]"},{"id":"d","text":"texto.last()"}]}', '{"option_id":"a"}', 'texto[len(texto)] se pasa por uno y da IndexError. Con [-1] no hay que calcular nada.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué hace nombre.upper() si no se guarda el resultado?', NULL, '{"options":[{"id":"a","text":"Nada visible: devuelve un texto nuevo y se pierde"},{"id":"b","text":"Cambia la variable nombre"},{"id":"c","text":"Lanza un error"},{"id":"d","text":"Imprime el texto en mayúsculas"}]}', '{"option_id":"a"}', 'Los métodos de texto no modifican el original: devuelven una copia. Hay que hacer nombre = nombre.upper().', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Para qué sirve la f antes de las comillas en f"Hola {nombre}"?', NULL, '{"options":[{"id":"a","text":"Para que Python reemplace lo que está entre llaves por su valor"},{"id":"b","text":"Para indicar que el texto está en formato UTF-8"},{"id":"c","text":"Para que el texto salga en negrilla"},{"id":"d","text":"Para convertir el texto en float"}]}', '{"option_id":"a"}', 'Sin la f, las llaves se imprimen tal cual. Con la f, adentro cabe cualquier expresión.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué una cédula se guarda como texto y no como número?', NULL, '{"options":[{"id":"a","text":"Porque no se hacen cuentas con ella y un cero inicial se perdería"},{"id":"b","text":"Porque los números enteros no aceptan más de 8 dígitos"},{"id":"c","text":"Porque input() no puede convertirla"},{"id":"d","text":"Porque ocupa menos memoria"}]}', '{"option_id":"a"}', 'Cédulas, teléfonos y códigos son identificadores, no cantidades: se manejan como texto.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'ciudad = "Cartagena"
 print(ciudad[0], ciudad[-1])', '{"options":[{"id":"a","text":"C a"},{"id":"b","text":"C n"},{"id":"c","text":"Ca"},{"id":"d","text":"IndexError"}]}', '{"option_id":"a"}', '[0] es la primera letra y [-1] la última, que en Cartagena es otra a.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'ciudad = "Cartagena"
 print(ciudad[0:5])', '{"options":[{"id":"a","text":"Carta"},{"id":"b","text":"Cartag"},{"id":"c","text":"artag"},{"id":"d","text":"Carta g"}]}', '{"option_id":"a"}', 'En una rebanada el inicio entra y el final no: se toman las posiciones 0, 1, 2, 3 y 4.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'nombre = "  ana  "
 nombre.strip()
 print(f"[{nombre}]")', '{"options":[{"id":"a","text":"[  ana  ]"},{"id":"b","text":"[ana]"},{"id":"c","text":"[]"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'El strip() calculó el texto limpio y lo botó porque nadie lo guardó. La variable sigue igual.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'print(f"{4.5678:.2f}")', '{"options":[{"id":"a","text":"4.57"},{"id":"b","text":"4.56"},{"id":"c","text":"4.5678"},{"id":"d","text":"4.6"}]}', '{"option_id":"a"}', '.2f deja dos decimales y redondea: 4.5678 pasa a 4.57.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'saldo = 1250000
 print(f"{saldo:,}")', '{"options":[{"id":"a","text":"1,250,000"},{"id":"b","text":"1.250.000"},{"id":"c","text":"1250000"},{"id":"d","text":"1250,000"}]}', '{"option_id":"a"}', 'La coma como especificador mete el separador de miles al estilo inglés.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'fecha = "14/03/2026"
 partes = fecha.split("/")
 print(partes[2])', '{"options":[{"id":"a","text":"2026"},{"id":"b","text":"03"},{"id":"c","text":"14"},{"id":"d","text":"/"}]}', '{"option_id":"a"}', 'split() parte el texto donde encuentra el separador y devuelve una lista: ["14", "03", "2026"].', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'print("  ANA gomez  ".strip().lower().title())', '{"options":[{"id":"a","text":"Ana Gomez"},{"id":"b","text":"  Ana Gomez  "},{"id":"c","text":"ANA GOMEZ"},{"id":"d","text":"ana gomez"}]}', '{"option_id":"a"}', 'Los métodos se encadenan de izquierda a derecha: primero se quitan espacios, luego se baja todo a minúsculas y al final se ponen las iniciales.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa debe mostrar el nombre en mayúsculas. ¿En qué línea está el error?', NULL, '{"lines":["nombre = input(\"Nombre: \")","nombre.upper()","print(nombre)"]}', '{"line_number":2}', 'Falta guardar: nombre = nombre.upper(). Así como está, el resultado se calcula y se bota.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["nombre = \"Ana\"","saldo = 1250000","print(\"{nombre} tiene {saldo}\")"]}', '{"line_number":3}', 'Falta la f antes de las comillas: sin ella las llaves se imprimen tal cual.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que separa un correo en usuario y dominio', NULL, '{"lines":[{"id":"l1","text":"crudo = input(\"Correo: \")","indent":0},{"id":"l2","text":"correo = crudo.strip().lower()","indent":0},{"id":"l3","text":"partes = correo.split(\"@\")","indent":0},{"id":"l4","text":"print(f\"Usuario: {partes[0]}\")","indent":0},{"id":"l5","text":"print(f\"Dominio: {partes[-1]}\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Primero se pide, después se normaliza, luego se parte y al final se muestran los pedazos.', 1, 'seed'
-    FROM chapters WHERE number = 5;
+    FROM chapters WHERE number = 5 AND track = 'basico';
 
 -- ── Capítulo 6: Condicionales (if / elif / else) (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 6, 'Condicionales (if / elif / else)', '🔀', 'Que el programa tome decisiones.', '<p class="jc-gancho">El cajero automático no le entrega plata a todo el mundo. Antes pregunta: ¿el saldo alcanza? ¿el monto es múltiplo de 10000? ¿la tarjeta está activa? Cada una de esas preguntas es un <code>if</code>, y hasta ahora tus programas no sabían hacer ninguna.</p>
 
 <h2>El torniquete</h2>
@@ -1816,18 +1816,18 @@ if nota == 5.0:     # ✅</code></pre>
   </tbody>
 </table>
 
-<blockquote>En un <code>elif</code>, Python se queda con la primera condición verdadera y no mira las demás. Por eso las condiciones van de la más exigente a la menos exigente.</blockquote>', 1
+<blockquote>En un <code>elif</code>, Python se queda con la primera condición verdadera y no mira las demás. Por eso las condiciones van de la más exigente a la menos exigente.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 2
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 6
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 6 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 6);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 6 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, '¿Par o impar?', 'facil', '<p>Solicitar un número entero y mostrar si es par o impar:</p><pre><code>El 7 es impar</code></pre><p><em>Nota:</em> use el operador módulo.</p>', '<p>Un número es par cuando <code>numero % 2 == 0</code>. Con eso arma el <code>if</code> y el <code>else</code>.</p>', '<pre><code>''''''
 Programa: Par o impar
@@ -1856,7 +1856,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Escala de notas', 'facil', '<p>Solicitar una nota entre 0.0 y 5.0 y mostrar su concepto según la escala:</p><table><thead><tr><th>Nota</th><th>Concepto</th></tr></thead><tbody><tr><td>4.5 a 5.0</td><td>Excelente</td></tr><tr><td>4.0 a 4.4</td><td>Muy bien</td></tr><tr><td>3.0 a 3.9</td><td>Aprobado</td></tr><tr><td>menor a 3.0</td><td>Reprobado</td></tr></tbody></table><pre><code>Nota 3.8: Aprobado</code></pre>', '<p>Use <code>elif</code> y ordene las condiciones de la más exigente a la menos exigente. Si empieza por <code>nota >= 3.0</code>, las demás nunca se alcanzan.</p>', '<pre><code>''''''
 Programa: Escala de notas
@@ -1892,7 +1892,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Retiro en el cajero', 'medio', '<p>Un cajero tiene un saldo de <strong>100000</strong> pesos y solo entrega billetes múltiplos de <strong>10000</strong>.</p><p>Solicitar el monto a retirar y mostrar una de tres respuestas:</p><ul><li><code>Retiro aprobado. Nuevo saldo: 50000</code></li><li><code>El cajero solo entrega multiplos de 10000</code></li><li><code>Saldo insuficiente</code></li></ul><p><em>Nota:</em> primero se verifica el saldo y solo después el múltiplo.</p>', '<p>Necesita un <code>if</code> anidado: la pregunta del múltiplo solo tiene sentido si el saldo alcanzó. El <code>else</code> de adentro se alinea con el <code>if</code> de adentro.</p>', '<pre><code>''''''
 Programa: Retiro en el cajero
@@ -1932,7 +1932,7 @@ BILLETE = 10000
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Tarifa de servicios públicos', 'dificil', '<p>Una empresa cobra la energía por rangos de consumo mensual:</p><table><thead><tr><th>Consumo (kWh)</th><th>Precio por kWh</th></tr></thead><tbody><tr><td>0 a 150</td><td>500</td></tr><tr><td>151 a 300</td><td>700</td></tr><tr><td>más de 300</td><td>900</td></tr></tbody></table><p>Además, si el estrato es 1, 2 o 3 se aplica un <strong>subsidio del 20%</strong> sobre el total.</p><p>Solicitar el consumo y el estrato. Mostrar:</p><pre><code>Consumo: 200 kWh
 Tarifa: 700
@@ -1988,36 +1988,36 @@ SUBSIDIO = 0.20
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 6;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 6);
+    FROM chapters WHERE number = 6 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 6 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué le dice a Python que una línea está dentro de un if?', NULL, '{"options":[{"id":"a","text":"La indentación: cuatro espacios al principio"},{"id":"b","text":"Las llaves { }"},{"id":"c","text":"Un punto y coma al final"},{"id":"d","text":"La palabra end"}]}', '{"option_id":"a"}', 'En Python el bloque ES la indentación. Sin sangría, la línea queda fuera del if.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué falta al final de la línea del if?', NULL, '{"options":[{"id":"a","text":"Dos puntos"},{"id":"b","text":"Punto y coma"},{"id":"c","text":"Una coma"},{"id":"d","text":"Nada"}]}', '{"option_id":"a"}', 'Los dos puntos anuncian que abre un bloque. Sin ellos, SyntaxError.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', 'En una cadena if / elif / elif / else, ¿cuántos bloques se ejecutan?', NULL, '{"options":[{"id":"a","text":"Exactamente uno: el primero cuya condición sea verdadera"},{"id":"b","text":"Todos los que tengan condición verdadera"},{"id":"c","text":"Siempre el else también"},{"id":"d","text":"Ninguno si la primera condición falla"}]}', '{"option_id":"a"}', 'Python se queda con la primera verdadera y sale de toda la cadena. Con if sueltos sí se evaluarían todas.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Por qué las condiciones de una escala de notas van de mayor a menor?', NULL, '{"options":[{"id":"a","text":"Porque Python toma la primera verdadera, y si empieza por la menos exigente las demás nunca se alcanzan"},{"id":"b","text":"Por estética, da igual el orden"},{"id":"c","text":"Porque elif solo acepta el operador >="},{"id":"d","text":"Porque else debe ir siempre de primero"}]}', '{"option_id":"a"}', 'Con nota >= 3.0 de primera, un 4.8 entraría por ahí y diría Aprobado.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Cuándo conviene anidar un if dentro de otro?', NULL, '{"options":[{"id":"a","text":"Cuando la segunda pregunta solo tiene sentido si la primera pasó"},{"id":"b","text":"Siempre que haya dos condiciones"},{"id":"c","text":"Cuando se quiere ahorrar líneas"},{"id":"d","text":"Nunca: anidar está prohibido"}]}', '{"option_id":"a"}', 'Si el saldo no alcanza, ni vale la pena preguntar si el monto es múltiplo. Si las dos preguntas son independientes, se unen con and.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'edad = 15
 if edad >= 18:
     print("Pasa")
 print("Siguiente")', '{"options":[{"id":"a","text":"Siguiente"},{"id":"b","text":"Pasa\nSiguiente"},{"id":"c","text":"Pasa"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'La condición es falsa, así que el bloque indentado se salta. El último print está afuera y siempre corre.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'nota = 4.8
 if nota >= 3.0:
     print("Aprobado")
 elif nota >= 4.5:
     print("Excelente")', '{"options":[{"id":"a","text":"Aprobado"},{"id":"b","text":"Excelente"},{"id":"c","text":"Aprobado\nExcelente"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'El orden está al revés: la primera condición ya es verdadera, así que el elif nunca se alcanza.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'saldo = 30000
 retiro = 50000
@@ -2027,14 +2027,14 @@ if retiro <= saldo:
 else:
     print("Insuficiente")
 print(saldo)', '{"options":[{"id":"a","text":"Insuficiente\n30000"},{"id":"b","text":"Aprobado\n-20000"},{"id":"c","text":"Insuficiente\n-20000"},{"id":"d","text":"Aprobado\n30000"}]}', '{"option_id":"a"}', 'La condición es falsa, así que el saldo no se toca y entra por el else.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'n = 12
 if n % 2 == 0:
     print("par")
 if n % 3 == 0:
     print("multiplo de 3")', '{"options":[{"id":"a","text":"par\nmultiplo de 3"},{"id":"b","text":"par"},{"id":"c","text":"multiplo de 3"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'Son dos if independientes, no una cadena: se evalúan los dos y los dos son verdaderos.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'consumo = 200
 if consumo <= 150:
@@ -2044,7 +2044,7 @@ elif consumo <= 300:
 else:
     tarifa = 900
 print(consumo * tarifa)', '{"options":[{"id":"a","text":"140000"},{"id":"b","text":"100000"},{"id":"c","text":"180000"},{"id":"d","text":"700"}]}', '{"option_id":"a"}', '200 no es <= 150 pero sí <= 300, así que la tarifa queda en 700: 200 * 700 = 140000.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'saldo = 100000
 monto = 35000
@@ -2055,22 +2055,22 @@ if monto <= saldo:
         print("Solo multiplos de 10000")
 else:
     print("Insuficiente")', '{"options":[{"id":"a","text":"Solo multiplos de 10000"},{"id":"b","text":"Aprobado"},{"id":"c","text":"Insuficiente"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'El saldo alcanza, así que entra al if de adentro; 35000 % 10000 da 5000, no cero, y cae en el else interno.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', '¿En qué línea está el error?', NULL, '{"lines":["edad = int(input(\"Edad: \"))","if edad >= 18","    print(\"Mayor de edad\")"]}', '{"line_number":2}', 'Falta los dos puntos al final de la condición.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["nota = 4.0","if nota = 5.0:","    print(\"Perfecto\")"]}', '{"line_number":2}', 'Dentro de un if se compara con ==. Un solo = es asignación y da SyntaxError.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El else debería atender el caso contrario. ¿En qué línea está el error?', NULL, '{"lines":["saldo = 100000","monto = 50000","if monto <= saldo:","print(\"Aprobado\")","else:","    print(\"Insuficiente\")"]}', '{"line_number":4}', 'El print del bloque no está indentado: Python espera al menos una línea con sangría después de los dos puntos.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que dice si un número es par o impar', NULL, '{"lines":[{"id":"l1","text":"numero = int(input(\"Numero: \"))","indent":0},{"id":"l2","text":"if numero % 2 == 0:","indent":0},{"id":"l3","text":"print(f\"El {numero} es par\")","indent":1},{"id":"l4","text":"else:","indent":0},{"id":"l5","text":"print(f\"El {numero} es impar\")","indent":1}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Los print van indentados dentro de su rama, y el else se alinea con el if.', 1, 'seed'
-    FROM chapters WHERE number = 6;
+    FROM chapters WHERE number = 6 AND track = 'basico';
 
 -- ── Capítulo 7: Ciclo while (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 7, 'Ciclo while', '⏳', 'Repetir mientras se cumpla una condición, con contadores, sumatorias y banderas.', '<p class="jc-gancho">El cajero no te pregunta la clave una vez y se rinde: te deja intentar hasta tres veces. La caja de la tienda no cobra un producto: cobra hasta que digas "ya". Eso es repetir <em>mientras</em> algo se cumpla, y para eso está <code>while</code>.</p>
 
 <h2>La alarma del despertador</h2>
@@ -2270,18 +2270,18 @@ else:
   </tbody>
 </table>
 
-<blockquote>Contadores, sumatorias y banderas nacen afuera y se actualizan adentro. Si la variable nace adentro, cada vuelta la borra.</blockquote>', 1
+<blockquote>Contadores, sumatorias y banderas nacen afuera y se actualizan adentro. Si la variable nace adentro, cada vuelta la borra.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 2
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 7
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 7 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 7);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 7 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Cuenta regresiva', 'facil', '<p>Solicitar un número entero positivo y mostrar la cuenta regresiva hasta 1, y luego la palabra <code>Ya!</code>:</p><pre><code>5
 4
@@ -2315,7 +2315,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Ventas del día', 'facil', '<p>Solicitar <strong>5</strong> ventas del día. Al final mostrar el total y el promedio:</p><pre><code>Total: 250000
 Promedio: 50000.0</code></pre><p><em>Nota:</em> use el patrón de sumatoria.</p>', '<p><code>total</code> nace en 0 <strong>antes</strong> del ciclo y adentro crece con <code>total += venta</code>. El promedio se calcula después, cuando el total ya está completo.</p>', '<pre><code>''''''
@@ -2352,7 +2352,7 @@ CUANTAS = 5
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Informe de notas', 'medio', '<p>Solicitar <strong>5</strong> notas de un estudiante (de 0.0 a 5.0). Mostrar al final:</p><ul><li>cuántas aprobaron (nota mayor o igual a 3.0),</li><li>el promedio del curso,</li><li>y un aviso si hubo <strong>al menos una</strong> nota perfecta (5.0).</li></ul><pre><code>Aprobadas: 3
 Promedio: 3.5
@@ -2405,7 +2405,7 @@ MINIMA_APROBATORIA = 3.0
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Caja de la tienda', 'dificil', '<p>Simular la caja de una tienda. Se piden productos y precios <strong>hasta que el usuario escriba <code>fin</code></strong> como nombre del producto.</p><p>Al terminar mostrar:</p><pre><code>Productos: 3
 Total: 27000
@@ -2456,29 +2456,29 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 7;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 7);
+    FROM chapters WHERE number = 7 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 7 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuáles son las tres partes de todo ciclo while?', NULL, '{"options":[{"id":"a","text":"Preparar antes, preguntar en el while y avanzar adentro"},{"id":"b","text":"Abrir, cerrar y contar"},{"id":"c","text":"if, elif y else"},{"id":"d","text":"Inicio, cuerpo y return"}]}', '{"option_id":"a"}', 'Si falta avanzar, la condición nunca cambia y el ciclo es infinito.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Dónde nace un contador o una sumatoria?', NULL, '{"options":[{"id":"a","text":"Antes del ciclo, y se actualiza adentro"},{"id":"b","text":"Dentro del ciclo, para que se reinicie"},{"id":"c","text":"Después del ciclo"},{"id":"d","text":"Dentro del if"}]}', '{"option_id":"a"}', 'Nacen afuera, se actualizan adentro. Si nacen adentro, cada vuelta los borra.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿En qué valor nace una bandera?', NULL, '{"options":[{"id":"a","text":"En False, y se pone en True cuando ocurre lo que se busca"},{"id":"b","text":"En 0, y se suma de a uno"},{"id":"c","text":"En True, para poder bajarla"},{"id":"d","text":"En una cadena vacía"}]}', '{"option_id":"a"}', 'Una bandera se levanta y se queda levantada. Ponerle un else que la baje borra el hallazgo.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué es la lectura anticipada?', NULL, '{"options":[{"id":"a","text":"Pedir el dato una vez antes del while y otra al final del cuerpo"},{"id":"b","text":"Leer todos los datos de una vez al principio"},{"id":"c","text":"Usar input() dentro de la condición del while"},{"id":"d","text":"Adivinar el dato antes de pedirlo"}]}', '{"option_id":"a"}', 'El primer input alimenta la primera pregunta del while; el de adentro prepara la vuelta siguiente.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué el promedio se calcula después del ciclo y no adentro?', NULL, '{"options":[{"id":"a","text":"Porque adentro la suma todavía está incompleta"},{"id":"b","text":"Porque dentro del while no se puede dividir"},{"id":"c","text":"Porque el promedio necesita un if"},{"id":"d","text":"Da igual, es cuestión de gusto"}]}', '{"option_id":"a"}', 'En la vuelta 3 la suma solo tiene tres datos. El promedio se saca cuando el acumulador ya terminó.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'n = 1
 while n <= 3:
     print(n)
     n += 1', '{"options":[{"id":"a","text":"1\n2\n3"},{"id":"b","text":"1\n2\n3\n4"},{"id":"c","text":"1 para siempre"},{"id":"d","text":"0\n1\n2"}]}', '{"option_id":"a"}', 'En la vuelta cuatro n vale 4, la condición falla y el ciclo termina sin imprimir.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'total = 0
 n = 1
@@ -2486,7 +2486,7 @@ while n <= 4:
     total += n
     n += 1
 print(total)', '{"options":[{"id":"a","text":"10"},{"id":"b","text":"4"},{"id":"c","text":"6"},{"id":"d","text":"0"}]}', '{"option_id":"a"}', 'Va sumando 1 + 2 + 3 + 4 = 10. Es el patrón de sumatoria.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'n = 1
 while n <= 3:
@@ -2494,13 +2494,13 @@ while n <= 3:
     total += n
     n += 1
 print(total)', '{"options":[{"id":"a","text":"3"},{"id":"b","text":"6"},{"id":"c","text":"0"},{"id":"d","text":"1"}]}', '{"option_id":"a"}', 'total nace dentro del ciclo, así que cada vuelta lo pone en cero: al final solo guarda el último valor.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'n = 5
 while n > 0:
     n -= 2
 print(n)', '{"options":[{"id":"a","text":"-1"},{"id":"b","text":"0"},{"id":"c","text":"1"},{"id":"d","text":"5"}]}', '{"option_id":"a"}', 'Va 5, 3, 1 y luego -1. Con -1 la condición falla y sale. Restar de a dos puede saltarse el cero.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'bandera = False
 n = 1
@@ -2511,27 +2511,27 @@ while n <= 3:
         bandera = False
     n += 1
 print(bandera)', '{"options":[{"id":"a","text":"False"},{"id":"b","text":"True"},{"id":"c","text":"2"},{"id":"d","text":"3"}]}', '{"option_id":"a"}', 'El else baja la bandera en la vuelta 3 y borra el hallazgo de la vuelta 2. Una bandera no lleva else.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Cuántas veces se imprime hola?', 'n = 0
 while n < 3:
     print("hola")', '{"options":[{"id":"a","text":"Infinitas: nunca cambia n"},{"id":"b","text":"Tres veces"},{"id":"c","text":"Ninguna"},{"id":"d","text":"Una vez"}]}', '{"option_id":"a"}', 'Falta la parte de avanzar. La condición 0 < 3 siempre es verdadera.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa debe sumar cinco ventas. ¿En qué línea está el error?', NULL, '{"lines":["n = 1","while n <= 5:","    total = 0","    total += int(input())","    n += 1","print(total)"]}', '{"line_number":3}', 'La sumatoria nace dentro del ciclo y se reinicia en cada vuelta. Esa línea va antes del while.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Este ciclo nunca termina. ¿En qué línea está el problema?', NULL, '{"lines":["n = 1","while n <= 3:","    print(n)","    n = 1"]}', '{"line_number":4}', 'Debía ser n += 1. Reasignar 1 deja la condición verdadera para siempre.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'dificil', 'El ciclo debe terminar cuando el usuario escriba fin, pero no termina. ¿Qué línea falta arreglar?', NULL, '{"lines":["producto = input(\"Producto: \")","while producto != \"fin\":","    precio = int(input(\"Precio: \"))","    total += precio","print(total)"]}', '{"line_number":4}', 'Falta volver a leer el producto al final del cuerpo: sin esa segunda lectura la condición nunca cambia.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme el programa que suma cinco ventas y muestra el promedio', NULL, '{"lines":[{"id":"l1","text":"total = 0","indent":0},{"id":"l2","text":"n = 1","indent":0},{"id":"l3","text":"while n <= 5:","indent":0},{"id":"l4","text":"venta = int(input(f\"Venta {n}: \"))","indent":1},{"id":"l5","text":"total += venta","indent":1},{"id":"l6","text":"n += 1","indent":1},{"id":"l7","text":"print(f\"Promedio: {total / 5}\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7"]}', 'La sumatoria y el contador nacen afuera, el cuerpo del ciclo va indentado, y el promedio se calcula fuera con la suma completa.', 1, 'seed'
-    FROM chapters WHERE number = 7;
+    FROM chapters WHERE number = 7 AND track = 'basico';
 
 -- ── Capítulo 8: Ciclo for y range() (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 8, 'Ciclo for y range()', '🔢', 'Recorrer secuencias y contar de forma elegante.', '<p class="jc-gancho">Escribir un <code>while</code> para contar del 1 al 10 son cuatro líneas y tres oportunidades de olvidar el <code>n += 1</code>. Cuando sabes cuántas vueltas quieres, hay algo mejor: <code>for</code>.</p>
 
 <h2><code>for</code>: recorrer, no contar</h2>
@@ -2691,18 +2691,18 @@ for i in range(100):
   </tbody>
 </table>
 
-<blockquote><code>for</code> cuando sabes cuántas vueltas; <code>while</code> cuando el final lo decide lo que pase adentro. Y en <code>range</code>, el final nunca entra.</blockquote>', 1
+<blockquote><code>for</code> cuando sabes cuántas vueltas; <code>while</code> cuando el final lo decide lo que pase adentro. Y en <code>range</code>, el final nunca entra.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 2
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 8
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 8 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 8);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 8 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Tabla de multiplicar', 'facil', '<p>Solicitar un número y mostrar su tabla de multiplicar del 1 al 10:</p><pre><code>7 x 1 = 7
 7 x 2 = 14
@@ -2732,7 +2732,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Contar vocales', 'facil', '<p>Solicitar una palabra o frase y contar cuántas vocales tiene:</p><pre><code>La frase tiene 5 vocales</code></pre><p><em>Nota:</em> deben contarse mayúsculas y minúsculas por igual.</p>', '<p>Recorra el texto con <code>for letra in frase:</code> y use <code>if letra in "aeiou"</code>. Normalice con <code>.lower()</code> para que las mayúsculas también cuenten.</p>', '<pre><code>''''''
 Programa: Contador de vocales
@@ -2767,7 +2767,7 @@ VOCALES = "aeiou"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Informe de ventas de la semana', 'medio', '<p>Solicitar las ventas de los <strong>7</strong> días de la semana. Mostrar al final:</p><pre><code>Total: 700000
 Promedio: 100000.0
@@ -2818,7 +2818,7 @@ DIAS = 7
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Amortización de un crédito', 'dificil', '<p>Un banco presta un monto a una tasa de interés mensual y el cliente abona una cuota fija cada mes.</p><p>Solicitar el monto del préstamo, la tasa mensual (en porcentaje) y la cuota. Mostrar la tabla de los primeros <strong>3</strong> meses y el saldo final:</p><pre><code>Mes 1: interes 20000 abono 80000 saldo 920000
 Mes 2: interes 18400 abono 81600 saldo 838400
@@ -2862,66 +2862,66 @@ MESES = 3
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 8;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 8);
+    FROM chapters WHERE number = 8 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 8 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuándo conviene usar for en vez de while?', NULL, '{"options":[{"id":"a","text":"Cuando se sabe cuántas vueltas serán o se recorre una colección"},{"id":"b","text":"Siempre: while quedó obsoleto"},{"id":"c","text":"Solo cuando hay que contar hacia atrás"},{"id":"d","text":"Cuando el final depende de lo que escriba el usuario"}]}', '{"option_id":"a"}', 'Si el final lo decide algo que pasa adentro (como escribir fin), eso es un while.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué genera range(1, 6)?', NULL, '{"options":[{"id":"a","text":"1, 2, 3, 4, 5"},{"id":"b","text":"1, 2, 3, 4, 5, 6"},{"id":"c","text":"0, 1, 2, 3, 4, 5"},{"id":"d","text":"6, 5, 4, 3, 2, 1"}]}', '{"option_id":"a"}', 'El final nunca entra: llega hasta el 5. Es la misma regla de las rebanadas de texto.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué hace enumerate() en un for?', NULL, '{"options":[{"id":"a","text":"Entrega la posición y el valor de cada elemento a la vez"},{"id":"b","text":"Cuenta cuántos elementos hay"},{"id":"c","text":"Ordena la colección"},{"id":"d","text":"Convierte la colección en números"}]}', '{"option_id":"a"}', 'for i, letra in enumerate(texto) evita tener que escribir range(len(texto)).', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', 'En un for, ¿quién actualiza la variable del ciclo?', NULL, '{"options":[{"id":"a","text":"Python: por eso no hay que escribir n += 1"},{"id":"b","text":"El programador, igual que en el while"},{"id":"c","text":"Nadie: se queda en el primer valor"},{"id":"d","text":"El range solo la actualiza si se le pide"}]}', '{"option_id":"a"}', 'Esa es la ventaja del for: elimina la parte de avanzar, que es donde más se olvida uno.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Qué pasa si dentro de un for se hace n = n + 10 sobre la variable del ciclo?', NULL, '{"options":[{"id":"a","text":"Nada útil: la siguiente vuelta la reemplaza con el próximo valor del range"},{"id":"b","text":"El ciclo salta diez posiciones"},{"id":"c","text":"El ciclo se vuelve infinito"},{"id":"d","text":"Da un error de sintaxis"}]}', '{"option_id":"a"}', 'La variable la controla el for. Si se necesita otro valor, se usa una variable aparte.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'for n in range(3):
     print(n)', '{"options":[{"id":"a","text":"0\n1\n2"},{"id":"b","text":"1\n2\n3"},{"id":"c","text":"0\n1\n2\n3"},{"id":"d","text":"3"}]}', '{"option_id":"a"}', 'range con un solo argumento arranca en 0 y da esa cantidad de números.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'for letra in "Ana":
     print(letra)', '{"options":[{"id":"a","text":"A\nn\na"},{"id":"b","text":"Ana"},{"id":"c","text":"0\n1\n2"},{"id":"d","text":"A n a"}]}', '{"option_id":"a"}', 'Un for sobre un texto lo recorre carácter por carácter.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'total = 0
 for n in range(1, 5):
     total += n
 print(total)', '{"options":[{"id":"a","text":"10"},{"id":"b","text":"15"},{"id":"c","text":"4"},{"id":"d","text":"0"}]}', '{"option_id":"a"}', 'Suma 1 + 2 + 3 + 4. El 5 no entra porque el final del range queda por fuera.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'for n in range(5, 0, -1):
     print(n, end=" ")', '{"options":[{"id":"a","text":"5 4 3 2 1"},{"id":"b","text":"5 4 3 2 1 0"},{"id":"c","text":"0 1 2 3 4 5"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'El tercer argumento es el paso. Con -1 cuenta hacia atrás, y el 0 del final no entra.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'for i, letra in enumerate("Cali"):
     if i == 2:
         print(letra)', '{"options":[{"id":"a","text":"l"},{"id":"b","text":"a"},{"id":"c","text":"i"},{"id":"d","text":"C"}]}', '{"option_id":"a"}', 'Las posiciones son 0:C, 1:a, 2:l, 3:i. La posición 2 es la l.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Cuántas líneas imprime este programa?', 'for a in range(3):
     for b in range(4):
         print(a, b)', '{"options":[{"id":"a","text":"12"},{"id":"b","text":"7"},{"id":"c","text":"3"},{"id":"d","text":"4"}]}', '{"option_id":"a"}', 'El ciclo interno corre completo en cada vuelta del externo: 3 × 4 = 12.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa debe imprimir del 1 al 5. ¿En qué línea está el error?', NULL, '{"lines":["for n in range(1, 5):","    print(n)"]}', '{"line_number":1}', 'range(1, 5) llega hasta el 4. Para incluir el 5 hay que escribir range(1, 6).', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El programa debe sumar cinco números. ¿En qué línea está el error?', NULL, '{"lines":["for n in range(1, 6):","    total = 0","    total += n","print(total)"]}', '{"line_number":2}', 'La sumatoria nace dentro del ciclo: cada vuelta la reinicia. Esa línea va antes del for.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["numero = int(input(\"Numero: \"))","for i in range(1, 11)","    print(numero * i)"]}', '{"line_number":2}', 'Falta los dos puntos al final de la línea del for.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que cuenta las vocales de una frase', NULL, '{"lines":[{"id":"l1","text":"frase = input(\"Frase: \").lower()","indent":0},{"id":"l2","text":"vocales = 0","indent":0},{"id":"l3","text":"for letra in frase:","indent":0},{"id":"l4","text":"if letra in \"aeiou\":","indent":1},{"id":"l5","text":"vocales += 1","indent":2},{"id":"l6","text":"print(f\"Tiene {vocales} vocales\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'El contador nace antes del ciclo; el if va dentro del for y el incremento dentro del if, cada uno con su nivel de indentación.', 1, 'seed'
-    FROM chapters WHERE number = 8;
+    FROM chapters WHERE number = 8 AND track = 'basico';
 
 -- ── Capítulo 9: break, continue y ciclos anidados (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 9, 'break, continue y ciclos anidados', '🎛️', 'Controlar el flujo dentro de los ciclos.', '<p class="jc-gancho">Buscas un producto en el inventario y lo encuentras en la posición 3 de 500. ¿Sigues revisando los 497 restantes? El cajero te da tres intentos de clave, pero si aciertas al primero no te pide los otros dos. Eso es <code>break</code>.</p>
 
 <h2><code>break</code>: salir ya</h2>
@@ -3071,18 +3071,18 @@ while n &lt; 5:
   </tbody>
 </table>
 
-<blockquote><code>break</code> sale del ciclo que lo contiene y nada más. En un anidado, romper el de adentro deja al de afuera dando vueltas.</blockquote>', 1
+<blockquote><code>break</code> sale del ciclo que lo contiene y nada más. En un anidado, romper el de adentro deja al de afuera dando vueltas.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 2
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 9
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 9 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 9);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 9 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Tres intentos de clave', 'facil', '<p>La clave del cajero es <code>1234</code>. Dar al usuario <strong>tres</strong> intentos. Si acierta, mostrar <code>Bienvenido</code> y terminar de inmediato. Si agota los tres, mostrar <code>Tarjeta bloqueada</code>.</p><pre><code>Clave (intento 1): Clave incorrecta
 Clave (intento 2): Bienvenido</code></pre>', '<p>Use <code>break</code> al acertar y el <code>else</code> del <code>for</code> para el caso de que nunca se acertó. Ese <code>else</code> se salta si hubo <code>break</code>.</p>', '<pre><code>''''''
@@ -3122,7 +3122,7 @@ INTENTOS = 3
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Ventas ignorando inválidas', 'facil', '<p>Solicitar <strong>5</strong> ventas. Si alguna es negativa, avisar y no sumarla. Al final mostrar el total y cuántas se ignoraron:</p><pre><code>Total: 60000
 Ignoradas: 1</code></pre>', '<p>Cuando la venta sea negativa, imprima el aviso, sume al contador de ignoradas y use <code>continue</code> para saltar la suma.</p>', '<pre><code>''''''
@@ -3163,7 +3163,7 @@ CUANTAS = 5
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Tabla de multiplicar completa', 'medio', '<p>Mostrar las tablas de multiplicar del <strong>1 al 5</strong>, cada tabla en su propia línea:</p><pre><code>1x1=1  1x2=2  1x3=3  1x4=4  1x5=5
 2x1=2  2x2=4  2x3=6  2x4=8  2x5=10
@@ -3200,7 +3200,7 @@ HASTA = 5
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, '¿Es primo?', 'dificil', '<p>Solicitar un número entero mayor que 1 y decir si es primo. Un número es primo si solo se puede dividir exactamente entre 1 y entre sí mismo.</p><pre><code>El 17 es primo</code></pre><pre><code>El 21 no es primo (divisible entre 3)</code></pre><p><em>Nota:</em> apenas encuentre un divisor debe dejar de buscar. No revise más allá de la mitad del número.</p>', '<p>Recorra los posibles divisores desde 2 hasta la mitad. Si alguno divide exacto (<code>numero % d == 0</code>), guarde ese divisor y use <code>break</code>. Use el <code>else</code> del <code>for</code> para el caso "no encontré ninguno".</p>', '<pre><code>''''''
 Programa: Verificador de numeros primos
@@ -3234,41 +3234,41 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 9;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 9);
+    FROM chapters WHERE number = 9 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 9 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué hace break dentro de un ciclo?', NULL, '{"options":[{"id":"a","text":"Sale del ciclo de inmediato"},{"id":"b","text":"Salta a la siguiente vuelta"},{"id":"c","text":"Reinicia el ciclo desde el principio"},{"id":"d","text":"Termina el programa"}]}', '{"option_id":"a"}', 'break corta el ciclo en seco: ni termina la vuelta ni vuelve a revisar la condición.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué hace continue?', NULL, '{"options":[{"id":"a","text":"Se salta lo que falta de esta vuelta y pasa a la siguiente"},{"id":"b","text":"Sale del ciclo"},{"id":"c","text":"Repite la misma vuelta otra vez"},{"id":"d","text":"Continúa con la siguiente línea del programa"}]}', '{"option_id":"a"}', 'El ciclo sigue vivo: solo se descarta el resto del cuerpo de esa vuelta.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Cuándo se ejecuta el else de un ciclo for?', NULL, '{"options":[{"id":"a","text":"Solo si el ciclo terminó sin haber pasado por un break"},{"id":"b","text":"Siempre al terminar el ciclo"},{"id":"c","text":"Cuando la colección está vacía"},{"id":"d","text":"Cada vez que la condición del if falla"}]}', '{"option_id":"a"}', 'Es el bloque del "no lo encontré": evita tener que llevar una bandera.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', 'En dos ciclos anidados, ¿de cuál sale un break que está en el interno?', NULL, '{"options":[{"id":"a","text":"Solo del interno: el externo sigue dando vueltas"},{"id":"b","text":"De los dos"},{"id":"c","text":"Solo del externo"},{"id":"d","text":"Del programa entero"}]}', '{"option_id":"a"}', 'break rompe únicamente el ciclo que lo contiene. Para salir de los dos hace falta una bandera o una función.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Para qué sirve end="  " en un print()?', NULL, '{"options":[{"id":"a","text":"Para que no baje de línea y deje dos espacios en su lugar"},{"id":"b","text":"Para terminar el programa"},{"id":"c","text":"Para poner dos espacios al principio"},{"id":"d","text":"Para cerrar el ciclo"}]}', '{"option_id":"a"}', 'Por defecto print termina en salto de línea. Con end se cambia por lo que uno quiera.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'for n in range(5):
     if n == 2:
         break
     print(n)', '{"options":[{"id":"a","text":"0\n1"},{"id":"b","text":"0\n1\n3\n4"},{"id":"c","text":"0\n1\n2"},{"id":"d","text":"0\n1\n2\n3\n4"}]}', '{"option_id":"a"}', 'Al llegar al 2 sale del ciclo, así que el 3 y el 4 ni se miran.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'for n in range(5):
     if n == 2:
         continue
     print(n)', '{"options":[{"id":"a","text":"0\n1\n3\n4"},{"id":"b","text":"0\n1"},{"id":"c","text":"0\n1\n2\n3\n4"},{"id":"d","text":"2"}]}', '{"option_id":"a"}', 'Solo se salta la vuelta del 2: las demás siguen normales.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'for n in range(3):
     print(n)
 else:
     print("listo")', '{"options":[{"id":"a","text":"0\n1\n2\nlisto"},{"id":"b","text":"0\n1\n2"},{"id":"c","text":"listo"},{"id":"d","text":"SyntaxError"}]}', '{"option_id":"a"}', 'No hubo break, así que el else del ciclo sí corre.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'for n in range(3):
     if n == 1:
@@ -3276,32 +3276,32 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
 else:
     print("sin break")
 print("fin")', '{"options":[{"id":"a","text":"fin"},{"id":"b","text":"sin break\nfin"},{"id":"c","text":"fin\nsin break"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'Hubo break, así que el else se salta. El print de afuera sí corre.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'for fila in range(1, 4):
     for col in range(1, 4):
         if col == 2:
             break
         print(fila, col)', '{"options":[{"id":"a","text":"1 1\n2 1\n3 1"},{"id":"b","text":"1 1"},{"id":"c","text":"1 1\n1 2\n1 3"},{"id":"d","text":"No imprime nada"}]}', '{"option_id":"a"}', 'El break corta solo el ciclo de las columnas; el de las filas sigue y vuelve a entrar tres veces.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Este ciclo se queda pegado. ¿En qué línea está el problema?', NULL, '{"lines":["n = 0","while n < 5:","    if n == 2:","        continue","    n += 1"]}', '{"line_number":4}', 'El continue salta el n += 1, así que n se queda en 2 para siempre. En un while hay que avanzar antes del continue.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El programa debe saltarse los negativos pero suma mal. ¿En qué línea está el error?', NULL, '{"lines":["total = 0","for n in range(3):","    venta = int(input())","    if venta < 0:","        break","    total += venta","print(total)"]}', '{"line_number":5}', 'Ahí va continue, no break: con break el primer negativo acaba el ciclo y las ventas siguientes se pierden.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'dificil', 'La cuadrícula sale toda en una sola línea. ¿En qué línea está el error?', NULL, '{"lines":["for fila in range(1, 4):","    for col in range(1, 4):","        print(fila, col, end=\"  \")","        print()"]}', '{"line_number":4}', 'El print() que baja de línea quedó dentro del ciclo interno: debe estar al nivel del for interno, no adentro.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme el programa de los tres intentos de clave', NULL, '{"lines":[{"id":"l1","text":"CLAVE = \"1234\"","indent":0},{"id":"l2","text":"for intento in range(1, 4):","indent":0},{"id":"l3","text":"clave = input(f\"Clave (intento {intento}): \")","indent":1},{"id":"l4","text":"if clave == CLAVE:","indent":1},{"id":"l5","text":"print(\"Bienvenido\")","indent":2},{"id":"l6","text":"break","indent":2},{"id":"l7","text":"print(\"Clave incorrecta\")","indent":1},{"id":"l8","text":"else:","indent":0},{"id":"l9","text":"print(\"Tarjeta bloqueada\")","indent":1}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8","l9"]}', 'El else del ciclo se alinea con el for, no con el if: por eso solo corre si nunca hubo break.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme la cuadrícula de tablas de multiplicar', NULL, '{"lines":[{"id":"l1","text":"for tabla in range(1, 6):","indent":0},{"id":"l2","text":"for mult in range(1, 6):","indent":1},{"id":"l3","text":"print(f\"{tabla}x{mult}={tabla * mult}\", end=\"  \")","indent":2},{"id":"l4","text":"print()","indent":1}]}', '{"order":["l1","l2","l3","l4"]}', 'El print() que baja de línea va al nivel del for interno: corre una vez por fila, cuando el ciclo de columnas ya terminó.', 1, 'seed'
-    FROM chapters WHERE number = 9;
+    FROM chapters WHERE number = 9 AND track = 'basico';
 
 -- ── Capítulo 10: Listas (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 10, 'Listas', '📋', 'La estructura de datos que más vas a usar.', '<p class="jc-gancho">Hasta ahora, para guardar cinco notas necesitabas cinco variables. ¿Y si son cuarenta estudiantes? ¿Y si no sabes cuántos son hasta que el usuario termine de escribir? Para eso existen las listas: <strong>una sola variable que guarda muchas cosas</strong>.</p>
 
 <h2>Una lista es una fila de cajas numeradas</h2>
@@ -3481,18 +3481,18 @@ for nota in notas:
   </tbody>
 </table>
 
-<blockquote>Las listas se modifican en el sitio; los textos no. Por eso <code>lista.sort()</code> se usa solo, y <code>texto.upper()</code> hay que guardarlo.</blockquote>', 1
+<blockquote>Las listas se modifican en el sitio; los textos no. Por eso <code>lista.sort()</code> se usa solo, y <code>texto.upper()</code> hay que guardarlo.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 3
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 10
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 10 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 10);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 10 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Estadísticas de notas', 'facil', '<p>Solicitar <strong>5</strong> notas y guardarlas en una lista. Mostrar:</p><pre><code>Notas: [4.0, 3.5, 2.8, 5.0, 3.2]
 Promedio: 3.7
@@ -3531,7 +3531,7 @@ CUANTAS = 5
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Filtrar aprobadas', 'facil', '<p>Dada la lista de notas <code>[4.0, 2.5, 3.8, 1.9, 5.0]</code>, construir dos listas nuevas: una con las aprobadas (nota mayor o igual a 3.0) y otra con las reprobadas. Mostrar:</p><pre><code>Aprobadas: [4.0, 3.8, 5.0]
 Reprobadas: [2.5, 1.9]
@@ -3574,7 +3574,7 @@ notas = [4.0, 2.5, 3.8, 1.9, 5.0]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Inventario de la tienda', 'medio', '<p>Se tienen dos listas en paralelo:</p><pre><code>productos = ["pan", "leche", "queso", "cafe"]
 precios = [5000, 7000, 15000, 12000]</code></pre><p>Mostrar el inventario numerado, el total y cuáles cuestan más de 10000:</p><pre><code>1. pan            5,000
@@ -3623,7 +3623,7 @@ precios = [5000, 7000, 15000, 12000]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Podio de ventas', 'dificil', '<p>Solicitar las ventas de <strong>7</strong> vendedores (una por línea). Mostrar el podio de los tres mejores, con su número de vendedor original:</p><pre><code>1. Vendedor 4 - 250,000
 2. Vendedor 1 - 180,000
@@ -3682,42 +3682,42 @@ PODIO = 3
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 10;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 10);
+    FROM chapters WHERE number = 10 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 10 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cómo se crea una lista vacía?', NULL, '{"options":[{"id":"a","text":"lista = []"},{"id":"b","text":"lista = ()"},{"id":"c","text":"lista = {}"},{"id":"d","text":"lista = \"\""}]}', '{"option_id":"a"}', 'Los corchetes son de listas. Los paréntesis hacen una tupla y las llaves un diccionario.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué método agrega un elemento al final de una lista?', NULL, '{"options":[{"id":"a","text":".append(x)"},{"id":"b","text":".add(x)"},{"id":"c","text":".insert(x)"},{"id":"d","text":".push(x)"}]}', '{"option_id":"a"}', 'append es el método más usado de todos. insert existe pero necesita también la posición.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Cuál es la diferencia entre lista.sort() y sorted(lista)?', NULL, '{"options":[{"id":"a","text":"sort() ordena la lista original; sorted() devuelve una copia ordenada"},{"id":"b","text":"Son idénticos"},{"id":"c","text":"sort() solo funciona con números"},{"id":"d","text":"sorted() ordena al revés"}]}', '{"option_id":"a"}', 'sort() modifica en el sitio y devuelve None. Si necesitas conservar el original, usa sorted().', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Por qué no se debe borrar elementos mientras se recorre una lista?', NULL, '{"options":[{"id":"a","text":"Porque al quitar uno, los de atrás se corren y el ciclo se salta elementos"},{"id":"b","text":"Porque Python lanza un error de sintaxis"},{"id":"c","text":"Porque las listas no se pueden modificar"},{"id":"d","text":"Porque el ciclo se vuelve infinito"}]}', '{"option_id":"a"}', 'Lo correcto es construir una lista nueva con los elementos que sí se quieren conservar.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', 'Se quieren guardar ventas y saber después quién vendió cada una, pero hay que ordenarlas. ¿Qué conviene?', NULL, '{"options":[{"id":"a","text":"Guardar parejas [venta, vendedor] y ordenar esa lista"},{"id":"b","text":"Ordenar solo las ventas y recordar el orden de memoria"},{"id":"c","text":"Usar dos listas y ordenar las dos por separado"},{"id":"d","text":"No se puede: hay que dejarlas sin ordenar"}]}', '{"option_id":"a"}', 'Ordenar dos listas por separado las desincroniza. Si el dato va a moverse, su identidad tiene que viajar con él.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'notas = [4.0, 3.5, 2.8]
 print(notas[0], notas[-1])', '{"options":[{"id":"a","text":"4.0 2.8"},{"id":"b","text":"4.0 3.5"},{"id":"c","text":"3.5 2.8"},{"id":"d","text":"IndexError"}]}', '{"option_id":"a"}', 'Igual que en los textos: [0] es el primero y [-1] el último.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'notas = [4.0, 3.0, 5.0]
 print(sum(notas) / len(notas))', '{"options":[{"id":"a","text":"4.0"},{"id":"b","text":"12.0"},{"id":"c","text":"3.0"},{"id":"d","text":"5.0"}]}', '{"option_id":"a"}', '12.0 dividido entre 3 da 4.0: es el promedio en una sola línea.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'notas = [3.0, 1.0, 2.0]
 notas = notas.sort()
 print(notas)', '{"options":[{"id":"a","text":"None"},{"id":"b","text":"[1.0, 2.0, 3.0]"},{"id":"c","text":"[3.0, 1.0, 2.0]"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'sort() ordena en el sitio y devuelve None. Al reasignar, se pierde la lista.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'productos = ["pan", "leche"]
 productos.append("queso")
 productos.insert(0, "cafe")
 print(productos)', '{"options":[{"id":"a","text":"[''cafe'', ''pan'', ''leche'', ''queso'']"},{"id":"b","text":"[''pan'', ''leche'', ''queso'', ''cafe'']"},{"id":"c","text":"[''cafe'', ''queso'', ''pan'', ''leche'']"},{"id":"d","text":"[''pan'', ''leche'', ''cafe'', ''queso'']"}]}', '{"option_id":"a"}', 'append pone al final; insert(0, x) mete al principio y corre todo lo demás.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'notas = [4.0, 2.5, 3.8]
 buenas = []
@@ -3725,31 +3725,31 @@ for nota in notas:
     if nota >= 3.0:
         buenas.append(nota)
 print(buenas)', '{"options":[{"id":"a","text":"[4.0, 3.8]"},{"id":"b","text":"[4.0, 2.5, 3.8]"},{"id":"c","text":"[2.5]"},{"id":"d","text":"[]"}]}', '{"option_id":"a"}', 'Es el patrón de filtrado: lista vacía afuera y append adentro solo cuando se cumple la condición.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'parejas = [[100, 1], [300, 2], [200, 3]]
 parejas.sort(reverse=True)
 print(parejas[0])', '{"options":[{"id":"a","text":"[300, 2]"},{"id":"b","text":"[100, 1]"},{"id":"c","text":"[200, 3]"},{"id":"d","text":"[3, 300]"}]}', '{"option_id":"a"}', 'Al ordenar listas de listas, Python compara primero el primer elemento. Con reverse=True queda de mayor a menor.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'notas = [1.0, 2.0, 3.0, 4.0]
 for nota in notas:
     if nota < 3.0:
         notas.remove(nota)
 print(notas)', '{"options":[{"id":"a","text":"[2.0, 3.0, 4.0]"},{"id":"b","text":"[3.0, 4.0]"},{"id":"c","text":"[1.0, 2.0, 3.0, 4.0]"},{"id":"d","text":"[]"}]}', '{"option_id":"a"}', 'Al borrar el 1.0 todo se corre y el ciclo salta el 2.0. Por eso nunca se borra mientras se recorre.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa debe llenar la lista con cinco notas. ¿En qué línea está el error?', NULL, '{"lines":["for n in range(5):","    notas = []","    notas.append(float(input()))","print(notas)"]}', '{"line_number":2}', 'La lista nace dentro del ciclo y cada vuelta la vacía. Esa línea va antes del for.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El programa debe mostrar la lista ordenada. ¿En qué línea está el error?', NULL, '{"lines":["notas = [3.0, 1.0, 2.0]","notas = notas.sort()","print(notas)"]}', '{"line_number":2}', 'sort() devuelve None. Basta con escribir notas.sort() sin asignar.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que guarda cinco notas y muestra el promedio', NULL, '{"lines":[{"id":"l1","text":"notas = []","indent":0},{"id":"l2","text":"for n in range(1, 6):","indent":0},{"id":"l3","text":"nota = float(input(f\"Nota {n}: \"))","indent":1},{"id":"l4","text":"notas.append(nota)","indent":1},{"id":"l5","text":"print(f\"Promedio: {sum(notas) / len(notas)}\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'La lista nace vacía antes del ciclo, se llena adentro, y el promedio se calcula al final con la lista completa.', 1, 'seed'
-    FROM chapters WHERE number = 10;
+    FROM chapters WHERE number = 10 AND track = 'basico';
 
 -- ── Capítulo 11: Tuplas y sets (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 11, 'Tuplas y sets', '🎯', 'Datos inmutables y colecciones sin repetidos.', '<p class="jc-gancho">Las coordenadas de una sucursal no deberían poder cambiarse por accidente. Y la lista de cédulas que entraron hoy no debería tener repetidos. Las listas no resuelven ninguna de las dos: para eso están las tuplas y los sets.</p>
 
 <h2>Tuplas: listas que no se pueden tocar</h2>
@@ -3912,18 +3912,18 @@ print(s[0])       # TypeError: ''set'' object is not subscriptable</code></pre>
   </tbody>
 </table>
 
-<blockquote>Lista si va a cambiar, tupla si es fija, set si no quieres repetidos. Escoger bien la estructura resuelve la mitad del problema antes de escribir el primer ciclo.</blockquote>', 1
+<blockquote>Lista si va a cambiar, tupla si es fija, set si no quieres repetidos. Escoger bien la estructura resuelve la mitad del problema antes de escribir el primer ciclo.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 3
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 11
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 11 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 11);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 11 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Ficha con desempaquetado', 'facil', '<p>Dada la tupla <code>persona = ("Ana", 17, "Bogota")</code>, desempaquetarla en tres variables y mostrar:</p><pre><code>Ana, de 17 anios, vive en Bogota</code></pre><p><em>Nota:</em> no use índices; use desempaquetado.</p>', '<p><code>nombre, edad, ciudad = persona</code> reparte los tres valores en una sola línea. El número de variables debe coincidir con el de elementos.</p>', '<pre><code>''''''
 Programa: Ficha con desempaquetado
@@ -3953,7 +3953,7 @@ persona = ("Ana", 17, "Bogota")
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Visitantes únicos', 'facil', '<p>Dada la lista de cédulas que registró la portería hoy:</p><pre><code>visitas = ["1023", "1045", "1023", "1088", "1045", "1023"]</code></pre><p>Mostrar cuántos registros hubo, cuántas personas distintas entraron y la lista de cédulas ordenada:</p><pre><code>Registros: 6
 Personas distintas: 3
@@ -3987,7 +3987,7 @@ visitas = ["1023", "1045", "1023", "1088", "1045", "1023"]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Asistencia de dos días', 'medio', '<p>Dos listas con los asistentes a un taller:</p><pre><code>lunes = ["ana", "juan", "sofia", "ana"]
 martes = ["juan", "sofia", "pedro"]</code></pre><p>Mostrar, siempre ordenado alfabéticamente:</p><pre><code>Los dos dias: [''juan'', ''sofia'']
@@ -4027,7 +4027,7 @@ martes = ["juan", "sofia", "pedro"]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Auditoría de transacciones', 'dificil', '<p>Un sistema bancario registra transacciones como tuplas <code>(codigo, cliente, monto)</code>. Por un error del servidor, algunas quedaron duplicadas.</p><pre><code>movimientos = [
     ("T1", "ana", 50000),
@@ -4095,55 +4095,55 @@ movimientos = [
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 11;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 11);
+    FROM chapters WHERE number = 11 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 11 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuál es la diferencia principal entre una lista y una tupla?', NULL, '{"options":[{"id":"a","text":"La tupla no se puede modificar después de creada"},{"id":"b","text":"La tupla solo guarda números"},{"id":"c","text":"La lista no admite repetidos"},{"id":"d","text":"La tupla no tiene índices"}]}', '{"option_id":"a"}', 'Si el dato es fijo (una coordenada, una fecha), la tupla garantiza que nadie lo cambie por accidente.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cómo se crea un set vacío?', NULL, '{"options":[{"id":"a","text":"s = set()"},{"id":"b","text":"s = {}"},{"id":"c","text":"s = []"},{"id":"d","text":"s = ()"}]}', '{"option_id":"a"}', 'Las llaves vacías crean un diccionario, no un set. Es una de las trampas clásicas de Python.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Para qué sirve set(mi_lista)?', NULL, '{"options":[{"id":"a","text":"Para quitar los elementos repetidos"},{"id":"b","text":"Para ordenar la lista"},{"id":"c","text":"Para convertirla en texto"},{"id":"d","text":"Para contar cuántos elementos tiene"}]}', '{"option_id":"a"}', 'Un set no admite duplicados, así que convertir una lista los elimina de una.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué devuelve lunes & martes si ambos son sets?', NULL, '{"options":[{"id":"a","text":"Los elementos que están en los dos"},{"id":"b","text":"Todos los elementos de ambos"},{"id":"c","text":"Los que están solo en lunes"},{"id":"d","text":"True o False"}]}', '{"option_id":"a"}', '& es la intersección. | es la unión y - la diferencia.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué se usa un set como memoria de "lo ya visto" en vez de una lista?', NULL, '{"options":[{"id":"a","text":"Porque preguntar si algo está en un set es muchísimo más rápido"},{"id":"b","text":"Porque las listas no aceptan el operador in"},{"id":"c","text":"Porque los sets se ordenan solos"},{"id":"d","text":"Porque un set ocupa menos memoria siempre"}]}', '{"option_id":"a"}', 'Buscar en una lista obliga a recorrerla entera; en un set es prácticamente instantáneo.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'cedulas = {"1023", "1045", "1023"}
 print(len(cedulas))', '{"options":[{"id":"a","text":"2"},{"id":"b","text":"3"},{"id":"c","text":"1"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'El 1023 repetido desaparece: un set guarda cada valor una sola vez.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'a = 1
 b = 2
 a, b = b, a
 print(a, b)', '{"options":[{"id":"a","text":"2 1"},{"id":"b","text":"1 2"},{"id":"c","text":"2 2"},{"id":"d","text":"1 1"}]}', '{"option_id":"a"}', 'Python arma la tupla del lado derecho primero y después la desempaqueta: intercambia sin variable temporal.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'persona = ("Ana", 17)
 nombre, edad = persona
 print(nombre, edad + 1)', '{"options":[{"id":"a","text":"Ana 18"},{"id":"b","text":"Ana 17"},{"id":"c","text":"(''Ana'', 17) 18"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'El desempaquetado reparte los dos valores; la tupla no cambia, pero sus valores sí se pueden usar.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'a = {"ana", "juan"}
 b = {"juan", "pedro"}
 print(sorted(a - b))', '{"options":[{"id":"a","text":"[''ana'']"},{"id":"b","text":"[''juan'']"},{"id":"c","text":"[''ana'', ''pedro'']"},{"id":"d","text":"[''ana'', ''juan'', ''pedro'']"}]}', '{"option_id":"a"}', 'a - b son los que están en a pero no en b: juan está en los dos, así que sale.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El programa debe crear un set vacío. ¿En qué línea está el error?', NULL, '{"lines":["vistos = {}","vistos.add(\"1023\")","print(vistos)"]}', '{"line_number":1}', '{} crea un diccionario. El set vacío se escribe set().', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["punto = (4.6, -74.1)","punto[0] = 5.0","print(punto)"]}', '{"line_number":2}', 'Las tuplas no se pueden modificar. Si el dato tenía que cambiar, debía ser una lista.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme el programa que cuenta visitantes únicos', NULL, '{"lines":[{"id":"l1","text":"visitas = [\"1023\", \"1045\", \"1023\"]","indent":0},{"id":"l2","text":"unicas = set(visitas)","indent":0},{"id":"l3","text":"print(f\"Registros: {len(visitas)}\")","indent":0},{"id":"l4","text":"print(f\"Personas: {len(unicas)}\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'Primero los datos, después la conversión a set que quita repetidos, y al final los dos conteos.', 1, 'seed'
-    FROM chapters WHERE number = 11;
+    FROM chapters WHERE number = 11 AND track = 'basico';
 
 -- ── Capítulo 12: Diccionarios (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 12, 'Diccionarios', '🗂️', 'Guardar información con clave y valor.', '<p class="jc-gancho">En el capítulo 10 guardaste el inventario en dos listas paralelas: productos y precios. Funciona hasta que alguien agrega un producto y olvida el precio, y todo se desalinea. Un diccionario guarda la pareja junta, para siempre.</p>
 
 <h2>Clave y valor: la agenda telefónica</h2>
@@ -4302,18 +4302,18 @@ for x in precios.values():
   </tbody>
 </table>
 
-<blockquote>Lista para lo que va en orden; diccionario para lo que se busca por nombre. Y para contar cualquier cosa: <code>conteo.get(x, 0) + 1</code>.</blockquote>', 1
+<blockquote>Lista para lo que va en orden; diccionario para lo que se busca por nombre. Y para contar cualquier cosa: <code>conteo.get(x, 0) + 1</code>.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 3
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 12
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 12 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 12);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 12 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Lista de precios', 'facil', '<p>Dado el diccionario de precios:</p><pre><code>precios = {"pan": 5000, "leche": 7000, "queso": 15000}</code></pre><p>Mostrar cada producto con su precio y el total del inventario:</p><pre><code>pan: 5,000
 leche: 7,000
@@ -4346,7 +4346,7 @@ precios = {"pan": 5000, "leche": 7000, "queso": 15000}
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Productos más vendidos', 'facil', '<p>Dada la lista de productos vendidos hoy:</p><pre><code>ventas = ["pan", "leche", "pan", "queso", "pan", "leche"]</code></pre><p>Contar cuántas veces se vendió cada uno y mostrarlos ordenados alfabéticamente:</p><pre><code>leche: 2
 pan: 3
@@ -4387,7 +4387,7 @@ ventas = ["pan", "leche", "pan", "queso", "pan", "leche"]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Cajero con diccionario', 'medio', '<p>Un banco guarda sus clientes así:</p><pre><code>clientes = {
     "1023": {"nombre": "Ana", "saldo": 250000},
@@ -4437,7 +4437,7 @@ clientes = {
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Boletín de calificaciones', 'dificil', '<p>Un curso guarda las notas así:</p><pre><code>curso = {
     "Ana": [4.5, 3.8, 5.0],
@@ -4508,55 +4508,55 @@ curso = {
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 12;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 12);
+    FROM chapters WHERE number = 12 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 12 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuándo conviene un diccionario en vez de una lista?', NULL, '{"options":[{"id":"a","text":"Cuando se busca por nombre, código o cédula en vez de por posición"},{"id":"b","text":"Cuando hay muchos datos"},{"id":"c","text":"Cuando los datos son números"},{"id":"d","text":"Cuando el orden importa"}]}', '{"option_id":"a"}', 'En una agenda uno no busca el contacto número 47: busca a Ana.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué pasa si se asigna un valor a una clave que ya existe?', NULL, '{"options":[{"id":"a","text":"Se reemplaza el valor anterior"},{"id":"b","text":"Se crea una segunda entrada con la misma clave"},{"id":"c","text":"Lanza KeyError"},{"id":"d","text":"No hace nada"}]}', '{"option_id":"a"}', 'Las claves nunca se repiten: volver a asignar es actualizar.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué hace d.get("arroz", 0) si la clave no existe?', NULL, '{"options":[{"id":"a","text":"Devuelve 0 sin lanzar error"},{"id":"b","text":"Lanza KeyError"},{"id":"c","text":"Crea la clave con valor 0"},{"id":"d","text":"Devuelve None"}]}', '{"option_id":"a"}', 'El segundo argumento es el valor por defecto. Sin él devolvería None, y con corchetes sería KeyError.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué recorre un for x in mi_diccionario?', NULL, '{"options":[{"id":"a","text":"Las claves"},{"id":"b","text":"Los valores"},{"id":"c","text":"Las parejas clave-valor"},{"id":"d","text":"Las posiciones"}]}', '{"option_id":"a"}', 'Para los valores está .values() y para las parejas .items().', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué una lista no puede ser clave de un diccionario?', NULL, '{"options":[{"id":"a","text":"Porque las claves deben ser inmutables, y una lista puede cambiar"},{"id":"b","text":"Porque las listas ocupan mucha memoria"},{"id":"c","text":"Porque las claves solo pueden ser texto"},{"id":"d","text":"Sí puede: es un error del enunciado"}]}', '{"option_id":"a"}', 'Una tupla sí sirve como clave, porque no puede cambiar. Es otra razón para que existan las tuplas.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'precios = {"pan": 5000, "leche": 7000}
 print(sum(precios.values()))', '{"options":[{"id":"a","text":"12000"},{"id":"b","text":"2"},{"id":"c","text":"[''pan'', ''leche'']"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', '.values() entrega los precios y sum() los suma.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'conteo = {}
 for p in ["pan", "pan", "leche"]:
     conteo[p] = conteo.get(p, 0) + 1
 print(conteo)', '{"options":[{"id":"a","text":"{''pan'': 2, ''leche'': 1}"},{"id":"b","text":"{''pan'': 1, ''leche'': 1}"},{"id":"c","text":"{''pan'': 3}"},{"id":"d","text":"KeyError"}]}', '{"option_id":"a"}', 'Es el patrón de conteo: get devuelve 0 la primera vez y el acumulado las siguientes.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'd = {"a": 1}
 d["a"] = 2
 d["b"] = 3
 print(len(d))', '{"options":[{"id":"a","text":"2"},{"id":"b","text":"3"},{"id":"c","text":"1"},{"id":"d","text":"4"}]}', '{"option_id":"a"}', 'Reasignar la clave a no agrega una entrada nueva: la reemplaza. Solo hay dos claves.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'conteo = {"pan": 3, "leche": 2, "queso": 5}
 print(max(conteo, key=conteo.get))', '{"options":[{"id":"a","text":"queso"},{"id":"b","text":"pan"},{"id":"c","text":"5"},{"id":"d","text":"leche"}]}', '{"option_id":"a"}', 'Con key=conteo.get, max compara por el valor pero devuelve la clave. Sin el key compararía los nombres alfabéticamente.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa se cae cuando el producto no está. ¿En qué línea está el error?', NULL, '{"lines":["precios = {\"pan\": 5000}","print(precios[\"arroz\"])"]}', '{"line_number":2}', 'Leer con corchetes una clave inexistente da KeyError. Ahí va precios.get("arroz", 0).', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El programa debe imprimir los precios, no los nombres. ¿En qué línea está el error?', NULL, '{"lines":["precios = {\"pan\": 5000, \"leche\": 7000}","for x in precios:","    print(x)"]}', '{"line_number":2}', 'Recorrer un diccionario da las claves. Para los precios habría que usar precios.values().', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme el programa que cuenta los productos vendidos', NULL, '{"lines":[{"id":"l1","text":"ventas = [\"pan\", \"leche\", \"pan\"]","indent":0},{"id":"l2","text":"conteo = {}","indent":0},{"id":"l3","text":"for producto in ventas:","indent":0},{"id":"l4","text":"conteo[producto] = conteo.get(producto, 0) + 1","indent":1},{"id":"l5","text":"for producto, veces in conteo.items():","indent":0},{"id":"l6","text":"print(f\"{producto}: {veces}\")","indent":1}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'Primero se cuenta en un ciclo y después se muestra en otro: mezclarlos imprimiría conteos parciales.', 1, 'seed'
-    FROM chapters WHERE number = 12;
+    FROM chapters WHERE number = 12 AND track = 'basico';
 
 -- ── Capítulo 13: Comprehensions (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 13, 'Comprehensions', '⚡', 'Crear listas, sets y diccionarios en una sola línea.', '<p class="jc-gancho">Filtrar las notas aprobadas te toma cuatro líneas: crear la lista, el <code>for</code>, el <code>if</code> y el <code>append</code>. Python tiene una forma de escribir eso mismo en una sola línea que se lee igual de bien. Se llama <em>comprehension</em>.</p>
 
 <h2>De cuatro líneas a una</h2>
@@ -4702,18 +4702,18 @@ dobles = [n * 2 for n in notas]   # ✅</code></pre>
   </tbody>
 </table>
 
-<blockquote>Una comprehension no hace nada que un ciclo no pueda. Se usa cuando hace el código <em>más</em> fácil de leer, nunca para presumir.</blockquote>', 1
+<blockquote>Una comprehension no hace nada que un ciclo no pueda. Se usa cuando hace el código <em>más</em> fácil de leer, nunca para presumir.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 3
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 13
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 13 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 13);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 13 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Precios con IVA', 'facil', '<p>Dada la lista <code>precios = [5000, 7000, 15000, 12000]</code>, crear con una comprehension una lista nueva con el precio más el 19% de IVA, redondeado a entero. Mostrar las dos listas:</p><pre><code>Sin IVA: [5000, 7000, 15000, 12000]
 Con IVA: [5950, 8330, 17850, 14280]</code></pre>', '<p>La forma es <code>[round(p * 1.19) for p in precios]</code>. Como es una transformación y no un filtro, no lleva <code>if</code>.</p>', '<pre><code>''''''
@@ -4748,7 +4748,7 @@ precios = [5000, 7000, 15000, 12000]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Filtrar y etiquetar notas', 'facil', '<p>Dada la lista <code>notas = [4.5, 2.8, 3.0, 1.9, 5.0]</code>, usar comprehensions para obtener:</p><ul><li>solo las aprobadas (mayor o igual a 3.0),</li><li>y una lista de etiquetas <code>APROBADO</code> / <code>REPROBADO</code> para todas.</li></ul><pre><code>Aprobadas: [4.5, 3.0, 5.0]
 Estados: [''APROBADO'', ''REPROBADO'', ''APROBADO'', ''REPROBADO'', ''APROBADO'']</code></pre>', '<p>Filtrar → el <code>if</code> va al final y no lleva <code>else</code>. Escoger entre dos valores → el <code>if-else</code> va adelante y el <code>else</code> es obligatorio.</p>', '<pre><code>''''''
@@ -4786,7 +4786,7 @@ notas = [4.5, 2.8, 3.0, 1.9, 5.0]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Inventario desde dos listas', 'medio', '<p>Se tienen dos listas paralelas:</p><pre><code>productos = ["pan", "leche", "queso", "cafe"]
 precios = [5000, 7000, 15000, 12000]</code></pre><p>Con comprehensions, construir:</p><ul><li>el inventario como diccionario,</li><li>un diccionario solo con los que cuestan más de 10000,</li><li>y el set de las iniciales de todos los productos.</li></ul><pre><code>Inventario: {''pan'': 5000, ''leche'': 7000, ''queso'': 15000, ''cafe'': 12000}
@@ -4832,7 +4832,7 @@ precios = [5000, 7000, 15000, 12000]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Reporte del curso en tres líneas', 'dificil', '<p>Dado el curso:</p><pre><code>curso = {
     "Ana": [4.5, 3.8, 5.0],
@@ -4891,48 +4891,48 @@ curso = {
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 13;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 13);
+    FROM chapters WHERE number = 13 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 13 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué hace [n for n in notas if n >= 3.0]?', NULL, '{"options":[{"id":"a","text":"Crea una lista nueva solo con las notas mayores o iguales a 3.0"},{"id":"b","text":"Modifica la lista notas quitando las bajas"},{"id":"c","text":"Cuenta cuántas notas aprobaron"},{"id":"d","text":"Devuelve True o False"}]}', '{"option_id":"a"}', 'Una comprehension nunca modifica el original: siempre crea algo nuevo, y hay que guardarlo.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Dónde va el if cuando se quiere escoger entre dos valores para cada elemento?', NULL, '{"options":[{"id":"a","text":"Adelante, con else obligatorio"},{"id":"b","text":"Al final, sin else"},{"id":"c","text":"Da igual"},{"id":"d","text":"No se puede hacer en una comprehension"}]}', '{"option_id":"a"}', 'Filtrar → if al final sin else. Escoger entre dos valores → if-else adelante.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué hace zip(productos, precios)?', NULL, '{"options":[{"id":"a","text":"Une las dos listas en parejas, elemento con elemento"},{"id":"b","text":"Comprime las listas para ahorrar memoria"},{"id":"c","text":"Ordena las dos listas a la vez"},{"id":"d","text":"Suma las dos listas"}]}', '{"option_id":"a"}', 'Es la forma limpia de convertir dos listas paralelas en un diccionario.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Cuándo NO conviene usar una comprehension?', NULL, '{"options":[{"id":"a","text":"Cuando no cabe cómoda en una línea o se necesita imprimir y llevar contadores"},{"id":"b","text":"Cuando la lista tiene más de diez elementos"},{"id":"c","text":"Cuando hay que filtrar"},{"id":"d","text":"Nunca: siempre son mejores que un ciclo"}]}', '{"option_id":"a"}', 'Se usan cuando hacen el código más fácil de leer. Si no, el ciclo normal gana.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'precios = [1000, 2000]
 print([p * 2 for p in precios])', '{"options":[{"id":"a","text":"[2000, 4000]"},{"id":"b","text":"[1000, 2000, 1000, 2000]"},{"id":"c","text":"3000"},{"id":"d","text":"[1000, 2000]"}]}', '{"option_id":"a"}', 'Sin if, la comprehension transforma cada elemento y devuelve una lista del mismo tamaño.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'notas = [4.0, 2.0, 3.5]
 print([n for n in notas if n >= 3.0])', '{"options":[{"id":"a","text":"[4.0, 3.5]"},{"id":"b","text":"[4.0, 2.0, 3.5]"},{"id":"c","text":"[2.0]"},{"id":"d","text":"[True, False, True]"}]}', '{"option_id":"a"}', 'El if al final deja pasar solo las que cumplen: la lista resultante es más corta.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'notas = [4.0, 2.0]
 print(["ok" if n >= 3.0 else "no" for n in notas])', '{"options":[{"id":"a","text":"[''ok'', ''no'']"},{"id":"b","text":"[''ok'']"},{"id":"c","text":"[''no'']"},{"id":"d","text":"SyntaxError"}]}', '{"option_id":"a"}', 'Con if-else adelante no se descarta nada: la lista tiene el mismo tamaño que la original.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'd = {"pan": 5000, "queso": 15000}
 print({k: v for k, v in d.items() if v > 10000})', '{"options":[{"id":"a","text":"{''queso'': 15000}"},{"id":"b","text":"{''pan'': 5000}"},{"id":"c","text":"[''queso'']"},{"id":"d","text":"{15000}"}]}', '{"option_id":"a"}', 'Una comprehension de diccionario usa llaves y clave: valor; el if al final filtra las parejas.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', '¿En qué línea está el error?', NULL, '{"lines":["notas = [4.0, 2.0]","print([n for n in notas if n >= 3.0 else 0])"]}', '{"line_number":2}', 'El if del final no admite else. Si se quiere el 0, el if-else va adelante: [n if n >= 3.0 else 0 for n in notas].', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El programa debería mostrar la lista con IVA pero no muestra nada útil. ¿En qué línea está el error?', NULL, '{"lines":["precios = [1000, 2000]","[p * 1.19 for p in precios]","print(precios)"]}', '{"line_number":2}', 'La comprehension crea una lista nueva y nadie la guarda. Falta con_iva = [...] y luego imprimirla.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme el reporte del curso con comprehensions', NULL, '{"lines":[{"id":"l1","text":"curso = {\"Ana\": [4.5, 5.0], \"Juan\": [2.0, 2.5]}","indent":0},{"id":"l2","text":"promedios = {n: sum(v) / len(v) for n, v in curso.items()}","indent":0},{"id":"l3","text":"aprobados = [n for n, p in promedios.items() if p >= 3.0]","indent":0},{"id":"l4","text":"print(f\"Aprobados: {aprobados}\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'Los promedios se calculan una sola vez y las líneas siguientes trabajan sobre ese diccionario.', 1, 'seed'
-    FROM chapters WHERE number = 13;
+    FROM chapters WHERE number = 13 AND track = 'basico';
 
 -- ── Capítulo 14: Funciones (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 14, 'Funciones', '🧰', 'Empaquetar lógica para reutilizarla.', '<p class="jc-gancho">Calculaste el IVA en el capítulo 13. Y en el 10. Y lo vas a calcular otra vez en el proyecto del capítulo 20. Cada vez copiaste la fórmula. El día que cambie el IVA, tienes que acordarte de los cinco sitios. Una función arregla eso para siempre.</p>
 
 <h2>Una función es una receta con nombre</h2>
@@ -5127,18 +5127,18 @@ def agregar(x, lista=None):  # ✅
   </tbody>
 </table>
 
-<blockquote><code>print</code> le habla al usuario; <code>return</code> le habla al programa. Una función que calcula devuelve; imprimir es trabajo de quien la llama.</blockquote>', 1
+<blockquote><code>print</code> le habla al usuario; <code>return</code> le habla al programa. Una función que calcula devuelve; imprimir es trabajo de quien la llama.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 4
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 14
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 14 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 14);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 14 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Función de IVA', 'facil', '<p>Escribir una función <code>calcular_iva(precio)</code> que <strong>devuelva</strong> el valor del IVA (19%) de un precio. Luego usarla para mostrar:</p><pre><code>IVA de 10000: 1900.0
 IVA de 50000: 9500.0
@@ -5191,7 +5191,7 @@ IVA = 0.19
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Clasificar notas', 'facil', '<p>Escribir una función <code>clasificar(nota)</code> que devuelva el concepto de una nota:</p><table><thead><tr><th>Nota</th><th>Concepto</th></tr></thead><tbody><tr><td>4.5 o más</td><td>Excelente</td></tr><tr><td>4.0 a 4.4</td><td>Muy bien</td></tr><tr><td>3.0 a 3.9</td><td>Aprobado</td></tr><tr><td>menor a 3.0</td><td>Reprobado</td></tr></tbody></table><p>Usarla para clasificar la lista <code>[4.8, 4.2, 3.5, 2.0]</code>:</p><pre><code>4.8: Excelente
 4.2: Muy bien
@@ -5244,7 +5244,7 @@ notas = [4.8, 4.2, 3.5, 2.0]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Estadísticas en una función', 'medio', '<p>Escribir una función <code>analizar(notas)</code> que reciba una lista y devuelva <strong>tres valores</strong>: la menor, la mayor y el promedio.</p><p>Escribir también <code>formatear(nombre, notas)</code> que devuelva una línea lista para imprimir usando la función anterior.</p><pre><code>Ana      min 2.5  max 5.0  prom 4.00
 Juan     min 2.0  max 3.0  prom 2.50</code></pre><p><em>Nota:</em> el nombre va alineado en 8 espacios y el promedio con dos decimales. Ninguna de las dos funciones debe imprimir.</p>', '<p><code>return min(notas), max(notas), suma / cantidad</code> devuelve una tupla, y quien llama la desempaqueta con <code>a, b, c = analizar(...)</code>.</p>', '<pre><code>''''''
@@ -5309,7 +5309,7 @@ curso = {
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Módulo de crédito', 'dificil', '<p>Un banco necesita tres funciones reutilizables:</p><ul><li><code>cuota_mensual(monto, tasa, meses)</code> — devuelve la cuota fija, redondeada a entero.</li><li><code>total_pagado(cuota, meses)</code> — devuelve cuánto se paga en total.</li><li><code>aprobar(ingresos, cuota, tope=0.30)</code> — devuelve <code>True</code> si la cuota no supera el porcentaje tope de los ingresos.</li></ul><p>Solicitar monto, tasa mensual (en %), plazo e ingresos. Por ejemplo, con un préstamo de <strong>1000000</strong> al <strong>2%</strong> mensual a <strong>24</strong> meses e ingresos de <strong>300000</strong>:</p><pre><code>Cuota mensual: 52,871
 Total pagado: 1,268,904
@@ -5394,42 +5394,42 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 14;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 14);
+    FROM chapters WHERE number = 14 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 14 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuál es la diferencia entre return y print dentro de una función?', NULL, '{"options":[{"id":"a","text":"return entrega el resultado al programa; print solo lo muestra al usuario"},{"id":"b","text":"Son equivalentes"},{"id":"c","text":"print es más rápido"},{"id":"d","text":"return solo sirve con números"}]}', '{"option_id":"a"}', 'Una función que imprime en vez de devolver no sirve para seguir calculando: su resultado se pierde.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué pasa cuando Python ejecuta un return?', NULL, '{"options":[{"id":"a","text":"Devuelve el valor y termina la función de inmediato"},{"id":"b","text":"Devuelve el valor y sigue con las líneas siguientes"},{"id":"c","text":"Termina el programa entero"},{"id":"d","text":"Guarda el valor en una variable global"}]}', '{"option_id":"a"}', 'Por eso se puede escribir varios if con return seguidos, sin elif ni else.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué es una variable local?', NULL, '{"options":[{"id":"a","text":"Una que nace dentro de la función y muere cuando esta termina"},{"id":"b","text":"Una que se puede usar en todo el programa"},{"id":"c","text":"Una que solo guarda números"},{"id":"d","text":"Una que se define con la palabra local"}]}', '{"option_id":"a"}', 'Es una virtud: garantiza que una función no rompa nada de afuera por accidente.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Por qué es mala idea que una función lea variables de afuera en vez de recibirlas por parámetro?', NULL, '{"options":[{"id":"a","text":"Porque deja de funcionar sola: depende de que exista algo fuera de ella"},{"id":"b","text":"Porque Python lo prohíbe"},{"id":"c","text":"Porque es más lento"},{"id":"d","text":"Porque no se puede documentar"}]}', '{"option_id":"a"}', 'Una función que recibe todo lo que necesita se puede probar y reutilizar en cualquier programa.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué def agregar(x, lista=[]) es peligroso?', NULL, '{"options":[{"id":"a","text":"Porque la lista se crea una sola vez y se comparte entre todas las llamadas"},{"id":"b","text":"Porque las listas no pueden ser parámetros"},{"id":"c","text":"Porque hay que ponerla de primera"},{"id":"d","text":"Porque consume mucha memoria"}]}', '{"option_id":"a"}', 'El valor por defecto se evalúa al definir la función. La solución es usar None y crear la lista adentro.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'def doble(x):
     return x * 2
 
 print(doble(5) + 1)', '{"options":[{"id":"a","text":"11"},{"id":"b","text":"10"},{"id":"c","text":"12"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'doble(5) devuelve 10 y después se le suma 1. Con print en vez de return daría TypeError.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'def doble(x):
     print(x * 2)
 
 r = doble(5)
 print(r)', '{"options":[{"id":"a","text":"10\nNone"},{"id":"b","text":"10\n10"},{"id":"c","text":"None"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'La función imprime 10 pero no devuelve nada, así que r queda en None.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'def total(precio, iva=0.19):
     return precio + precio * iva
 
 print(total(10000, 0))', '{"options":[{"id":"a","text":"10000.0"},{"id":"b","text":"11900.0"},{"id":"c","text":"10000"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'El argumento explícito 0 reemplaza el valor por defecto, y el resultado es float por la multiplicación.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'def cambiar():
     total = 100
@@ -5437,7 +5437,7 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
 total = 5
 cambiar()
 print(total)', '{"options":[{"id":"a","text":"5"},{"id":"b","text":"100"},{"id":"c","text":"None"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'El total de adentro es otra variable, local a la función. La de afuera ni se entera.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'def clasificar(n):
     if n >= 3.0:
@@ -5445,19 +5445,19 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
     return "no pasa"
 
 print(clasificar(4.0), clasificar(2.0))', '{"options":[{"id":"a","text":"pasa no pasa"},{"id":"b","text":"pasa pasa"},{"id":"c","text":"no pasa no pasa"},{"id":"d","text":"pasa"}]}', '{"option_id":"a"}', 'Cada llamada es independiente: la primera sale por el primer return y la segunda llega al último.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa debe mostrar 19.0 pero muestra otra cosa. ¿En qué línea está el error?', NULL, '{"lines":["def iva(p):","    return p * 0.19","","print(iva)"]}', '{"line_number":4}', 'Falta llamar la función con paréntesis: print(iva(100)). Sin ellos se imprime el objeto función.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El resultado no se puede usar después. ¿En qué línea está el error?', NULL, '{"lines":["def suma(a, b):","    print(a + b)","","r = suma(2, 3)","print(r * 2)"]}', '{"line_number":2}', 'Ahí va return, no print: como está, r queda en None y la última línea da TypeError.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme la función que calcula el IVA y la usa', NULL, '{"lines":[{"id":"l1","text":"def calcular_iva(precio):","indent":0},{"id":"l2","text":"return precio * 0.19","indent":1},{"id":"l3","text":"precio = 10000","indent":0},{"id":"l4","text":"print(f\"IVA: {calcular_iva(precio)}\")","indent":0}]}', '{"order":["l1","l2","l3","l4"]}', 'La función se define antes de usarse, el return va indentado dentro de ella, y el print va afuera.', 1, 'seed'
-    FROM chapters WHERE number = 14;
+    FROM chapters WHERE number = 14 AND track = 'basico';
 
 -- ── Capítulo 15: Errores y excepciones (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 15, 'Errores y excepciones', '🛡️', 'try, except, finally y errores propios.', '<p class="jc-gancho">El cajero le pide el monto al cliente y el cliente escribe "cincuenta mil". El programa se cae, la pantalla queda en negro y el cajero se traba. Ningún programa serio se comporta así: los errores se esperan y se atienden.</p>
 
 <h2>Los errores que ya conoces</h2>
@@ -5641,18 +5641,18 @@ except ValueError:
   </tbody>
 </table>
 
-<blockquote>Atrapa el error que esperas, no todos. Un <code>except</code> pelado convierte un bug ruidoso en un bug silencioso, que es mucho peor.</blockquote>', 1
+<blockquote>Atrapa el error que esperas, no todos. Un <code>except</code> pelado convierte un bug ruidoso en un bug silencioso, que es mucho peor.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 4
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 15
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 15 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 15);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 15 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Edad a prueba de errores', 'facil', '<p>Solicitar la edad del usuario. Si escribe algo que no es un número, avisar y volver a preguntar hasta que escriba bien:</p><pre><code>Edad: Eso no es un numero, intente otra vez
 Edad: Eso no es un numero, intente otra vez
@@ -5685,7 +5685,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'División segura', 'facil', '<p>Solicitar el total de una cuenta y el número de personas, y mostrar cuánto paga cada una. Atender los dos errores posibles:</p><ul><li>si escriben algo que no es número: <code>Escriba solo numeros</code></li><li>si el número de personas es cero: <code>No se puede repartir entre cero personas</code></li></ul><pre><code>Total: Personas: Cada uno paga: 25000.0</code></pre>', '<p>Un solo <code>try</code> con dos <code>except</code>: uno para <code>ValueError</code> y otro para <code>ZeroDivisionError</code>. Python entra por el que coincida.</p>', '<pre><code>''''''
 Programa: Division segura de una cuenta
@@ -5716,7 +5716,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Función que pide números', 'medio', '<p>Escribir una función <code>pedir_entero(mensaje, minimo=0)</code> que:</p><ul><li>pregunte hasta que el usuario escriba un entero válido,</li><li>y que además sea mayor o igual a <code>minimo</code>.</li></ul><p>Usarla para pedir la edad (mínimo 0) y el monto de un retiro (mínimo 10000):</p><pre><code>Edad: Debe ser un numero entero
 Edad: Monto a retirar: Debe ser al menos 10000
@@ -5773,7 +5773,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Cajero con reglas propias', 'dificil', '<p>Escribir una función <code>retirar(saldo, monto)</code> que devuelva el nuevo saldo, pero que lance <code>ValueError</code> con un mensaje claro si:</p><ul><li>el monto no es positivo → <code>El monto debe ser positivo</code></li><li>no es múltiplo de 10000 → <code>El cajero solo entrega multiplos de 10000</code></li><li>supera el saldo → <code>Saldo insuficiente</code></li></ul><p>El programa principal procesa una lista de retiros sobre un saldo inicial de <strong>100000</strong> y reporta cada uno:</p><pre><code>Retiro de 50000: OK, saldo 50000
 Retiro de -100: RECHAZADO, El monto debe ser positivo
@@ -5846,30 +5846,30 @@ retiros = [50000, -100, 35000, 90000, 20000]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 15;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 15);
+    FROM chapters WHERE number = 15 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 15 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuál de estos errores NO se puede atrapar con try/except?', NULL, '{"options":[{"id":"a","text":"SyntaxError"},{"id":"b","text":"ValueError"},{"id":"c","text":"ZeroDivisionError"},{"id":"d","text":"KeyError"}]}', '{"option_id":"a"}', 'El SyntaxError ocurre antes de que el programa arranque: hay que arreglarlo, no atraparlo.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué error lanza int("veinte")?', NULL, '{"options":[{"id":"a","text":"ValueError"},{"id":"b","text":"TypeError"},{"id":"c","text":"NameError"},{"id":"d","text":"KeyError"}]}', '{"option_id":"a"}', 'El tipo está bien (es un texto) pero el contenido no representa un entero: eso es ValueError.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Cuándo se ejecuta el bloque finally?', NULL, '{"options":[{"id":"a","text":"Siempre, haya error o no"},{"id":"b","text":"Solo si hubo error"},{"id":"c","text":"Solo si no hubo error"},{"id":"d","text":"Solo si se usó raise"}]}', '{"option_id":"a"}', 'Es para lo que hay que hacer sí o sí: cerrar un archivo, soltar una conexión.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Por qué es mala práctica escribir except: sin especificar el error?', NULL, '{"options":[{"id":"a","text":"Porque atrapa hasta los bugs propios y los vuelve invisibles"},{"id":"b","text":"Porque es más lento"},{"id":"c","text":"Porque Python lo prohíbe"},{"id":"d","text":"Porque solo funciona una vez"}]}', '{"option_id":"a"}', 'Convierte un bug ruidoso en uno silencioso, que es mucho más difícil de encontrar.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Para qué sirve raise ValueError("Saldo insuficiente") dentro de una función?', NULL, '{"options":[{"id":"a","text":"Para que la función valide y quien la llama decida qué hacer"},{"id":"b","text":"Para imprimir el mensaje en pantalla"},{"id":"c","text":"Para terminar el programa"},{"id":"d","text":"Para devolver el texto como resultado"}]}', '{"option_id":"a"}', 'La función sabe las reglas; el que llama decide si muestra un mensaje, reintenta o guarda un log.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', 'El usuario escribe abc. ¿Qué imprime este programa?', 'try:
     n = int(input("n: "))
     print("ok")
 except ValueError:
     print("malo")', '{"options":[{"id":"a","text":"n: malo"},{"id":"b","text":"n: ok"},{"id":"c","text":"n: ok\nmalo"},{"id":"d","text":"El programa se cae"}]}', '{"option_id":"a"}', 'Al fallar el int(), Python abandona el resto del try: el print("ok") nunca corre.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'try:
     print(10 / 0)
@@ -5877,7 +5877,7 @@ except ValueError:
     print("valor")
 except ZeroDivisionError:
     print("division")', '{"options":[{"id":"a","text":"division"},{"id":"b","text":"valor"},{"id":"c","text":"valor\ndivision"},{"id":"d","text":"El programa se cae"}]}', '{"option_id":"a"}', 'Python entra por el except que coincide con el error, no por el primero que encuentre.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'try:
     n = int("5")
@@ -5887,7 +5887,7 @@ else:
     print("bien")
 finally:
     print("fin")', '{"options":[{"id":"a","text":"bien\nfin"},{"id":"b","text":"fin"},{"id":"c","text":"error\nfin"},{"id":"d","text":"bien"}]}', '{"option_id":"a"}', 'No hubo error, así que corre el else; el finally corre siempre.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'def retirar(saldo, monto):
     if monto > saldo:
@@ -5900,19 +5900,19 @@ try:
 except ValueError as e:
     print(e)
 print(saldo)', '{"options":[{"id":"a","text":"Saldo insuficiente\n1000"},{"id":"b","text":"Saldo insuficiente\n-4000"},{"id":"c","text":"Saldo insuficiente\nNone"},{"id":"d","text":"1000"}]}', '{"option_id":"a"}', 'La excepción interrumpe la línea completa, así que la asignación nunca ocurre y el saldo queda intacto.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El ciclo nunca termina aunque el usuario escriba bien. ¿En qué línea está el error?', NULL, '{"lines":["while True:","    try:","        edad = int(input(\"Edad: \"))","    except ValueError:","        print(\"malo\")","        break"]}', '{"line_number":6}', 'El break está en el except: sale solo cuando FALLA. Debía ir dentro del try, después del int().', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El programa esconde los errores. ¿En qué línea está el problema?', NULL, '{"lines":["try:","    n = int(input())","except:","    pass"]}', '{"line_number":3}', 'Un except pelado atrapa cualquier cosa, y con pass ni siquiera avisa. Debía ser except ValueError con un mensaje.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme el ciclo que insiste hasta recibir un número válido', NULL, '{"lines":[{"id":"l1","text":"while True:","indent":0},{"id":"l2","text":"try:","indent":1},{"id":"l3","text":"edad = int(input(\"Edad: \"))","indent":2},{"id":"l4","text":"break","indent":2},{"id":"l5","text":"except ValueError:","indent":1},{"id":"l6","text":"print(\"Eso no es un numero\")","indent":2},{"id":"l7","text":"print(f\"Edad: {edad}\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7"]}', 'El break va dentro del try y después del int(): si la conversión falla, Python salta al except y nunca lo alcanza.', 1, 'seed'
-    FROM chapters WHERE number = 15;
+    FROM chapters WHERE number = 15 AND track = 'basico';
 
 -- ── Capítulo 16: Módulos, pip y entornos virtuales (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 16, 'Módulos, pip y entornos virtuales', '📚', 'Organizar el proyecto y usar librerías externas.', '<p class="jc-gancho">Las tres funciones de crédito del capítulo 14 las vas a necesitar en el simulador, en el reporte y en el proyecto final. Copiarlas en cada archivo es garantizar que un día tengas tres versiones distintas. Un módulo se escribe una vez y se importa.</p>
 
 <h2>Un módulo es un archivo .py</h2>
@@ -6104,18 +6104,18 @@ print("Cargando...")      # ❌ sale cada vez que alguien lo importe</code></pre
   </tbody>
 </table>
 
-<blockquote>Un módulo define y el programa ejecuta. Si al importar tu archivo pasa <em>algo</em>, le falta el <code>if __name__ == "__main__"</code>.</blockquote>', 1
+<blockquote>Un módulo define y el programa ejecuta. Si al importar tu archivo pasa <em>algo</em>, le falta el <code>if __name__ == "__main__"</code>.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 4
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 16
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 16 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 16);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 16 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Usar la biblioteca estándar', 'facil', '<p>Usando los módulos <code>math</code> y <code>statistics</code>, mostrar para la lista <code>[4.5, 3.0, 2.8, 5.0]</code>:</p><pre><code>Promedio: 3.83
 Mediana: 3.75
@@ -6154,7 +6154,7 @@ notas = [4.5, 3.0, 2.8, 5.0]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Simulador de dado', 'facil', '<p>Usando <code>random</code> con semilla fija <code>random.seed(42)</code>, simular <strong>10</strong> lanzamientos de un dado y mostrar los resultados y cuántas veces salió cada cara:</p><pre><code>Lanzamientos: [6, 1, 1, 6, 3, 2, 2, 2, 6, 1]
 1: 3
@@ -6202,7 +6202,7 @@ LANZAMIENTOS = 10
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Módulo de formato', 'medio', '<p>Escribir un módulo de utilidades con tres funciones y probarlo con el guardián <code>if __name__ == "__main__"</code>:</p><ul><li><code>pesos(valor)</code> → <code>$ 1,250,000</code></li><li><code>porcentaje(parte, total)</code> → <code>25.0%</code></li><li><code>titulo(texto)</code> → el texto centrado en 30 caracteres entre líneas de <code>=</code></li></ul><pre><code>==============================
         REPORTE DIARIO
@@ -6285,7 +6285,7 @@ if __name__ == "__main__":
     # Fin
     pass
 ', 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Reporte con fechas', 'dificil', '<p>Un banco necesita un reporte de vencimientos. Dada la lista de créditos con su fecha de desembolso y su plazo en días:</p><pre><code>creditos = [
     ("C-001", "2026-01-15", 30),
@@ -6366,55 +6366,55 @@ creditos = [
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 16;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 16);
+    FROM chapters WHERE number = 16 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 16 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué es un módulo en Python?', NULL, '{"options":[{"id":"a","text":"Un archivo .py cuyas funciones se pueden importar desde otro archivo"},{"id":"b","text":"Una carpeta con código"},{"id":"c","text":"Un paquete que se instala con pip"},{"id":"d","text":"Una función muy larga"}]}', '{"option_id":"a"}', 'Cualquier archivo de Python ya es un módulo. No hay que hacer nada especial.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Para qué sirve un entorno virtual?', NULL, '{"options":[{"id":"a","text":"Para que cada proyecto tenga sus propios paquetes sin pisar a los demás"},{"id":"b","text":"Para que el programa corra más rápido"},{"id":"c","text":"Para ejecutar Python sin instalarlo"},{"id":"d","text":"Para subir el proyecto a internet"}]}', '{"option_id":"a"}', 'Un proyecto puede necesitar pandas 1.5 y otro pandas 2.1: cada uno en su caja.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué hace if __name__ == "__main__":?', NULL, '{"options":[{"id":"a","text":"Ejecuta ese bloque solo si el archivo se corre directamente, no al importarlo"},{"id":"b","text":"Define la función principal del programa"},{"id":"c","text":"Importa todos los módulos necesarios"},{"id":"d","text":"Marca dónde empieza el programa para el intérprete"}]}', '{"option_id":"a"}', 'Es el interruptor entre "soy una librería" y "soy el programa".', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Cuál de estos archivos NO debe subirse al repositorio?', NULL, '{"options":[{"id":"a","text":"La carpeta venv/"},{"id":"b","text":"requirements.txt"},{"id":"c","text":"main.py"},{"id":"d","text":".gitignore"}]}', '{"option_id":"a"}', 'venv/ pesa cientos de megas y se regenera en un minuto con requirements.txt.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué es mala idea from modulo import *?', NULL, '{"options":[{"id":"a","text":"Porque trae todo sin que se sepa qué, y una función puede pisar a otra en silencio"},{"id":"b","text":"Porque es más lento"},{"id":"c","text":"Porque Python lo prohíbe"},{"id":"d","text":"Porque no funciona con la biblioteca estándar"}]}', '{"option_id":"a"}', 'Si dos módulos tienen una función con el mismo nombre, el último importado gana y nadie se entera.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'import math
 print(math.ceil(4.2), math.floor(4.8))', '{"options":[{"id":"a","text":"5 4"},{"id":"b","text":"4 5"},{"id":"c","text":"4 4"},{"id":"d","text":"5 5"}]}', '{"option_id":"a"}', 'ceil siempre redondea hacia arriba y floor siempre hacia abajo, sin importar los decimales.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import statistics
 print(statistics.mean([4.0, 3.0, 5.0]))', '{"options":[{"id":"a","text":"4.0"},{"id":"b","text":"12.0"},{"id":"c","text":"3.0"},{"id":"d","text":"4"}]}', '{"option_id":"a"}', 'mean() es el promedio: hace el mismo sum() / len() pero con nombre propio.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', 'Si este archivo se importa desde otro, ¿qué imprime?', 'def saludar():
     return "hola"
 
 if __name__ == "__main__":
     print(saludar())', '{"options":[{"id":"a","text":"Nada"},{"id":"b","text":"hola"},{"id":"c","text":"__main__"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'Al importarlo, __name__ vale el nombre del módulo, así que el bloque no corre. Solo aporta la función.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'import datetime
 d = datetime.date(2026, 3, 10)
 print(d + datetime.timedelta(days=15))', '{"options":[{"id":"a","text":"2026-03-25"},{"id":"b","text":"2026-03-15"},{"id":"c","text":"2026-04-10"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'timedelta suma días respetando los meses y los años bisiestos, que es justo lo difícil de hacer a mano.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Este archivo se llama random.py y no funciona. ¿En qué línea está el problema?', NULL, '{"lines":["import random","","print(random.randint(1, 6))"]}', '{"line_number":1}', 'Python importa el propio archivo en vez del módulo de la biblioteca. Nunca hay que ponerle a un archivo el nombre de un módulo conocido.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Este módulo ensucia la salida de quien lo importe. ¿En qué línea está el problema?', NULL, '{"lines":["def cuota(m, t, n):","    return m * t","","print(\"Modulo cargado\")"]}', '{"line_number":4}', 'Ese print corre cada vez que alguien importe el módulo. Debía ir dentro de if __name__ == "__main__".', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'medio', 'Arme un módulo con su bloque de prueba', NULL, '{"lines":[{"id":"l1","text":"import math","indent":0},{"id":"l2","text":"def area_circulo(radio):","indent":0},{"id":"l3","text":"return math.pi * radio ** 2","indent":1},{"id":"l4","text":"if __name__ == \"__main__\":","indent":0},{"id":"l5","text":"print(area_circulo(2))","indent":1}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Los imports arriba, después las funciones, y de último el bloque del guardián con la prueba.', 1, 'seed'
-    FROM chapters WHERE number = 16;
+    FROM chapters WHERE number = 16 AND track = 'basico';
 
 -- ── Capítulo 17: Archivos (txt, csv, json) (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 17, 'Archivos (txt, csv, json)', '📁', 'Leer y escribir datos en disco.', '<p class="jc-gancho">Todos los programas que has escrito olvidan todo al cerrarse. El inventario, las notas, los clientes: se pierden. Un archivo es la memoria que sobrevive al programa.</p>
 
 <h2>Abrir, usar, cerrar</h2>
@@ -6605,18 +6605,18 @@ total += float(fila["nota1"])    # ✅</code></pre>
   </tbody>
 </table>
 
-<blockquote>Modo <code>"w"</code> borra el archivo entero antes de escribir. Si querías agregar, era <code>"a"</code>. Ese descuido ha borrado muchos datos de trabajos reales.</blockquote>', 1
+<blockquote>Modo <code>"w"</code> borra el archivo entero antes de escribir. Si querías agregar, era <code>"a"</code>. Ese descuido ha borrado muchos datos de trabajos reales.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 4
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 17
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 17 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 17);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 17 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Bitácora de ventas', 'facil', '<p>Escribir un programa que registre tres ventas en un archivo <code>ventas.txt</code>, una por línea, y luego lo lea y muestre su contenido con el total:</p><pre><code>Contenido de ventas.txt:
 50000
@@ -6666,7 +6666,7 @@ ventas = [50000, 30000, 20000]
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Notas en CSV', 'facil', '<p>Crear un archivo <code>notas.csv</code> con este contenido y luego leerlo con el módulo <code>csv</code> para mostrar el promedio de cada estudiante:</p><pre><code>nombre,nota1,nota2
 Ana,4.5,3.8
@@ -6711,7 +6711,7 @@ ARCHIVO = "notas.csv"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Clientes en JSON', 'medio', '<p>Guardar en <code>clientes.json</code> el siguiente diccionario, volverlo a leer y aplicar un retiro de <strong>50000</strong> a la cliente <code>1023</code>, guardando el resultado:</p><pre><code>clientes = {
     "1023": {"nombre": "Ana", "saldo": 250000},
@@ -6775,7 +6775,7 @@ clientes = {
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Registro que sobrevive', 'dificil', '<p>Escribir un programa que lleve el registro de gastos en <code>gastos.json</code> y que funcione tanto la primera vez (cuando el archivo no existe) como las siguientes.</p><p>Debe tener tres funciones: <code>cargar(ruta)</code>, <code>guardar(ruta, datos)</code> y <code>agregar(datos, categoria, monto)</code>.</p><p>El programa registra tres gastos y muestra el informe:</p><pre><code>Primera corrida: 0 categorias
 mercado: 150000
@@ -6877,55 +6877,55 @@ ARCHIVO = "gastos.json"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 17;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 17);
+    FROM chapters WHERE number = 17 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 17 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué ventaja tiene with open(...) sobre abrir el archivo a mano?', NULL, '{"options":[{"id":"a","text":"Cierra el archivo solo, incluso si algo falla adentro"},{"id":"b","text":"Es más rápido"},{"id":"c","text":"Permite leer y escribir a la vez"},{"id":"d","text":"No necesita la ruta del archivo"}]}', '{"option_id":"a"}', 'Olvidar el .close() es el error clásico; with lo hace imposible.', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué le pasa a un archivo existente si se abre en modo "w"?', NULL, '{"options":[{"id":"a","text":"Se borra todo su contenido"},{"id":"b","text":"Se agrega al final"},{"id":"c","text":"Da un error porque ya existe"},{"id":"d","text":"Se abre solo para lectura"}]}', '{"option_id":"a"}', 'Para agregar sin borrar se usa el modo "a". Este descuido ha borrado datos de trabajos reales.', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Cuál es la diferencia clave entre guardar en CSV y guardar en JSON?', NULL, '{"options":[{"id":"a","text":"JSON conserva los tipos y la estructura; el CSV lo devuelve todo como texto plano"},{"id":"b","text":"El CSV ocupa menos espacio"},{"id":"c","text":"JSON solo sirve para internet"},{"id":"d","text":"El CSV no se puede leer con Python"}]}', '{"option_id":"a"}', 'Con JSON un int vuelve como int; con CSV hay que convertir cada valor a mano.', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Por qué se usa encoding="utf-8" al abrir un archivo?', NULL, '{"options":[{"id":"a","text":"Para que las tildes y las eñes no se dañen entre sistemas operativos"},{"id":"b","text":"Para que el archivo pese menos"},{"id":"c","text":"Para poder escribir números"},{"id":"d","text":"Es obligatorio en Python 3"}]}', '{"option_id":"a"}', 'Sin él, Python usa la codificación del sistema y el mismo archivo se lee distinto en cada máquina.', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', 'Un programa carga un JSON, modifica el diccionario y se cierra. ¿Qué pasa?', NULL, '{"options":[{"id":"a","text":"El cambio se pierde: faltó volver a guardar"},{"id":"b","text":"El cambio queda guardado automáticamente"},{"id":"c","text":"El archivo se corrompe"},{"id":"d","text":"Python lanza un error al cerrar"}]}', '{"option_id":"a"}', 'El ciclo es cargar, modificar y GUARDAR. Modificar el diccionario solo cambia la memoria.', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', 'El archivo tiene la línea "fin". ¿Qué imprime este programa?', 'with open("d.txt", encoding="utf-8") as f:
     for linea in f:
         if linea == "fin":
             print("encontrado")
 print("listo")', '{"options":[{"id":"a","text":"listo"},{"id":"b","text":"encontrado\nlisto"},{"id":"c","text":"encontrado"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'La línea leída es "fin\n", que no es igual a "fin". Faltaba el .strip().', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import json
 d = {"saldo": 250000}
 texto = json.dumps(d)
 vuelto = json.loads(texto)
 print(vuelto["saldo"] + 1000)', '{"options":[{"id":"a","text":"251000"},{"id":"b","text":"2500001000"},{"id":"c","text":"TypeError"},{"id":"d","text":"250000"}]}', '{"option_id":"a"}', 'JSON conserva los tipos: el saldo vuelve como int y la suma es aritmética.', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', 'El CSV tiene la columna nota1 con el valor 4.5. ¿Qué imprime?', 'import csv
 with open("n.csv", encoding="utf-8", newline="") as f:
     for fila in csv.DictReader(f):
         print(fila["nota1"] + fila["nota1"])', '{"options":[{"id":"a","text":"4.54.5"},{"id":"b","text":"9.0"},{"id":"c","text":"9"},{"id":"d","text":"TypeError"}]}', '{"option_id":"a"}', 'Todo lo que sale de un CSV es texto: el + concatena. Faltaba float().', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El programa debía agregar al historial pero lo borró. ¿En qué línea está el error?', NULL, '{"lines":["with open(\"log.txt\", \"w\", encoding=\"utf-8\") as f:","    f.write(\"nuevo registro\\n\")"]}', '{"line_number":1}', 'El modo "w" borra el archivo entero. Para agregar al final va el modo "a".', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El programa se cae la primera vez que se ejecuta. ¿En qué línea está el problema?', NULL, '{"lines":["import json","","with open(\"datos.json\", encoding=\"utf-8\") as f:","    datos = json.load(f)","","print(len(datos))"]}', '{"line_number":3}', 'Si el archivo no existe todavía, open lanza FileNotFoundError. Hay que envolverlo en try/except y devolver {}.', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme la función que carga un JSON sin caerse la primera vez', NULL, '{"lines":[{"id":"l1","text":"def cargar(ruta):","indent":0},{"id":"l2","text":"try:","indent":1},{"id":"l3","text":"with open(ruta, encoding=\"utf-8\") as f:","indent":2},{"id":"l4","text":"return json.load(f)","indent":3},{"id":"l5","text":"except FileNotFoundError:","indent":1},{"id":"l6","text":"return {}","indent":2}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'El with va dentro del try, y el except devuelve un diccionario vacío para que el programa arranque de cero.', 1, 'seed'
-    FROM chapters WHERE number = 17;
+    FROM chapters WHERE number = 17 AND track = 'basico';
 
 -- ── Capítulo 18: Clases y objetos (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 18, 'Clases y objetos', '🏛️', 'Modelar el mundo con atributos y métodos.', '<p class="jc-gancho">Llevas todo el libro representando una cuenta bancaria con un diccionario suelto y funciones que la reciben por parámetro. Nada impide que alguien le meta un saldo negativo o le borre el nombre. Una clase junta los datos <em>y</em> las reglas que los protegen.</p>
 
 <h2>El molde y las galletas</h2>
@@ -7122,18 +7122,18 @@ class Cuenta:
   </tbody>
 </table>
 
-<blockquote>Una clase no es solo datos juntos: es datos <em>más</em> las reglas que impiden dejarlos en un estado imposible.</blockquote>', 1
+<blockquote>Una clase no es solo datos juntos: es datos <em>más</em> las reglas que impiden dejarlos en un estado imposible.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 5
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 18
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 18 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 18);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 18 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Clase Estudiante', 'facil', '<p>Crear una clase <code>Estudiante</code> con:</p><ul><li>atributos <code>nombre</code> y <code>notas</code> (lista, vacía por defecto),</li><li>método <code>agregar_nota(nota)</code>,</li><li>método <code>promedio()</code> que devuelva 0 si no tiene notas,</li><li>y <code>__str__</code> que muestre <code>Ana: 4.15</code>.</li></ul><pre><code>Ana: 4.15
 Juan: 0</code></pre>', '<p>La lista de notas debe crearse <strong>dentro</strong> de <code>__init__</code> con <code>self.notas = []</code>. Si se pone como atributo de clase, todos los estudiantes compartirían la misma lista.</p>', '<pre><code>''''''
@@ -7189,7 +7189,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Cuenta bancaria', 'facil', '<p>Crear una clase <code>CuentaBancaria</code> con <code>titular</code> y <code>saldo</code> (0 por defecto), y los métodos <code>consignar(monto)</code> y <code>retirar(monto)</code>. Retirar más del saldo debe lanzar <code>ValueError("Saldo insuficiente")</code>.</p><p>Demostrar que dos cuentas son independientes:</p><pre><code>Ana: 300000
 Juan: 0
@@ -7259,7 +7259,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Producto con propiedad', 'medio', '<p>Crear una clase <code>Producto</code> con <code>nombre</code>, <code>precio</code> y <code>cantidad</code>. Debe tener:</p><ul><li>una propiedad <code>total</code> (precio × cantidad) que se lea sin paréntesis,</li><li>un método <code>vender(unidades)</code> que descuente del inventario y lance <code>ValueError</code> si no hay suficientes,</li><li>y <code>__str__</code> con el formato de la salida.</li></ul><pre><code>Pan          x20 =    100,000
 Quedan 15 unidades
@@ -7329,7 +7329,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Inventario completo', 'dificil', '<p>Sobre la clase <code>Producto</code> anterior, crear una clase <code>Inventario</code> que:</p><ul><li>guarde productos en un diccionario por nombre,</li><li><code>agregar(producto)</code> — si ya existe, suma la cantidad,</li><li><code>vender(nombre, unidades)</code> — lanza <code>KeyError</code> si el producto no existe,</li><li>propiedad <code>valor_total</code>,</li><li><code>bajo_stock(minimo)</code> — devuelve la lista de nombres con menos de <code>minimo</code> unidades.</li></ul><pre><code>Pan          x30 =    150,000
 Leche        x 8 =     56,000
@@ -7435,23 +7435,23 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 18;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 18);
+    FROM chapters WHERE number = 18 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 18 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuál es la diferencia entre una clase y un objeto?', NULL, '{"options":[{"id":"a","text":"La clase es el molde; el objeto es cada cosa concreta creada con ese molde"},{"id":"b","text":"Son sinónimos"},{"id":"c","text":"El objeto es el molde y la clase la copia"},{"id":"d","text":"La clase guarda datos y el objeto guarda funciones"}]}', '{"option_id":"a"}', 'Del mismo molde salen muchas galletas, y cada una tiene sus propios datos.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué es self?', NULL, '{"options":[{"id":"a","text":"El objeto concreto sobre el que se está trabajando"},{"id":"b","text":"Una palabra reservada obligatoria de Python"},{"id":"c","text":"La clase en sí misma"},{"id":"d","text":"Una variable global del programa"}]}', '{"option_id":"a"}', 'cuenta.retirar(100) es en realidad retirar(cuenta, 100): Python pasa self solo.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Cuándo se ejecuta __init__?', NULL, '{"options":[{"id":"a","text":"Automáticamente al crear un objeto de la clase"},{"id":"b","text":"Cada vez que se llama un método"},{"id":"c","text":"Cuando se imprime el objeto"},{"id":"d","text":"Hay que llamarlo a mano"}]}', '{"option_id":"a"}', 'Su trabajo es dejar el objeto listo para usarse: ahí se crean todos los atributos.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Para qué sirve @property?', NULL, '{"options":[{"id":"a","text":"Para que un método se lea como atributo, sin paréntesis"},{"id":"b","text":"Para hacer el atributo privado"},{"id":"c","text":"Para declarar un atributo de clase"},{"id":"d","text":"Para documentar la clase"}]}', '{"option_id":"a"}', 'Sirve para valores que se calculan al pedirlos, como el total de un producto, en vez de guardarlos desactualizados.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué un valor calculable como total = precio * cantidad conviene como propiedad y no como atributo?', NULL, '{"options":[{"id":"a","text":"Porque como atributo queda congelado y miente cuando la cantidad cambia"},{"id":"b","text":"Porque ocupa menos memoria"},{"id":"c","text":"Porque los atributos no pueden ser números"},{"id":"d","text":"Porque las propiedades son más rápidas"}]}', '{"option_id":"a"}', 'Lo que se puede deducir de otros datos se calcula, no se guarda: guardarlo crea dos versiones de la verdad.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'class Cuenta:
     def __init__(self, saldo=0):
@@ -7461,7 +7461,7 @@ a = Cuenta(100)
 b = Cuenta()
 a.saldo += 50
 print(a.saldo, b.saldo)', '{"options":[{"id":"a","text":"150 0"},{"id":"b","text":"150 150"},{"id":"c","text":"100 0"},{"id":"d","text":"150 100"}]}', '{"option_id":"a"}', 'Cada objeto tiene sus propios atributos: cambiar el de a no toca a b.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class Cuenta:
     def __init__(self, saldo):
@@ -7473,7 +7473,7 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
 c = Cuenta(100)
 c.sumar(50)
 print(c.saldo)', '{"options":[{"id":"a","text":"100"},{"id":"b","text":"150"},{"id":"c","text":"50"},{"id":"d","text":"None"}]}', '{"option_id":"a"}', 'Falta el self.: esa saldo es una variable local que muere al terminar el método.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class P:
     def __init__(self, precio, cant):
@@ -7487,7 +7487,7 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
 p = P(1000, 5)
 p.cant = 2
 print(p.total)', '{"options":[{"id":"a","text":"2000"},{"id":"b","text":"5000"},{"id":"c","text":"1000"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'La propiedad se recalcula al pedirla, así que refleja la cantidad nueva.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'class Cuenta:
     movimientos = []
@@ -7499,19 +7499,19 @@ a = Cuenta("Ana")
 b = Cuenta("Juan")
 a.movimientos.append("retiro")
 print(len(b.movimientos))', '{"options":[{"id":"a","text":"1"},{"id":"b","text":"0"},{"id":"c","text":"2"},{"id":"d","text":"AttributeError"}]}', '{"option_id":"a"}', 'La lista es atributo de CLASE: la comparten todos los objetos. Debía crearse dentro de __init__.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'Al llamar c.consignar(100) da TypeError. ¿En qué línea está el error?', NULL, '{"lines":["class Cuenta:","    def __init__(self, saldo):","        self.saldo = saldo","","    def consignar(monto):","        self.saldo += monto"]}', '{"line_number":5}', 'Falta self como primer parámetro: debía ser def consignar(self, monto).', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Todos los estudiantes terminan con las mismas notas. ¿En qué línea está el error?', NULL, '{"lines":["class Estudiante:","    notas = []","","    def __init__(self, nombre):","        self.nombre = nombre"]}', '{"line_number":2}', 'Esa lista es de la clase y la comparten todos. Va dentro de __init__ como self.notas = [].', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme la clase CuentaBancaria con validación', NULL, '{"lines":[{"id":"l1","text":"class CuentaBancaria:","indent":0},{"id":"l2","text":"def __init__(self, titular, saldo=0):","indent":1},{"id":"l3","text":"self.titular = titular","indent":2},{"id":"l4","text":"self.saldo = saldo","indent":2},{"id":"l5","text":"def retirar(self, monto):","indent":1},{"id":"l6","text":"if monto > self.saldo:","indent":2},{"id":"l7","text":"raise ValueError(\"Saldo insuficiente\")","indent":3},{"id":"l8","text":"self.saldo -= monto","indent":2}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8"]}', 'Los métodos van indentados dentro de la clase, y la validación antes de tocar el saldo: si el raise se dispara, el descuento nunca ocurre.', 1, 'seed'
-    FROM chapters WHERE number = 18;
+    FROM chapters WHERE number = 18 AND track = 'basico';
 
 -- ── Capítulo 19: Herencia y métodos especiales (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 19, 'Herencia y métodos especiales', '🧬', 'Reutilizar clases y personalizar su comportamiento.', '<p class="jc-gancho">El banco tiene cuentas de ahorros y cuentas corrientes. Las dos tienen titular, saldo, consignar y retirar. Lo único distinto es que la corriente permite sobregiro. ¿Copias la clase entera y cambias tres líneas? No: heredas.</p>
 
 <h2>Herencia: partir de algo que ya existe</h2>
@@ -7724,18 +7724,18 @@ class Inventario:              # ✅ los contiene
   </tbody>
 </table>
 
-<blockquote>Herencia solo cuando la frase "<em>es un</em>" es cierta. Si dices "tiene un", lo que necesitas es guardar el objeto adentro, no heredarlo.</blockquote>', 1
+<blockquote>Herencia solo cuando la frase "<em>es un</em>" es cierta. Si dices "tiene un", lo que necesitas es guardar el objeto adentro, no heredarlo.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 5
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 19
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 19 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 19);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 19 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Empleado y Gerente', 'facil', '<p>Crear una clase <code>Empleado</code> con <code>nombre</code> y <code>salario</code>, y un método <code>pago_mensual()</code> que devuelva el salario.</p><p>Crear <code>Gerente(Empleado)</code> que además tenga <code>bono</code> y cuyo <code>pago_mensual()</code> sume el bono.</p><pre><code>Ana gana 2,000,000
 Juan gana 5,500,000</code></pre>', '<p>En el <code>__init__</code> del gerente, primero <code>super().__init__(nombre, salario)</code> y después <code>self.bono = bono</code>.</p>', '<pre><code>''''''
@@ -7794,7 +7794,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Cuenta corriente con sobregiro', 'facil', '<p>Sobre una clase <code>Cuenta</code> con <code>consignar()</code> y <code>retirar()</code> (que no permite quedar en negativo), crear <code>CuentaCorriente</code> con un cupo de sobregiro de <strong>500000</strong>.</p><pre><code>Ahorros de Ana: 150000
 Error en ahorros: Saldo insuficiente
@@ -7874,7 +7874,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Clase Dinero con operadores', 'medio', '<p>Crear una clase <code>Dinero</code> que guarde un valor en pesos y sepa comportarse como un número:</p><ul><li><code>__str__</code> → <code>$ 50,000</code></li><li><code>__repr__</code> → <code>Dinero(50000)</code></li><li><code>__eq__</code>, <code>__lt__</code> y <code>__add__</code></li></ul><pre><code>$ 80,000
 True
@@ -7938,7 +7938,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Nómina polimórfica', 'dificil', '<p>Una empresa paga de tres formas distintas:</p><ul><li><code>Asalariado</code>: salario fijo.</li><li><code>PorHoras</code>: valor hora × horas, y las horas sobre 160 se pagan con recargo del 25%.</li><li><code>Comisionista</code>: básico + porcentaje de sus ventas.</li></ul><p>Todos heredan de <code>Empleado</code>, que define <code>pago_mensual()</code> y el descuento de salud y pensión (8% del pago).</p><p>Procesar la nómina completa:</p><pre><code>Ana          asalariado    2,000,000   neto 1,840,000
 Juan         por horas     1,850,000   neto 1,702,000
@@ -8075,23 +8075,23 @@ RECARGO_EXTRA = 1.25
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 19;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 19);
+    FROM chapters WHERE number = 19 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 19 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Cuándo conviene usar herencia?', NULL, '{"options":[{"id":"a","text":"Cuando la frase \"la hija ES un padre\" es cierta"},{"id":"b","text":"Siempre que dos clases compartan código"},{"id":"c","text":"Cuando una clase necesita usar otra"},{"id":"d","text":"Cuando hay muchas clases"}]}', '{"option_id":"a"}', 'Si hay que decir "tiene un", eso es composición: guardar el objeto adentro, no heredarlo.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué hace super().__init__(...)?', NULL, '{"options":[{"id":"a","text":"Llama al constructor de la clase padre"},{"id":"b","text":"Crea un objeto nuevo del padre"},{"id":"c","text":"Copia los atributos del padre"},{"id":"d","text":"Convierte la hija en padre"}]}', '{"option_id":"a"}', 'Sin esa llamada, los atributos que crea el padre nunca existen y después salta AttributeError.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué es el polimorfismo?', NULL, '{"options":[{"id":"a","text":"Que la misma llamada funcione sobre objetos de tipos distintos, cada uno a su manera"},{"id":"b","text":"Que una clase tenga muchos atributos"},{"id":"c","text":"Que un objeto cambie de tipo en tiempo de ejecución"},{"id":"d","text":"Heredar de varias clases a la vez"}]}', '{"option_id":"a"}', 'Es lo que permite recorrer una lista de empleados llamando pago_mensual() sin un solo if.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué diferencia hay entre __str__ y __repr__?', NULL, '{"options":[{"id":"a","text":"__str__ es para el usuario y __repr__ para el programador (listas, consola)"},{"id":"b","text":"Son lo mismo con distinto nombre"},{"id":"c","text":"__repr__ solo sirve con números"},{"id":"d","text":"__str__ se usa al comparar objetos"}]}', '{"option_id":"a"}', 'Por eso al imprimir una lista de objetos se ve el __repr__ y no el __str__.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Para qué sirve raise NotImplementedError en un método de la clase base?', NULL, '{"options":[{"id":"a","text":"Para obligar a las clases hijas a definir ese método"},{"id":"b","text":"Para marcar código pendiente de escribir"},{"id":"c","text":"Para evitar que la clase se pueda instanciar"},{"id":"d","text":"Para documentar el método"}]}', '{"option_id":"a"}', 'Es un contrato: si alguien crea una hija y lo olvida, el error se lo dice en vez de dar un resultado equivocado.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class A:
     def saludo(self):
@@ -8102,7 +8102,7 @@ class B(A):
         return "soy B"
 
 print(B().saludo())', '{"options":[{"id":"a","text":"soy B"},{"id":"b","text":"soy A"},{"id":"c","text":"soy A\nsoy B"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', 'Python busca el método primero en la clase del objeto. Como B lo define, esa versión gana.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class A:
     def __init__(self, x):
@@ -8115,7 +8115,7 @@ class B(A):
 
 b = B(1, 2)
 print(b.x + b.y)', '{"options":[{"id":"a","text":"3"},{"id":"b","text":"2"},{"id":"c","text":"AttributeError"},{"id":"d","text":"1"}]}', '{"option_id":"a"}', 'super() crea self.x y después la hija agrega self.y: el objeto termina con los dos.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'class D:
     def __init__(self, v):
@@ -8128,7 +8128,7 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
         return f"D({self.v})"
 
 print(sorted([D(3), D(1), D(2)]))', '{"options":[{"id":"a","text":"[D(1), D(2), D(3)]"},{"id":"b","text":"[D(3), D(1), D(2)]"},{"id":"c","text":"TypeError"},{"id":"d","text":"[1, 2, 3]"}]}', '{"option_id":"a"}', 'Con __lt__ definido, sorted() sabe comparar los objetos; __repr__ es lo que se ve dentro de la lista.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'class Cuenta:
     def retirar(self, m):
@@ -8141,19 +8141,19 @@ class Ahorros(Cuenta):
         return super().retirar(m)
 
 print(Ahorros().retirar(50))', '{"options":[{"id":"a","text":"retiro 50"},{"id":"b","text":"tope excedido"},{"id":"c","text":"None"},{"id":"d","text":"Error"}]}', '{"option_id":"a"}', '50 no supera el tope, así que la hija valida lo suyo y delega en el padre con super().', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Al usar el objeto salta AttributeError: no existe ''saldo''. ¿En qué línea está el error?', NULL, '{"lines":["class Cuenta:","    def __init__(self, saldo):","        self.saldo = saldo","","class Corriente(Cuenta):","    def __init__(self, saldo, cupo):","        self.cupo = cupo"]}', '{"line_number":7}', 'Falta super().__init__(saldo) antes: sin esa llamada el atributo saldo nunca se crea.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'La jerarquía está mal planteada. ¿En qué línea está el error de diseño?', NULL, '{"lines":["class Producto:","    pass","","class Inventario(Producto):","    def __init__(self):","        self.productos = {}"]}', '{"line_number":4}', 'Un inventario no ES un producto: TIENE productos. Eso es composición, no herencia.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme la cuenta de ahorros que extiende la del padre', NULL, '{"lines":[{"id":"l1","text":"class CuentaAhorros(Cuenta):","indent":0},{"id":"l2","text":"def retirar(self, monto):","indent":1},{"id":"l3","text":"if monto > 1000000:","indent":2},{"id":"l4","text":"raise ValueError(\"Maximo un millon por retiro\")","indent":3},{"id":"l5","text":"return super().retirar(monto)","indent":2}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'La hija valida lo suyo primero y termina delegando en el padre, en vez de copiar su validación de saldo.', 1, 'seed'
-    FROM chapters WHERE number = 19;
+    FROM chapters WHERE number = 19 AND track = 'basico';
 
 -- ── Capítulo 20: Proyecto integrador: Sistema Bancario (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 20, 'Proyecto integrador: Sistema Bancario', '🏗️', 'Todo lo aprendido en una sola aplicación.', '<p class="jc-gancho">Diecinueve capítulos, cada uno con su pieza. Este capítulo no enseña nada nuevo: las junta todas en un programa que un banco pequeño podría usar de verdad. Cuentas, retiros, historial, persistencia y menú.</p>
 
 <h2>Qué vamos a construir</h2>
@@ -8451,18 +8451,18 @@ if __name__ == "__main__":
   </tbody>
 </table>
 
-<blockquote>Un proyecto no es código más largo: es código <em>repartido</em>. Cuando cada archivo tiene un solo trabajo, agregar una función nueva deja de dar miedo.</blockquote>', 1
+<blockquote>Un proyecto no es código más largo: es código <em>repartido</em>. Cuando cada archivo tiene un solo trabajo, agregar una función nueva deja de dar miedo.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 6
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 20
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 20 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 20);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 20 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'El gancho puede_retirar', 'facil', '<p>Implementar <code>Cuenta</code> y <code>CuentaCorriente</code> de forma que <code>retirar()</code> se escriba <strong>una sola vez</strong> en el padre y lo único que cambie entre las dos sea el método <code>puede_retirar(monto)</code>.</p><pre><code>Ahorros: 150000
 Corriente: -250000
@@ -8538,7 +8538,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Transferencia atómica', 'facil', '<p>Sobre una clase <code>Banco</code> que guarda cuentas en un diccionario, implementar <code>transferir(origen, destino, monto)</code> de forma que, si el retiro falla, <strong>no se consigne nada</strong>.</p><pre><code>Antes  -> Ana: 200000  Juan: 50000
 Despues-> Ana: 120000  Juan: 130000
@@ -8630,7 +8630,7 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Guardar y recuperar el banco', 'medio', '<p>Escribir <code>guardar(banco, ruta)</code> y <code>cargar(banco, ruta)</code> que conviertan las cuentas a JSON y las reconstruyan como objetos.</p><p>El programa debe abrir dos cuentas, hacer un movimiento, guardar, y volver a cargar en un banco nuevo para comprobar que todo sobrevivió:</p><pre><code>Guardadas 2 cuentas
 Recuperadas 2 cuentas
@@ -8743,7 +8743,7 @@ ARCHIVO = "banco.json"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Sistema bancario completo', 'dificil', '<p>Armar el sistema completo con menú por consola. Debe soportar las opciones:</p><ol><li>Abrir cuenta (ahorros o corriente)</li><li>Consignar</li><li>Retirar</li><li>Transferir</li><li>Extracto (saldo e historial)</li><li>Salir</li></ol><p>Con esta secuencia de entradas:</p><pre><code>1 / 001 / Ana / ahorros
 1 / 002 / Juan / corriente
@@ -8925,23 +8925,23 @@ Descripcion:
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 20;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 20);
+    FROM chapters WHERE number = 20 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 20 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Por qué un proyecto se reparte en varios archivos en vez de uno solo?', NULL, '{"options":[{"id":"a","text":"Porque cada archivo con una sola responsabilidad es más fácil de cambiar y de probar"},{"id":"b","text":"Porque Python no admite archivos largos"},{"id":"c","text":"Porque así el programa corre más rápido"},{"id":"d","text":"Porque lo exige el sistema operativo"}]}', '{"option_id":"a"}', 'Con 100 líneas da igual; con 500 la diferencia entre un archivo ordenado y uno revuelto es enorme.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué parte del sistema bancario debe hacer print() e input()?', NULL, '{"options":[{"id":"a","text":"Solo el menú (main.py)"},{"id":"b","text":"Todas, cada una reporta lo suyo"},{"id":"c","text":"Las clases de cuenta"},{"id":"d","text":"El módulo de almacenamiento"}]}', '{"option_id":"a"}', 'Así el mismo Banco sirve tal cual para una API web: solo cambia quién llama a sus métodos.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', 'En transferir(), ¿por qué el retiro va antes que la consignación?', NULL, '{"options":[{"id":"a","text":"Para que, si el retiro falla, la consignación nunca ocurra y el banco no cree dinero"},{"id":"b","text":"Porque retirar es más rápido"},{"id":"c","text":"Por convención de los bancos"},{"id":"d","text":"Da lo mismo el orden"}]}', '{"option_id":"a"}', 'Esa propiedad de "o pasa todo o no pasa nada" se llama atomicidad, y aquí sale gratis con solo ordenar bien.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué es serializar?', NULL, '{"options":[{"id":"a","text":"Convertir objetos en diccionarios y listas que JSON sí sabe guardar"},{"id":"b","text":"Ordenar los datos por fecha"},{"id":"c","text":"Numerar las cuentas en serie"},{"id":"d","text":"Comprimir el archivo"}]}', '{"option_id":"a"}', 'JSON solo maneja diccionarios, listas, números, textos y booleanos: los objetos hay que traducirlos en las dos direcciones.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Qué gana el diseño al poner la regla variable en puede_retirar() en vez de sobrescribir retirar() entero?', NULL, '{"options":[{"id":"a","text":"Que el método largo se escribe una sola vez y las hijas solo redefinen lo que de verdad cambia"},{"id":"b","text":"Que se ejecuta más rápido"},{"id":"c","text":"Que no hace falta usar super()"},{"id":"d","text":"Que se pueden tener más subclases"}]}', '{"option_id":"a"}', 'Ese método pequeño que las hijas redefinen se llama gancho, y es lo que evita duplicar validaciones.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'class C:
     def puede(self, m):
@@ -8962,7 +8962,7 @@ class Corriente(C):
 c = Corriente(50)
 c.retirar(120)
 print(c.saldo)', '{"options":[{"id":"a","text":"-70"},{"id":"b","text":"50"},{"id":"c","text":"no alcanza"},{"id":"d","text":"ValueError"}]}', '{"option_id":"a"}', 'retirar() está en el padre pero llama a self.puede(), y self es una Corriente: usa la versión de la hija.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', 'Ana tiene 100 y Juan 50. ¿Cuánto queda en cada uno?', 'def transferir(a, b, monto):
     a.retirar(monto)
@@ -8974,19 +8974,19 @@ except ValueError:
     pass
 
 print(ana.saldo, juan.saldo)', '{"options":[{"id":"a","text":"100 50"},{"id":"b","text":"-400 550"},{"id":"c","text":"100 550"},{"id":"d","text":"0 50"}]}', '{"option_id":"a"}', 'El retiro lanza la excepción y la consignación nunca corre: ninguno de los dos saldos cambia.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Una transferencia fallida le regala dinero al destino. ¿En qué línea está el error?', NULL, '{"lines":["def transferir(self, origen, destino, monto):","    o = self.buscar(origen)","    d = self.buscar(destino)","    d.consignar(monto)","    o.retirar(monto)"]}', '{"line_number":4}', 'La consignación va después del retiro. Así, si el retiro falla, el destino ya recibió el dinero.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'La clase no debería hablar con el usuario. ¿En qué línea está el problema de diseño?', NULL, '{"lines":["def retirar(self, monto):","    if monto > self.saldo:","        print(\"Saldo insuficiente\")","        raise ValueError(\"Saldo insuficiente\")","    self.saldo -= monto"]}', '{"line_number":3}', 'La clase no sabe si hay pantalla: solo debe lanzar. Mostrar el mensaje es trabajo del menú.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme la transferencia atómica del banco', NULL, '{"lines":[{"id":"l1","text":"def transferir(self, origen, destino, monto):","indent":0},{"id":"l2","text":"salida = self.buscar(origen)","indent":1},{"id":"l3","text":"entrada = self.buscar(destino)","indent":1},{"id":"l4","text":"salida.retirar(monto)","indent":1},{"id":"l5","text":"entrada.consignar(monto)","indent":1}]}', '{"order":["l1","l2","l3","l4","l5"]}', 'Primero se buscan las dos cuentas (si alguna no existe, falla antes de tocar nada) y después el retiro antes de la consignación.', 1, 'seed'
-    FROM chapters WHERE number = 20;
+    FROM chapters WHERE number = 20 AND track = 'basico';
 
 -- ── Capítulo 21: SQL desde cero (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 21, 'SQL desde cero', '🗄️', 'Bases de datos relacionales y consultas desde Python.', '<p class="jc-gancho">El banco del capítulo 20 guarda todo en un JSON. Con 50 cuentas va bien. Con 50 mil, cada consulta lee el archivo entero, dos personas no pueden escribir a la vez y buscar "los retiros de marzo" obliga a recorrerlo todo. Para eso se inventaron las bases de datos.</p>
 
 <h2>SQLite: la base de datos que ya tienes</h2>
@@ -9192,18 +9192,18 @@ cursor.execute("... WHERE numero = ?", ("001",))   # ✅ tupla de uno</code></pr
   </tbody>
 </table>
 
-<blockquote>Los valores nunca se pegan a la consulta: siempre van con <code>?</code>. Esa sola regla previene la vulnerabilidad más común y más costosa que existe.</blockquote>', 1
+<blockquote>Los valores nunca se pegan a la consulta: siempre van con <code>?</code>. Esa sola regla previene la vulnerabilidad más común y más costosa que existe.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 6
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 21
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 21 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 21);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 21 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Primera tabla', 'facil', '<p>Crear una base <code>tienda.db</code> con una tabla <code>productos</code> (<code>codigo</code> como clave primaria, <code>nombre</code>, <code>precio</code>), insertar tres productos y listarlos ordenados por precio:</p><pre><code>P3 Queso        15,000
 P2 Leche         7,000
@@ -9270,7 +9270,7 @@ BASE = "tienda.db"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Consultas con filtro', 'facil', '<p>Sobre la tabla de productos, responder tres preguntas usando SQL (no ciclos de Python):</p><ul><li>los que cuestan más de 6000,</li><li>cuántos productos hay y cuál es el precio promedio,</li><li>y el más caro.</li></ul><pre><code>Caros: [''Leche'', ''Queso'']
 3 productos, promedio 9000.0
@@ -9337,7 +9337,7 @@ CARO = 6000
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Dos tablas y un JOIN', 'medio', '<p>Crear las tablas <code>cuentas</code> y <code>movimientos</code> (con clave foránea a la cuenta) y mostrar cada movimiento con el nombre de su titular, más el resumen por cuenta:</p><pre><code>Ana   consignacion   200000
 Ana   retiro         -50000
@@ -9431,7 +9431,7 @@ BASE = "banco_sql.db"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'El banco sobre SQLite', 'dificil', '<p>Reescribir el banco del capítulo 20 guardando en SQLite en vez de JSON. La clase <code>BancoSQL</code> debe tener <code>abrir()</code>, <code>consignar()</code>, <code>retirar()</code>, <code>transferir()</code> y <code>extracto()</code>.</p><p>La transferencia debe usar una transacción: si el retiro falla, no se consigna nada.</p><pre><code>001 Ana: 200,000
 002 Juan: 50,000
@@ -9593,30 +9593,30 @@ BASE = "banco_final.db"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 21;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 21);
+    FROM chapters WHERE number = 21 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 21 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué tiene de especial SQLite frente a otras bases de datos?', NULL, '{"options":[{"id":"a","text":"Es un solo archivo, no necesita servidor y viene incluida en Python"},{"id":"b","text":"Solo funciona en Windows"},{"id":"c","text":"Guarda los datos en la nube"},{"id":"d","text":"Hay que instalarla con pip"}]}', '{"option_id":"a"}', 'Es la misma base que usan tu celular y tu navegador. Para aprender y para proyectos pequeños sobra.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué pasa si se olvida el commit() después de un INSERT?', NULL, '{"options":[{"id":"a","text":"El cambio no queda guardado"},{"id":"b","text":"Se guarda igual, el commit es opcional"},{"id":"c","text":"Se lanza un error"},{"id":"d","text":"Se guarda a medias"}]}', '{"option_id":"a"}', 'Hasta el commit los cambios están en el aire. Es el equivalente al paso de guardar del capítulo 17.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Por qué los valores van con ? y no pegados con f-strings?', NULL, '{"options":[{"id":"a","text":"Para evitar inyección SQL: con ? el valor nunca se interpreta como instrucción"},{"id":"b","text":"Porque las f-strings no funcionan con sqlite3"},{"id":"c","text":"Porque es más rápido"},{"id":"d","text":"Por convención de estilo"}]}', '{"option_id":"a"}', 'Un nombre como ''; DROP TABLE cuentas; -- borraría la tabla si la consulta se arma pegando texto.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué hace GROUP BY tipo?', NULL, '{"options":[{"id":"a","text":"Agrupa las filas por ese valor para resumirlas con COUNT, SUM o AVG"},{"id":"b","text":"Ordena las filas por tipo"},{"id":"c","text":"Filtra las filas de ese tipo"},{"id":"d","text":"Crea una tabla nueva por cada tipo"}]}', '{"option_id":"a"}', 'Es el patrón de conteo del capítulo 12, pero resuelto por la base sin traer los datos a Python.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Para qué sirve rollback()?', NULL, '{"options":[{"id":"a","text":"Para deshacer todos los cambios pendientes desde el último commit"},{"id":"b","text":"Para volver a la versión anterior de la base"},{"id":"c","text":"Para cerrar la conexión"},{"id":"d","text":"Para borrar la última fila insertada"}]}', '{"option_id":"a"}', 'Con commit y rollback, una transferencia queda completa o no queda: la atomicidad la garantiza la base.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import sqlite3
 c = sqlite3.connect(":memory:")
 c.execute("CREATE TABLE t (n INTEGER)")
 c.executemany("INSERT INTO t VALUES (?)", [(1,), (2,), (3,)])
 print(c.execute("SELECT SUM(n) FROM t").fetchone())', '{"options":[{"id":"a","text":"(6,)"},{"id":"b","text":"6"},{"id":"c","text":"[6]"},{"id":"d","text":"[(1,), (2,), (3,)]"}]}', '{"option_id":"a"}', 'fetchone() siempre devuelve una tupla, aunque la consulta traiga un solo valor: por eso el [0] al usarlo.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import sqlite3
 c = sqlite3.connect(":memory:")
@@ -9624,26 +9624,26 @@ c.execute("CREATE TABLE p (nombre TEXT, precio INTEGER)")
 c.executemany("INSERT INTO p VALUES (?, ?)", [("pan", 5000), ("queso", 15000)])
 filas = c.execute("SELECT nombre FROM p WHERE precio > ?", (6000,)).fetchall()
 print(filas)', '{"options":[{"id":"a","text":"[(''queso'',)]"},{"id":"b","text":"[''queso'']"},{"id":"c","text":"[(''pan'',), (''queso'',)]"},{"id":"d","text":"queso"}]}', '{"option_id":"a"}', 'fetchall() devuelve una lista de tuplas, una por fila, aunque cada una tenga una sola columna.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'import sqlite3
 c = sqlite3.connect(":memory:")
 c.execute("CREATE TABLE t (tipo TEXT, monto INTEGER)")
 c.executemany("INSERT INTO t VALUES (?, ?)", [("a", 10), ("b", 20), ("a", 30)])
 print(c.execute("SELECT tipo, SUM(monto) FROM t GROUP BY tipo").fetchall())', '{"options":[{"id":"a","text":"[(''a'', 40), (''b'', 20)]"},{"id":"b","text":"[(''a'', 10), (''b'', 20), (''a'', 30)]"},{"id":"c","text":"[(''a'', 2), (''b'', 1)]"},{"id":"d","text":"[60]"}]}', '{"option_id":"a"}', 'GROUP BY junta las filas del mismo tipo y SUM las totaliza: la a suma 10 + 30.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'Este programa es vulnerable. ¿En qué línea está el problema?', NULL, '{"lines":["nombre = input(\"Titular: \")","cursor.execute(f\"SELECT * FROM cuentas WHERE titular = ''{nombre}''\")","print(cursor.fetchall())"]}', '{"line_number":2}', 'Inyección SQL: el valor va pegado a la consulta. Debía ser execute("... = ?", (nombre,)).', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'El parámetro no funciona. ¿En qué línea está el error?', NULL, '{"lines":["cursor.execute(","    \"SELECT * FROM cuentas WHERE numero = ?\",","    (\"001\")",")"]}', '{"line_number":3}', 'Falta la coma: ("001") es un texto entre paréntesis, no una tupla. Debía ser ("001",).', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme la transferencia con transacción', NULL, '{"lines":[{"id":"l1","text":"try:","indent":0},{"id":"l2","text":"cur.execute(\"UPDATE cuentas SET saldo = saldo - ? WHERE numero = ?\", (monto, origen))","indent":1},{"id":"l3","text":"cur.execute(\"UPDATE cuentas SET saldo = saldo + ? WHERE numero = ?\", (monto, destino))","indent":1},{"id":"l4","text":"conexion.commit()","indent":1},{"id":"l5","text":"except Exception:","indent":0},{"id":"l6","text":"conexion.rollback()","indent":1},{"id":"l7","text":"raise","indent":1}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7"]}', 'Los dos UPDATE van antes del único commit: si algo falla, el rollback deshace los dos y el raise avisa a quien llamó.', 1, 'seed'
-    FROM chapters WHERE number = 21;
+    FROM chapters WHERE number = 21 AND track = 'basico';
 
 -- ── Capítulo 22: Pandas y datos (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 22, 'Pandas y datos', '🐼', 'Cargar, limpiar y analizar datos reales.', '<p class="jc-gancho">Te pasan el CSV de ventas del año: 80 mil filas. Con el módulo <code>csv</code> del capítulo 17 y un par de ciclos lo sacas… en cuarenta líneas. Con pandas, el mismo análisis son cuatro. Esta es la herramienta con la que trabaja todo el que vive de datos.</p>
 
 <h2>Instalar y arrancar</h2>
@@ -9824,18 +9824,18 @@ df["total"] = df["precio"] * df["cantidad"]   # ✅ vectorizado</code></pre>
   </tbody>
 </table>
 
-<blockquote>Si estás escribiendo un ciclo sobre un DataFrame, probablemente hay una línea de pandas que hace lo mismo cien veces más rápido.</blockquote>', 1
+<blockquote>Si estás escribiendo un ciclo sobre un DataFrame, probablemente hay una línea de pandas que hace lo mismo cien veces más rápido.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 6
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 22
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 22 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 22);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 22 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Primer DataFrame', 'facil', '<p>Crear un DataFrame con el inventario de la tienda (producto, precio, cantidad), agregar una columna <code>total</code> y mostrar la tabla, el valor del inventario y el producto más caro.</p><pre><code>  producto  precio  cantidad   total
 0      pan    5000        30  150000
@@ -9883,7 +9883,7 @@ import pandas as pd
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Filtrar ventas', 'facil', '<p>Con un DataFrame de ventas (vendedor, producto, monto), mostrar:</p><ul><li>las ventas mayores a 100000,</li><li>las ventas de "Ana" de más de 50000,</li><li>y cuántas ventas hubo en total.</li></ul><p><em>Nota:</em> use filtrado de pandas, no ciclos ni <code>if</code>.</p>', '<p>Un filtro es <code>df[df["monto"] > 100000]</code>. Para dos condiciones, cada una entre paréntesis y unidas con <code>&amp;</code>, nunca con <code>and</code>.</p>', '<pre><code>''''''
 Programa: Filtros sobre las ventas
@@ -9926,7 +9926,7 @@ import pandas as pd
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Limpiar datos sucios', 'medio', '<p>Un CSV de ventas llegó con problemas: montos como texto, celdas vacías, nombres con espacios y mayúsculas inconsistentes, y filas duplicadas.</p><p>Escribir el proceso de limpieza y reportar cuántas filas se descartaron y el total limpio.</p><p><em>Nota:</em> los montos que no sean números deben descartarse, no romper el programa.</p>', '<p><code>pd.to_numeric(col, errors="coerce")</code> convierte y pone <code>NaN</code> en lo que no sirva. Después <code>dropna()</code>, <code>drop_duplicates()</code> y <code>.str.strip().str.title()</code> para los nombres.</p>', '<pre><code>''''''
 Programa: Limpieza de datos de ventas
@@ -9979,7 +9979,7 @@ import pandas as pd
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Reporte de ventas del año', 'dificil', '<p>Escribir el análisis completo de un archivo <code>ventas.csv</code> con columnas <code>fecha</code>, <code>vendedor</code>, <code>producto</code> y <code>monto</code>. El programa debe:</p><ol><li>cargar y limpiar los datos,</li><li>agregar una columna con el mes,</li><li>calcular el total y el número de ventas por vendedor,</li><li>el mejor mes,</li><li>el producto más vendido,</li><li>y guardar el reporte por vendedor en <code>reporte.csv</code>.</li></ol><p><em>Nota:</em> el programa debe funcionar aunque el CSV traiga montos inválidos o celdas vacías.</p>', '<p>Siga el orden cargar → limpiar → enriquecer → analizar → guardar. Para el mes, <code>df["fecha"].dt.month</code> después de convertir con <code>pd.to_datetime()</code>. Para varios cálculos a la vez, <code>.agg(["count", "sum"])</code>.</p>', '<pre><code>''''''
 Programa: Reporte anual de ventas
@@ -10069,54 +10069,54 @@ SALIDA = "reporte.csv"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 22;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 22);
+    FROM chapters WHERE number = 22 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 22 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué es un DataFrame?', NULL, '{"options":[{"id":"a","text":"Una tabla con filas y columnas con nombre"},{"id":"b","text":"Una lista de listas"},{"id":"c","text":"Un archivo CSV abierto"},{"id":"d","text":"Una función de pandas"}]}', '{"option_id":"a"}', 'Es la estructura central de pandas. Una sola columna de un DataFrame es una Series.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué muestra df.info()?', NULL, '{"options":[{"id":"a","text":"Los tipos de cada columna y cuántos valores no nulos hay"},{"id":"b","text":"Las primeras cinco filas"},{"id":"c","text":"La media y los cuartiles"},{"id":"d","text":"El nombre del archivo cargado"}]}', '{"option_id":"a"}', 'Es lo primero que se corre siempre: dice si faltan datos y si los números llegaron como texto.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Por qué se usa & y no and para combinar dos filtros?', NULL, '{"options":[{"id":"a","text":"Porque pandas compara columnas enteras y and no sabe qué hacer con eso"},{"id":"b","text":"Porque and no existe en pandas"},{"id":"c","text":"Porque & es más rápido"},{"id":"d","text":"Porque and solo sirve con números"}]}', '{"option_id":"a"}', 'Cada comparación devuelve una columna de True/False. Con and pandas lanza ValueError, y cada condición debe ir entre paréntesis.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Qué hace pd.to_numeric(col, errors="coerce")?', NULL, '{"options":[{"id":"a","text":"Convierte a número y pone NaN en lo que no se pueda convertir"},{"id":"b","text":"Lanza un error si algo no es número"},{"id":"c","text":"Borra las filas que no sean números"},{"id":"d","text":"Convierte los números a texto"}]}', '{"option_id":"a"}', 'Es la versión pandas del try/except del capítulo 15: en vez de reventar, marca lo inválido para descartarlo después con dropna().', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Cuál es el orden correcto de un trabajo con datos?', NULL, '{"options":[{"id":"a","text":"Cargar, limpiar, enriquecer, analizar, guardar"},{"id":"b","text":"Cargar, analizar, limpiar, guardar"},{"id":"c","text":"Limpiar, cargar, guardar, analizar"},{"id":"d","text":"Cargar, guardar, limpiar, analizar"}]}', '{"option_id":"a"}', 'Analizar antes de limpiar da resultados falsos: un mismo vendedor escrito de dos formas cuenta como dos personas.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', '¿Qué imprime este programa?', 'import pandas as pd
 df = pd.DataFrame({"a": [1, 2, 3], "b": [10, 20, 30]})
 df["c"] = df["a"] * df["b"]
 print(df["c"].sum())', '{"options":[{"id":"a","text":"140"},{"id":"b","text":"60"},{"id":"c","text":"6"},{"id":"d","text":"[10, 40, 90]"}]}', '{"option_id":"a"}', 'La columna c es [10, 40, 90] calculada de una sola vez, sin ciclo, y su suma es 140.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', '¿Qué imprime este programa?', 'import pandas as pd
 df = pd.DataFrame({"p": ["pan", "queso", "cafe"], "v": [5000, 15000, 12000]})
 print(len(df[df["v"] > 10000]))', '{"options":[{"id":"a","text":"2"},{"id":"b","text":"1"},{"id":"c","text":"3"},{"id":"d","text":"27000"}]}', '{"option_id":"a"}', 'El filtro deja las filas de queso y cafe, y len() cuenta filas del DataFrame resultante.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', '¿Qué imprime este programa?', 'import pandas as pd
 df = pd.DataFrame({"v": ["Ana", "Juan", "Ana"], "m": [100, 200, 300]})
 print(df.groupby("v")["m"].sum().idxmax())', '{"options":[{"id":"a","text":"Ana"},{"id":"b","text":"Juan"},{"id":"c","text":"400"},{"id":"d","text":"0"}]}', '{"option_id":"a"}', 'Ana suma 400 y Juan 200. idxmax() devuelve la etiqueta del grupo más alto, no el valor.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El filtro lanza ValueError. ¿En qué línea está el error?', NULL, '{"lines":["import pandas as pd","df = pd.DataFrame({\"a\": [1, 2], \"b\": [3, 4]})","print(df[df[\"a\"] > 1 and df[\"b\"] < 4])"]}', '{"line_number":3}', 'Con dos condiciones va (df["a"] > 1) & (df["b"] < 4): paréntesis y & en vez de and.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Las filas nulas siguen ahí. ¿En qué línea está el error?', NULL, '{"lines":["df = pd.read_csv(\"ventas.csv\")","df.dropna()","print(df.isnull().sum())"]}', '{"line_number":2}', 'dropna() devuelve una copia; hay que reasignar con df = df.dropna(). Mismo error de texto.upper() del capítulo 5.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'dificil', 'El reporte cuenta a la misma vendedora dos veces. ¿En qué línea está el problema?', NULL, '{"lines":["df = pd.read_csv(\"ventas.csv\")","resumen = df.groupby(\"vendedor\")[\"monto\"].sum()","df[\"vendedor\"] = df[\"vendedor\"].str.strip().str.title()","print(resumen)"]}', '{"line_number":2}', 'Se agrupa antes de normalizar los nombres, así que '' ana '' y ''Ana'' quedan como dos grupos. La limpieza va primero.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme el análisis de ventas en el orden correcto', NULL, '{"lines":[{"id":"l1","text":"ventas = pd.read_csv(\"ventas.csv\")","indent":0},{"id":"l2","text":"ventas[\"monto\"] = pd.to_numeric(ventas[\"monto\"], errors=\"coerce\")","indent":0},{"id":"l3","text":"ventas = ventas.dropna(subset=[\"monto\"])","indent":0},{"id":"l4","text":"ventas[\"vendedor\"] = ventas[\"vendedor\"].str.strip().str.title()","indent":0},{"id":"l5","text":"por_vendedor = ventas.groupby(\"vendedor\")[\"monto\"].sum()","indent":0},{"id":"l6","text":"por_vendedor.to_csv(\"reporte.csv\")","indent":0}]}', '{"order":["l1","l2","l3","l4","l5","l6"]}', 'Cargar, convertir, descartar lo inválido, normalizar el texto, agrupar y guardar. Convertir va antes de dropna porque ''sin dato'' es texto, no nulo.', 1, 'seed'
-    FROM chapters WHERE number = 22;
+    FROM chapters WHERE number = 22 AND track = 'basico';
 
 -- ── Capítulo 23: IA aplicada con Python (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 23, 'IA aplicada con Python', '🤖', 'Consumir modelos y construir algo útil con ellos.', '<p class="jc-gancho">Llegan 400 PQRs al correo de la empresa cada semana y alguien tiene que leerlas una por una para saber cuáles son quejas urgentes. Ese trabajo hoy lo hace un programa de treinta líneas. No porque sepamos construir un modelo de IA: porque sabemos <em>usarlo</em>, que es una habilidad distinta y mucho más útil.</p>
 
 <h2>Un modelo de IA es un servicio al que le hablas</h2>
@@ -10356,18 +10356,18 @@ except json.JSONDecodeError:
   </tbody>
 </table>
 
-<blockquote>El modelo pone el criterio; tu programa pone las reglas. Un prompt sin formato exigido y una respuesta sin <code>try/except</code> son las dos formas de que esto funcione en la demo y falle el primer día real.</blockquote>', 1
+<blockquote>El modelo pone el criterio; tu programa pone las reglas. Un prompt sin formato exigido y una respuesta sin <code>try/except</code> son las dos formas de que esto funcione en la demo y falle el primer día real.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 6
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 23
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 23 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 23);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 23 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'La llave segura', 'facil', '<p>Escribir el arranque de un programa que use una API: cargar el <code>.env</code>, leer <code>API_KEY</code> del entorno y avisar con un mensaje claro si no está configurada, en vez de fallar más adelante.</p><p>Cuando sí esté, mostrarla <strong>enmascarada</strong>: los primeros 6 caracteres, tres puntos y los últimos 4.</p><pre><code>Llave cargada: sk-ant...9f2c</code></pre><p><em>Nota:</em> la llave nunca se imprime completa ni se escribe en el código.</p>', '<p><code>load_dotenv()</code> primero, luego <code>os.environ.get("API_KEY")</code>. Para enmascarar, <em>slicing</em> del capítulo 5: <code>llave[:6]</code> y <code>llave[-4:]</code>.</p>', '<pre><code>''''''
 Programa: Carga segura de la API key
@@ -10424,7 +10424,7 @@ from dotenv import load_dotenv
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Primera pregunta al modelo', 'facil', '<p>Escribir una función <code>preguntar(texto)</code> que envíe el texto al modelo y devuelva su respuesta.</p><p>Requisitos:</p><ul><li><code>timeout</code> en la petición,</li><li>revisar <code>status_code</code> antes de leer la respuesta,</li><li>devolver <code>None</code> si algo salió mal, sin tumbar el programa.</li></ul>', '<p><code>requests.post(url, headers=…, json=…, timeout=30)</code>. El texto de la respuesta está en <code>r.json()["content"][0]["text"]</code>.</p>', '<pre><code>''''''
 Programa: Primera llamada a la API del modelo
@@ -10513,7 +10513,7 @@ MODELO = "claude-sonnet-4-5"
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Clasificador de PQRs', 'medio', '<p>Escribir una función <code>clasificar(mensaje)</code> que devuelva una de cuatro categorías: <code>queja</code>, <code>peticion</code>, <code>reclamo</code> o <code>felicitacion</code>.</p><p>El prompt debe exigir el formato exacto, y la función debe <strong>validar</strong> la respuesta: si el modelo devuelve algo distinto a las cuatro categorías, retornar <code>"sin_clasificar"</code>.</p>', '<p>Al prompt: rol, opciones cerradas y "responde únicamente con la palabra". A la respuesta: <code>.strip().lower()</code> y luego comprobar que esté en la lista de categorías válidas.</p>', '<pre><code>''''''
 Programa: Clasificador de PQRs
@@ -10586,7 +10586,7 @@ CATEGORIAS = ("queja", "peticion", "reclamo", "felicitacion")
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'Reporte automático de PQRs', 'dificil', '<p>Escribir el proceso completo que la empresa correría cada lunes: leer <code>pqrs.csv</code> (columnas <code>fecha</code>, <code>cliente</code>, <code>mensaje</code>), pedirle al modelo categoría, urgencia (1 a 5) y un resumen de una frase por cada PQR, y producir:</p><ul><li>el conteo por categoría,</li><li>la lista de los casos urgentes (reclamo con urgencia ≥ 4),</li><li>y el archivo <code>pqrs_clasificadas.csv</code>.</li></ul><p><em>Nota:</em> una PQR que el modelo no logre analizar no puede tumbar el proceso ni desaparecer del reporte. Debe existir un modo de prueba que procese solo las primeras filas.</p>', '<p>Pida el resultado en JSON y conviértalo con <code>json.loads()</code> dentro de <code>try/except</code>. Para el modo de prueba, una constante <code>LIMITE</code> y <code>df.head(LIMITE)</code>.</p>', '<pre><code>''''''
 Programa: Reporte semanal de PQRs
@@ -10698,23 +10698,23 @@ LIMITE = 5          # None para procesar todo
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 23;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 23);
+    FROM chapters WHERE number = 23 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 23 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Dónde corre el modelo de IA cuando lo usas desde Python?', NULL, '{"options":[{"id":"a","text":"En un servidor de la empresa que lo entrenó; tu programa le habla por una API"},{"id":"b","text":"En tu computador, después de instalarlo con pip"},{"id":"c","text":"Dentro del intérprete de Python"},{"id":"d","text":"En la memoria RAM, mientras dure el programa"}]}', '{"option_id":"a"}', 'Tú pones el prompt, la llave y el código que usa la respuesta. Ellos ponen el modelo y los computadores.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Dónde debe guardarse la API key?', NULL, '{"options":[{"id":"a","text":"En un archivo .env que está en el .gitignore, leído con os.environ"},{"id":"b","text":"En una constante al inicio del programa"},{"id":"c","text":"En un comentario, para no confundirla con el código"},{"id":"d","text":"En la URL de la petición"}]}', '{"option_id":"a"}', 'Una llave subida a GitHub la encuentran bots en horas y el consumo se cobra a tu cuenta.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Por qué el prompt debe exigir el formato exacto de la respuesta?', NULL, '{"options":[{"id":"a","text":"Porque tu código va a leer esa respuesta y una frase de cortesía la rompe"},{"id":"b","text":"Porque el modelo responde más rápido"},{"id":"c","text":"Porque así cuesta menos"},{"id":"d","text":"Porque si no, la API devuelve error 400"}]}', '{"option_id":"a"}', 'Si el modelo contesta "¡Claro! Esto parece una queja porque…", el if categoria == "queja" nunca se cumple.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Para qué sirve timeout=30 en requests.post?', NULL, '{"options":[{"id":"a","text":"Para que el programa no quede colgado esperando para siempre"},{"id":"b","text":"Para limitar el largo de la respuesta"},{"id":"c","text":"Para reintentar la llamada 30 veces"},{"id":"d","text":"Para que el modelo piense 30 segundos"}]}', '{"option_id":"a"}', 'El tope de largo (y de costo) es max_tokens. El timeout es cuánto se espera la respuesta antes de rendirse.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Para cuál de estas tareas NO sirve un modelo de lenguaje?', NULL, '{"options":[{"id":"a","text":"Consultar el saldo real de una cuenta bancaria"},{"id":"b","text":"Clasificar mensajes en categorías"},{"id":"c","text":"Resumir un texto largo en una frase"},{"id":"d","text":"Extraer la ciudad y la fecha de un texto libre"}]}', '{"option_id":"a"}', 'El modelo inventa con total seguridad. Los datos salen de la base de datos; el modelo pone el criterio, no los hechos.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', 'La variable de entorno API_KEY no está definida. ¿Qué imprime?', 'import os
 
@@ -10723,14 +10723,14 @@ if not llave:
     print("Falta API_KEY")
 else:
     print(f"{llave[:6]}...{llave[-4:]}")', '{"options":[{"id":"a","text":"Falta API_KEY"},{"id":"b","text":"None"},{"id":"c","text":"Lanza KeyError"},{"id":"d","text":"...  (sin nada alrededor)"}]}', '{"option_id":"a"}', '.get() devuelve None si no existe, y None es falso. Con os.environ["API_KEY"] sí habría KeyError.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', 'El modelo respondió el texto ''  Queja. ''. ¿Qué imprime?', 'CATEGORIAS = ("queja", "peticion", "reclamo", "felicitacion")
 respuesta = "  Queja. "
 
 categoria = respuesta.strip().lower().strip(".")
 print(categoria if categoria in CATEGORIAS else "sin_clasificar")', '{"options":[{"id":"a","text":"queja"},{"id":"b","text":"sin_clasificar"},{"id":"c","text":"Queja."},{"id":"d","text":"  queja. "}]}', '{"option_id":"a"}', 'strip() quita los espacios, lower() unifica mayúsculas y el segundo strip(".") quita el punto final.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'dificil', 'El modelo devolvió ''Claro, aqui tienes: {"a": 1}''. ¿Qué imprime?', 'import json
 
@@ -10742,22 +10742,22 @@ except json.JSONDecodeError:
     datos = None
 
 print(datos)', '{"options":[{"id":"a","text":"None"},{"id":"b","text":"{''a'': 1}"},{"id":"c","text":"Claro, aqui tienes: {\"a\": 1}"},{"id":"d","text":"Lanza JSONDecodeError"}]}', '{"option_id":"a"}', 'El texto de cortesía adelante invalida el JSON completo. Por eso todo json.loads() de una respuesta del modelo va dentro de try/except.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'Este programa expone un secreto. ¿En qué línea está el problema?', NULL, '{"lines":["import requests","API_KEY = \"sk-ant-api03-abc123xyz\"","r = requests.post(URL, headers={\"x-api-key\": API_KEY}, json=cuerpo, timeout=30)","print(r.json())"]}', '{"line_number":2}', 'La llave está escrita en el código y viaja al repositorio. Va en el .env y se lee con os.environ.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'Cuando la API responde 401, el programa falla con un error confuso. ¿En qué línea está el problema?', NULL, '{"lines":["r = requests.post(URL, headers=CABECERAS, json=cuerpo, timeout=30)","texto = r.json()[\"content\"][0][\"text\"]","print(texto)"]}', '{"line_number":2}', 'Se lee la respuesta sin revisar r.status_code: con un error la respuesta no tiene ''content'' y salta un KeyError que no explica nada.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'dificil', 'Todas las filas terminan con el mismo análisis. ¿En qué línea está el problema?', NULL, '{"lines":["VACIO = {\"categoria\": \"sin_clasificar\", \"urgencia\": 0}","def analizar(mensaje):","    texto = preguntar(PROMPT + mensaje)","    if texto is None:","        return VACIO"]}', '{"line_number":5}', 'Devuelve siempre el mismo objeto: todas las filas comparten un diccionario y modificar una las modifica todas. Va return dict(VACIO).', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme la función que consulta el modelo y devuelve JSON validado', NULL, '{"lines":[{"id":"l1","text":"def analizar(mensaje):","indent":0},{"id":"l2","text":"r = requests.post(URL, headers=CABECERAS, timeout=30, json=cuerpo(mensaje))","indent":1},{"id":"l3","text":"if r.status_code != 200:","indent":1},{"id":"l4","text":"return None","indent":2},{"id":"l5","text":"texto = r.json()[\"content\"][0][\"text\"]","indent":1},{"id":"l6","text":"try:","indent":1},{"id":"l7","text":"return json.loads(texto)","indent":2},{"id":"l8","text":"except json.JSONDecodeError:","indent":1},{"id":"l9","text":"return None","indent":2}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8","l9"]}', 'Primero se revisa el status_code y se sale; solo entonces se lee el texto, y su conversión a JSON va envuelta en try/except.', 1, 'seed'
-    FROM chapters WHERE number = 23;
+    FROM chapters WHERE number = 23 AND track = 'basico';
 
 -- ── Capítulo 24: APIs con FastAPI y despliegue (publicado)
-INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)
+INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 24, 'APIs con FastAPI y despliegue', '🚀', 'Publicar tu propio backend en internet.', '<p class="jc-gancho">Todo lo que has escrito hasta aquí corre en tu computador y lo usas tú. En este capítulo eso cambia: el sistema bancario del capítulo 20 va a quedar en internet, con una dirección que cualquiera puede abrir, y una app de celular podría consumirlo. Ese salto es lo que separa un ejercicio de un producto.</p>
 
 <h2>De script a servicio</h2>
@@ -11024,18 +11024,18 @@ venv/</code></pre>
   </tbody>
 </table>
 
-<blockquote>Hace veinticuatro capítulos, un <code>print</code> era todo lo que sabías hacer. Ahora tienes un servicio con base de datos, validaciones y una dirección pública. Lo que sigue no es otro capítulo: es tu propio proyecto.</blockquote>', 1
+<blockquote>Hace veinticuatro capítulos, un <code>print</code> era todo lo que sabías hacer. Ahora tienes un servicio con base de datos, validaciones y una dirección pública. Lo que sigue no es otro capítulo: es tu propio proyecto.</blockquote>', 1, 'basico'
     FROM parts p WHERE p.number = 6
-  ON CONFLICT(number) DO UPDATE SET
+  ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
     emoji        = excluded.emoji,
     description  = excluded.description,
     content_html = excluded.content_html,
     published    = excluded.published;
-INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 24
+INSERT INTO quizzes (chapter_id, passing_score) SELECT id, 80 FROM chapters WHERE number = 24 AND track = 'basico'
   ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;
-DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 24);
+DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 24 AND track = 'basico');
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 1, 'Hola API', 'facil', '<p>Crear una API con FastAPI que tenga dos rutas:</p><ul><li><code>GET /</code> → <code>{"mensaje": "API del banco funcionando"}</code></li><li><code>GET /saludo/{nombre}</code> → <code>{"saludo": "Hola, Ana"}</code></li></ul><p>Levantarla con uvicorn y probarla en <code>/docs</code>.</p>', '<p><code>app = FastAPI()</code>, y cada ruta es una función con el decorador <code>@app.get("...")</code>. La función devuelve un diccionario y FastAPI lo convierte a JSON.</p>', '<pre><code>''''''
 Programa: API del banco - primeras rutas
@@ -11094,7 +11094,7 @@ from fastapi import FastAPI
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 2, 'Consultar una cuenta', 'facil', '<p>Agregar la ruta <code>GET /cuentas/{numero}</code> que devuelva los datos de la cuenta desde un diccionario en memoria.</p><p>Si el número no existe, la respuesta debe ser un <strong>404 real</strong>, no un 200 con un mensaje de error.</p><p>Agregar también <code>GET /cuentas</code> que liste todas, con un parámetro opcional <code>tipo</code> para filtrar.</p>', '<p><code>raise HTTPException(status_code=404, detail="...")</code>. El filtro opcional es un parámetro con valor por defecto: <code>tipo: str = "todos"</code>.</p>', '<pre><code>''''''
 Programa: API del banco - consulta de cuentas
@@ -11176,7 +11176,7 @@ CUENTAS = {
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 3, 'Abrir cuenta y retirar', 'medio', '<p>Agregar dos rutas que <em>modifican</em> datos:</p><ul><li><code>POST /cuentas</code> → crea una cuenta. Responde <strong>201</strong>. Si el número ya existe, <strong>409</strong>.</li><li><code>POST /cuentas/{numero}/retiros</code> → retira un monto. <strong>404</strong> si la cuenta no existe y <strong>400</strong> si el saldo no alcanza.</li></ul><p><em>Nota:</em> la validación de los datos que llegan (saldo no negativo, monto mayor que cero, titular no vacío) no se escribe a mano: se declara con Pydantic.</p>', '<p>Una clase que herede de <code>BaseModel</code> por cada cuerpo que reciba. <code>Field(ge=0)</code> es "mayor o igual a 0" y <code>Field(gt=0)</code> es "mayor que 0".</p>', '<pre><code>''''''
 Programa: API del banco - operaciones
@@ -11281,7 +11281,7 @@ CUENTAS = {}
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO exercises (chapter_id, orden, title, difficulty, statement_html, hint_html, solution_html, tests_json, starter_code, source)
   SELECT id, 4, 'La API lista para publicar', 'dificil', '<p>Escribir la versión final de la API del banco, la que sí se puede subir a un servidor:</p><ol><li>los datos en SQLite (capítulo 21), no en memoria;</li><li>la ruta de la base y el puerto leídos de variables de entorno;</li><li>una transferencia entre dos cuentas que quede completa o no quede (transacción);</li><li>CORS habilitado para el dominio del frontend;</li><li>y un <code>GET /salud</code> que el servicio de despliegue pueda consultar para saber si la API está viva.</li></ol><p>Incluir en el comentario de encabezado los pasos para desplegarla.</p>', '<p><code>os.environ.get("DATABASE_PATH", "banco.db")</code> para la ruta. La transferencia va con <code>try/except</code>, dos <code>UPDATE</code>, un solo <code>commit()</code> y <code>rollback()</code> si algo falla.</p>', '<pre><code>''''''
 Programa: API del banco - version desplegable
@@ -11488,31 +11488,31 @@ app = FastAPI(title="Banco JuanCode", version="1.0")
 
 # Fin
 ', 'seed'
-    FROM chapters WHERE number = 24;
-DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 24);
+    FROM chapters WHERE number = 24 AND track = 'basico';
+DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = 24 AND track = 'basico');
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué diferencia hay entre un script y una API?', NULL, '{"options":[{"id":"a","text":"El script arranca, hace algo y termina; la API queda encendida esperando peticiones"},{"id":"b","text":"Ninguna, es el mismo programa con otro nombre"},{"id":"c","text":"La API no puede usar base de datos"},{"id":"d","text":"El script necesita internet y la API no"}]}', '{"option_id":"a"}', 'Por eso en una API los recursos se cierran siempre: el proceso no termina nunca y lo que se queda abierto se acumula.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'facil', '¿Qué hay en /docs de una aplicación FastAPI?', NULL, '{"options":[{"id":"a","text":"Documentación interactiva generada sola, con un botón para probar cada ruta"},{"id":"b","text":"El código fuente del proyecto"},{"id":"c","text":"Los registros de errores"},{"id":"d","text":"Nada, hay que escribirla a mano"}]}', '{"option_id":"a"}', 'Sale de las anotaciones de tipo y los modelos de Pydantic, sin configurar nada.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', 'Se pide una cuenta que no existe. ¿Qué debe responder la API?', NULL, '{"options":[{"id":"a","text":"404 con raise HTTPException"},{"id":"b","text":"200 con {\"error\": \"no existe\"}"},{"id":"c","text":"500, porque algo salió mal"},{"id":"d","text":"Nada, para no dar información"}]}', '{"option_id":"a"}', 'Quien consume la API mira el código de estado antes que el cuerpo: un 200 le dice que salió bien aunque el texto diga lo contrario.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'medio', '¿Para qué sirve un modelo de Pydantic (BaseModel) en una ruta POST?', NULL, '{"options":[{"id":"a","text":"Describe y valida el cuerpo de la petición antes de que la función se ejecute"},{"id":"b","text":"Crea la tabla en la base de datos"},{"id":"c","text":"Convierte la respuesta a JSON"},{"id":"d","text":"Documenta la ruta, sin efecto real"}]}', '{"option_id":"a"}', 'Reemplaza las validaciones a mano: un saldo negativo se responde con 422 y el campo exacto, sin llegar al cuerpo de la función.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', 'La API funciona con curl, pero la página web no puede llamarla. ¿Qué falta?', NULL, '{"options":[{"id":"a","text":"Habilitar CORS con el dominio del frontend"},{"id":"b","text":"Cambiar los GET por POST"},{"id":"c","text":"Agregar más rutas"},{"id":"d","text":"Levantar el servidor con --reload"}]}', '{"option_id":"a"}', 'El bloqueo lo hace el navegador, no el servidor. Por eso curl pasa y la página no.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'mcq', 'dificil', '¿Por qué en producción se usa --host 0.0.0.0 y el puerto de la variable PORT?', NULL, '{"options":[{"id":"a","text":"0.0.0.0 acepta conexiones de afuera y el puerto lo asigna el servicio de despliegue"},{"id":"b","text":"Porque es más rápido que 127.0.0.1"},{"id":"c","text":"Porque 127.0.0.1 solo funciona en Windows"},{"id":"d","text":"Porque así se activa HTTPS"}]}', '{"option_id":"a"}', 'Con 127.0.0.1 la API solo se escucha a sí misma, y con un puerto fijo el servicio no la encuentra.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'facil', 'Se pide GET /cuentas?limite=3 . ¿Qué devuelve la API?', '@app.get("/cuentas")
 def listar(tipo: str = "todos", limite: int = 10):
     return {"tipo": tipo, "limite": limite}', '{"options":[{"id":"a","text":"{\"tipo\": \"todos\", \"limite\": 3}"},{"id":"b","text":"{\"tipo\": \"todos\", \"limite\": 10}"},{"id":"c","text":"{\"tipo\": null, \"limite\": \"3\"}"},{"id":"d","text":"Un error 422 porque falta tipo"}]}', '{"option_id":"a"}', 'tipo conserva su valor por defecto y limite llega como texto "3" pero la anotación int lo convierte.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'predict_output', 'medio', 'Llega un POST /cuentas con {"numero": "001", "titular": "Ana", "saldo": -5000}. ¿Qué pasa?', 'class CuentaNueva(BaseModel):
     numero: str
@@ -11522,17 +11522,17 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
 @app.post("/cuentas", status_code=201)
 def crear(cuenta: CuentaNueva):
     return {"creada": cuenta.numero}', '{"options":[{"id":"a","text":"Responde 422 y la función crear() nunca se ejecuta"},{"id":"b","text":"Responde 201 con {\"creada\": \"001\"}"},{"id":"c","text":"Responde 201 y guarda el saldo como 0"},{"id":"d","text":"Responde 500"}]}', '{"option_id":"a"}', 'ge=0 rechaza el saldo negativo. La validación ocurre antes del cuerpo de la función, con el campo exacto en el detalle.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'facil', 'El cliente cree que todo salió bien aunque la cuenta no exista. ¿En qué línea está el problema?', NULL, '{"lines":["@app.get(\"/cuentas/{numero}\")","def ver_cuenta(numero: str):","    if numero not in CUENTAS:","        return {\"error\": \"La cuenta no existe\"}","    return CUENTAS[numero]"]}', '{"line_number":4}', 'Ese return sale con código 200. Va raise HTTPException(status_code=404, detail="La cuenta no existe").', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'medio', 'A las pocas horas el servidor deja de responder. ¿En qué línea está el problema?', NULL, '{"lines":["def ver_cuenta(numero: str):","    conexion = sqlite3.connect(BASE)","    fila = conexion.execute(\"SELECT * FROM cuentas WHERE numero = ?\", (numero,)).fetchone()","    return dict(fila)"]}', '{"line_number":4}', 'Se retorna sin cerrar la conexión: cada petición deja una abierta. El close() va en un finally.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'find_bug', 'dificil', 'Esta API queda expuesta a inyección SQL. ¿En qué línea está el problema?', NULL, '{"lines":["@app.get(\"/cuentas/{numero}\")","def ver_cuenta(numero: str):","    sql = f\"SELECT * FROM cuentas WHERE numero = ''{numero}''\"","    fila = conexion.execute(sql).fetchone()","    return dict(fila)"]}', '{"line_number":3}', 'El valor viene de la URL y cualquiera en internet puede escribir lo que quiera ahí. Va execute("... = ?", (numero,)).', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, data_json, correct_json, explanation, active, source)
   SELECT id, 'parsons', 'dificil', 'Arme la ruta que consulta una cuenta en la base de datos', NULL, '{"lines":[{"id":"l1","text":"@app.get(\"/cuentas/{numero}\")","indent":0},{"id":"l2","text":"def ver_cuenta(numero: str):","indent":0},{"id":"l3","text":"conexion = conectar()","indent":1},{"id":"l4","text":"try:","indent":1},{"id":"l5","text":"fila = conexion.execute(SQL, (numero,)).fetchone()","indent":2},{"id":"l6","text":"finally:","indent":1},{"id":"l7","text":"conexion.close()","indent":2},{"id":"l8","text":"if fila is None:","indent":1},{"id":"l9","text":"raise HTTPException(status_code=404, detail=\"La cuenta no existe\")","indent":2},{"id":"l10","text":"return dict(fila)","indent":1}]}', '{"order":["l1","l2","l3","l4","l5","l6","l7","l8","l9","l10"]}', 'La conexión se cierra en el finally antes de decidir la respuesta; solo entonces se revisa si hubo fila y se lanza el 404.', 1, 'seed'
-    FROM chapters WHERE number = 24;
+    FROM chapters WHERE number = 24 AND track = 'basico';
 

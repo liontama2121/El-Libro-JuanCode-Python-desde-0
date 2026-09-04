@@ -25,10 +25,27 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), "..");
-const dirContenido = join(raiz, "content");
-const salida = join(raiz, "seeds", "contenido.sql");
 
-const TIPOS = new Set(["mcq", "predict_output", "find_bug", "parsons"]);
+/**
+ * Sin argumentos arma el libro básico (content/ -> seeds/contenido.sql).
+ * Con uno, arma ese otro libro:
+ *
+ *   node scripts/build-contenido.mjs avanzado
+ *   -> content/avanzado/ -> seeds/avanzado.sql
+ */
+const carpetaLibro = process.argv[2] ?? "";
+const dirContenido = carpetaLibro
+	? join(raiz, "content", carpetaLibro)
+	: join(raiz, "content");
+const salida = join(raiz, "seeds", `${carpetaLibro || "contenido"}.sql`);
+
+const TIPOS = new Set([
+	"mcq",
+	"predict_output",
+	"find_bug",
+	"parsons",
+	"fill_blank",
+]);
 const DIFICULTADES = new Set(["facil", "medio", "dificil"]);
 
 /* ── Utilidades ─────────────────────────────────────────────────────────── */
@@ -61,6 +78,12 @@ if (!existsSync(join(dirContenido, "libro.json"))) {
 }
 
 const libro = leerJSON(join(dirContenido, "libro.json"));
+
+/**
+ * Track al que pertenece este contenido. libro.json puede declararlo
+ * ("avanzado"); si no dice nada, es el libro basico de siempre.
+ */
+const TRACK = libro.track ?? "basico";
 
 /** Mapa número -> ruta del html, leyendo content/chapters/NN-slug.html */
 const cuerpos = new Map();
@@ -117,6 +140,36 @@ function validarPregunta(q, etiqueta) {
 			`${etiqueta}: correct.order debe listar todas las líneas.`,
 		);
 	}
+	if (q.type === "fill_blank") {
+		const codigo = String(q.data?.code ?? "");
+		const huecos = q.data?.blanks ?? [];
+		const respuestas = q.correct?.answers ?? {};
+
+		revisar(huecos.length > 0, `${etiqueta}: fill_blank sin huecos.`);
+
+		for (const h of huecos) {
+			const id = String(h?.id ?? "");
+			// La marca tiene que existir en el código, o el hueco no se dibuja
+			revisar(
+				codigo.includes(`___${id}___`),
+				`${etiqueta}: el código no tiene la marca ___${id}___.`,
+			);
+			const variantes = respuestas[id];
+			revisar(
+				Array.isArray(variantes) && variantes.length > 0,
+				`${etiqueta}: al hueco ${id} le falta correct.answers["${id}"].`,
+			);
+		}
+
+		// Al revés: una respuesta sin hueco es una respuesta que nadie escribe
+		for (const id of Object.keys(respuestas)) {
+			revisar(
+				huecos.some((h) => String(h?.id) === id),
+				`${etiqueta}: correct.answers tiene "${id}" pero no existe ese hueco.`,
+			);
+		}
+	}
+
 	revisar(Boolean(q.explanation), `${etiqueta}: falta explanation.`);
 }
 
@@ -133,10 +186,10 @@ sql.push("");
 /* Partes */
 for (const p of libro.partes) {
 	sql.push(
-		`INSERT INTO parts (number, title, emoji) VALUES (${p.number}, ${txt(p.title)}, ${txt(p.emoji)})`,
+		`INSERT INTO parts (number, title, emoji, track) VALUES (${p.number}, ${txt(p.title)}, ${txt(p.emoji)}, ${txt(TRACK)})`,
 	);
 	sql.push(
-		`  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;`,
+		`  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;`,
 	);
 }
 sql.push("");
@@ -170,13 +223,15 @@ for (const cap of libro.capitulos) {
 
 	/* El capítulo: se actualiza por número, o se crea si no estaba. */
 	sql.push(
-		`INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published)`,
+		`INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)`,
 	);
 	sql.push(
-		`  SELECT p.id, ${n}, ${txt(cap.title)}, ${txt(cap.emoji)}, ${txt(cap.description ?? "")}, ${txt(cuerpo)}, ${completo ? 1 : 0}`,
+		`  SELECT p.id, ${n}, ${txt(cap.title)}, ${txt(cap.emoji)}, ${txt(cap.description ?? "")}, ${txt(cuerpo)}, ${completo ? 1 : 0}, ${txt(TRACK)}`,
 	);
 	sql.push(`    FROM parts p WHERE p.number = ${cap.part}`);
-	sql.push(`  ON CONFLICT(number) DO UPDATE SET`);
+	// El numero se repite entre tracks (hay capitulo 1 en cada libro), asi
+	// que el conflicto se resuelve por la pareja.
+	sql.push(`  ON CONFLICT(track, number) DO UPDATE SET`);
 	sql.push(`    part_id      = excluded.part_id,`);
 	sql.push(`    title        = excluded.title,`);
 	sql.push(`    emoji        = excluded.emoji,`);
@@ -186,7 +241,7 @@ for (const cap of libro.capitulos) {
 
 	/* El quiz del capítulo (uno por capítulo) */
 	sql.push(
-		`INSERT INTO quizzes (chapter_id, passing_score) SELECT id, ${cap.passing_score ?? 80} FROM chapters WHERE number = ${n}`,
+		`INSERT INTO quizzes (chapter_id, passing_score) SELECT id, ${cap.passing_score ?? 80} FROM chapters WHERE number = ${n} AND track = ${txt(TRACK)}`,
 	);
 	sql.push(
 		`  ON CONFLICT(chapter_id) DO UPDATE SET passing_score = excluded.passing_score;`,
@@ -194,7 +249,7 @@ for (const cap of libro.capitulos) {
 
 	/* Ejercicios del archivo (los del profe no se tocan) */
 	sql.push(
-		`DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = ${n});`,
+		`DELETE FROM exercises WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = ${n} AND track = ${txt(TRACK)});`,
 	);
 	ejercicios.forEach((e, i) => {
 		totalEjercicios += 1;
@@ -205,12 +260,12 @@ for (const cap of libro.capitulos) {
 		sql.push(
 			`  SELECT id, ${e.orden ?? i + 1}, ${txt(e.title)}, ${txt(e.difficulty ?? "facil")}, ${txt(e.statement_html ?? "")}, ${txt(e.hint_html ?? "")}, ${txt(e.solution_html ?? "")}, ${tests}, ${e.starter_code ? txt(e.starter_code) : "NULL"}, 'seed'`,
 		);
-		sql.push(`    FROM chapters WHERE number = ${n};`);
+		sql.push(`    FROM chapters WHERE number = ${n} AND track = ${txt(TRACK)};`);
 	});
 
 	/* Banco del archivo */
 	sql.push(
-		`DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = ${n});`,
+		`DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM chapters WHERE number = ${n} AND track = ${txt(TRACK)});`,
 	);
 	banco.forEach((q) => {
 		totalPreguntas += 1;
@@ -220,7 +275,7 @@ for (const cap of libro.capitulos) {
 		sql.push(
 			`  SELECT id, ${txt(q.type)}, ${txt(q.difficulty ?? "facil")}, ${txt(q.prompt)}, ${q.code_snippet ? txt(q.code_snippet) : "NULL"}, ${json(q.data)}, ${json(q.correct)}, ${txt(q.explanation ?? "")}, 1, 'seed'`,
 		);
-		sql.push(`    FROM chapters WHERE number = ${n};`);
+		sql.push(`    FROM chapters WHERE number = ${n} AND track = ${txt(TRACK)};`);
 	});
 
 	sql.push("");
@@ -236,7 +291,7 @@ if (problemas.length > 0) {
 mkdirSync(join(raiz, "seeds"), { recursive: true });
 writeFileSync(salida, `${sql.join("\n")}\n`, "utf8");
 
-console.log(`seeds/contenido.sql generado`);
+console.log(`seeds/${carpetaLibro || "contenido"}.sql generado · track ${TRACK}`);
 console.log(
 	`  ${libro.capitulos.length} capítulos (${capitulosListos} publicados) · ` +
 		`${totalPreguntas} preguntas · ${totalEjercicios} ejercicios`,

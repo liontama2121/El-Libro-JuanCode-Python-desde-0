@@ -161,3 +161,41 @@
 - [x] `npm run peliculas:verificar` → 6/6 contra Python real: la concatenación de
       los `out` es idéntica a la salida del programa
 - [x] Seed idempotente por `(chapter_id, orden)`
+
+## 🚀 Track avanzado (algoritmos y competitiva)
+
+- [x] Migración `0005_track_avanzado`: `users.track`, `chapters.track`, `parts.track`
+      y el único de `chapters` pasa de `(number)` a `(track, number)`
+- [x] `app/lib/tracks.ts`: quién ve qué libro y con qué URL
+- [x] `/libro` y `/avanzado` comparten módulo — el track sale de la URL
+- [x] El quiz desbloquea el siguiente capítulo **del mismo libro**
+- [x] `/tracks`: selector para quien tenga los dos; con uno solo entra directo
+- [x] `/admin/estudiantes`: columna Track con selector optimista, filtro,
+      buscador y barra de progreso por libro
+- [x] El estudiante NO puede cambiarse el track (la acción vive tras `requireTeacher`)
+- [x] Aviso de repaso con WhatsApp si entra al avanzado sin terminar el básico
+- [x] Badge AVANZADO magenta, sidebar 🚀 y "Módulo" en vez de "Capítulo"
+- [x] La práctica y los simulacros solo usan los capítulos que el estudiante ve
+- [x] Tipo de pregunta nuevo `fill_blank`: rellenar el código de memoria
+      · normaliza espacios, no perdona nombres ni lógica (11/11 en pruebas)
+      · todo o nada: medio algoritmo no cuenta
+- [x] El quiz del avanzado usa los 5 tipos; el básico sigue con mcq y predict
+- [x] Módulo 6 completo: burbuja, merge sort, complejidad medida y búsqueda
+      binaria · 12 preguntas · 4 ejercicios (14/14 casos en Python real)
+- [ ] Módulos 1–5, 7 y 8: creados en borrador, esperan los enunciados del curso
+
+### Contenido del avanzado
+
+```
+content/avanzado/libro.json        8 módulos, "track": "avanzado"
+content/avanzado/chapters/NN-*.html
+content/avanzado/bank/NN.json
+content/avanzado/exercises/NN.json
+
+npm run content:build       arma los dos libros
+npm run content:verificar   corre las soluciones de los dos en Python
+```
+
+> ⚠️ Los dos libros repiten los números de capítulo. Toda consulta que busque
+> un capítulo por número **tiene que filtrar también por track**, o el
+> contenido de un libro termina dentro del otro.

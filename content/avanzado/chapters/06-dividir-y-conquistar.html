@@ -1,0 +1,256 @@
+<p class="jc-gancho">Tienes 100.000 números y hay que ordenarlos. Con burbuja el juez te da <strong>Time Limit Exceeded</strong>. Con merge sort, <strong>Accepted</strong> en menos de un segundo. Los dos ordenan bien; solo uno cabe en el tiempo. Este módulo es sobre esa diferencia — y sobre saberse los dos de memoria, porque en el parcial te los van a pedir escritos a mano.</p>
+
+<h2>La idea: partir el problema</h2>
+
+<p><strong>Dividir y conquistar</strong> es una receta de tres pasos:</p>
+
+<ol>
+  <li><strong>Dividir</strong> el problema en pedazos más pequeños del mismo tipo.</li>
+  <li><strong>Conquistar</strong> cada pedazo (normalmente llamándose a sí mismo).</li>
+  <li><strong>Combinar</strong> las respuestas en la respuesta final.</li>
+</ol>
+
+<p>Ordenar 8 números es difícil de un solo golpe. Ordenar 1 número es trivial. Merge sort baja de 8 a 1 partiendo por la mitad, y luego sube combinando.</p>
+
+<h2>Burbuja: el que todos escriben primero</h2>
+
+<pre><code>def burbuja(lista):
+    n = len(lista)
+    for i in range(n):
+        intercambio = False
+        for j in range(0, n - i - 1):
+            if lista[j] &gt; lista[j + 1]:
+                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+                intercambio = True
+        if not intercambio:
+            break
+    return lista</code></pre>
+
+<p>Compara <strong>vecinos</strong> y los intercambia si están al revés. En cada pasada, el número más grande "burbujea" hasta el final.</p>
+
+<table>
+  <thead>
+    <tr><th>Pieza</th><th>Por qué está ahí</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>n - i - 1</code></td><td>Después de <code>i</code> pasadas, los últimos <code>i</code> ya quedaron en su sitio: no hay que volver a mirarlos</td></tr>
+    <tr><td><code>lista[j], lista[j+1] = lista[j+1], lista[j]</code></td><td>El intercambio de Python, en una línea y sin variable auxiliar</td></tr>
+    <tr><td><code>intercambio</code></td><td>La bandera: si una pasada completa no cambió nada, ya está ordenado y no hay nada más que hacer</td></tr>
+  </tbody>
+</table>
+
+<h3>La película de una pasada</h3>
+
+<p>Con <code>[5, 1, 4, 2]</code>, la primera pasada (<code>i = 0</code>):</p>
+
+<table>
+  <thead>
+    <tr><th>j</th><th>Compara</th><th>¿Intercambia?</th><th>Queda</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>0</td><td>5 y 1</td><td>✅ sí</td><td>[<b>1, 5</b>, 4, 2]</td></tr>
+    <tr><td>1</td><td>5 y 4</td><td>✅ sí</td><td>[1, <b>4, 5</b>, 2]</td></tr>
+    <tr><td>2</td><td>5 y 2</td><td>✅ sí</td><td>[1, 4, <b>2, 5</b>]</td></tr>
+  </tbody>
+</table>
+
+<p>El 5 llegó al final. Eso es lo que garantiza cada pasada: <strong>un número queda en su lugar definitivo</strong>. Por eso hacen falta <code>n</code> pasadas, y por eso son <code>n × n</code> comparaciones.</p>
+
+<h2>Merge Sort: partir y mezclar</h2>
+
+<pre><code>def merge_sort(lista):
+    # CASO BASE
+    if len(lista) &lt;= 1:
+        return lista
+
+    # DIVIDIR en dos mitades
+    medio = len(lista) // 2
+    izquierda = merge_sort(lista[:medio])
+    derecha = merge_sort(lista[medio:])
+
+    # MEZCLAR
+    return merge(izquierda, derecha)</code></pre>
+
+<p>Nueve líneas, y las tres partes de la receta están marcadas. El caso base va <strong>primero</strong>: sin él, la función se llamaría para siempre.</p>
+
+<pre><code>def merge(izquierda, derecha):
+    resultado = []
+    i = 0  # indice izquierda
+    j = 0  # indice derecha
+
+    # Comparar y tomar el menor
+    while i &lt; len(izquierda) and j &lt; len(derecha):
+        if izquierda[i] &lt;= derecha[j]:
+            resultado.append(izquierda[i])
+            i = i + 1
+        else:
+            resultado.append(derecha[j])
+            j = j + 1
+
+    # Agregar restos de izquierda
+    while i &lt; len(izquierda):
+        resultado.append(izquierda[i])
+        i = i + 1
+
+    # Agregar restos de derecha
+    while j &lt; len(derecha):
+        resultado.append(derecha[j])
+        j = j + 1
+
+    return resultado</code></pre>
+
+<p><code>merge</code> recibe <strong>dos listas ya ordenadas</strong> y las junta en una sola ordenada. Va tomando el menor de los dos frentes, uno a la vez.</p>
+
+<h3>Los cuatro detalles que hay que saberse</h3>
+
+<table>
+  <thead>
+    <tr><th>Detalle</th><th>Si lo cambias</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>and</code> en el primer <code>while</code></td><td>Con <code>or</code>, uno de los índices se sale de la lista y revienta con <code>IndexError</code></td></tr>
+    <tr><td><code>&lt;=</code> y no <code>&lt;</code></td><td>Con <code>&lt;</code> el algoritmo deja de ser <strong>estable</strong>: dos elementos iguales se voltean</td></tr>
+    <tr><td><code>//</code> y no <code>/</code></td><td><code>/</code> devuelve decimal, y <code>lista[:3.5]</code> es <code>TypeError</code></td></tr>
+    <tr><td>Los dos <code>while</code> de restos</td><td>Sin ellos, el programa <strong>no falla</strong>: simplemente pierde elementos. El peor error posible, porque parece funcionar</td></tr>
+  </tbody>
+</table>
+
+<h3>La película de una mezcla</h3>
+
+<p>Mezclando <code>[3, 9, 27]</code> con <code>[10, 38]</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>i</th><th>j</th><th>Compara</th><th>Toma</th><th>resultado</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>0</td><td>0</td><td>3 ≤ 10</td><td>3</td><td>[3]</td></tr>
+    <tr><td>1</td><td>0</td><td>9 ≤ 10</td><td>9</td><td>[3, 9]</td></tr>
+    <tr><td>2</td><td>0</td><td>27 &gt; 10</td><td>10</td><td>[3, 9, 10]</td></tr>
+    <tr><td>2</td><td>1</td><td>27 ≤ 38</td><td>27</td><td>[3, 9, 10, 27]</td></tr>
+    <tr><td>3</td><td>1</td><td>se acabó la izquierda</td><td>—</td><td>sale del primer while</td></tr>
+    <tr><td>3</td><td>1</td><td>resto de la derecha</td><td>38</td><td>[3, 9, 10, 27, 38]</td></tr>
+  </tbody>
+</table>
+
+<p>Ese último paso es el que hacen los <code>while</code> de restos. Sin ellos, el 38 <strong>se pierde</strong> y la lista sale con 4 elementos en vez de 5.</p>
+
+<h2>⚖️ La diferencia de complejidad</h2>
+
+<p>Aquí está la razón de aprenderse los dos:</p>
+
+<table>
+  <thead>
+    <tr><th></th><th>❌ Burbuja</th><th>✅ Merge Sort</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Complejidad</td><td><code>O(N²)</code></td><td><code>O(N log N)</code></td></tr>
+    <tr><td>Con N grande</td><td>Lento</td><td>Rápido y óptimo</td></tr>
+    <tr><td>Memoria extra</td><td>Ninguna</td><td>Otra lista</td></tr>
+    <tr><td>Mejor caso</td><td><code>O(N)</code> si ya está ordenado (por la bandera)</td><td><code>O(N log N)</code> siempre</td></tr>
+  </tbody>
+</table>
+
+<p>Y esto no es teoría. Estas son <strong>comparaciones y segundos medidos</strong> con los dos programas de arriba:</p>
+
+<table>
+  <thead>
+    <tr><th>N</th><th>Burbuja</th><th>Merge</th><th>Burbuja</th><th>Merge</th><th>Diferencia</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>100</td><td>4.872 comp.</td><td>543 comp.</td><td>0,000 s</td><td>0,000 s</td><td>4×</td></tr>
+    <tr><td>500</td><td>123.319</td><td>3.869</td><td>0,013 s</td><td>0,001 s</td><td>15×</td></tr>
+    <tr><td>1.000</td><td>499.380</td><td>8.715</td><td>0,058 s</td><td>0,002 s</td><td><b>30×</b></td></tr>
+    <tr><td>2.000</td><td>1.997.460</td><td>19.434</td><td>0,236 s</td><td>0,004 s</td><td><b>59×</b></td></tr>
+    <tr><td>4.000</td><td>7.996.919</td><td>42.851</td><td>1,002 s</td><td>0,007 s</td><td><b>138×</b></td></tr>
+  </tbody>
+</table>
+
+<p>Mira la última columna: la diferencia <strong>crece</strong>. No es que el burbuja sea "un poco más lento", es que se despega. La razón está en cómo reacciona cada uno cuando doblas N:</p>
+
+<blockquote>Al doblar N, el burbuja se pone <strong>4 veces</strong> más lento (2² = 4). El merge, apenas <strong>un poco más del doble</strong>.</blockquote>
+
+<p>Llevado a tamaños de juez en línea:</p>
+
+<table>
+  <thead>
+    <tr><th>N</th><th>N² (burbuja)</th><th>N·log₂N (merge)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1.000</td><td>1.000.000</td><td>9.965</td></tr>
+    <tr><td>100.000</td><td>10.000.000.000</td><td>1.660.964</td></tr>
+    <tr><td>1.000.000</td><td>1.000.000.000.000</td><td>19.931.568</td></tr>
+  </tbody>
+</table>
+
+<p>Con un millón de datos, el burbuja pide <strong>un billón</strong> de comparaciones: horas. El merge pide 20 millones: <strong>segundos</strong>. Esa frase es la que te llevas al parcial.</p>
+
+<h2>Búsqueda binaria: la misma idea, buscando</h2>
+
+<p>Partir por la mitad también sirve para buscar — pero solo si la lista <strong>ya está ordenada</strong>.</p>
+
+<pre><code>def busqueda_binaria(lista, objetivo):
+    izq = 0
+    der = len(lista) - 1
+
+    while izq &lt;= der:
+        medio = (izq + der) // 2
+
+        if lista[medio] == objetivo:
+            return medio
+        if lista[medio] &lt; objetivo:
+            izq = medio + 1      # está a la derecha
+        else:
+            der = medio - 1      # está a la izquierda
+
+    return -1                    # no está</code></pre>
+
+<p>Cada vuelta descarta <strong>la mitad</strong> de lo que queda. En un millón de elementos son 20 vueltas, no un millón: <code>O(log N)</code>.</p>
+
+<p>Los dos <code>+1</code> y <code>-1</code> no son adorno: sin ellos, cuando <code>izq</code> y <code>der</code> se juntan el <code>while</code> no termina nunca.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. El caso base después de la recursión</h3>
+<pre><code>def merge_sort(lista):        # ❌ RecursionError
+    medio = len(lista) // 2
+    izquierda = merge_sort(lista[:medio])
+    if len(lista) &lt;= 1:
+        return lista</code></pre>
+<p>El caso base va <strong>primero</strong>. Es la condición de parada: si se pregunta después de llamarse, nunca para.</p>
+
+<h3>2. Olvidar un <code>while</code> de restos</h3>
+<pre><code>while i &lt; len(izquierda) and j &lt; len(derecha):
+    ...
+while i &lt; len(izquierda):     # ✅
+    ...
+# ❌ falta el de la derecha: se pierden elementos en silencio</code></pre>
+
+<h3>3. Creer que el burbuja "sirve igual"</h3>
+<p>Sirve, con 100 datos. Con 100.000 el juez te saca por tiempo. Ordenar bien no basta: hay que ordenar <strong>a tiempo</strong>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Caso base primero, siempre.</li>
+  <li>Dividir por la mitad con <code>//</code>, nunca con <code>/</code>.</li>
+  <li><code>lista[:medio]</code> y <code>lista[medio:]</code>: sin solapar y sin perder nada.</li>
+  <li>Al mezclar: <code>and</code> en el while, <code>&lt;=</code> en la comparación, y los <strong>dos</strong> while de restos.</li>
+  <li>Si el enunciado dice "N hasta 100.000", el burbuja ya no es opción.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Algoritmo</th><th>Complejidad</th><th>Cuándo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Burbuja</td><td><code>O(N²)</code></td><td>N pequeño, o cuando lo piden explícitamente</td></tr>
+    <tr><td>Merge Sort</td><td><code>O(N log N)</code></td><td>Siempre que N sea grande</td></tr>
+    <tr><td>Búsqueda binaria</td><td><code>O(log N)</code></td><td>Buscar en algo <strong>ya ordenado</strong></td></tr>
+    <tr><td><code>sorted()</code></td><td><code>O(N log N)</code></td><td>En competencia, salvo que pidan implementarlo</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Los dos ordenan bien. Solo uno termina a tiempo. Sabérselos de memoria es saber cuál escribir — y por qué.</blockquote>

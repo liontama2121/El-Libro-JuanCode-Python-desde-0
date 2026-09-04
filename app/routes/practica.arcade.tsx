@@ -7,7 +7,7 @@ import { requireUser } from "~/lib/auth.server";
 import { MODOS, ORDEN_MODOS } from "~/lib/arcade";
 import { cargarStats, listarInsignias, nivelDe } from "~/lib/gamification.server";
 import { leerTests, modoCodigoActivo } from "~/lib/piston.server";
-import { cargarLibro } from "~/lib/progress.server";
+import { cargarCapitulosVisibles } from "~/lib/progress.server";
 import type { Route } from "./+types/practica.arcade";
 
 export const meta: Route.MetaFunction = () => [
@@ -19,7 +19,12 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	const user = await requireUser(env, request);
 	const db = getDb(env);
 
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const capitulos = await cargarCapitulosVisibles(
+		db,
+		user.id,
+		user.role === "teacher",
+		user.track,
+	);
 	const abiertos = capitulos.filter((c) => c.estado !== "bloqueado").map((c) => c.id);
 
 	// Cuántas preguntas hay por tipo entre los capítulos que tiene abiertos

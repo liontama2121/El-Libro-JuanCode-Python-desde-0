@@ -24,7 +24,8 @@
 	// @cloudflare/vite-plugin durante el build. No hace falta declararlos aqui.
 
 	"vars": {
-		"APP_NAME": "El Libro JuanCode"
+		"APP_NAME": "El Libro JuanCode",
+		"WHATSAPP_URL": "https://wa.me/573046452629"
 	}
 
 	// Secretos (NO van aqui):

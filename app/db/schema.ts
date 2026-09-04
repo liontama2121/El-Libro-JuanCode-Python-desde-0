@@ -22,6 +22,12 @@ export const users = sqliteTable("users", {
 	image: text("image"),
 	/** 'teacher' | 'student' */
 	role: text("role").notNull().default("student"),
+	/**
+	 * Que libro ve el estudiante: 'basico' | 'avanzado' | 'ambos'.
+	 * Solo el profe lo cambia (desde /admin/estudiantes). El estudiante no,
+	 * o se saltaria el contenido que necesita.
+	 */
+	track: text("track").notNull().default("basico"),
 	/** Obliga a cambiar la clave temporal en el primer ingreso */
 	mustChangePassword: integer("must_change_password", { mode: "boolean" })
 		.notNull()
@@ -93,6 +99,8 @@ export const parts = sqliteTable("parts", {
 	number: integer("number").notNull().unique(),
 	title: text("title").notNull(),
 	emoji: text("emoji").notNull().default("📘"),
+	/** 'basico' | 'avanzado' */
+	track: text("track").notNull().default("basico"),
 });
 
 export const chapters = sqliteTable(
@@ -111,8 +119,16 @@ export const chapters = sqliteTable(
 		published: integer("published", { mode: "boolean" })
 			.notNull()
 			.default(false),
+		/**
+		 * 'basico' | 'avanzado'. Los dos tracks son libros paralelos: el
+		 * progreso ya es por capitulo, asi que aprobar un quiz de uno nunca
+		 * toca el otro.
+		 */
+		track: text("track").notNull().default("basico"),
 	},
-	(t) => [uniqueIndex("chapters_number_unique").on(t.number)],
+	// El numero se repite entre tracks (hay capitulo 1 en cada uno), pero
+	// nunca dentro del mismo.
+	(t) => [uniqueIndex("chapters_track_number_unique").on(t.track, t.number)],
 );
 
 export const exercises = sqliteTable(
@@ -416,8 +432,17 @@ export const TIPOS_PREGUNTA = [
 	"predict_output",
 	"find_bug",
 	"parsons",
+	/** Rellenar los huecos de un codigo: para algoritmos que van de memoria */
+	"fill_blank",
 ] as const;
 export type TipoPregunta = (typeof TIPOS_PREGUNTA)[number];
+
+/** Los dos libros paralelos. 'ambos' solo aplica a un usuario, no a un capitulo. */
+export const TRACKS = ["basico", "avanzado"] as const;
+export type Track = (typeof TRACKS)[number];
+
+export const TRACKS_USUARIO = ["basico", "avanzado", "ambos"] as const;
+export type TrackUsuario = (typeof TRACKS_USUARIO)[number];
 
 export const DIFICULTADES = ["facil", "medio", "dificil"] as const;
 export type Dificultad = (typeof DIFICULTADES)[number];

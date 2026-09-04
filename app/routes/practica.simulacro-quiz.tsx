@@ -15,7 +15,7 @@ import {
 	type Respuesta,
 } from "~/lib/bank.server";
 import { otorgar, XP_POR_CORRECTA_SIMULACRO } from "~/lib/gamification.server";
-import { cargarLibro } from "~/lib/progress.server";
+import { cargarCapitulosVisibles } from "~/lib/progress.server";
 import { firmar, verificar } from "~/lib/sign.server";
 import type { Route } from "./+types/practica.simulacro-quiz";
 
@@ -37,7 +37,12 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	const user = await requireUser(env, request);
 	const db = getDb(env);
 
-	const { capitulos } = await cargarLibro(db, user.id, user.role === "teacher");
+	const capitulos = await cargarCapitulosVisibles(
+		db,
+		user.id,
+		user.role === "teacher",
+		user.track,
+	);
 	const abiertos = capitulos.filter((c) => c.estado !== "bloqueado");
 
 	const url = new URL(request.url);

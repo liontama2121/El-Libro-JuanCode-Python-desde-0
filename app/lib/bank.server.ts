@@ -21,6 +21,9 @@ export type PreguntaPublica = {
 	lineas?: string[];
 	/** parsons: las líneas DESORDENADAS, sin la indentación correcta */
 	piezas?: { id: string; text: string }[];
+	/** fill_blank: el código con las marcas ___N___ y la pista de cada hueco */
+	codigoHuecos?: string;
+	huecos?: { id: string; pista: string }[];
 };
 
 /**
@@ -59,6 +62,17 @@ export function aPublica(q: BankQuestion, semilla = 0): PreguntaPublica {
 		};
 	}
 
+	if (q.type === "fill_blank") {
+		const huecos =
+			(data.blanks as { id: string | number; pista?: string }[] | undefined) ?? [];
+		// Se manda el código con los huecos, nunca las respuestas.
+		return {
+			...base,
+			codigoHuecos: String(data.code ?? ""),
+			huecos: huecos.map((h) => ({ id: String(h.id), pista: String(h.pista ?? "") })),
+		};
+	}
+
 	return base;
 }
 
@@ -73,6 +87,8 @@ export type Respuesta =
 	| { line_number: number }
 	/** parsons */
 	| { order: { id: string; indent: number }[] }
+	/** fill_blank: lo que el estudiante escribió en cada hueco */
+	| { blanks: Record<string, string> }
 	| null;
 
 export type Correccion = {
@@ -127,7 +143,54 @@ export function calificar(q: BankQuestion, respuesta: Respuesta): Correccion {
 		};
 	}
 
+	if (q.type === "fill_blank") {
+		const escritas =
+			(respuesta as { blanks?: Record<string, string> } | null)?.blanks ?? {};
+		const esperadas = (correcto.answers as Record<string, string[]>) ?? {};
+		const huecos = (data.blanks as { id: string | number }[] | undefined) ?? [];
+
+		// Un hueco está bien si coincide con CUALQUIERA de las variantes que
+		// el autor aceptó, comparando en forma normalizada.
+		const detalle = huecos.map((h) => {
+			const id = String(h.id);
+			const escrita = String(escritas[id] ?? "");
+			const variantes = esperadas[id] ?? [];
+			return {
+				id,
+				escrita,
+				acerto: variantes.some((v) => mismoCodigo(v, escrita)),
+				correcta: variantes[0] ?? "",
+			};
+		});
+
+		return {
+			// Todo o nada: memorizar medio algoritmo no sirve de nada.
+			acerto: detalle.length > 0 && detalle.every((d) => d.acerto),
+			correcta: detalle,
+			explanation: q.explanation,
+		};
+	}
+
 	return { acerto: false, correcta: null, explanation: q.explanation };
+}
+
+/**
+ * Compara dos trozos de código como los compararía un profesor: los espacios
+ * sobran, pero los nombres y la lógica no.
+ *
+ *   "arr[j+1]"  ==  "arr[j + 1]"        ✔ mismo código
+ *   "arr[j]>arr[j+1]" == "arr[j] > arr[j+1]"   ✔
+ *   "lista[j]"  !=  "arr[j]"            ✘ otro nombre, otra respuesta
+ */
+export function mismoCodigo(a: string, b: string): boolean {
+	const limpio = (t: string) =>
+		String(t)
+			.trim()
+			.replace(/\s+/g, " ")
+			// Espacios alrededor de los símbolos: irrelevantes al comparar
+			.replace(/\s*([[\]().,:+\-*/%<>=!]+)\s*/g, "$1");
+
+	return limpio(a) === limpio(b);
 }
 
 /* -------------------------------------------------------------------------- */
