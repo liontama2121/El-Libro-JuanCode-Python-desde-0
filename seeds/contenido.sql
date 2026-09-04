@@ -5,17 +5,17 @@
 -- ============================================================================
 
 INSERT INTO parts (number, title, emoji, track) VALUES (1, 'Fundamentos', '🌱', 'basico')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 INSERT INTO parts (number, title, emoji, track) VALUES (2, 'Control de flujo', '🔀', 'basico')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 INSERT INTO parts (number, title, emoji, track) VALUES (3, 'Estructuras de datos', '📚', 'basico')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 INSERT INTO parts (number, title, emoji, track) VALUES (4, 'Código organizado', '🧰', 'basico')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 INSERT INTO parts (number, title, emoji, track) VALUES (5, 'Programación orientada a objetos', '🏛️', 'basico')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 INSERT INTO parts (number, title, emoji, track) VALUES (6, 'Mundo real', '🚀', 'basico')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 
 -- ── Capítulo 1: ¿Qué es programar? (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
@@ -127,7 +127,7 @@ print("Total:", 340)   # bien: el conteo del día lo entrega la caja registrador
 </table>
 
 <blockquote>Programar no es memorizar comandos. Es aprender a partir un problema grande en pasos tan pequeños que hasta una máquina los pueda seguir.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 1
+    FROM parts p WHERE p.number = 1 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -397,7 +397,7 @@ print(precio + 500)    # TypeError</code></pre>
 </table>
 
 <blockquote>Regla de oro: si vas a mostrarlo, es texto. Si vas a hacer cuentas con eso, es número. Convierte cuando cruces de un lado al otro.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 1
+    FROM parts p WHERE p.number = 1 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -683,7 +683,7 @@ edad = int(input())     # funciona, pero el cursor queda en otra línea</code></
 </table>
 
 <blockquote>Todo lo que entra por el teclado es texto. Si vas a hacer cuentas con eso, conviértelo en la misma línea en que lo pides.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 1
+    FROM parts p WHERE p.number = 1 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -1078,7 +1078,7 @@ if nota == 3 or nota == 4:  # ✅</code></pre>
 </table>
 
 <blockquote>Un signo igual guarda. Dos signos igual preguntan. Esa sola frase te ahorra la mitad de los errores del próximo capítulo.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 1
+    FROM parts p WHERE p.number = 1 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -1456,7 +1456,7 @@ print(f"{nombre} tiene {saldo}")    # ✅</code></pre>
 </table>
 
 <blockquote>Los métodos de texto no cambian la variable: devuelven una copia arreglada. Si no la guardas, se pierde.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 1
+    FROM parts p WHERE p.number = 1 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -1817,7 +1817,7 @@ if nota == 5.0:     # ✅</code></pre>
 </table>
 
 <blockquote>En un <code>elif</code>, Python se queda con la primera condición verdadera y no mira las demás. Por eso las condiciones van de la más exigente a la menos exigente.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 2
+    FROM parts p WHERE p.number = 2 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -2271,7 +2271,7 @@ else:
 </table>
 
 <blockquote>Contadores, sumatorias y banderas nacen afuera y se actualizan adentro. Si la variable nace adentro, cada vuelta la borra.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 2
+    FROM parts p WHERE p.number = 2 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -2692,7 +2692,7 @@ for i in range(100):
 </table>
 
 <blockquote><code>for</code> cuando sabes cuántas vueltas; <code>while</code> cuando el final lo decide lo que pase adentro. Y en <code>range</code>, el final nunca entra.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 2
+    FROM parts p WHERE p.number = 2 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -3072,7 +3072,7 @@ while n &lt; 5:
 </table>
 
 <blockquote><code>break</code> sale del ciclo que lo contiene y nada más. En un anidado, romper el de adentro deja al de afuera dando vueltas.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 2
+    FROM parts p WHERE p.number = 2 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -3482,7 +3482,7 @@ for nota in notas:
 </table>
 
 <blockquote>Las listas se modifican en el sitio; los textos no. Por eso <code>lista.sort()</code> se usa solo, y <code>texto.upper()</code> hay que guardarlo.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 3
+    FROM parts p WHERE p.number = 3 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -3913,7 +3913,7 @@ print(s[0])       # TypeError: ''set'' object is not subscriptable</code></pre>
 </table>
 
 <blockquote>Lista si va a cambiar, tupla si es fija, set si no quieres repetidos. Escoger bien la estructura resuelve la mitad del problema antes de escribir el primer ciclo.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 3
+    FROM parts p WHERE p.number = 3 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -4303,7 +4303,7 @@ for x in precios.values():
 </table>
 
 <blockquote>Lista para lo que va en orden; diccionario para lo que se busca por nombre. Y para contar cualquier cosa: <code>conteo.get(x, 0) + 1</code>.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 3
+    FROM parts p WHERE p.number = 3 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -4703,7 +4703,7 @@ dobles = [n * 2 for n in notas]   # ✅</code></pre>
 </table>
 
 <blockquote>Una comprehension no hace nada que un ciclo no pueda. Se usa cuando hace el código <em>más</em> fácil de leer, nunca para presumir.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 3
+    FROM parts p WHERE p.number = 3 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -5128,7 +5128,7 @@ def agregar(x, lista=None):  # ✅
 </table>
 
 <blockquote><code>print</code> le habla al usuario; <code>return</code> le habla al programa. Una función que calcula devuelve; imprimir es trabajo de quien la llama.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 4
+    FROM parts p WHERE p.number = 4 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -5642,7 +5642,7 @@ except ValueError:
 </table>
 
 <blockquote>Atrapa el error que esperas, no todos. Un <code>except</code> pelado convierte un bug ruidoso en un bug silencioso, que es mucho peor.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 4
+    FROM parts p WHERE p.number = 4 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -6105,7 +6105,7 @@ print("Cargando...")      # ❌ sale cada vez que alguien lo importe</code></pre
 </table>
 
 <blockquote>Un módulo define y el programa ejecuta. Si al importar tu archivo pasa <em>algo</em>, le falta el <code>if __name__ == "__main__"</code>.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 4
+    FROM parts p WHERE p.number = 4 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -6606,7 +6606,7 @@ total += float(fila["nota1"])    # ✅</code></pre>
 </table>
 
 <blockquote>Modo <code>"w"</code> borra el archivo entero antes de escribir. Si querías agregar, era <code>"a"</code>. Ese descuido ha borrado muchos datos de trabajos reales.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 4
+    FROM parts p WHERE p.number = 4 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -7123,7 +7123,7 @@ class Cuenta:
 </table>
 
 <blockquote>Una clase no es solo datos juntos: es datos <em>más</em> las reglas que impiden dejarlos en un estado imposible.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 5
+    FROM parts p WHERE p.number = 5 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -7725,7 +7725,7 @@ class Inventario:              # ✅ los contiene
 </table>
 
 <blockquote>Herencia solo cuando la frase "<em>es un</em>" es cierta. Si dices "tiene un", lo que necesitas es guardar el objeto adentro, no heredarlo.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 5
+    FROM parts p WHERE p.number = 5 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -8452,7 +8452,7 @@ if __name__ == "__main__":
 </table>
 
 <blockquote>Un proyecto no es código más largo: es código <em>repartido</em>. Cuando cada archivo tiene un solo trabajo, agregar una función nueva deja de dar miedo.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 6
+    FROM parts p WHERE p.number = 6 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -9193,7 +9193,7 @@ cursor.execute("... WHERE numero = ?", ("001",))   # ✅ tupla de uno</code></pr
 </table>
 
 <blockquote>Los valores nunca se pegan a la consulta: siempre van con <code>?</code>. Esa sola regla previene la vulnerabilidad más común y más costosa que existe.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 6
+    FROM parts p WHERE p.number = 6 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -9825,7 +9825,7 @@ df["total"] = df["precio"] * df["cantidad"]   # ✅ vectorizado</code></pre>
 </table>
 
 <blockquote>Si estás escribiendo un ciclo sobre un DataFrame, probablemente hay una línea de pandas que hace lo mismo cien veces más rápido.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 6
+    FROM parts p WHERE p.number = 6 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -10357,7 +10357,7 @@ except json.JSONDecodeError:
 </table>
 
 <blockquote>El modelo pone el criterio; tu programa pone las reglas. Un prompt sin formato exigido y una respuesta sin <code>try/except</code> son las dos formas de que esto funcione en la demo y falle el primer día real.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 6
+    FROM parts p WHERE p.number = 6 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -11025,7 +11025,7 @@ venv/</code></pre>
 </table>
 
 <blockquote>Hace veinticuatro capítulos, un <code>print</code> era todo lo que sabías hacer. Ahora tienes un servicio con base de datos, validaciones y una dirección pública. Lo que sigue no es otro capítulo: es tu propio proyecto.</blockquote>', 1, 'basico'
-    FROM parts p WHERE p.number = 6
+    FROM parts p WHERE p.number = 6 AND p.track = 'basico'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,

@@ -5,13 +5,13 @@
 -- ============================================================================
 
 INSERT INTO parts (number, title, emoji, track) VALUES (1, 'Entrada y salida', '⚙️', 'avanzado')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 INSERT INTO parts (number, title, emoji, track) VALUES (2, 'Estructuras', '🧱', 'avanzado')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 INSERT INTO parts (number, title, emoji, track) VALUES (3, 'Recursión y búsqueda', '🌳', 'avanzado')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 INSERT INTO parts (number, title, emoji, track) VALUES (4, 'Técnicas de diseño', '🧠', 'avanzado')
-  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;
+  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;
 
 -- ── Capítulo 1: Setup DOMjudge (publicado)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
@@ -182,7 +182,7 @@ print(a + b)        # ❌ imprime "23" en vez de 5</code></pre>
 </table>
 
 <blockquote>El juez no lee lo que quisiste decir: compara lo que imprimiste, carácter por carácter. Programar para un juez es aprender a callarse.</blockquote>', 1, 'avanzado'
-    FROM parts p WHERE p.number = 1
+    FROM parts p WHERE p.number = 1 AND p.track = 'avanzado'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -494,7 +494,7 @@ print()                 # ❌ deja una línea en blanco después del último cas
 </table>
 
 <blockquote>El algoritmo era tomar una letra. El problema era leer bien el enunciado.</blockquote>', 1, 'avanzado'
-    FROM parts p WHERE p.number = 1
+    FROM parts p WHERE p.number = 1 AND p.track = 'avanzado'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -920,7 +920,7 @@ print(f"Field #{campo_num}:")   # ❌ ese campo no existe</code></pre>
 </table>
 
 <blockquote>En Python el índice −1 no es un error: es la última posición. Por eso el borde se valida a mano — nadie te va a avisar.</blockquote>', 1, 'avanzado'
-    FROM parts p WHERE p.number = 2
+    FROM parts p WHERE p.number = 2 AND p.track = 'avanzado'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -1197,7 +1197,7 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
 -- ── Capítulo 4: Recursión (borrador)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 4, 'Recursión', '🌀', 'Caso base, caso recursivo y qué pasa en el stack de llamadas.', '', 0, 'avanzado'
-    FROM parts p WHERE p.number = 3
+    FROM parts p WHERE p.number = 3 AND p.track = 'avanzado'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -1213,7 +1213,7 @@ DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM
 -- ── Capítulo 5: Backtracking (borrador)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 5, 'Backtracking', '🌳', 'El árbol de decisión y la poda de ramas que no llevan a nada.', '', 0, 'avanzado'
-    FROM parts p WHERE p.number = 3
+    FROM parts p WHERE p.number = 3 AND p.track = 'avanzado'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -1484,7 +1484,7 @@ while i &lt; len(izquierda):     # ✅
 </table>
 
 <blockquote>Los dos ordenan bien. Solo uno termina a tiempo. Sabérselos de memoria es saber cuál escribir — y por qué.</blockquote>', 1, 'avanzado'
-    FROM parts p WHERE p.number = 4
+    FROM parts p WHERE p.number = 4 AND p.track = 'avanzado'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -1933,7 +1933,7 @@ INSERT INTO question_bank (chapter_id, type, difficulty, prompt, code_snippet, d
 -- ── Capítulo 7: Programación Dinámica (borrador)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 7, 'Programación Dinámica', '📊', 'La tabla DP y la diferencia entre construirla hacia adelante o hacia atrás.', '', 0, 'avanzado'
-    FROM parts p WHERE p.number = 4
+    FROM parts p WHERE p.number = 4 AND p.track = 'avanzado'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,
@@ -1949,7 +1949,7 @@ DELETE FROM question_bank WHERE source = 'seed' AND chapter_id = (SELECT id FROM
 -- ── Capítulo 8: Greedy y simulación (borrador)
 INSERT INTO chapters (part_id, number, title, emoji, description, content_html, published, track)
   SELECT p.id, 8, 'Greedy y simulación', '🎯', 'Cuándo la decisión codiciosa es correcta, y cuándo toca simular.', '', 0, 'avanzado'
-    FROM parts p WHERE p.number = 4
+    FROM parts p WHERE p.number = 4 AND p.track = 'avanzado'
   ON CONFLICT(track, number) DO UPDATE SET
     part_id      = excluded.part_id,
     title        = excluded.title,

@@ -189,7 +189,7 @@ for (const p of libro.partes) {
 		`INSERT INTO parts (number, title, emoji, track) VALUES (${p.number}, ${txt(p.title)}, ${txt(p.emoji)}, ${txt(TRACK)})`,
 	);
 	sql.push(
-		`  ON CONFLICT(number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji, track = excluded.track;`,
+		`  ON CONFLICT(track, number) DO UPDATE SET title = excluded.title, emoji = excluded.emoji;`,
 	);
 }
 sql.push("");
@@ -228,7 +228,8 @@ for (const cap of libro.capitulos) {
 	sql.push(
 		`  SELECT p.id, ${n}, ${txt(cap.title)}, ${txt(cap.emoji)}, ${txt(cap.description ?? "")}, ${txt(cuerpo)}, ${completo ? 1 : 0}, ${txt(TRACK)}`,
 	);
-	sql.push(`    FROM parts p WHERE p.number = ${cap.part}`);
+		// La parte tambien se busca por track: hay parte 1 en cada libro
+	sql.push(`    FROM parts p WHERE p.number = ${cap.part} AND p.track = ${txt(TRACK)}`);
 	// El numero se repite entre tracks (hay capitulo 1 en cada libro), asi
 	// que el conflicto se resuelve por la pareja.
 	sql.push(`  ON CONFLICT(track, number) DO UPDATE SET`);

@@ -94,14 +94,20 @@ export const verifications = sqliteTable("verifications", {
 /*  CONTENIDO DEL LIBRO                                                        */
 /* -------------------------------------------------------------------------- */
 
-export const parts = sqliteTable("parts", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	number: integer("number").notNull().unique(),
-	title: text("title").notNull(),
-	emoji: text("emoji").notNull().default("📘"),
-	/** 'basico' | 'avanzado' */
-	track: text("track").notNull().default("basico"),
-});
+export const parts = sqliteTable(
+	"parts",
+	{
+		id: integer("id").primaryKey({ autoIncrement: true }),
+		number: integer("number").notNull(),
+		title: text("title").notNull(),
+		emoji: text("emoji").notNull().default("📘"),
+		/** 'basico' | 'avanzado' */
+		track: text("track").notNull().default("basico"),
+	},
+	// Igual que en chapters: cada libro numera sus partes desde 1. Con el
+	// unico global, las partes del avanzado pisaban las del basico.
+	(t) => [uniqueIndex("parts_track_number_unique").on(t.track, t.number)],
+);
 
 export const chapters = sqliteTable(
 	"chapters",
