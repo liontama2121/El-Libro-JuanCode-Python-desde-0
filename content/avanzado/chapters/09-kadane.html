@@ -1,0 +1,167 @@
+<p class="jc-gancho">Toda la programación dinámica del módulo 7 necesitaba una tabla. Este algoritmo resuelve un problema del mismo tipo con <strong>dos variables</strong> y una sola pasada. Es la versión más elegante de la misma pregunta: <em>¿cuál es la mejor solución que termina exactamente aquí?</em></p>
+
+<h2>📖 El problema</h2>
+
+<div class="jc-problema">
+
+<h3>Máxima subsecuencia contigua</h3>
+
+<p><strong>Descripción.</strong> Dado un arreglo con números positivos y negativos, encuentra la <strong>suma máxima</strong> de una subsecuencia <strong>contigua</strong> — elementos consecutivos, sin saltarse ninguno del medio.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>-2 1 -3 4 -1 2 1 -5 4</code></td>
+      <td><code>6</code> — la racha <code>[4, -1, 2, 1]</code></td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+<p>Ojo con la palabra <strong>contigua</strong>. Si pudieras escoger elementos sueltos, la respuesta sería trivial: sumar todos los positivos. Aquí, si te llevas el 4 y el 2, te tienes que llevar también el −1 que está en medio.</p>
+
+<h2>💡 Análisis y estrategia</h2>
+
+<h3>La solución ingenua y por qué no sirve</h3>
+
+<p>Probar todas las subsecuencias: para cada inicio, todos los finales. Son <code>O(N²)</code> pares y sumar cada uno lo lleva a <code>O(N³)</code>, o <code>O(N²)</code> si acumulas. Con 100.000 elementos, ninguna de las dos pasa.</p>
+
+<h3>La pregunta que lo resuelve todo</h3>
+
+<p>En cada posición hay <strong>una sola decisión</strong>:</p>
+
+<blockquote>¿Me conviene <strong>seguir</strong> la racha que traigo, o <strong>empezar una nueva</strong> aquí mismo?</blockquote>
+
+<p>Y la respuesta es aritmética pura: si lo que traes acumulado es negativo, arrastrarlo solo te resta. Mejor empezar de cero.</p>
+
+<pre><code>max_actual = max(arr[i], max_actual + arr[i])</code></pre>
+
+<table>
+  <thead><tr><th>Opción</th><th>Significa</th></tr></thead>
+  <tbody>
+    <tr><td><code>arr[i]</code></td><td>Empezar una racha nueva justo aquí</td></tr>
+    <tr><td><code>max_actual + arr[i]</code></td><td>Extender la racha que venía</td></tr>
+  </tbody>
+</table>
+
+<h3>Dos variables, dos preguntas distintas</h3>
+
+<p>Esta es la parte que más se confunde:</p>
+
+<table>
+  <thead><tr><th>Variable</th><th>Responde</th></tr></thead>
+  <tbody>
+    <tr><td><code>max_actual</code></td><td>¿Cuál es la mejor racha que <strong>termina en esta posición</strong>?</td></tr>
+    <tr><td><code>max_global</code></td><td>¿Cuál es la mejor racha <strong>vista hasta ahora</strong>, termine donde termine?</td></tr>
+  </tbody>
+</table>
+
+<p>La primera puede bajar; la segunda nunca. Por eso hacen falta las dos: <code>max_actual</code> es la que trabaja y <code>max_global</code> es la que recuerda.</p>
+
+<h2>💻 Código paso a paso</h2>
+
+<pre><code>def kadane(arr):
+    if not arr:
+        return 0
+
+    max_actual = arr[0]
+    max_global = arr[0]
+
+    for i in range(1, len(arr)):
+        max_actual = max(arr[i], max_actual + arr[i])
+        max_global = max(max_global, max_actual)
+
+    return max_global</code></pre>
+
+<table>
+  <thead><tr><th>Línea</th><th>Por qué está ahí</th></tr></thead>
+  <tbody>
+    <tr><td><code>max_actual = arr[0]</code></td><td>Se arranca con el primer elemento, <strong>no con 0</strong>. Con 0, un arreglo de puros negativos daría 0, y 0 no es una subsecuencia válida si hay que tomar al menos un elemento</td></tr>
+    <tr><td><code>range(1, len(arr))</code></td><td>El elemento 0 ya se usó para inicializar</td></tr>
+    <tr><td><code>max(arr[i], max_actual + arr[i])</code></td><td>La decisión: empezar de nuevo o seguir</td></tr>
+    <tr><td><code>max(max_global, max_actual)</code></td><td>Guardar la mejor racha vista. Va <strong>después</strong> de actualizar <code>max_actual</code></td></tr>
+  </tbody>
+</table>
+
+<h3>La película completa</h3>
+
+<p>Con <code>[-2, 1, -3, 4, -1, 2, 1, -5, 4]</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>i</th><th>arr[i]</th><th>Decisión</th><th>max_actual</th><th>max_global</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>0</td><td>−2</td><td>inicio</td><td>−2</td><td>−2</td></tr>
+    <tr><td>1</td><td>1</td><td><code>max(1, −1)</code> → <b>empieza de nuevo</b></td><td>1</td><td>1</td></tr>
+    <tr><td>2</td><td>−3</td><td><code>max(−3, −2)</code> → sigue</td><td>−2</td><td>1</td></tr>
+    <tr><td>3</td><td>4</td><td><code>max(4, 2)</code> → <b>empieza de nuevo</b></td><td>4</td><td>4</td></tr>
+    <tr><td>4</td><td>−1</td><td><code>max(−1, 3)</code> → sigue</td><td>3</td><td>4</td></tr>
+    <tr><td>5</td><td>2</td><td><code>max(2, 5)</code> → sigue</td><td>5</td><td>5</td></tr>
+    <tr><td>6</td><td>1</td><td><code>max(1, 6)</code> → sigue</td><td>6</td><td><b>6</b></td></tr>
+    <tr><td>7</td><td>−5</td><td><code>max(−5, 1)</code> → sigue</td><td>1</td><td>6</td></tr>
+    <tr><td>8</td><td>4</td><td><code>max(4, 5)</code> → sigue</td><td>5</td><td>6</td></tr>
+  </tbody>
+</table>
+
+<p>Resultado: <strong>6</strong>, la racha <code>[4, −1, 2, 1]</code>.</p>
+
+<p>Fíjate en <code>i = 3</code>: traía <code>max_actual = −2</code> y el elemento es 4. Seguir daría 2; empezar de nuevo da 4. <strong>Ahí nace la racha ganadora.</strong> Un acumulado negativo siempre conviene botarlo.</p>
+
+<h2>🔑 El concepto: DP sin tabla</h2>
+
+<p>Kadane <strong>es</strong> programación dinámica. Compáralo con el Edificio del módulo 7:</p>
+
+<table>
+  <thead><tr><th></th><th>🏗️ Edificio</th><th>📈 Kadane</th></tr></thead>
+  <tbody>
+    <tr><td><code>dp[i]</code> significa</td><td>mejor torre que termina en <code>i</code></td><td>mejor racha que termina en <code>i</code></td></tr>
+    <tr><td>Cómo se guarda</td><td>una tabla de N casillas</td><td><strong>una variable</strong></td></tr>
+    <tr><td>Por qué</td><td>consulta cualquier <code>dp[j]</code> anterior</td><td>solo necesita la casilla <strong>inmediatamente</strong> anterior</td></tr>
+    <tr><td>Respuesta final</td><td><code>max(dp)</code></td><td><code>max_global</code></td></tr>
+    <tr><td>Complejidad</td><td><code>O(N²)</code> · memoria <code>O(N)</code></td><td><code>O(N)</code> · memoria <code>O(1)</code></td></tr>
+  </tbody>
+</table>
+
+<blockquote>Cuando la transición de una DP solo mira <strong>un paso atrás</strong>, la tabla sobra: basta una variable. Ese cambio convierte O(N²) en O(N).</blockquote>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Inicializar en 0</h3>
+<pre><code>max_actual = max_global = 0     # ❌ con puros negativos devuelve 0</code></pre>
+<p>Con <code>[-1, -2, -3]</code> la respuesta correcta es <strong>−1</strong>: el menos malo. Devolver 0 equivale a decir "no tomo nada", y eso solo vale si el enunciado permite la subsecuencia vacía. Léelo con cuidado, porque las dos versiones existen.</p>
+
+<h3>2. Actualizar <code>max_global</code> antes que <code>max_actual</code></h3>
+<pre><code>max_global = max(max_global, max_actual)   # ❌ compara con el valor viejo
+max_actual = max(arr[i], max_actual + arr[i])</code></pre>
+<p>Se pierde la última racha. El orden es: primero decides, después guardas.</p>
+
+<h3>3. Confundir contigua con cualquiera</h3>
+<pre><code>return sum(x for x in arr if x &gt; 0)   # ❌ eso resuelve otro problema</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Pregúntate qué es "lo mejor que termina exactamente aquí".</li>
+  <li>Si eso solo depende del paso anterior, cambia la tabla por una variable.</li>
+  <li>Lleva aparte el mejor global: lo actual sube y baja, lo global no.</li>
+  <li>Inicializa con el primer elemento, no con cero, salvo que el enunciado permita lo vacío.</li>
+  <li>Un acumulado negativo se bota: nunca ayuda a lo que viene.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>max_actual = max(arr[i], max_actual + arr[i])</code></td><td>Seguir o empezar de nuevo</td></tr>
+    <tr><td><code>max_global = max(max_global, max_actual)</code></td><td>Recordar la mejor racha</td></tr>
+    <tr><td>Inicializar en <code>arr[0]</code></td><td>Funciona con puros negativos</td></tr>
+    <tr><td>Inicializar en <code>0</code></td><td>Solo si se permite la subsecuencia vacía</td></tr>
+    <tr><td>Complejidad</td><td><code>O(N)</code> tiempo, <code>O(1)</code> memoria</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Si lo que traes acumulado es negativo, déjalo ir. Esa frase de una línea es todo el algoritmo.</blockquote>

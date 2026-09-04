@@ -1,0 +1,218 @@
+<p class="jc-gancho">Dos problemas casi idénticos: contar formas de dar un cambio y llenar una cinta de cassette. El mismo tamaño de código, la misma tabla, los mismos dos ciclos. Lo único que cambia es <strong>hacia dónde va el ciclo de adentro</strong>. Y esa dirección decide si puedes repetir una moneda o no. Este módulo es sobre esa línea.</p>
+
+<h2>💡 Qué es Programación Dinámica</h2>
+
+<p>Una frase: <strong>no calcular dos veces lo mismo</strong>.</p>
+
+<p>Se arma una tabla — la <code>dp</code> — donde cada casilla guarda la respuesta a un subproblema. Cuando el problema grande necesita esa respuesta, la <strong>consulta</strong> en vez de recalcularla.</p>
+
+<p>Lo difícil de DP no es el código: son cuatro líneas. Lo difícil es responder <strong>qué significa exactamente <code>dp[i]</code></strong>. Si no puedes decirlo en una frase, todavía no tienes la solución.</p>
+
+<h2>🏗️ Problema 1 — Edificio</h2>
+
+<div class="jc-problema">
+<p><strong>Descripción.</strong> Tienes pisos de distintos tamaños. Quieres construir una torre donde cada piso sea <strong>estrictamente mayor</strong> que el anterior. ¿Cuál es la altura máxima que puedes lograr?</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>5 7 -2 6 9 -3 8</code></td><td><code>35</code></td></tr></tbody>
+</table>
+</div>
+
+<h3>La pregunta que hay que responder primero</h3>
+
+<p><strong><code>dp[i]</code> = la altura máxima de una torre que termina en el piso <code>i</code>.</strong> Esa frase es la solución; lo demás es escribirla.</p>
+
+<pre><code>def solve_edificio(pisos):
+    if not pisos:
+        return 0
+
+    pisos_ordenados = sorted(pisos)       # ← lo que hace que todo funcione
+    n = len(pisos_ordenados)
+
+    dp = pisos_ordenados[:]               # cada piso solo ya es una torre
+
+    for i in range(1, n):
+        for j in range(i):
+            if pisos_ordenados[j] &lt; pisos_ordenados[i]:
+                dp[i] = max(dp[i], dp[j] + pisos_ordenados[i])
+
+    return max(dp)</code></pre>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué está ahí</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>sorted(pisos)</code></td><td>Ordenar garantiza que todo lo que está <strong>antes</strong> en la lista es candidato a ir <strong>abajo</strong> en la torre. Sin ordenar, habría que mirar la lista entera en cada paso</td></tr>
+    <tr><td><code>dp = pisos_ordenados[:]</code></td><td>La copia es la torre de un solo piso. Es el punto de partida: siempre existe</td></tr>
+    <tr><td><code>for j in range(i)</code></td><td>Prueba poner el piso <code>i</code> encima de cada piso anterior</td></tr>
+    <tr><td><code>if …[j] &lt; …[i]</code></td><td>La regla del problema: estrictamente creciente. Con <code>&lt;=</code> aceptaría pisos iguales</td></tr>
+    <tr><td><code>max(dp[i], dp[j] + …)</code></td><td>La decisión: ¿mejor solo, o encima de la mejor torre que termina en <code>j</code>?</td></tr>
+    <tr><td><code>return max(dp)</code></td><td><strong>No</strong> es <code>dp[n-1]</code>: la mejor torre puede no terminar en el piso más grande</td></tr>
+  </tbody>
+</table>
+
+<h3>La película con <code>[2, 5, 3]</code></h3>
+
+<table>
+  <thead><tr><th>Paso</th><th>Compara</th><th>Decide</th><th>dp queda</th></tr></thead>
+  <tbody>
+    <tr><td>ordenar</td><td>—</td><td><code>[2, 3, 5]</code></td><td><code>[2, 3, 5]</code></td></tr>
+    <tr><td>i=1, j=0</td><td>¿2 &lt; 3? sí</td><td><code>max(3, 2+3)</code> = 5</td><td><code>[2, 5, 5]</code></td></tr>
+    <tr><td>i=2, j=0</td><td>¿2 &lt; 5? sí</td><td><code>max(5, 2+5)</code> = 7</td><td><code>[2, 5, 7]</code></td></tr>
+    <tr><td>i=2, j=1</td><td>¿3 &lt; 5? sí</td><td><code>max(7, 5+5)</code> = <b>10</b></td><td><code>[2, 5, 10]</code></td></tr>
+  </tbody>
+</table>
+
+<p>Respuesta: <code>max(dp)</code> = <strong>10</strong>, la torre 2 + 3 + 5.</p>
+
+<h3>Por qué la respuesta del ejemplo grande es 35 y no 30</h3>
+
+<p>Con <code>[5, 7, -2, 6, 9, -3, 8]</code>, ordenado queda <code>[-3, -2, 5, 6, 7, 8, 9]</code>. Todos van en orden creciente, así que la torre <em>podría</em> usarlos todos: −3 −2 + 5 + 6 + 7 + 8 + 9 = <strong>30</strong>.</p>
+
+<p>Pero la mejor torre es <strong>35</strong>: 5 + 6 + 7 + 8 + 9. <strong>Dejar fuera los negativos da más altura.</strong></p>
+
+<p>Ese es todo el punto del <code>max(dp[i], …)</code>: en cada paso el algoritmo puede decidir <em>empezar de nuevo</em> en vez de apilarse sobre lo anterior. Si el problema fuera "usa todos los que puedas", no habría nada que optimizar.</p>
+
+<h2>💰 Problema 2 — Monedas</h2>
+
+<div class="jc-problema">
+<p><strong>Descripción.</strong> Con monedas de 50¢, 25¢, 10¢, 5¢ y 1¢, ¿de cuántas formas distintas se puede armar una cantidad? Cada combinación cuenta una sola vez, sin importar el orden.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>11</code></td><td><code>4</code> — (10+1) · (5+5+1) · (5+1×6) · (1×11)</td></tr></tbody>
+</table>
+</div>
+
+<pre><code>def solve_monedas(cantidad):
+    monedas = [50, 25, 10, 5, 1]
+
+    dp = [0] * (cantidad + 1)
+    dp[0] = 1                              # hay 1 forma de armar 0: ninguna moneda
+
+    for moneda in monedas:                 # ← primero la moneda
+        for m in range(moneda, cantidad + 1):   # ← ADELANTE
+            dp[m] += dp[m - moneda]
+
+    return dp[cantidad]</code></pre>
+
+<p><strong><code>dp[m]</code> = de cuántas formas se arma la cantidad <code>m</code></strong> con las monedas consideradas hasta ahora.</p>
+
+<p>El <code>dp[0] = 1</code> no es un truco: es el caso base. Hay exactamente una manera de armar cero centavos — no poner nada. Si fuera 0, toda la tabla quedaría en ceros, porque cada casilla se construye sumando desde otra.</p>
+
+<h3>La película con cantidad = 5</h3>
+
+<table>
+  <thead><tr><th>Moneda</th><th>Qué hace</th><th>dp queda</th></tr></thead>
+  <tbody>
+    <tr><td>inicio</td><td>—</td><td><code>[1, 0, 0, 0, 0, 0]</code></td></tr>
+    <tr><td>50, 25, 10</td><td>no caben en 5</td><td><code>[1, 0, 0, 0, 0, 0]</code></td></tr>
+    <tr><td>5</td><td><code>dp[5] += dp[0]</code></td><td><code>[1, 0, 0, 0, 0, 1]</code></td></tr>
+    <tr><td>1</td><td>llena todo, y <code>dp[5] += dp[4]</code></td><td><code>[1, 1, 1, 1, 1, <b>2</b>]</code></td></tr>
+  </tbody>
+</table>
+
+<p>Dos formas: una de 5¢, o cinco de 1¢. ✅</p>
+
+<h2>📼 Problema 3 — Cintas</h2>
+
+<div class="jc-problema">
+<p><strong>Descripción.</strong> Tienes una cinta de <code>N</code> minutos y varias pistas con sus duraciones. Quieres llenarla lo más posible, pero <strong>cada pista se usa una vez o ninguna</strong>: no puedes grabar la misma dos veces.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td>pistas <code>3 5</code>, cinta de <code>8</code></td><td><code>8</code></td></tr></tbody>
+</table>
+</div>
+
+<pre><code>def solve_cintas(duraciones, minutos_totales):
+    dp = [0] * (minutos_totales + 1)
+
+    for duracion in duraciones:
+        for m in range(minutos_totales, duracion - 1, -1):   # ← ATRÁS
+            dp[m] = max(dp[m], dp[m - duracion] + duracion)
+
+    return dp[minutos_totales]</code></pre>
+
+<p><strong><code>dp[m]</code> = los minutos máximos que se pueden llenar teniendo <code>m</code> minutos de cinta.</strong></p>
+
+<h2>🔑 ADELANTE contra ATRÁS: la línea que lo cambia todo</h2>
+
+<p>Compara los dos ciclos de adentro:</p>
+
+<pre><code># Monedas — se puede repetir la misma moneda
+for m in range(moneda, cantidad + 1):        # de menor a mayor
+
+# Cintas — cada pista, una sola vez
+for m in range(minutos_totales, duracion - 1, -1):   # de mayor a menor</code></pre>
+
+<h3>Por qué ir hacia adelante repite</h3>
+
+<p>Con una pista de 3 minutos y una cinta de 5, yendo <strong>adelante</strong>:</p>
+
+<table>
+  <thead><tr><th>m</th><th>Consulta</th><th>Valor de esa casilla</th><th>dp[m] queda</th></tr></thead>
+  <tbody>
+    <tr><td>3</td><td><code>dp[0] + 3</code></td><td>0 — casilla limpia</td><td>3</td></tr>
+    <tr><td>4</td><td><code>dp[1] + 3</code></td><td>0 — casilla limpia</td><td>3</td></tr>
+    <tr><td>5</td><td><code>dp[2] + 3</code></td><td>0</td><td>3</td></tr>
+    <tr><td>6</td><td><code>dp[3] + 3</code></td><td><b>3 — ¡esa casilla ya usó la pista!</b></td><td><b>6</b> ❌</td></tr>
+  </tbody>
+</table>
+
+<p>En <code>m = 6</code> consulta <code>dp[3]</code>, que <strong>ya fue actualizado en esta misma pasada</strong>. Resultado: la pista de 3 minutos se grabó dos veces.</p>
+
+<h3>Por qué ir hacia atrás no repite</h3>
+
+<p>Recorriendo de mayor a menor, <code>dp[m - duracion]</code> es una casilla que <strong>todavía no se ha tocado</strong> en esta pasada: guarda el resultado <em>sin</em> esta pista. Por eso cada pista entra máximo una vez.</p>
+
+<table>
+  <thead>
+    <tr><th></th><th>💰 Monedas</th><th>📼 Cintas</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Dirección</td><td><b>ADELANTE</b></td><td><b>ATRÁS</b></td></tr>
+    <tr><td>Repetir el mismo elemento</td><td>✅ permitido</td><td>❌ prohibido</td></tr>
+    <tr><td>Nombre clásico</td><td>Mochila ilimitada</td><td>Mochila 0/1</td></tr>
+    <tr><td>La casilla consultada</td><td>ya incluye este elemento</td><td>todavía no lo incluye</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Si el enunciado dice "puedes usar cada cosa las veces que quieras" → adelante. Si dice "cada cosa una sola vez" → atrás. Es la primera pregunta que hay que hacerle a un problema de mochila.</blockquote>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Devolver <code>dp[n-1]</code> en vez de <code>max(dp)</code></h3>
+<pre><code>return dp[n - 1]     # ❌ asume que la mejor torre termina en el piso más grande</code></pre>
+<p>En <code>[5, 7, -2, …]</code> la mejor termina en el 9, sí — pero en otros casos no. Si <code>dp[i]</code> es "torres que terminan en i", la respuesta es el máximo de todas.</p>
+
+<h3>2. Poner <code>dp[0] = 0</code> en Monedas</h3>
+<pre><code>dp[0] = 0            # ❌ toda la tabla queda en ceros</code></pre>
+
+<h3>3. Cambiar el <code>-1</code> del <code>range</code> en Cintas</h3>
+<pre><code>for m in range(minutos_totales, duracion - 1, 1):   # ❌ va adelante, repite pistas
+                                                     #    y además no ejecuta nada</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Escribe en una frase qué significa <code>dp[i]</code>. Si no puedes, aún no tienes la solución.</li>
+  <li>Define el caso base: <code>dp[0]</code> casi siempre es 1 (contar) o 0 (maximizar).</li>
+  <li>Decide la dirección del ciclo interno: <strong>adelante</strong> si se puede repetir, <strong>atrás</strong> si no.</li>
+  <li>La transición siempre es una decisión: <code>max</code> entre usarlo y no usarlo, o <code>+=</code> para contar.</li>
+  <li>Al final, ¿la respuesta es la última casilla o el máximo de todas? Depende de lo que <code>dp[i]</code> signifique.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Problema</th><th>dp[i] significa</th><th>Ciclo</th><th>Complejidad</th></tr></thead>
+  <tbody>
+    <tr><td>🏗️ Edificio</td><td>altura máxima terminando en <code>i</code></td><td>doble, sobre pisos ordenados</td><td><code>O(N²)</code></td></tr>
+    <tr><td>💰 Monedas</td><td>formas de armar <code>i</code></td><td>moneda → cantidad, <b>adelante</b></td><td><code>O(N × M)</code></td></tr>
+    <tr><td>📼 Cintas</td><td>minutos llenados con <code>i</code> de cinta</td><td>pista → cinta, <b>atrás</b></td><td><code>O(N × P)</code></td></tr>
+  </tbody>
+</table>
+
+<blockquote>Los tres problemas tienen el mismo esqueleto. Lo que cambia es qué guarda la tabla y hacia dónde corre el ciclo — y de eso depende toda la respuesta.</blockquote>

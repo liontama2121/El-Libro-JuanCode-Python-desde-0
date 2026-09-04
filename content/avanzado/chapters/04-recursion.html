@@ -1,0 +1,205 @@
+<p class="jc-gancho">Una función que se llama a sí misma suena a truco de magia hasta que ves el stack. No hay magia: hay una pila de llamadas esperando su turno para devolver. Este módulo es sobre escribir la receta antes del código, porque el 90% de los errores de recursión son un caso base mal puesto.</p>
+
+<h2>💡 La idea recursiva</h2>
+
+<p>Resolver un problema construyendo la respuesta desde una <strong>versión más pequeña de sí mismo</strong>. La función delega un subproblema estrictamente menor y combina lo que reciba.</p>
+
+<h3>La receta, antes de escribir código</h3>
+
+<ol>
+  <li><strong>Identificar el caso base</strong> — dónde para.</li>
+  <li><strong>Definir una reducción</strong> que acerque al caso base.</li>
+  <li><strong>Delegar</strong> exactamente ese subproblema reducido.</li>
+  <li><strong>Combinar</strong> la respuesta recibida.</li>
+  <li><strong>Comprobar que toda entrada válida progresa</strong> hacia el caso base.</li>
+  <li><strong>Trazar un ejemplo pequeño</strong> antes de programar.</li>
+</ol>
+
+<p>El paso 5 es el que se salta todo el mundo, y es el que produce el <code>RecursionError</code>.</p>
+
+<h2>🔍 Ejemplo introductorio: suma recursiva</h2>
+
+<p>Definición matemática:</p>
+
+<pre><code>S(n) = 0                si n = 0
+S(n) = n + S(n − 1)     si n &gt; 0</code></pre>
+
+<pre><code>def sumar(n):
+    if n == 0:          # caso base
+        return 0
+    return n + sumar(n - 1)</code></pre>
+
+<h3>El stack, de bajada y de subida</h3>
+
+<pre><code>S(4) = 4 + S(3)
+     = 4 + 3 + S(2)
+     = 4 + 3 + 2 + S(1)
+     = 4 + 3 + 2 + 1 + S(0)
+
+Retorno: S(0)=0 → S(1)=1 → S(2)=3 → S(3)=6 → S(4)=10</code></pre>
+
+<p>Fíjate en las dos mitades. <strong>Bajando</strong>, cada llamada queda congelada esperando; <strong>subiendo</strong>, cada una completa su suma con lo que recibió. Todas esas llamadas congeladas viven en la <strong>pila</strong>, y ocupan memoria de verdad.</p>
+
+<h3>Pila contra cola</h3>
+
+<table>
+  <thead><tr><th></th><th>Recursión de pila</th><th>Recursión de cola</th></tr></thead>
+  <tbody>
+    <tr><td>Cómo se ve</td><td><code>return n + sumar(n − 1)</code></td><td><code>return suma_cola(n − 1, total + n)</code></td></tr>
+    <tr><td>Al volver</td><td>queda una operación pendiente (el <code>+ n</code>)</td><td>no queda nada pendiente</td></tr>
+  </tbody>
+</table>
+
+<pre><code>def suma_cola(n, total=0):
+    if n == 0:
+        return total
+    return suma_cola(n - 1, total + n)</code></pre>
+
+<p>En otros lenguajes la versión de cola se optimiza y no crece la pila. <strong>En Python no</strong>: las dos consumen la misma profundidad, y las dos revientan alrededor de las mil llamadas. Saber la diferencia sirve para el parcial; en competencia, lo que salva es no recursar tan hondo.</p>
+
+<h2>📖 El problema</h2>
+
+<div class="jc-problema">
+
+<h3>Superdígito</h3>
+<p><em>Basado en Super Digit</em></p>
+
+<p><strong>Descripción.</strong> El superdígito de un entero se define recursivamente:</p>
+<ul>
+  <li>Si el número tiene un solo dígito, ese dígito <strong>es</strong> su superdígito.</li>
+  <li>En otro caso, se suman sus dígitos y se calcula el superdígito del resultado.</li>
+</ul>
+
+<p>Se recibe un número decimal <code>n</code> y un entero <code>k</code>. El número completo <code>p</code> se forma concatenando <code>n</code> consigo mismo exactamente <code>k</code> veces. Debe calcularse el superdígito de <code>p</code> <strong>sin construir necesariamente toda la cadena</strong>.</p>
+
+<p><strong>Entrada.</strong> Una sola línea con la cadena decimal <code>n</code> y el entero <code>k</code>, separados por espacio. 1 ≤ |n| ≤ 10⁵, 1 ≤ k ≤ 10⁵.</p>
+
+<p><strong>Salida.</strong> Un único dígito: el superdígito del número formado al repetir <code>n</code> exactamente <code>k</code> veces.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>148 3</code></td><td><code>3</code></td></tr></tbody>
+</table>
+
+<p><strong>Explicación.</strong> La concatenación es 148148148. Suma = 39; luego 3+9 = 12; finalmente 1+2 = 3.</p>
+
+</div>
+
+<h2>💡 Análisis y estrategia</h2>
+
+<h3>La trampa del enunciado</h3>
+
+<p>Con |n| = 10⁵ y k = 10⁵, la cadena concatenada tendría <strong>diez mil millones de caracteres</strong>. No cabe en memoria, y armarla es responder otro problema.</p>
+
+<p>La salida está en una observación simple: <strong>sumar los dígitos de "n repetido k veces" es lo mismo que sumar los de n y multiplicar por k</strong>. Repetir el número repite exactamente sus dígitos.</p>
+
+<pre><code>suma_base = suma de los dígitos de n
+inicial   = suma_base × k</code></pre>
+
+<p>Con <code>148</code> y k=3: 1+4+8 = 13, y 13 × 3 = <strong>39</strong>. Que es justo la suma de los dígitos de 148148148, sin haberla construido.</p>
+
+<h3>Ahora sí, la recursión</h3>
+
+<p>Aplicada al número ya reducido, la receta es directa:</p>
+
+<table>
+  <thead><tr><th>Paso de la receta</th><th>En este problema</th></tr></thead>
+  <tbody>
+    <tr><td>Caso base</td><td>El número tiene un solo dígito: <code>x &lt; 10</code></td></tr>
+    <tr><td>Reducción</td><td>Reemplazar el número por la suma de sus dígitos</td></tr>
+    <tr><td>Delegar</td><td><code>superdigito(suma)</code></td></tr>
+    <tr><td>Combinar</td><td>Nada que combinar: se devuelve tal cual lo que llegue</td></tr>
+    <tr><td>¿Progresa?</td><td>Sí: la suma de dígitos de un número de 2+ cifras siempre es menor que el número</td></tr>
+  </tbody>
+</table>
+
+<h2>💻 Código paso a paso</h2>
+
+<pre><code>def superdigito(x):
+    if x &lt; 10:                    # CASO BASE
+        return x
+
+    suma = 0
+    for c in str(x):              # REDUCCIÓN
+        suma += int(c)
+
+    return superdigito(suma)      # DELEGAR
+
+
+linea = input().split()
+n = linea[0]
+k = int(linea[1])
+
+suma_base = 0
+for c in n:
+    suma_base += int(c)
+
+inicial = suma_base * k
+
+print(superdigito(inicial))</code></pre>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué está ahí</th></tr></thead>
+  <tbody>
+    <tr><td><code>if x &lt; 10: return x</code></td><td>El caso base. Va <strong>primero</strong>: es la condición de parada</td></tr>
+    <tr><td><code>str(x)</code></td><td>Recorrer los dígitos de un número es más cómodo tratándolo como texto</td></tr>
+    <tr><td><code>suma_base * k</code></td><td>El truco: evita construir una cadena de 10¹⁰ caracteres</td></tr>
+    <tr><td><code>n</code> se lee como texto</td><td>Con <code>int(n)</code> se perderían los ceros a la izquierda y el número podría no caber cómodo</td></tr>
+  </tbody>
+</table>
+
+<h3>La película con <code>148 3</code></h3>
+
+<table>
+  <thead><tr><th>Llamada</th><th>x</th><th>¿Caso base?</th><th>Suma de dígitos</th><th>Devuelve</th></tr></thead>
+  <tbody>
+    <tr><td>preparación</td><td>—</td><td>—</td><td>(1+4+8) × 3 = <b>39</b></td><td>—</td></tr>
+    <tr><td>superdigito(39)</td><td>39</td><td>no</td><td>3+9 = 12</td><td>lo que devuelva superdigito(12)</td></tr>
+    <tr><td>superdigito(12)</td><td>12</td><td>no</td><td>1+2 = 3</td><td>lo que devuelva superdigito(3)</td></tr>
+    <tr><td>superdigito(3)</td><td>3</td><td><b>sí</b></td><td>—</td><td><b>3</b></td></tr>
+  </tbody>
+</table>
+
+<p>Y de subida, cada llamada devuelve el 3 tal cual, porque en este problema no hay nada que combinar. Compáralo con <code>sumar(n)</code>, donde cada nivel tenía un <code>+ n</code> pendiente.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. El caso base después de la llamada recursiva</h3>
+<pre><code>def superdigito(x):
+    suma = sum(int(c) for c in str(x))
+    return superdigito(suma)      # ❌ nunca para: RecursionError
+    if x &lt; 10:
+        return x</code></pre>
+
+<h3>2. Construir la cadena completa</h3>
+<pre><code>p = n * k                         # ❌ con k = 10⁵ son 10¹⁰ caracteres</code></pre>
+
+<h3>3. Un caso base que no se alcanza</h3>
+<pre><code>if x == 0:                        # ❌ la suma de dígitos nunca llega a 0
+    return x</code></pre>
+<p>El caso base tiene que ser alcanzable <strong>desde cualquier entrada válida</strong>. Ese es el paso 5 de la receta.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Escribe el caso base <strong>primero</strong>, siempre.</li>
+  <li>Comprueba que la reducción de verdad acerca al caso base: si no encoge, no para.</li>
+  <li>Traza un ejemplo pequeño a mano antes de correr nada.</li>
+  <li>Si el enunciado da límites enormes, busca la propiedad matemática: casi siempre hay una que evita construir el monstruo.</li>
+  <li>En Python la pila aguanta unas mil llamadas. Más hondo que eso, toca iterativo.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>if caso_base: return valor</code></td><td>La condición de parada, siempre de primera</td></tr>
+    <tr><td><code>return f(entrada_reducida)</code></td><td>Delegar sin nada pendiente (cola)</td></tr>
+    <tr><td><code>return n + f(n - 1)</code></td><td>Delegar con algo pendiente (pila)</td></tr>
+    <tr><td><code>str(x)</code> · <code>int(c)</code></td><td>Recorrer los dígitos de un número</td></tr>
+    <tr><td><code>sys.setrecursionlimit(…)</code></td><td>Sube el tope, pero no arregla un caso base malo</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Si la recursión no para, el problema casi nunca es la recursión: es que el caso base está mal puesto, o la reducción no encoge.</blockquote>

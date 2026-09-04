@@ -1,0 +1,161 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué estructura usa DFS?",
+    "data": { "options": [
+      { "id": "a", "text": "Una pila: saca el último que entró y se hunde por una rama" },
+      { "id": "b", "text": "Una cola: saca el primero que entró" },
+      { "id": "c", "text": "Un diccionario" },
+      { "id": "d", "text": "Una lista ordenada" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con pop() saca el último; con popleft() sería BFS. Para contar componentes las dos dan el mismo resultado: lo único que importa es visitar todo."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En el conteo de islas, ¿qué hace realmente el doble for exterior?",
+    "data": { "options": [
+      { "id": "a", "text": "Busca puntos de partida: celdas de tierra que nadie visitó todavía" },
+      { "id": "b", "text": "Cuenta las celdas de tierra" },
+      { "id": "c", "text": "Recorre cada isla completa" },
+      { "id": "d", "text": "Ordena las celdas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Quien recorre la isla es el DFS. El for solo busca dónde empezar: cada vez que entra al if es porque tropezó con una componente que nadie había pintado."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué el algoritmo es O(N × M) si tiene un while dentro de un doble for?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque cada celda se procesa a lo sumo una vez en toda la ejecución: queda marcada" },
+      { "id": "b", "text": "Porque el while casi nunca entra" },
+      { "id": "c", "text": "No lo es: es O(N² × M²)" },
+      { "id": "d", "text": "Porque las islas son pequeñas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Contar ciclos anidados engaña. Hay que contar cuántas veces se toca cada celda en total: el for la mira una vez, y el while la procesa como máximo una vez."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Con el mapa #.# / .#. / #.# ¿cuántas islas hay con 4 direcciones y cuántas con 8?",
+    "data": { "options": [
+      { "id": "a", "text": "5 con cuatro direcciones, 1 con ocho" },
+      { "id": "b", "text": "5 en los dos casos" },
+      { "id": "c", "text": "1 con cuatro, 5 con ocho" },
+      { "id": "d", "text": "4 con cuatro, 2 con ocho" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con cuatro direcciones ninguna de las cinco celdas toca a otra por los lados. Con las diagonales, el centro las conecta todas. Por eso hay que leer bien el enunciado antes de escribir la lista de direcciones."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuándo conviene BFS en vez de DFS?",
+    "data": { "options": [
+      { "id": "a", "text": "Cuando se pide el camino más corto o el mínimo de pasos" },
+      { "id": "b", "text": "Cuando hay que contar componentes" },
+      { "id": "c", "text": "Cuando el mapa tiene diagonales" },
+      { "id": "d", "text": "Cuando el mapa es pequeño" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "BFS explora por niveles, así que la primera vez que llega a una celda llegó por el camino mínimo. Para conectividad las dos técnicas sirven igual."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "Con 4 direcciones, ¿cuántas islas tiene este mapa?",
+    "code_snippet": "#.#\n...\n#.#",
+    "data": { "options": [
+      { "id": "a", "text": "4" },
+      { "id": "b", "text": "1" },
+      { "id": "c", "text": "2" },
+      { "id": "d", "text": "8" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las cuatro esquinas son tierra y ninguna toca a otra por arriba, abajo, izquierda o derecha. Con ocho direcciones tampoco se juntan: las diagonales las separa una casilla de agua."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este programa cuenta celdas de tierra en vez de islas. ¿En qué línea está el error?",
+    "data": { "lines": [
+      "for i in range(n):",
+      "    for j in range(m):",
+      "        if grid[i][j] == '#':",
+      "            islas += 1",
+      "            pila = [(i, j)]",
+      "            visitado[i][j] = True"
+    ]},
+    "correct": { "line_number": 3 },
+    "explanation": "Falta el 'and not visitado[i][j]'. Sin esa condición, cada celda de una misma isla vuelve a sumar. Esa comprobación es lo que convierte el conteo en componentes."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el conteo de componentes.",
+    "data": {
+      "code": "islas = 0\n\nfor i in range(n):\n    for j in range(m):\n        if grid[i][j] == \"#\" and ___1___ visitado[i][j]:\n            islas += 1\n\n            pila = [(i, j)]\n            visitado[i][j] = True\n\n            while len(pila) > 0:\n                f, c = pila.___2___()",
+      "blanks": [
+        { "id": "1", "pista": "todavía nadie la pintó" },
+        { "id": "2", "pista": "saca el último que entró" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["not"],
+      "2": ["pop"]
+    }},
+    "explanation": "El 'not visitado' es lo que hace que se cuente una vez por isla y no una por celda. Y pop() saca el último: eso es lo que hace que el recorrido sea DFS."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa la lista de las 8 direcciones (con diagonales).",
+    "data": {
+      "code": "direcciones = [(-1, -1), (-1, 0), (-1, 1),\n               ( 0, -1),          ( 0, ___1___),\n               ( 1, -1), ( 1, 0), ( ___2___, 1)]",
+      "blanks": [
+        { "id": "1", "pista": "una columna a la derecha, misma fila" },
+        { "id": "2", "pista": "una fila abajo" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["1"],
+      "2": ["1"]
+    }},
+    "explanation": "Son las 9 combinaciones de −1, 0 y 1 menos el (0,0), que es la celda misma. Cambiar de 4 a 8 vecinos es cambiar solo esta lista."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arma el conteo de islas con DFS iterativo",
+    "data": { "lines": [
+      { "id": "d1", "text": "for i in range(n):", "indent": 0 },
+      { "id": "d2", "text": "for j in range(m):", "indent": 1 },
+      { "id": "d3", "text": "if grid[i][j] == '#' and not visitado[i][j]:", "indent": 2 },
+      { "id": "d4", "text": "islas += 1", "indent": 3 },
+      { "id": "d5", "text": "pila = [(i, j)]", "indent": 3 },
+      { "id": "d6", "text": "visitado[i][j] = True", "indent": 3 },
+      { "id": "d7", "text": "while len(pila) > 0:", "indent": 3 },
+      { "id": "d8", "text": "f, c = pila.pop()", "indent": 4 },
+      { "id": "d9", "text": "for df, dc in direcciones:", "indent": 4 }
+    ]},
+    "correct": { "order": ["d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9"] },
+    "explanation": "El contador sube al DESCUBRIR la isla, antes de recorrerla. Si estuviera dentro del while, contaría una vez por celda."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué en competencia se prefiere el DFS iterativo al recursivo?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque con un mapa de 1000×1000 la recursión se hunde un millón de niveles y revienta" },
+      { "id": "b", "text": "Porque el recursivo da resultados incorrectos" },
+      { "id": "c", "text": "Porque Python no permite funciones recursivas" },
+      { "id": "d", "text": "Porque el iterativo usa menos memoria en todos los casos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El límite de recursión de Python está cerca de mil llamadas. La versión recursiva es más corta y más bonita, pero con mapas grandes lanza RecursionError."
+  }
+]

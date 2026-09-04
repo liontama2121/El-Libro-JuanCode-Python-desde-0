@@ -1,0 +1,164 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En el par que suma, si arr[i] + arr[j] es MENOR que S, ¿qué se hace y por qué?",
+    "data": { "options": [
+      { "id": "a", "text": "i += 1, porque arr[i] es el menor disponible: ni con el mayor llega a S" },
+      { "id": "b", "text": "j -= 1, porque hay que bajar la suma" },
+      { "id": "c", "text": "Se mueven los dos a la vez" },
+      { "id": "d", "text": "Se reinicia j al final" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Ese argumento es la técnica entera: si el elemento más pequeño emparejado con el más grande ya se queda corto, con ningún otro llega. Se descarta para siempre, y por eso el total es O(N)."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué requisito tiene la variante de two pointers desde los extremos?",
+    "data": { "options": [
+      { "id": "a", "text": "Que el arreglo esté ordenado" },
+      { "id": "b", "text": "Que tenga tamaño par" },
+      { "id": "c", "text": "Que no tenga números negativos" },
+      { "id": "d", "text": "Ninguno" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El orden es lo que permite saber hacia dónde moverse. Con [10, 1, 7, 3], mover i cuando la suma es corta no garantiza nada: el siguiente podría ser más pequeño."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué el ciclo es 'while i < j' y no 'while i <= j'?",
+    "data": { "options": [
+      { "id": "a", "text": "Para no usar el mismo elemento dos veces" },
+      { "id": "b", "text": "Para que sea más rápido" },
+      { "id": "c", "text": "Porque i nunca alcanza a j" },
+      { "id": "d", "text": "Para evitar un IndexError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con <=, buscando S=8 en un arreglo con un 4, respondería '4 y 4' — el mismo elemento contado dos veces. El enunciado pide dos elementos distintos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuál es la complejidad de two pointers frente a la fuerza bruta?",
+    "data": { "options": [
+      { "id": "a", "text": "O(N) contra O(N²)" },
+      { "id": "b", "text": "O(N log N) contra O(N²)" },
+      { "id": "c", "text": "O(N²) contra O(N³)" },
+      { "id": "d", "text": "Las dos son O(N)" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cada índice recorre el arreglo una vez y nunca retrocede, así que entre los dos hacen a lo sumo N pasos. Con N = 10⁵, la fuerza bruta serían cinco mil millones de pares."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Cuántas vueltas del while hace este programa antes de encontrar el par?",
+    "code_snippet": "arr = [1, 3, 4, 7, 11, 15]\nS = 11\ni, j = 0, len(arr) - 1\nvueltas = 0\nwhile i < j:\n    vueltas += 1\n    s = arr[i] + arr[j]\n    if s == S:\n        break\n    if s < S:\n        i += 1\n    else:\n        j -= 1\nprint(vueltas)",
+    "data": { "options": [
+      { "id": "a", "text": "5" },
+      { "id": "b", "text": "3" },
+      { "id": "c", "text": "6" },
+      { "id": "d", "text": "15" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "16 (baja j), 12 (baja j), 8 (sube i), 10 (sube i), 11 (encontrado). Cinco vueltas contra los quince pares que probaría la fuerza bruta."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este programa se salta pares válidos. ¿En qué línea está el error?",
+    "data": { "lines": [
+      "while i < j:",
+      "    suma = arr[i] + arr[j]",
+      "    if suma == S:",
+      "        return (arr[i], arr[j])",
+      "    i += 1",
+      "    j -= 1"
+    ]},
+    "correct": { "line_number": 5 },
+    "explanation": "Mueve los dos índices en el mismo paso, sin mirar si la suma se pasó o se quedó corta. En cada vuelta se mueve UNO solo: el que el argumento permite descartar."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el par que suma S.",
+    "data": {
+      "code": "i = 0\nj = len(arr) - 1\n\nwhile i ___1___ j:\n    suma = arr[i] + arr[j]\n\n    if suma == S:\n        return (arr[i], arr[j])\n\n    if suma < S:\n        ___2___\n    else:\n        ___3___",
+      "blanks": [
+        { "id": "1", "pista": "sin repetir el mismo elemento" },
+        { "id": "2", "pista": "la suma es corta: sube el menor" },
+        { "id": "3", "pista": "la suma se pasa: baja el mayor" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["<"],
+      "2": ["i += 1"],
+      "3": ["j -= 1"]
+    }},
+    "explanation": "Suma corta → hay que subir, y solo se puede moviendo i. Suma pasada → hay que bajar, moviendo j. Nunca los dos a la vez."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa la variante lento/rápido que elimina duplicados en el sitio.",
+    "data": {
+      "code": "k = 0\n\nfor i in range(1, len(arr)):\n    if arr[i] != arr[___1___]:\n        k += 1\n        arr[k] = ___2___\n\n# arr[0..k] son los unicos",
+      "blanks": [
+        { "id": "1", "pista": "el último que se escribió" },
+        { "id": "2", "pista": "lo nuevo que encontró el rápido" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["k"],
+      "2": ["arr[i]"]
+    }},
+    "explanation": "k marca dónde se escribe e i recorre. Como k va siempre detrás o igual que i, nunca se pisa un dato sin leer."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arma el par que suma S",
+    "data": { "lines": [
+      { "id": "t1", "text": "i = 0", "indent": 0 },
+      { "id": "t2", "text": "j = len(arr) - 1", "indent": 0 },
+      { "id": "t3", "text": "while i < j:", "indent": 0 },
+      { "id": "t4", "text": "suma = arr[i] + arr[j]", "indent": 1 },
+      { "id": "t5", "text": "if suma == S:", "indent": 1 },
+      { "id": "t6", "text": "return (arr[i], arr[j])", "indent": 2 },
+      { "id": "t7", "text": "if suma < S:", "indent": 1 },
+      { "id": "t8", "text": "i += 1", "indent": 2 },
+      { "id": "t9", "text": "else:", "indent": 1 },
+      { "id": "t10", "text": "j -= 1", "indent": 2 }
+    ]},
+    "correct": { "order": ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"] },
+    "explanation": "Los índices en los extremos, y dentro del ciclo una sola decisión: subir i o bajar j, nunca las dos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Cuándo se usa la variante 'lento y rápido' (los dos índices arrancando en 0)?",
+    "data": { "options": [
+      { "id": "a", "text": "Cuando hay que filtrar o comprimir el arreglo en el sitio, sin memoria extra" },
+      { "id": "b", "text": "Cuando el arreglo no está ordenado" },
+      { "id": "c", "text": "Cuando se buscan pares que suman algo" },
+      { "id": "d", "text": "Cuando el arreglo tiene menos de 10 elementos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Uno recorre y el otro marca dónde escribir. Con [1,1,2,2,3] deja [1,2,3] en las tres primeras posiciones sin crear una lista nueva."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Si el arreglo NO está ordenado y hay que encontrar un par que sume S, ¿qué se hace?",
+    "data": { "options": [
+      { "id": "a", "text": "Ordenarlo primero (O(N log N)) o usar un diccionario de vistos (O(N))" },
+      { "id": "b", "text": "Usar two pointers igual: funciona en cualquier orden" },
+      { "id": "c", "text": "Es imposible resolverlo" },
+      { "id": "d", "text": "Recorrerlo al revés" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Two pointers sobre datos desordenados no falla con error: da respuestas incorrectas. Ordenar sigue siendo mucho mejor que el O(N²) de la fuerza bruta."
+  }
+]

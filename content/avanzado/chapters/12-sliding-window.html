@@ -1,0 +1,173 @@
+<p class="jc-gancho">Recalcular la suma de cada ventana desde cero es hacer el mismo trabajo N veces. La ventana deslizante hace lo obvio y lo que casi nadie escribe a la primera: <strong>reutilizar la cuenta anterior</strong>. Entra uno, sale uno, y listo.</p>
+
+<h2>💡 La idea</h2>
+
+<p>Un subarreglo contiguo se puede ver como una ventana que se desliza. Al avanzar una posición, la ventana no cambia entera: <strong>gana un elemento por la derecha y pierde uno por la izquierda</strong>. Todo lo demás sigue igual, así que no hay que volver a sumarlo.</p>
+
+<pre><code>suma_nueva = suma_vieja + arr[der] - arr[izq]</code></pre>
+
+<p>Esa línea es el módulo entero. Convierte O(N × K) en O(N).</p>
+
+<table>
+  <thead><tr><th>Tipo</th><th>Cuándo</th><th>Cómo se mueve</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Ventana fija</strong></td><td>El enunciado da el tamaño K</td><td>Entra uno, sale uno, siempre</td></tr>
+    <tr><td><strong>Ventana variable</strong></td><td>Se pide "el más corto/largo que cumple…"</td><td>Crece por la derecha; encoge por la izquierda mientras se pueda</td></tr>
+  </tbody>
+</table>
+
+<h2>📖 Problema 1 — Ventana fija</h2>
+
+<div class="jc-problema">
+
+<h3>La mejor ventana de K</h3>
+
+<p><strong>Descripción.</strong> Dado un arreglo y un entero <code>K</code>, encontrar la suma máxima de <code>K</code> elementos <strong>consecutivos</strong>.</p>
+
+<p><strong>Entrada.</strong> Dos líneas: el arreglo, y el valor de <code>K</code>.</p>
+
+<p><strong>Salida.</strong> La suma máxima.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>2 1 5 1 3 2</code><br><code>3</code></td><td><code>9</code></td></tr></tbody>
+</table>
+
+<p><strong>Explicación.</strong> La ventana <code>5 1 3</code> suma 9, más que cualquier otra de tamaño 3.</p>
+
+</div>
+
+<h3>El desperdicio de la fuerza bruta</h3>
+
+<pre><code>for i in range(len(arr) - k + 1):
+    suma = 0
+    for j in range(i, i + k):     # ❌ vuelve a sumar todo
+        suma += arr[j]</code></pre>
+
+<p>Entre la ventana que empieza en <code>i</code> y la que empieza en <code>i+1</code> hay <strong>K−1 elementos idénticos</strong>. Sumarlos otra vez es tirar trabajo. Con N = 10⁵ y K = 10³ son 10⁸ operaciones.</p>
+
+<h3>El código</h3>
+
+<pre><code>arr = [int(x) for x in input().split()]
+k = int(input())
+
+# Primera ventana: esta sí toca sumarla completa
+suma = 0
+for i in range(k):
+    suma += arr[i]
+
+mejor = suma
+
+for i in range(k, len(arr)):
+    suma += arr[i] - arr[i - k]     # entra el nuevo, sale el que quedó atrás
+    if suma &gt; mejor:
+        mejor = suma
+
+print(mejor)</code></pre>
+
+<h3>La película con <code>[2, 1, 5, 1, 3, 2]</code>, K = 3</h3>
+
+<table>
+  <thead><tr><th>Ventana</th><th>Entra</th><th>Sale</th><th>Suma</th><th>Mejor</th></tr></thead>
+  <tbody>
+    <tr><td><code>2 1 5</code></td><td>—</td><td>—</td><td>8</td><td>8</td></tr>
+    <tr><td><code>1 5 1</code></td><td>1</td><td>2</td><td>8 + 1 − 2 = 7</td><td>8</td></tr>
+    <tr><td><code>5 1 3</code></td><td>3</td><td>1</td><td>7 + 3 − 1 = <b>9</b></td><td><b>9</b></td></tr>
+    <tr><td><code>1 3 2</code></td><td>2</td><td>5</td><td>9 + 2 − 5 = 6</td><td>9</td></tr>
+  </tbody>
+</table>
+
+<p>Cuatro sumas de dos términos, en vez de cuatro sumas de tres elementos cada una. Con K grande la diferencia es brutal.</p>
+
+<h2>📖 Problema 2 — Ventana variable</h2>
+
+<div class="jc-problema">
+
+<h3>El subarreglo más corto</h3>
+
+<p><strong>Descripción.</strong> Dado un arreglo de enteros <strong>positivos</strong> y un objetivo <code>S</code>, encontrar la longitud del subarreglo contiguo <strong>más corto</strong> cuya suma sea al menos <code>S</code>.</p>
+
+<p><strong>Entrada.</strong> Dos líneas: el arreglo, y el objetivo <code>S</code>.</p>
+
+<p><strong>Salida.</strong> La longitud mínima, o <code>0</code> si ningún subarreglo alcanza.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>2 3 1 2 4 3</code><br><code>7</code></td><td><code>2</code></td></tr></tbody>
+</table>
+
+<p><strong>Explicación.</strong> <code>4 3</code> suma 7 con solo dos elementos.</p>
+
+</div>
+
+<p>Aquí el tamaño no lo da el enunciado: es lo que se busca. La ventana <strong>respira</strong>.</p>
+
+<pre><code>izq = 0
+suma = 0
+mejor = len(arr) + 1          # un valor imposible, marca "todavía nada"
+
+for der in range(len(arr)):
+    suma += arr[der]                      # CRECE por la derecha
+
+    while suma &gt;= S:                      # ENCOGE mientras siga cumpliendo
+        if der - izq + 1 &lt; mejor:
+            mejor = der - izq + 1
+        suma -= arr[izq]
+        izq += 1
+
+if mejor == len(arr) + 1:
+    print(0)
+else:
+    print(mejor)</code></pre>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué</th></tr></thead>
+  <tbody>
+    <tr><td><code>while</code> y no <code>if</code></td><td>Después de encoger una vez puede que <em>siga</em> cumpliendo: hay que seguir encogiendo</td></tr>
+    <tr><td>Se mide antes de encoger</td><td>La ventana actual cumple; la de después de restar quizá no</td></tr>
+    <tr><td>Números positivos</td><td>Es lo que garantiza que al quitar por la izquierda la suma <strong>baja</strong>. Con negativos esto no funciona</td></tr>
+    <tr><td><code>len(arr) + 1</code></td><td>Longitud imposible, sirve de "infinito" sin importar nada</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Por qué sigue siendo O(N)</strong> aunque haya un <code>while</code> dentro de un <code>for</code>: <code>izq</code> solo avanza y nunca retrocede, así que en toda la ejecución se mueve como máximo N veces. Los dos índices juntos hacen 2N pasos.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Recalcular la ventana entera</h3>
+<pre><code>suma = sum(arr[i:i+k])       # ❌ dentro del ciclo, es O(N × K) otra vez</code></pre>
+<p><code>sum()</code> de un pedazo no es gratis: recorre los K elementos. Escribirlo corto no lo hace rápido.</p>
+
+<h3>2. <code>if</code> en vez de <code>while</code> al encoger</h3>
+<pre><code>if suma &gt;= S:                # ❌ encoge una sola vez
+    ...</code></pre>
+<p>Con <code>[1, 4, 4]</code> y S = 4, la respuesta es 1. Con <code>if</code>, la ventana no alcanza a encogerse hasta ese único elemento.</p>
+
+<h3>3. Ventana variable con números negativos</h3>
+<p>Todo el argumento de "quito por la izquierda y la suma baja" se cae. Si el enunciado permite negativos, esto no es ventana deslizante: es otro problema (mira Kadane, o sumas acumuladas).</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿El enunciado dice "contiguo" o "consecutivos"? Es candidato a ventana.</li>
+  <li>¿Da el tamaño? Ventana fija: entra uno, sale uno.</li>
+  <li>¿Pide el más corto o el más largo que cumple? Ventana variable: crece con el <code>for</code>, encoge con un <code>while</code>.</li>
+  <li>Verifica que los datos sean positivos antes de confiar en el encogimiento.</li>
+  <li>Nunca uses <code>sum()</code> de un pedazo dentro del ciclo: ahí se pierde toda la ganancia.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>suma += arr[i] - arr[i - k]</code></td><td>Deslizar una ventana fija</td></tr>
+    <tr><td><code>for der in range(len(arr))</code></td><td>La ventana crece por la derecha</td></tr>
+    <tr><td><code>while cumple: … izq += 1</code></td><td>La ventana encoge por la izquierda</td></tr>
+    <tr><td><code>der - izq + 1</code></td><td>El tamaño actual de la ventana</td></tr>
+    <tr><td><code>mejor = len(arr) + 1</code></td><td>"Infinito" para un mínimo de longitudes</td></tr>
+    <tr><td>O(N)</td><td>Porque <code>izq</code> solo avanza, nunca retrocede</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Si dentro del ciclo vuelves a recorrer la ventana, no estás deslizando: estás haciendo fuerza bruta con nombre bonito.</blockquote>

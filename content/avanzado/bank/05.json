@@ -1,0 +1,158 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es la poda en el problema de la suma de potencias?",
+    "data": { "options": [
+      { "id": "a", "text": "Si baseᴺ > restante, devolver 0: ninguna base mayor va a servir" },
+      { "id": "b", "text": "Si baseᴺ == restante, devolver 1" },
+      { "id": "c", "text": "Si el restante es par, saltarse la base" },
+      { "id": "d", "text": "Si base > 100, devolver 0" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las potencias solo crecen, así que si esta ya se pasó, todas las siguientes también. Ahí se corta el subárbol entero. La opción b es el caso de éxito, no la poda."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué las dos ramas llaman con 'base + 1' y no con 'base'?",
+    "data": { "options": [
+      { "id": "a", "text": "Para que los enteros sean distintos y cada conjunto se cuente una sola vez" },
+      { "id": "b", "text": "Para que la recursión sea más rápida" },
+      { "id": "c", "text": "Porque Python no permite repetir parámetros" },
+      { "id": "d", "text": "Para que el restante baje más rápido" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Avanzar siempre significa que una base ya decidida no se vuelve a tocar. Con 'base' en la rama de usar, se podría repetir el mismo número — y el enunciado pide distintos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué pasa si se quita la poda 'if p > restante: return 0'?",
+    "data": { "options": [
+      { "id": "a", "text": "La rama de 'no usar esta base' nunca para: RecursionError" },
+      { "id": "b", "text": "Da una respuesta incorrecta pero termina" },
+      { "id": "c", "text": "No cambia nada" },
+      { "id": "d", "text": "Cuenta el doble de formas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Sin esa condición nada detiene a la base de subir. La poda no es solo optimización aquí: es la única condición de parada de esa rama."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Para X = 100 y N = 2 la respuesta es 3. ¿Cuáles son las tres formas?",
+    "data": { "options": [
+      { "id": "a", "text": "1²+3²+4²+5²+7², 6²+8², y 10²" },
+      { "id": "b", "text": "10², 5²+5², y 6²+8²" },
+      { "id": "c", "text": "2²+4²+6²+8², 10², y 1²+3²+9²" },
+      { "id": "d", "text": "Solo 10² y 6²+8²" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La opción b usa el 5 dos veces, y el enunciado exige enteros distintos. Verifica la primera: 1+9+16+25+49 = 100, y 36+64 = 100."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En la versión con lista compartida, ¿para qué sirve el pop() después de la llamada recursiva?",
+    "data": { "options": [
+      { "id": "a", "text": "Para deshacer la decisión y dejar el estado como estaba antes de esta rama" },
+      { "id": "b", "text": "Para liberar memoria" },
+      { "id": "c", "text": "Para devolver el resultado" },
+      { "id": "d", "text": "Para ordenar la lista" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Es el backtrack literal. Sin él, la rama siguiente encuentra la lista contaminada con decisiones de una rama ya abandonada. Regla: por cada append, un pop."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def contar(restante, base, n):\n    p = base ** n\n    if p > restante:\n        return 0\n    if p == restante:\n        return 1\n    return contar(restante - p, base + 1, n) + contar(restante, base + 1, n)\n\nprint(contar(10, 1, 2))",
+    "data": { "options": [
+      { "id": "a", "text": "1" },
+      { "id": "b", "text": "2" },
+      { "id": "c", "text": "0" },
+      { "id": "d", "text": "3" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La única forma es 1² + 3² = 1 + 9. Las demás ramas se podan: con base 3 el restante 5 ya no alcanza, y con base 4 (16) nada cabe."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este backtracking permite repetir números. ¿En qué línea está el error?",
+    "data": { "lines": [
+      "def contar(restante, base, n):",
+      "    p = base ** n",
+      "    if p > restante:",
+      "        return 0",
+      "    if p == restante:",
+      "        return 1",
+      "    return contar(restante - p, base, n) + contar(restante, base + 1, n)"
+    ]},
+    "correct": { "line_number": 7 },
+    "explanation": "La rama de 'usar esta base' vuelve a entrar con la MISMA base, así que la puede usar otra vez. El enunciado pide enteros distintos: las dos ramas tienen que avanzar a base + 1."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el backtracking de la suma de potencias.",
+    "data": {
+      "code": "def contar(restante, base, n):\n    p = base ** n\n\n    if ___1___:\n        return 0\n\n    if p == restante:\n        return ___2___\n\n    return contar(restante - p, base + 1, n) + contar(___3___, base + 1, n)",
+      "blanks": [
+        { "id": "1", "pista": "la poda: ya se pasó" },
+        { "id": "2", "pista": "una forma encontrada" },
+        { "id": "3", "pista": "rama de saltarse esta base: el restante no cambia" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["p > restante"],
+      "2": ["1"],
+      "3": ["restante"]
+    }},
+    "explanation": "Tres piezas: poda, éxito y las dos ramas. En la de saltarse la base el restante queda igual — solo avanza la base."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa el backtrack manual sobre una lista compartida.",
+    "data": {
+      "code": "def explorar(restante, base, actual):\n    if restante == 0:\n        soluciones.append(list(actual))\n        return\n\n    for b in range(base, limite):\n        p = b * b\n        if p > restante:\n            break\n        actual.append(b)\n        explorar(restante - p, b + 1, actual)\n        actual.___1___()",
+      "blanks": [
+        { "id": "1", "pista": "deshacer la última decisión" }
+      ]
+    },
+    "correct": { "answers": { "1": ["pop"] } },
+    "explanation": "Por cada append, un pop. Sin él, la siguiente vuelta del for arranca con la lista contaminada por la rama anterior."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arma la función de conteo, con la poda en su lugar",
+    "data": { "lines": [
+      { "id": "b1", "text": "def contar(restante, base, n):", "indent": 0 },
+      { "id": "b2", "text": "p = base ** n", "indent": 1 },
+      { "id": "b3", "text": "if p > restante:", "indent": 1 },
+      { "id": "b4", "text": "return 0", "indent": 2 },
+      { "id": "b5", "text": "if p == restante:", "indent": 1 },
+      { "id": "b6", "text": "return 1", "indent": 2 },
+      { "id": "b7", "text": "return contar(restante - p, base + 1, n) + contar(restante, base + 1, n)", "indent": 1 }
+    ]},
+    "correct": { "order": ["b1", "b2", "b3", "b4", "b5", "b6", "b7"] },
+    "explanation": "La potencia se calcula una vez, la poda va antes del éxito porque descarta más rápido, y las dos ramas cierran la función."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué en este problema no hace falta escribir un 'deshacer' explícito?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque el estado viaja en los parámetros, así que al volver de la llamada este nivel sigue intacto" },
+      { "id": "b", "text": "Porque no hay recursión de verdad" },
+      { "id": "c", "text": "Porque Python deshace solo" },
+      { "id": "d", "text": "Porque no hay poda" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "restante y base son parámetros: cada llamada tiene los suyos. El pop() a mano solo hace falta cuando todas las llamadas comparten la misma lista."
+  }
+]

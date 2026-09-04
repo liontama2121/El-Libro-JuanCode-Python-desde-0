@@ -1,0 +1,53 @@
+[
+  {
+    "orden": 1,
+    "title": "La mejor ventana de K",
+    "difficulty": "medio",
+    "statement_html": "<p>La primera línea trae el arreglo y la segunda el tamaño <code>K</code>. Imprime la suma máxima de <code>K</code> elementos <strong>consecutivos</strong>.</p><pre><code>Entrada:\n2 1 5 1 3 2\n3\n\nSalida:\n9</code></pre><p>La ventana <code>5 1 3</code> suma 9. Tiene que ser O(N): nada de recalcular la ventana entera cada vez.</p>",
+    "hint_html": "<p>Suma la primera ventana completa. Después, en cada paso: <code>suma += arr[i] - arr[i - k]</code>. Entra el nuevo, sale el que quedó K posiciones atrás.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: La mejor ventana de K\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Suma maxima de K elementos consecutivos, deslizando una ventana\n    en vez de recalcularla en cada posicion.\n'''\n\n\ndef mejor_ventana(arr, k):\n    '''\n    Encuentra la suma maxima de k elementos consecutivos.\n\n    Parametros:\n        arr (list): numeros\n        k (int): tamano de la ventana\n\n    Retorna:\n        int: la suma maxima\n    '''\n    # La PRIMERA ventana si toca sumarla completa: es la unica\n    suma = 0\n    for i in range(k):\n        suma += arr[i]\n\n    mejor = suma\n\n    for i in range(k, len(arr)):\n        # ENTRA arr[i] por la derecha, SALE arr[i - k] por la izquierda.\n        # Los k - 2 del medio no se vuelven a tocar: ahi esta la ganancia\n        suma += arr[i] - arr[i - k]\n\n        if suma > mejor:\n            mejor = suma\n\n    return mejor\n\n\n# Inicio\narr = [int(x) for x in input().split()]\nk = int(input())\n\nprint(mejor_ventana(arr, k))\n# Fin</code></pre><p>La fuerza bruta hace esto:</p><pre><code>for i in range(len(arr) - k + 1):\n    suma = sum(arr[i:i+k])      # recorre los k elementos otra vez</code></pre><p>Y ahí está el desperdicio: entre la ventana que empieza en <code>i</code> y la que empieza en <code>i+1</code> hay <strong>K−1 elementos idénticos</strong>. Solo cambian los dos de los bordes.</p><ul><li><strong><code>arr[i - k]</code> es el que sale.</strong> Está exactamente K posiciones atrás del que entra. Equivocarse por uno aquí es el error clásico: prueba con K=1, donde el que sale es el mismo de la vuelta anterior.</li><li><strong>Cuidado con <code>sum(arr[i:i+k])</code>.</strong> Escribirlo en una línea no lo hace rápido: sigue recorriendo K elementos. Con N = 10⁵ y K = 10³ son 10⁸ operaciones contra 10⁵.</li><li><strong>No inicialices <code>mejor</code> en 0.</strong> Con puros negativos la respuesta es negativa, y un 0 inicial se la comería. Por eso arranca en la suma de la primera ventana.</li></ul><p>La traza con <code>[2,1,5,1,3,2]</code> y K=3: 8 → 8+1−2 = 7 → 7+3−1 = <strong>9</strong> → 9+2−5 = 6.</p>",
+    "starter_code": "'''\nPrograma: La mejor ventana de K\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef mejor_ventana(arr, k):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "2 1 5 1 3 2\n3\n", "expected_output": "9\n" },
+      { "stdin": "1 2 3 4 5\n2\n", "expected_output": "9\n" },
+      { "stdin": "5\n1\n", "expected_output": "5\n" },
+      { "stdin": "-1 -2 -3\n2\n", "expected_output": "-3\n" },
+      { "stdin": "1 1 1 1\n4\n", "expected_output": "4\n" },
+      { "stdin": "4 2 1 7 8 1 2 8 1 0\n3\n", "expected_output": "16\n" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "El subarreglo más corto",
+    "difficulty": "dificil",
+    "statement_html": "<p>La primera línea trae un arreglo de enteros <strong>positivos</strong> y la segunda un objetivo <code>S</code>. Imprime la longitud del subarreglo contiguo <strong>más corto</strong> cuya suma sea al menos <code>S</code>. Si ninguno alcanza, imprime <code>0</code>.</p><pre><code>Entrada:\n2 3 1 2 4 3\n7\n\nSalida:\n2</code></pre><p><code>4 3</code> suma 7 con solo dos elementos.</p>",
+    "hint_html": "<p>Aquí el tamaño no lo da el enunciado: la ventana respira. Crece con el <code>for</code> por la derecha, y encoge con un <code>while</code> por la izquierda mientras siga cumpliendo.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: El subarreglo mas corto\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Longitud del subarreglo contiguo mas corto con suma al menos S,\n    con una ventana que crece y encoge.\n'''\n\n\ndef mas_corto(arr, S):\n    '''\n    Busca el subarreglo contiguo mas corto con suma >= S.\n\n    Parametros:\n        arr (list): enteros positivos\n        S (int): suma minima exigida\n\n    Retorna:\n        int: la longitud minima, o 0 si ninguno alcanza\n    '''\n    izq = 0\n    suma = 0\n\n    # Longitud imposible: sirve de 'infinito' sin importar nada\n    mejor = len(arr) + 1\n\n    for der in range(len(arr)):\n        # CRECE por la derecha\n        suma += arr[der]\n\n        # ENCOGE mientras siga cumpliendo. WHILE y no IF: despues de\n        # encoger una vez la ventana puede seguir alcanzando\n        while suma >= S:\n            # Se mide ANTES de restar: esta ventana cumple, la de\n            # despues de quitar el de la izquierda quiza no\n            if der - izq + 1 < mejor:\n                mejor = der - izq + 1\n\n            suma -= arr[izq]\n            izq += 1\n\n    if mejor == len(arr) + 1:\n        return 0\n\n    return mejor\n\n\n# Inicio\narr = [int(x) for x in input().split()]\nS = int(input())\n\nprint(mas_corto(arr, S))\n# Fin</code></pre><p>La ventana variable es la versión difícil de la técnica, y tiene tres puntos donde todo el mundo se cae:</p><ul><li><strong><code>while</code> y no <code>if</code>.</strong> Con <code>[1, 4, 4]</code> y S = 4 la respuesta es 1. Un <code>if</code> encoge una sola vez por vuelta y nunca llega a la ventana de un solo elemento.</li><li><strong>Medir antes de restar.</strong> El orden importa: en el momento en que entras al <code>while</code>, la ventana <em>actual</em> es la que cumple.</li><li><strong>Los números tienen que ser positivos.</strong> Todo el argumento del encogimiento es \"si quito por la izquierda, la suma baja\". Con negativos eso es falso y la técnica no aplica — ese sería otro problema.</li></ul><p><strong>Por qué es O(N)</strong> aunque haya un <code>while</code> dentro de un <code>for</code>: <code>izq</code> solo avanza, nunca retrocede. En toda la ejecución se mueve como máximo N veces, así que entre los dos índices hacen 2N pasos. Contar ciclos anidados no sirve para esta técnica; hay que contar cuánto se mueve cada índice en total.</p>",
+    "starter_code": "'''\nPrograma: El subarreglo mas corto\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef mas_corto(arr, S):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "2 3 1 2 4 3\n7\n", "expected_output": "2\n" },
+      { "stdin": "1 4 4\n4\n", "expected_output": "1\n" },
+      { "stdin": "1 1 1 1\n7\n", "expected_output": "0\n" },
+      { "stdin": "5\n5\n", "expected_output": "1\n" },
+      { "stdin": "1 2 3 4\n10\n", "expected_output": "4\n" },
+      { "stdin": "1 2 3 4\n11\n", "expected_output": "0\n" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "La racha sin repetir",
+    "difficulty": "dificil",
+    "statement_html": "<p>La entrada trae una cadena. Imprime la longitud de la <strong>subcadena contigua más larga sin caracteres repetidos</strong>.</p><pre><code>Entrada:\nabcabcbb\n\nSalida:\n3</code></pre><p>La mejor es <code>abc</code>, con 3. Si la cadena está vacía, imprime 0.</p>",
+    "hint_html": "<p>Ventana variable con un diccionario: guarda la última posición donde viste cada carácter. Si el carácter que entra ya está <em>dentro</em> de la ventana, salta <code>izq</code> justo después de su aparición anterior.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: La racha sin repetir\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Longitud de la subcadena contigua mas larga sin caracteres\n    repetidos, con ventana variable y un diccionario de posiciones.\n'''\n\n\ndef sin_repetir(s):\n    '''\n    Busca la subcadena mas larga sin repetidos.\n\n    Parametros:\n        s (str): la cadena a analizar\n\n    Retorna:\n        int: la longitud maxima\n    '''\n    ultimo = {}    # caracter -> ultima posicion donde aparecio\n    izq = 0\n    mejor = 0\n\n    for der in range(len(s)):\n        c = s[der]\n\n        # Solo importa si la aparicion anterior esta DENTRO de la\n        # ventana. Si quedo atras de izq, ya no cuenta como repetido\n        if c in ultimo and ultimo[c] >= izq:\n            # Salto directo: la ventana empieza justo despues del\n            # repetido, sin ir quitando uno por uno\n            izq = ultimo[c] + 1\n\n        ultimo[c] = der\n\n        if der - izq + 1 > mejor:\n            mejor = der - izq + 1\n\n    return mejor\n\n\n# Inicio\ns = input()\nprint(sin_repetir(s))\n# Fin</code></pre><p>Esta es la ventana variable en su forma más útil: la condición ya no es una suma, sino <strong>\"no hay repetidos adentro\"</strong>. Y el diccionario es lo que permite verificarla sin recorrer la ventana.</p><ul><li><strong><code>ultimo[c] &gt;= izq</code> es la clave.</strong> Que un carácter haya aparecido antes no lo hace un repetido: solo cuenta si esa aparición sigue <em>dentro</em> de la ventana. Sin esa comparación, <code>izq</code> podría saltar hacia atrás y romper todo.</li><li><strong>El salto en vez del encogimiento uno por uno.</strong> Aquí no hace falta un <code>while</code>: se sabe exactamente dónde tiene que quedar la izquierda, así que se salta de una.</li><li><strong><code>ultimo[c] = der</code> va después del salto.</strong> Al revés, se sobrescribe la posición vieja justo antes de necesitarla.</li><li><strong>Se mide en cada vuelta.</strong> La ventana siempre es válida al final del cuerpo del ciclo, así que ahí se compara.</li></ul><p>Con <code>pwwkew</code> la respuesta es 3 (<code>wke</code>), no 4: <code>pwke</code> no es contiguo. La palabra \"contigua\" del enunciado es la que descarta esa trampa.</p>",
+    "starter_code": "'''\nPrograma: La racha sin repetir\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef sin_repetir(s):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "abcabcbb\n", "expected_output": "3\n" },
+      { "stdin": "bbbbb\n", "expected_output": "1\n" },
+      { "stdin": "pwwkew\n", "expected_output": "3\n" },
+      { "stdin": "abcdef\n", "expected_output": "6\n" },
+      { "stdin": "au\n", "expected_output": "2\n" },
+      { "stdin": "\n", "expected_output": "0\n" }
+    ]
+  }
+]

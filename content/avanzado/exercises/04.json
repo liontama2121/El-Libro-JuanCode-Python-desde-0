@@ -1,0 +1,34 @@
+[
+  {
+    "orden": 1,
+    "title": "Superdígito",
+    "difficulty": "medio",
+    "statement_html": "<p>La entrada trae la cadena <code>n</code> y el entero <code>k</code>, separados por espacio. Imprime el superdígito del número que resulta de repetir <code>n</code> exactamente <code>k</code> veces.</p><pre><code>Entrada:\n148 3\n\nSalida:\n3</code></pre><p>148148148 → 39 → 12 → <strong>3</strong>.</p><p><em>Con |n| hasta 10⁵ y k hasta 10⁵, construir la cadena es imposible.</em> Hay que evitarlo.</p>",
+    "hint_html": "<p>Repetir el número repite sus dígitos: la suma total es <code>suma(n) × k</code>. Sobre ese número ya reducido, aplica la recursión.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Superdigito\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Calcula el superdigito de n repetido k veces, sin construir la\n    cadena concatenada.\n'''\n\n\ndef superdigito(x):\n    '''\n    Reduce un numero a un solo digito sumando sus cifras.\n\n    Parametros:\n        x (int): numero a reducir\n\n    Retorna:\n        int: su superdigito, entre 0 y 9\n    '''\n    # CASO BASE, siempre de primero: un solo digito ya es la respuesta\n    if x < 10:\n        return x\n\n    # REDUCCION: la suma de digitos de un numero de 2+ cifras siempre\n    # es menor que el numero, asi que esto SI progresa hacia el caso base\n    suma = 0\n    for c in str(x):\n        suma += int(c)\n\n    # DELEGAR. No hay nada que combinar al volver: se devuelve tal cual\n    return superdigito(suma)\n\n\n# Inicio\nlinea = input().split()\nn = linea[0]          # se deja como TEXTO: solo interesan sus digitos\nk = int(linea[1])\n\n# El truco del problema: concatenar n consigo mismo k veces repite\n# exactamente sus digitos, asi que la suma total es suma(n) * k.\n# Con k = 10^5, construir la cadena serian 10^10 caracteres\nsuma_base = 0\nfor c in n:\n    suma_base += int(c)\n\ninicial = suma_base * k\n\nprint(superdigito(inicial))\n# Fin</code></pre><p>El problema tiene dos partes y solo una es recursión.</p><p><strong>La observación matemática.</strong> Con <code>148</code> y k=3: los dígitos 1, 4 y 8 aparecen tres veces cada uno, así que la suma es (1+4+8) × 3 = 39 — exactamente la suma de los dígitos de 148148148, sin haberla escrito. Cuando un enunciado da límites absurdos (10⁵ × 10⁵), casi siempre te está avisando que hay una propiedad así.</p><p><strong>La recursión.</strong> Con el número ya reducido, la receta sale sola:</p><ul><li><strong>Caso base:</strong> <code>x &lt; 10</code>. Ponerlo en <code>x == 0</code> sería un error clásico: la suma de dígitos nunca llega a 0, y la función no pararía.</li><li><strong>Reducción:</strong> la suma de sus cifras, que siempre encoge.</li><li><strong>Combinar:</strong> nada. Este es un caso de recursión <em>de cola</em>: al volver no queda ninguna operación pendiente, a diferencia de <code>n + sumar(n-1)</code>.</li></ul>",
+    "starter_code": "'''\nPrograma: Superdigito\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef superdigito(x):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "148 3\n", "expected_output": "3\n" },
+      { "stdin": "148 1\n", "expected_output": "4\n" },
+      { "stdin": "9875 1\n", "expected_output": "2\n" },
+      { "stdin": "9 1\n", "expected_output": "9\n" },
+      { "stdin": "123 100000\n", "expected_output": "6\n" },
+      { "stdin": "10 5\n", "expected_output": "5\n" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "La suma que baja y sube",
+    "difficulty": "facil",
+    "statement_html": "<p>Escribe las <strong>dos</strong> versiones recursivas de la suma 1 + 2 + … + n y muestra que dan lo mismo.</p><p>La entrada trae <code>n</code>. Imprime los dos resultados separados por espacio.</p><pre><code>Entrada:\n4\n\nSalida:\n10 10</code></pre><p>La primera con la operación pendiente al volver (<em>pila</em>), la segunda acumulando en un parámetro (<em>cola</em>).</p>",
+    "hint_html": "<p>Pila: <code>return n + sumar(n - 1)</code>. Cola: <code>return suma_cola(n - 1, total + n)</code>, con <code>total</code> como segundo parámetro que arranca en 0.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Suma recursiva, en pila y en cola\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Las dos formas de escribir la misma recursion, para ver la\n    diferencia entre dejar una operacion pendiente y no dejarla.\n'''\n\n\ndef sumar(n):\n    '''\n    Suma 1 + 2 + ... + n dejando una operacion pendiente al volver.\n\n    Parametros:\n        n (int): hasta donde sumar\n\n    Retorna:\n        int: la suma\n    '''\n    if n == 0:\n        return 0\n\n    # El '+ n' queda PENDIENTE: esta llamada no puede terminar hasta\n    # que la de adentro le responda. Eso es la pila creciendo\n    return n + sumar(n - 1)\n\n\ndef suma_cola(n, total=0):\n    '''\n    La misma suma, acumulando en un parametro.\n\n    Parametros:\n        n (int): hasta donde sumar\n        total (int): lo acumulado hasta ahora\n\n    Retorna:\n        int: la suma\n    '''\n    if n == 0:\n        return total\n\n    # Nada pendiente: lo que devuelva la llamada de adentro ES la\n    # respuesta. Otros lenguajes optimizan esto y no crecen la pila;\n    # Python NO lo hace\n    return suma_cola(n - 1, total + n)\n\n\n# Inicio\nn = int(input())\nprint(sumar(n), suma_cola(n))\n# Fin</code></pre><p>Con <code>n = 4</code>, la versión de pila baja congelando llamadas y sube completándolas:</p><pre><code>S(4) = 4 + S(3)\n     = 4 + 3 + S(2)\n     = 4 + 3 + 2 + S(1)\n     = 4 + 3 + 2 + 1 + S(0)\n\nRetorno: S(0)=0 → S(1)=1 → S(2)=3 → S(3)=6 → S(4)=10</code></pre><p>La de cola no acumula nada pendiente: cuando llega al caso base ya trae el total listo y solo lo devuelve.</p><p><strong>El detalle que importa en Python:</strong> las dos consumen la misma profundidad de pila. La optimización de llamada de cola existe en otros lenguajes, no aquí. Prueba con <code>n = 5000</code> y las dos revientan igual con <code>RecursionError</code>. Cuando la profundidad es el problema, la solución no es cambiar de estilo de recursión: es pasar a un ciclo.</p>",
+    "starter_code": "'''\nPrograma: Suma recursiva, en pila y en cola\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef sumar(n):\n    pass\n\n\ndef suma_cola(n, total=0):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "4\n", "expected_output": "10 10\n" },
+      { "stdin": "0\n", "expected_output": "0 0\n" },
+      { "stdin": "1\n", "expected_output": "1 1\n" },
+      { "stdin": "100\n", "expected_output": "5050 5050\n" }
+    ]
+  }
+]

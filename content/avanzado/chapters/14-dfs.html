@@ -1,0 +1,165 @@
+<p class="jc-gancho">DFS va hasta el fondo antes de retroceder. Y de ahí sale la idea que resuelve media docena de problemas de concurso: <strong>un DFS lanzado desde una celda pinta toda su componente</strong>. Así que contar componentes es contar cuántas veces tuviste que lanzarlo.</p>
+
+<h2>💡 La idea</h2>
+
+<p>La estructura de datos es una <strong>pila</strong> (o la pila de llamadas, si lo escribes recursivo). Se saca el último que entró, se meten sus vecinos, y el recorrido se hunde por una rama hasta que no puede más.</p>
+
+<pre><code>for cada celda:
+    if es tierra and no visitada:
+        componentes += 1
+        dfs(celda)           # marca TODA la isla de una vez</code></pre>
+
+<p>El <code>for</code> exterior no encuentra islas: encuentra <strong>puntos de partida</strong>. Cada vez que entra al <code>if</code> es porque tropezó con una isla que nadie había pintado.</p>
+
+<h3>BFS o DFS: cuál usar</h3>
+
+<table>
+  <thead><tr><th>Necesitas</th><th>Usa</th></tr></thead>
+  <tbody>
+    <tr><td>Camino más corto, mínimo de pasos</td><td><strong>BFS</strong> (módulo anterior)</td></tr>
+    <tr><td>Contar componentes, tamaños, "¿están conectados?"</td><td><strong>DFS</strong> o BFS, da igual</td></tr>
+  </tbody>
+</table>
+
+<p>Para conectividad las dos sirven — lo único que importa es visitar todo. DFS suele escribirse más corto.</p>
+
+<h2>📖 El problema</h2>
+
+<div class="jc-problema">
+
+<h3>Contar islas</h3>
+
+<p><strong>Descripción.</strong> Un mapa donde <code>#</code> es tierra y <code>.</code> es agua. Dos casillas de tierra pertenecen a la misma isla si están pegadas en alguna de las <strong>cuatro direcciones</strong> (arriba, abajo, izquierda, derecha).</p>
+
+<p><strong>Entrada.</strong> La primera línea trae filas y columnas. Después, las filas del mapa.</p>
+
+<p><strong>Salida.</strong> Cuántas islas hay.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>3 3</code><br><code>#.#</code><br><code>...</code><br><code>#.#</code></td><td><code>4</code></td></tr></tbody>
+</table>
+
+<p><strong>Explicación.</strong> Las cuatro esquinas son tierra, y ninguna toca a otra por los lados.</p>
+
+</div>
+
+<h2>💻 Código paso a paso</h2>
+
+<p>La versión <strong>iterativa</strong>, que es la que conviene en competencia:</p>
+
+<pre><code>datos = input().split()
+n = int(datos[0])
+m = int(datos[1])
+
+grid = []
+for i in range(n):
+    grid.append(input())
+
+visitado = []
+for i in range(n):
+    visitado.append([False] * m)
+
+direcciones = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+islas = 0
+
+for i in range(n):
+    for j in range(m):
+        if grid[i][j] == "#" and not visitado[i][j]:
+            islas += 1                       # una isla nueva
+
+            pila = [(i, j)]
+            visitado[i][j] = True
+
+            while len(pila) &gt; 0:
+                f, c = pila.pop()            # POP: el último que entró
+
+                for df, dc in direcciones:
+                    nf = f + df
+                    nc = c + dc
+
+                    if 0 &lt;= nf &lt; n and 0 &lt;= nc &lt; m:
+                        if grid[nf][nc] == "#" and not visitado[nf][nc]:
+                            visitado[nf][nc] = True
+                            pila.append((nf, nc))
+
+print(islas)</code></pre>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué</th></tr></thead>
+  <tbody>
+    <tr><td><code>pila.pop()</code></td><td>Saca el último: eso es DFS. Cambiándolo por <code>popleft()</code> sería BFS, y para contar islas da exactamente lo mismo</td></tr>
+    <tr><td>El doble <code>for</code> exterior</td><td>Busca puntos de partida. Sin él, solo se contaría la isla que toque la primera celda</td></tr>
+    <tr><td><code>islas += 1</code> <em>antes</em> del recorrido</td><td>Se cuenta al descubrir la isla, no por cada celda que se visita</td></tr>
+    <tr><td>Marcar al apilar</td><td>Igual que en BFS: si no, la misma celda entra varias veces</td></tr>
+  </tbody>
+</table>
+
+<h3>Por qué es O(N × M) aunque haya tres ciclos anidados</h3>
+
+<p>El doble <code>for</code> pasa por cada celda una vez. El <code>while</code> de adentro procesa cada celda <strong>a lo sumo una vez en toda la ejecución</strong>, porque queda marcada. Sumado: cada celda se toca un número constante de veces.</p>
+
+<h2>🔍 La versión recursiva y su trampa</h2>
+
+<pre><code>def dfs(f, c):
+    visitado[f][c] = True
+    for df, dc in direcciones:
+        nf, nc = f + df, c + dc
+        if 0 &lt;= nf &lt; n and 0 &lt;= nc &lt; m:
+            if grid[nf][nc] == "#" and not visitado[nf][nc]:
+                dfs(nf, nc)</code></pre>
+
+<p>Más corta y más bonita. Y con un mapa de 1000×1000 lleno de tierra, <strong>revienta</strong>: la recursión se hunde un millón de niveles y el límite de Python está cerca de mil. En concursos con mapas grandes, iterativo.</p>
+
+<h2>🔍 Cuatro vecinos u ocho</h2>
+
+<p>Muchos enunciados consideran también las diagonales. El cambio es una sola lista:</p>
+
+<pre><code>direcciones = [(-1,-1), (-1,0), (-1,1),
+               ( 0,-1),         ( 0,1),
+               ( 1,-1), ( 1,0), ( 1,1)]</code></pre>
+
+<p>Con el mapa <code>#.#</code> / <code>.#.</code> / <code>#.#</code> la diferencia es enorme: <strong>5 islas</strong> con cuatro direcciones, <strong>1 sola</strong> con ocho. Lee bien el enunciado antes de escribir la lista.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Contar celdas en vez de componentes</h3>
+<pre><code>if grid[i][j] == "#":
+    islas += 1            # ❌ sin mirar si ya está visitada</code></pre>
+<p>Eso cuenta casillas de tierra, no islas. El <code>not visitado[i][j]</code> es lo que convierte el conteo en componentes.</p>
+
+<h3>2. No marcar antes de apilar</h3>
+<pre><code>pila.append((nf, nc))     # ❌ sin visitado[nf][nc] = True</code></pre>
+<p>La misma celda entra a la pila por cada vecino que la vea. En un mapa grande, la memoria se acaba.</p>
+
+<h3>3. Recursión en mapas grandes</h3>
+<pre><code>dfs(0, 0)                 # ❌ con 10⁶ celdas: RecursionError</code></pre>
+<p>Subir el límite con <code>sys.setrecursionlimit</code> ayuda a veces, pero lo seguro es la pila explícita.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿"Cuántos grupos", "cuántas regiones", "¿están conectados?" Es componentes conexas.</li>
+  <li>Doble <code>for</code> buscando puntos de partida, y un recorrido que pinta toda la componente.</li>
+  <li>Suma <strong>uno por componente</strong>, no uno por celda.</li>
+  <li>Marca visitado al apilar/encolar.</li>
+  <li>Lee si son 4 vecinos u 8 antes de escribir la lista de direcciones.</li>
+  <li>Mapa grande → pila explícita, no recursión.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>pila.pop()</code></td><td>Saca el último: DFS</td></tr>
+    <tr><td><code>cola.popleft()</code></td><td>Saca el primero: BFS</td></tr>
+    <tr><td><code>if es_tierra and not visitado</code></td><td>Encontraste una componente nueva</td></tr>
+    <tr><td>4 direcciones</td><td><code>[(-1,0),(1,0),(0,-1),(0,1)]</code></td></tr>
+    <tr><td>8 direcciones</td><td>Las 4 anteriores más las diagonales</td></tr>
+    <tr><td>Tamaño de la componente</td><td>Contar celdas dentro del <code>while</code> de este recorrido</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Contar componentes no es contar celdas: es contar cuántas veces tuviste que <em>empezar</em> a recorrer.</blockquote>

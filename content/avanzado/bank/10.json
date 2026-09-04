@@ -1,0 +1,165 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué requisito tiene la búsqueda binaria?",
+    "data": { "options": [
+      { "id": "a", "text": "Que el arreglo esté ordenado" },
+      { "id": "b", "text": "Que el arreglo tenga un tamaño par" },
+      { "id": "c", "text": "Que no haya elementos repetidos" },
+      { "id": "d", "text": "Que todos los números sean positivos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La binaria descarta media lista confiando en el orden. Sin orden no lanza error: devuelve basura, que es peor."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Qué pasa si escribes 'izq = medio' en vez de 'izq = medio + 1'?",
+    "data": { "options": [
+      { "id": "a", "text": "Ciclo infinito: con dos elementos, medio es izq y el rango no encoge" },
+      { "id": "b", "text": "Devuelve el índice equivocado" },
+      { "id": "c", "text": "Lanza IndexError" },
+      { "id": "d", "text": "No cambia nada, solo es más lento" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "(izq + der) // 2 con dos elementos da izq por la división entera. Si izq no se mueve, el while gira para siempre. El programa no falla: recibe Time Limit."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Con N = 1 000 000 000, ¿cuántos pasos hace la búsqueda binaria en el peor caso?",
+    "data": { "options": [
+      { "id": "a", "text": "Unos 30" },
+      { "id": "b", "text": "Unos 1000" },
+      { "id": "c", "text": "Mil millones" },
+      { "id": "d", "text": "Unos 100 000" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "log₂(10⁹) ≈ 30. Cada paso bota la mitad, así que multiplicar el tamaño por mil solo agrega diez pasos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "En la plantilla del 'primero que cumple', ¿por qué se escribe 'der = medio' y no 'der = medio - 1'?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque el elemento del medio ya cumple: es candidato y no se puede descartar" },
+      { "id": "b", "text": "Porque el rango es cerrado" },
+      { "id": "c", "text": "Porque así es más rápido" },
+      { "id": "d", "text": "Porque der arranca en len(arr) - 1" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La regla mental: si el del medio ya sirve, muévete a la izquierda dejándolo dentro del rango. Solo se descarta lo que NO cumple, con izq = medio + 1."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Cuándo se puede hacer búsqueda binaria sobre la RESPUESTA, sin arreglo?",
+    "data": { "options": [
+      { "id": "a", "text": "Cuando si una respuesta R sirve, toda R mayor también sirve" },
+      { "id": "b", "text": "Cuando la respuesta es un número pequeño" },
+      { "id": "c", "text": "Siempre que haya un ciclo while" },
+      { "id": "d", "text": "Cuando los datos están ordenados" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Esa monotonía convierte el espacio de respuestas en una recta de NO NO NO SÍ SÍ SÍ, y se busca la frontera. Sin monotonía, la binaria descarta la mitad equivocada."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def buscar(arr, x):\n    izq, der = 0, len(arr) - 1\n    while izq <= der:\n        medio = (izq + der) // 2\n        if arr[medio] == x:\n            return medio\n        if arr[medio] < x:\n            izq = medio + 1\n        else:\n            der = medio - 1\n    return -1\n\nprint(buscar([2, 5, 8, 12, 16, 23, 38, 56, 72, 91], 23))",
+    "data": { "options": [
+      { "id": "a", "text": "5" },
+      { "id": "b", "text": "23" },
+      { "id": "c", "text": "6" },
+      { "id": "d", "text": "-1" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Devuelve el ÍNDICE, no el valor. El 23 está en la posición 5, contando desde 0. Tres pasos: medio=4 (16<23) → medio=7 (56>23) → medio=5, encontrado."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este programa nunca encuentra el último elemento del arreglo. ¿En qué línea está el error?",
+    "data": { "lines": [
+      "izq = 0",
+      "der = len(arr) - 1",
+      "while izq < der:",
+      "    medio = (izq + der) // 2",
+      "    if arr[medio] == x:",
+      "        return medio"
+    ]},
+    "correct": { "line_number": 3 },
+    "explanation": "Con rango cerrado (len − 1) la condición tiene que ser izq <= der: cuando los dos se juntan todavía queda un elemento por revisar. len − 1 va con <=, y len va con <."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa la búsqueda binaria clásica.",
+    "data": {
+      "code": "izq = 0\nder = ___1___\n\nwhile izq ___2___ der:\n    medio = (izq + der) // 2\n    if arr[medio] == x:\n        return medio\n    if arr[medio] < x:\n        izq = ___3___\n    else:\n        der = medio - 1\n\nreturn -1",
+      "blanks": [
+        { "id": "1", "pista": "el último índice válido" },
+        { "id": "2", "pista": "con rango cerrado todavía queda uno por revisar" },
+        { "id": "3", "pista": "el del medio ya se descartó" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["len(arr) - 1"],
+      "2": ["<="],
+      "3": ["medio + 1"]
+    }},
+    "explanation": "Las tres piezas van juntas: len − 1 con <=, y el + 1 que garantiza que el rango encoge. Sin ese + 1 el programa se cuelga."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa la plantilla del primer elemento que cumple arr[i] >= x.",
+    "data": {
+      "code": "izq = 0\nder = len(arr)\n\nwhile izq < der:\n    medio = (izq + der) // 2\n    if arr[medio] >= x:\n        der = ___1___\n    else:\n        izq = ___2___\n\nreturn izq",
+      "blanks": [
+        { "id": "1", "pista": "este candidato sirve: no lo descartes" },
+        { "id": "2", "pista": "este no sirve: fuera" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["medio"],
+      "2": ["medio + 1"]
+    }},
+    "explanation": "Asimétrico a propósito. El que cumple se conserva dentro del rango; el que no cumple se bota. Al salir, izq apunta a la frontera."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arma la búsqueda binaria clásica",
+    "data": { "lines": [
+      { "id": "s1", "text": "izq = 0", "indent": 0 },
+      { "id": "s2", "text": "der = len(arr) - 1", "indent": 0 },
+      { "id": "s3", "text": "while izq <= der:", "indent": 0 },
+      { "id": "s4", "text": "medio = (izq + der) // 2", "indent": 1 },
+      { "id": "s5", "text": "if arr[medio] == x:", "indent": 1 },
+      { "id": "s6", "text": "return medio", "indent": 2 },
+      { "id": "s7", "text": "if arr[medio] < x:", "indent": 1 },
+      { "id": "s8", "text": "izq = medio + 1", "indent": 2 },
+      { "id": "s9", "text": "else:", "indent": 1 },
+      { "id": "s10", "text": "der = medio - 1", "indent": 2 },
+      { "id": "s11", "text": "return -1", "indent": 0 }
+    ]},
+    "correct": { "order": ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11"] },
+    "explanation": "El return -1 va FUERA del while: solo se llega ahí cuando el rango se agotó sin encontrar nada."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En [1, 3, 3, 3, 5, 7], ¿qué devuelve la plantilla del primer elemento >= 3?",
+    "data": { "options": [
+      { "id": "a", "text": "1" },
+      { "id": "b", "text": "3" },
+      { "id": "c", "text": "2" },
+      { "id": "d", "text": "0" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El índice del PRIMER 3, no su valor ni el de cualquiera de los tres. Esa es justamente la ventaja sobre la búsqueda exacta, que habría devuelto cualquiera de las tres posiciones."
+  }
+]

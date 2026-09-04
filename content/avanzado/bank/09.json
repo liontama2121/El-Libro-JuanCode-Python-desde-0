@@ -1,0 +1,141 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué representa max_actual en Kadane?",
+    "data": { "options": [
+      { "id": "a", "text": "La mejor suma de una racha que TERMINA exactamente en la posición actual" },
+      { "id": "b", "text": "La mejor suma vista en todo el arreglo" },
+      { "id": "c", "text": "La suma de todos los elementos hasta la posición actual" },
+      { "id": "d", "text": "El elemento más grande visto hasta ahora" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Esa es la pregunta de cualquier DP: cuál es la mejor solución que termina aquí. max_global es otra cosa — la mejor vista hasta ahora, termine donde termine. Por eso hacen falta las dos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Si TODOS los números son negativos, ¿qué devuelve este Kadane?",
+    "data": { "options": [
+      { "id": "a", "text": "El menos negativo de todos" },
+      { "id": "b", "text": "0" },
+      { "id": "c", "text": "La suma de todos" },
+      { "id": "d", "text": "None" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con [-1,-2,-3,-4] devuelve -1. Como se inicializa en arr[0] y no en 0, siempre toma al menos un elemento. Si el enunciado permitiera la subsecuencia vacía, habría que inicializar en 0 — son dos versiones distintas del problema."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es la complejidad de Kadane?",
+    "data": { "options": [
+      { "id": "a", "text": "O(N) en tiempo, O(1) en memoria" },
+      { "id": "b", "text": "O(N²) en tiempo, O(N) en memoria" },
+      { "id": "c", "text": "O(N log N) en tiempo" },
+      { "id": "d", "text": "O(N) en tiempo, O(N) en memoria" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Una sola pasada y dos variables. Ahí está la gracia: es una DP donde la transición solo mira un paso atrás, así que la tabla sobra."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Para [3, -1, 4, -1, 2, 1, -5, 4], ¿cuál es el resultado?",
+    "data": { "options": [
+      { "id": "a", "text": "8" },
+      { "id": "b", "text": "7" },
+      { "id": "c", "text": "9" },
+      { "id": "d", "text": "13" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La mejor racha es [3,-1,4,-1,2,1] = 8. El 13 sale de sumar solo los positivos, pero la subsecuencia tiene que ser CONTIGUA: si te llevas el 3 y el 4, te llevas también el -1 del medio."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "Este Kadane inicializa en 0. ¿Qué imprime?",
+    "code_snippet": "def kadane(arr):\n    max_actual = 0\n    max_global = 0\n    for x in arr:\n        max_actual = max(x, max_actual + x)\n        max_global = max(max_global, max_actual)\n    return max_global\n\nprint(kadane([-1, -2, -3, -4]))",
+    "data": { "options": [
+      { "id": "a", "text": "0" },
+      { "id": "b", "text": "-1" },
+      { "id": "c", "text": "-10" },
+      { "id": "d", "text": "Lanza ValueError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "max_global arranca en 0 y nunca baja, así que devuelve 0: 'no tomo nada'. Si el enunciado exige al menos un elemento, la respuesta correcta era -1. Por eso la inicialización depende de lo que pida el problema."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "Este Kadane pierde la última racha buena. ¿En qué línea está el error?",
+    "data": { "lines": [
+      "max_actual = arr[0]",
+      "max_global = arr[0]",
+      "for i in range(1, len(arr)):",
+      "    max_global = max(max_global, max_actual)",
+      "    max_actual = max(arr[i], max_actual + arr[i])",
+      "return max_global"
+    ]},
+    "correct": { "line_number": 4 },
+    "explanation": "Guarda el máximo ANTES de actualizar max_actual, así que compara contra el valor de la vuelta anterior y nunca ve la racha del último elemento. El orden correcto es: primero decidir, después guardar."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el corazón de Kadane.",
+    "data": {
+      "code": "max_actual = arr[0]\nmax_global = arr[0]\n\nfor i in range(1, len(arr)):\n    max_actual = max(___1___, max_actual + arr[i])\n    max_global = max(___2___, max_actual)",
+      "blanks": [
+        { "id": "1", "pista": "empezar una racha nueva justo aquí" },
+        { "id": "2", "pista": "la mejor racha vista hasta ahora" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["arr[i]"],
+      "2": ["max_global"]
+    }},
+    "explanation": "Las dos opciones del primer max son: arrancar de nuevo en arr[i], o extender lo que traía. El segundo max es la memoria: max_global nunca baja."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué Kadane no necesita una tabla dp como el problema del Edificio?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque su transición solo mira el paso inmediatamente anterior" },
+      { "id": "b", "text": "Porque el arreglo está ordenado" },
+      { "id": "c", "text": "Porque no es programación dinámica" },
+      { "id": "d", "text": "Porque solo funciona con arreglos pequeños" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El Edificio consulta cualquier dp[j] anterior, así que necesita guardarlos todos. Kadane solo necesita el de un paso atrás, y para eso basta una variable. Esa diferencia es la que convierte O(N²) en O(N)."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arma el algoritmo de Kadane",
+    "data": { "lines": [
+      { "id": "kd1", "text": "max_actual = arr[0]", "indent": 0 },
+      { "id": "kd2", "text": "max_global = arr[0]", "indent": 0 },
+      { "id": "kd3", "text": "for i in range(1, len(arr)):", "indent": 0 },
+      { "id": "kd4", "text": "max_actual = max(arr[i], max_actual + arr[i])", "indent": 1 },
+      { "id": "kd5", "text": "max_global = max(max_global, max_actual)", "indent": 1 },
+      { "id": "kd6", "text": "return max_global", "indent": 0 }
+    ]},
+    "correct": { "order": ["kd1", "kd2", "kd3", "kd4", "kd5", "kd6"] },
+    "explanation": "Dentro del ciclo, la actualización de max_actual va primero: max_global tiene que comparar contra el valor recién calculado, no contra el de la vuelta pasada."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En [-2, 1, ...], al llegar al 1 el algoritmo decide empezar de nuevo. ¿Por qué?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque lo acumulado era negativo: arrastrarlo solo resta" },
+      { "id": "b", "text": "Porque 1 es positivo y -2 no" },
+      { "id": "c", "text": "Porque es el segundo elemento" },
+      { "id": "d", "text": "Porque el arreglo tiene más negativos que positivos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "max(1, -2+1) = max(1, -1) = 1. La regla general: si el acumulado es negativo, botarlo siempre conviene, porque cualquier cosa que venga después queda mejor sin ese lastre."
+  }
+]

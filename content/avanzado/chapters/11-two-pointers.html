@@ -1,0 +1,155 @@
+<p class="jc-gancho">Dos índices moviéndose sobre el mismo arreglo. Suena a nada, y sin embargo convierte un O(N²) en O(N) — que es la diferencia entre 10¹⁰ operaciones y 10⁵. La técnica es fácil; lo difícil es <strong>justificar por qué se puede descartar lo que se descarta</strong>.</p>
+
+<h2>💡 La idea</h2>
+
+<p>En vez de dos ciclos anidados probando todos los pares, se ponen dos índices y en cada paso <strong>se mueve solo uno</strong>, el que corresponda. Como cada índice recorre el arreglo una vez y nunca retrocede, el total es O(N).</p>
+
+<table>
+  <thead><tr><th>Variante</th><th>Dónde arrancan</th><th>Para qué sirve</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Extremos que se acercan</strong></td><td><code>i = 0</code>, <code>j = len−1</code></td><td>Pares que suman algo, palíndromos, áreas</td></tr>
+    <tr><td><strong>Lento y rápido</strong></td><td>Los dos en 0</td><td>Filtrar, comprimir, eliminar duplicados en el sitio</td></tr>
+  </tbody>
+</table>
+
+<p>Casi siempre la variante de extremos exige que el arreglo <strong>esté ordenado</strong>: el orden es lo que permite saber hacia dónde moverse.</p>
+
+<h2>📖 El problema</h2>
+
+<div class="jc-problema">
+
+<h3>El par que suma</h3>
+
+<p><strong>Descripción.</strong> Dado un arreglo <strong>ordenado</strong> de enteros y un objetivo <code>S</code>, encontrar dos elementos que sumen exactamente <code>S</code>.</p>
+
+<p><strong>Entrada.</strong> Dos líneas: el arreglo ordenado, y el objetivo <code>S</code>.</p>
+
+<p><strong>Salida.</strong> Los dos valores separados por espacio, el menor primero. Si no existe tal par, imprimir <code>NO</code>.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>1 3 4 7 11 15</code><br><code>11</code></td><td><code>4 7</code></td></tr></tbody>
+</table>
+
+</div>
+
+<h3>La fuerza bruta y por qué no sirve</h3>
+
+<pre><code>for i in range(len(arr)):
+    for j in range(i + 1, len(arr)):
+        if arr[i] + arr[j] == S:
+            ...                       # O(N²)</code></pre>
+
+<p>Con N = 10⁵ eso son <strong>cinco mil millones</strong> de pares. El juez te corta mucho antes.</p>
+
+<h3>El razonamiento que lo cambia todo</h3>
+
+<p>Con el arreglo ordenado, se pone un índice en cada extremo y se mira la suma:</p>
+
+<table>
+  <thead><tr><th>Si la suma…</th><th>Se hace</th><th>Por qué es seguro</th></tr></thead>
+  <tbody>
+    <tr><td>es igual a S</td><td>Se encontró</td><td>—</td></tr>
+    <tr><td>es <strong>menor</strong> que S</td><td><code>i += 1</code></td><td><code>arr[i]</code> es el más pequeño disponible: emparejado con el más grande ya se queda corto, así que con ningún otro llega. Se descarta entero.</td></tr>
+    <tr><td>es <strong>mayor</strong> que S</td><td><code>j -= 1</code></td><td>Simétrico: <code>arr[j]</code> es el más grande, y ni con el más pequeño baja de S.</td></tr>
+  </tbody>
+</table>
+
+<p>Cada paso descarta un elemento <strong>para siempre</strong>, con argumento. Eso es lo que hace válido el O(N), y es lo que hay que saber explicar — no el código.</p>
+
+<h2>💻 Código paso a paso</h2>
+
+<pre><code>arr = [int(x) for x in input().split()]
+S = int(input())
+
+i = 0
+j = len(arr) - 1
+
+encontrado = False
+
+while i &lt; j:                 # i &lt; j, no i &lt;= j: no se vale usar el mismo dos veces
+    suma = arr[i] + arr[j]
+
+    if suma == S:
+        print(arr[i], arr[j])
+        encontrado = True
+        break
+
+    if suma &lt; S:
+        i += 1
+    else:
+        j -= 1
+
+if not encontrado:
+    print("NO")</code></pre>
+
+<h3>La película con <code>[1, 3, 4, 7, 11, 15]</code> y S = 11</h3>
+
+<table>
+  <thead><tr><th>i</th><th>j</th><th>arr[i] + arr[j]</th><th>vs 11</th><th>Acción</th></tr></thead>
+  <tbody>
+    <tr><td>0</td><td>5</td><td>1 + 15 = 16</td><td>mayor</td><td>j → 4 (el 15 no sirve con nadie)</td></tr>
+    <tr><td>0</td><td>4</td><td>1 + 11 = 12</td><td>mayor</td><td>j → 3</td></tr>
+    <tr><td>0</td><td>3</td><td>1 + 7 = 8</td><td>menor</td><td>i → 1 (el 1 no le alcanza a nadie)</td></tr>
+    <tr><td>1</td><td>3</td><td>3 + 7 = 10</td><td>menor</td><td>i → 2</td></tr>
+    <tr><td>2</td><td>3</td><td>4 + 7 = 11</td><td><b>igual</b></td><td><b>4 7</b></td></tr>
+  </tbody>
+</table>
+
+<p>Cinco pasos. La fuerza bruta habría probado quince pares.</p>
+
+<h2>🔍 La otra variante: lento y rápido</h2>
+
+<p>Cuando hay que <strong>reescribir el arreglo sin usar memoria extra</strong>, los dos índices arrancan juntos: uno recorre (rápido) y el otro marca dónde se escribe (lento).</p>
+
+<pre><code>k = 0                            # última posición escrita
+
+for i in range(1, len(arr)):     # i recorre
+    if arr[i] != arr[k]:
+        k += 1
+        arr[k] = arr[i]          # se escribe solo cuando hay algo nuevo
+
+# arr[0..k] son los únicos</code></pre>
+
+<p>Con <code>[1, 1, 2, 2, 3]</code> queda <code>[1, 2, 3]</code> en las tres primeras posiciones, sin lista nueva. El índice lento va siempre detrás o igual que el rápido, así que nunca se pisa un dato que todavía no se ha leído.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Two pointers sobre un arreglo desordenado</h3>
+<pre><code>arr = [10, 1, 7, 3]     # ❌ el razonamiento no aplica</code></pre>
+<p>Si la suma se queda corta, mover <code>i</code> no garantiza nada: el siguiente podría ser más pequeño. Sin orden, la técnica no es válida — ordena primero, o usa un diccionario.</p>
+
+<h3>2. <code>while i &lt;= j</code></h3>
+<pre><code>while i &lt;= j:           # ❌ permite i == j</code></pre>
+<p>Con <code>S = 8</code> y un 4 en el arreglo, respondería "4 y 4" usando el mismo elemento dos veces.</p>
+
+<h3>3. Mover los dos a la vez</h3>
+<pre><code>i += 1
+j -= 1                  # ❌ en el mismo paso</code></pre>
+<p>Se saltan pares sin revisarlos. En cada vuelta se mueve <strong>uno solo</strong>, el que el argumento permite descartar.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿El arreglo está ordenado? Si no, ordénalo — sigue siendo mejor que O(N²).</li>
+  <li>Antes de escribir, di en voz alta <strong>por qué</strong> puedes descartar el elemento que descartas. Si no puedes, la técnica no aplica.</li>
+  <li>Un solo índice se mueve por vuelta.</li>
+  <li><code>while i &lt; j</code> cuando los dos elementos tienen que ser distintos.</li>
+  <li>Si el problema es "filtrar o comprimir en el sitio", la variante es lento/rápido.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>i, j = 0, len(arr) - 1</code></td><td>Extremos que se van a acercar</td></tr>
+    <tr><td><code>while i &lt; j:</code></td><td>Mientras no se crucen, sin repetir elemento</td></tr>
+    <tr><td><code>i += 1</code> si la suma es corta</td><td>Descartar el menor disponible</td></tr>
+    <tr><td><code>j -= 1</code> si la suma se pasa</td><td>Descartar el mayor disponible</td></tr>
+    <tr><td><code>k</code> lento, <code>i</code> rápido</td><td>Reescribir el arreglo sin memoria extra</td></tr>
+    <tr><td>O(N) en vez de O(N²)</td><td>Cada índice recorre una vez y no retrocede</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Two pointers no es "usar dos variables": es tener un argumento que te deja botar un candidato en cada paso y no volverlo a mirar.</blockquote>

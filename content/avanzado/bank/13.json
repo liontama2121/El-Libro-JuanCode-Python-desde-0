@@ -1,0 +1,161 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué estructura usa BFS y por qué?",
+    "data": { "options": [
+      { "id": "a", "text": "Una cola: lo primero que entra es lo primero que sale, así explora por niveles" },
+      { "id": "b", "text": "Una pila: explora hasta el fondo primero" },
+      { "id": "c", "text": "Un diccionario ordenado por distancia" },
+      { "id": "d", "text": "Una lista que se ordena en cada paso" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Los vecinos de nivel 1 entran antes que los de nivel 2, así que salen antes. Con una pila el recorrido pasa a ser DFS y los caminos que encuentra ya no son mínimos."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué BFS encuentra el camino MÁS CORTO?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque explora por niveles: la primera vez que llega a una celda, llegó con la distancia mínima" },
+      { "id": "b", "text": "Porque prueba todos los caminos y compara" },
+      { "id": "c", "text": "Porque ordena las celdas por distancia" },
+      { "id": "d", "text": "Porque usa recursión" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Vale cuando todos los pasos cuestan lo mismo. Por eso se marca visitado AL ENCOLAR: la primera llegada ya es la mejor, y cualquier otra sería más larga."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Qué pasa si marcas la celda como visitada al SACARLA de la cola en vez de al encolarla?",
+    "data": { "options": [
+      { "id": "a", "text": "La misma celda se encola varias veces y la cola crece sin control" },
+      { "id": "b", "text": "No cambia nada" },
+      { "id": "c", "text": "El programa lanza IndexError" },
+      { "id": "d", "text": "Se vuelve DFS" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Entre que una celda entra y sale, otros vecinos la vuelven a encolar. El programa se demora una eternidad y puede reportar distancias mayores que las reales."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Si cambias popleft() por pop(), ¿qué pasa?",
+    "data": { "options": [
+      { "id": "a", "text": "El recorrido se vuelve DFS: encuentra un camino, pero no el más corto" },
+      { "id": "b", "text": "El programa se cuelga" },
+      { "id": "c", "text": "No compila" },
+      { "id": "d", "text": "Es igual, solo más rápido" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "pop() saca por el final: eso es una pila. Es el error más difícil de detectar, porque en mapas pequeños el resultado suele coincidir con el correcto."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En un laberinto de N filas por M columnas, ¿cuál es la complejidad de BFS?",
+    "data": { "options": [
+      { "id": "a", "text": "O(N × M): cada celda entra a la cola a lo sumo una vez" },
+      { "id": "b", "text": "O(N × M × 4!)" },
+      { "id": "c", "text": "O(2^(N×M))" },
+      { "id": "d", "text": "O(N + M)" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Marcar al encolar garantiza que ninguna celda entra dos veces, y de cada una se revisan 4 vecinos: eso es una constante."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "En este mapa 3x4, ¿cuántos pasos mínimos hay de la esquina superior izquierda a la inferior derecha?",
+    "code_snippet": "....\n.##.\n....",
+    "data": { "options": [
+      { "id": "a", "text": "5" },
+      { "id": "b", "text": "6" },
+      { "id": "c", "text": "7" },
+      { "id": "d", "text": "-1, no hay camino" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Bajando por la primera columna (2 pasos) y avanzando por la última fila (3 pasos): 5. También se puede por arriba, con la misma cuenta — los muros del centro no alargan el camino."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "Este BFS puede leer casillas equivocadas sin dar error. ¿En qué línea está el problema?",
+    "data": { "lines": [
+      "for df, dc in direcciones:",
+      "    nf = f + df",
+      "    nc = c + dc",
+      "    if grid[nf][nc] == '.' and dist[nf][nc] == -1:",
+      "        dist[nf][nc] = dist[f][c] + 1",
+      "        cola.append((nf, nc))"
+    ]},
+    "correct": { "line_number": 4 },
+    "explanation": "Lee la casilla antes de verificar los límites. Con nf = -1 Python no falla: devuelve la última fila, y el recorrido se teletransporta de un borde al otro sin que nadie se entere."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el núcleo del BFS.",
+    "data": {
+      "code": "dist[0][0] = 0\ncola = deque()\ncola.append((0, 0))\n\nwhile len(cola) > 0:\n    f, c = cola.___1___()\n\n    for df, dc in direcciones:\n        nf = f + df\n        nc = c + dc\n        if 0 <= nf < n and 0 <= nc < m:\n            if grid[nf][nc] == \".\" and dist[nf][nc] == ___2___:\n                dist[nf][nc] = dist[f][c] + 1\n                cola.append((nf, nc))",
+      "blanks": [
+        { "id": "1", "pista": "sacar por el frente: eso es una cola" },
+        { "id": "2", "pista": "la marca de 'no visitada'" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["popleft"],
+      "2": ["-1"]
+    }},
+    "explanation": "popleft es lo que hace que sea BFS. Y la matriz dist sirve de dos cosas: −1 significa no visitada, y cualquier otro valor es la distancia."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa el BFS de varias fuentes (todas arrancan a la vez).",
+    "data": {
+      "code": "cola = deque()\n\nfor i in range(n):\n    for j in range(m):\n        if grid[i][j] == \"F\":\n            dist[i][j] = ___1___\n            cola.___2___((i, j))\n\n# el resto del BFS no cambia",
+      "blanks": [
+        { "id": "1", "pista": "todas las fuentes arrancan igual" },
+        { "id": "2", "pista": "meter a la cola" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["0"],
+      "2": ["append"]
+    }},
+    "explanation": "Metiendo todas las fuentes con distancia 0, una sola pasada da la distancia de cada celda a la fuente MÁS CERCANA. Un BFS por fuente daría lo mismo pero costaría F veces más."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arma el ciclo principal de BFS",
+    "data": { "lines": [
+      { "id": "q1", "text": "while len(cola) > 0:", "indent": 0 },
+      { "id": "q2", "text": "f, c = cola.popleft()", "indent": 1 },
+      { "id": "q3", "text": "for df, dc in direcciones:", "indent": 1 },
+      { "id": "q4", "text": "nf = f + df", "indent": 2 },
+      { "id": "q5", "text": "nc = c + dc", "indent": 2 },
+      { "id": "q6", "text": "if 0 <= nf < n and 0 <= nc < m:", "indent": 2 },
+      { "id": "q7", "text": "if grid[nf][nc] == '.' and dist[nf][nc] == -1:", "indent": 3 },
+      { "id": "q8", "text": "dist[nf][nc] = dist[f][c] + 1", "indent": 4 },
+      { "id": "q9", "text": "cola.append((nf, nc))", "indent": 4 }
+    ]},
+    "correct": { "order": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"] },
+    "explanation": "Primero los límites, después el contenido de la casilla. Y la distancia se asigna justo antes de encolar: esa es la marca de visitado."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Al terminar el BFS, ¿cómo se sabe que no había camino a la meta?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque dist en la meta quedó en -1: nunca se visitó" },
+      { "id": "b", "text": "Porque la cola quedó llena" },
+      { "id": "c", "text": "Porque el programa lanza una excepción" },
+      { "id": "d", "text": "Porque dist en la meta quedó en 0" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El −1 inicial nunca se sobrescribió, así que la celda quedó fuera de todas las ondas. Y ese −1 es justo lo que el enunciado pide imprimir."
+  }
+]

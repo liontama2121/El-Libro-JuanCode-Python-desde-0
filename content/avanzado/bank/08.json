@@ -1,0 +1,160 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué minimiza la suma de distancias absolutas Σ|X − sᵢ|?",
+    "data": { "options": [
+      { "id": "a", "text": "La mediana" },
+      { "id": "b", "text": "La media (el promedio)" },
+      { "id": "c", "text": "El valor más grande" },
+      { "id": "d", "text": "El valor más pequeño" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La media minimiza los cuadrados, Σ(X−sᵢ)². Con [1, 2, 100] la media es 34,33 y da 131,33; la mediana es 2 y da 99. Confundirlas es el error clásico de este problema."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "En Vito's Family con [1, 2, 3, 4, 5], ¿cuál es la mediana?",
+    "data": { "options": [
+      { "id": "a", "text": "3" },
+      { "id": "b", "text": "2" },
+      { "id": "c", "text": "4" },
+      { "id": "d", "text": "15" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cinco elementos ordenados: el del centro es posiciones[5 // 2] = posiciones[2] = 3. La suma de distancias queda 2+1+0+1+2 = 6."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Para dar cambio de 6 con monedas de {1, 3, 4}, greedy toma la más grande que quepa. ¿Qué pasa?",
+    "data": { "options": [
+      { "id": "a", "text": "Da 3 monedas (4+1+1), pero el óptimo son 2 (3+3): greedy falla" },
+      { "id": "b", "text": "Da el óptimo, 2 monedas" },
+      { "id": "c", "text": "No termina" },
+      { "id": "d", "text": "Da 6 monedas de 1" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El mismo problema con {1, 5, 10, 25} sí funciona con greedy. La técnica depende de los datos, no solo del enunciado: por eso siempre se busca un contraejemplo pequeño antes de escribirla."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En Canada Goose, ¿por qué el ciclo es while y no for?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque no se sabe de antemano cuántas iteraciones van a ser" },
+      { "id": "b", "text": "Porque es más rápido" },
+      { "id": "c", "text": "Porque for no permite contar" },
+      { "id": "d", "text": "Porque hay que recorrer una lista" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "La cantidad de edificios es justamente la respuesta: no se puede poner en un range. Un for con range(L // H) además ignoraría la separación S."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Con L=100, H=20, S=10, ¿cuántos edificios caben?",
+    "data": { "options": [
+      { "id": "a", "text": "3" },
+      { "id": "b", "text": "4" },
+      { "id": "c", "text": "5" },
+      { "id": "d", "text": "2" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Ocupan 0–20, 30–50 y 60–80. El cuarto empezaría en 90 y terminaría en 110, que se pasa de 100. Contestar 4 es olvidar que el último también necesita caber entero."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "L, H, S = 30, 15, 5\nedificios = 0\npos = 0\nwhile pos + H <= L:\n    edificios += 1\n    pos += H + S\nprint(edificios)",
+    "data": { "options": [
+      { "id": "a", "text": "1" },
+      { "id": "b", "text": "2" },
+      { "id": "c", "text": "0" },
+      { "id": "d", "text": "3" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Primera vuelta: 0+15 ≤ 30, se cuenta y pos pasa a 20. Segunda: 20+15 = 35 > 30, sale. Solo 1. Con 30 // 15 daría 2, pero eso ignora los 5 metros de separación."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "Este programa da 8 en vez de 4 con la entrada '2 6 4'. ¿En qué línea está el error?",
+    "data": { "lines": [
+      "posiciones = [int(x) for x in input().split()]",
+      "mediana = posiciones[len(posiciones) // 2]",
+      "suma = 0",
+      "for p in posiciones:",
+      "    suma += abs(mediana - p)",
+      "print(suma)"
+    ]},
+    "correct": { "line_number": 2 },
+    "explanation": "Falta ordenar antes. Sin sort(), posiciones[1] es el 6 y no el 4, y la suma da 4+0+2 = 8. El error es silencioso: el programa corre y entrega un número."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa la solución de Vito's Family.",
+    "data": {
+      "code": "posiciones = [int(x) for x in input().split()]\n\nposiciones.___1___()\nmediana = posiciones[___2___]\n\nsuma = 0\nfor p in posiciones:\n    suma += ___3___(mediana - p)\n\nprint(suma)",
+      "blanks": [
+        { "id": "1", "pista": "primer paso de casi todo greedy" },
+        { "id": "2", "pista": "el del centro" },
+        { "id": "3", "pista": "la distancia no tiene signo" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["sort"],
+      "2": ["len(posiciones) // 2"],
+      "3": ["abs"]
+    }},
+    "explanation": "Ordenar, tomar el del centro, sumar distancias. Sin el sort, el índice del centro no significa nada."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa la simulación de Canada Goose.",
+    "data": {
+      "code": "edificios = 0\npos = 0\n\nwhile pos + H ___1___ L:\n    edificios += 1\n    pos += ___2___\n\nprint(edificios)",
+      "blanks": [
+        { "id": "1", "pista": "uno que termina justo en el borde sí cabe" },
+        { "id": "2", "pista": "el edificio Y su separación" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["<="],
+      "2": ["H + S"]
+    }},
+    "explanation": "Con < se perdería el edificio que termina exactamente en L. Y avanzar solo H olvidaría la separación obligatoria hacia el siguiente."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "facil",
+    "prompt": "Arma la simulación de Canada Goose",
+    "data": { "lines": [
+      { "id": "g1", "text": "edificios = 0", "indent": 0 },
+      { "id": "g2", "text": "pos = 0", "indent": 0 },
+      { "id": "g3", "text": "while pos + H <= L:", "indent": 0 },
+      { "id": "g4", "text": "edificios += 1", "indent": 1 },
+      { "id": "g5", "text": "pos += H + S", "indent": 1 },
+      { "id": "g6", "text": "print(edificios)", "indent": 0 }
+    ]},
+    "correct": { "order": ["g1", "g2", "g3", "g4", "g5", "g6"] },
+    "explanation": "Contador y posición antes del ciclo; dentro, contar y avanzar. El caso H > L no necesita línea aparte: la condición es falsa desde la primera vuelta e imprime 0."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "En Vito's Family con una cantidad PAR de parientes, ¿qué pasa?",
+    "data": { "options": [
+      { "id": "a", "text": "Las dos medianas —y todo lo que hay entre ellas— dan la misma suma" },
+      { "id": "b", "text": "Hay que promediar las dos medianas" },
+      { "id": "c", "text": "El problema no tiene solución" },
+      { "id": "d", "text": "Hay que probar todas las posiciones" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con [1,2,3,4]: vivir en 2 da 1+0+1+2 = 4, y vivir en 3 da 2+1+0+1 = 4. Por eso len // 2 funciona sin caso especial."
+  }
+]

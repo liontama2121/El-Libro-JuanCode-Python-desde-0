@@ -1,0 +1,217 @@
+<p class="jc-gancho">Greedy es la técnica más corta de escribir y la más fácil de equivocar. Tomas la mejor opción local y sigues, sin volver atrás. Cuando funciona, el código son cinco líneas. Cuando no, produce una respuesta bonita y equivocada — y el juez no te dice cuál de las dos cosas pasó.</p>
+
+<h2>💡 Las dos técnicas del módulo</h2>
+
+<table>
+  <thead><tr><th></th><th>Greedy</th><th>Simulación</th></tr></thead>
+  <tbody>
+    <tr><td>Qué hace</td><td>Decide con una regla y nunca se arrepiente</td><td>Sigue las reglas del enunciado, paso por paso</td></tr>
+    <tr><td>Lo difícil</td><td><strong>Demostrar</strong> que la regla es correcta</td><td>No equivocarse en un detalle</td></tr>
+    <tr><td>Se reconoce por</td><td>"mínimo", "máximo", "el mejor"</td><td>"cuántos caben", "cuántos pasos", "qué queda al final"</td></tr>
+  </tbody>
+</table>
+
+<p>Las dos son lo contrario de backtracking y DP: aquí <strong>no se explora</strong>. Hay un solo camino y se recorre una vez.</p>
+
+<h2>🔍 Cuándo funciona greedy (y cuándo no)</h2>
+
+<p>Greedy es correcto cuando la decisión localmente óptima <strong>nunca cierra la puerta</strong> a la solución global. Eso hay que argumentarlo, no suponerlo.</p>
+
+<h3>El contraejemplo que hay que tener siempre a la mano</h3>
+
+<p>Dar cambio de <strong>6</strong> con monedas de <strong>{1, 3, 4}</strong>:</p>
+
+<table>
+  <thead><tr><th>Estrategia</th><th>Elige</th><th>Monedas</th></tr></thead>
+  <tbody>
+    <tr><td>Greedy (la más grande que quepa)</td><td>4 + 1 + 1</td><td><b>3</b></td></tr>
+    <tr><td>Óptimo</td><td>3 + 3</td><td><b>2</b></td></tr>
+  </tbody>
+</table>
+
+<p>El mismo problema con monedas {1, 5, 10, 25} sí funciona con greedy. La técnica no depende solo del problema: <strong>depende de los datos</strong>. Por eso, antes de escribir greedy, se busca un contraejemplo pequeño. Si aparece, toca DP.</p>
+
+<blockquote>Regla práctica: si no sabes <em>por qué</em> tu greedy es correcto, no es que sea correcto — es que todavía no encontraste el caso donde falla.</blockquote>
+
+<h2>📖 Problema 1 — Vito's Family</h2>
+
+<div class="jc-problema">
+
+<h3>Vito's Family</h3>
+<p><em>Basado en Vito's Family</em></p>
+
+<p><strong>Descripción.</strong> La familia de Vito vive en una calle donde las casas están numeradas. Los parientes viven en las posiciones s₁, s₂, …, sₙ. Vito quiere escoger <strong>una</strong> posición X donde vivir que minimice la suma total de distancias a todos sus parientes:</p>
+
+<pre><code>Σ |X − sᵢ|</code></pre>
+
+<p><strong>Entrada.</strong> Una línea con las posiciones, separadas por espacios.</p>
+
+<p><strong>Salida.</strong> Un entero: la suma mínima de distancias.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>2 6 4</code></td><td><code>4</code></td></tr></tbody>
+</table>
+
+<p><strong>Explicación.</strong> Viviendo en la posición 4: |4−2| + |4−4| + |4−6| = 2 + 0 + 2 = 4.</p>
+
+</div>
+
+<h3>El teorema que resuelve todo</h3>
+
+<p><strong>La mediana minimiza la suma de distancias absolutas.</strong> No hay que probar posiciones: se ordena y se toma el elemento del centro.</p>
+
+<table>
+  <thead><tr><th>Qué minimizas</th><th>Con qué</th></tr></thead>
+  <tbody>
+    <tr><td>Σ |X − sᵢ| — distancias</td><td>La <strong>mediana</strong></td></tr>
+    <tr><td>Σ (X − sᵢ)² — cuadrados</td><td>La <strong>media</strong></td></tr>
+  </tbody>
+</table>
+
+<p><strong>Por qué.</strong> Párate en cualquier punto y muévete un metro a la derecha. Te alejas un metro de cada pariente que quedó a la izquierda, y te acercas un metro de cada uno que está a la derecha. Mientras haya más gente a la derecha que a la izquierda, moverte <em>mejora</em> la suma. El punto donde deja de mejorar es exactamente aquel donde hay la misma cantidad a cada lado: la mediana.</p>
+
+<p>Ese razonamiento es la parte importante del problema. El código son cuatro líneas.</p>
+
+<h3>Código</h3>
+
+<pre><code>linea = input()
+posiciones = [int(x) for x in linea.split()]
+
+posiciones.sort()
+mediana = posiciones[len(posiciones) // 2]
+
+suma = 0
+for p in posiciones:
+    suma += abs(mediana - p)
+
+print(suma)</code></pre>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué</th></tr></thead>
+  <tbody>
+    <tr><td><code>.sort()</code></td><td>Sin ordenar, "el del centro" no significa nada</td></tr>
+    <tr><td><code>len // 2</code></td><td>Con n impar da el centro exacto</td></tr>
+    <tr><td><code>abs()</code></td><td>La distancia no tiene signo</td></tr>
+  </tbody>
+</table>
+
+<p>Con n <strong>par</strong> hay dos candidatos a mediana, y <em>cualquiera de los dos —y todo lo que hay entre ellos— da la misma suma</em>. Con <code>[1, 2, 3, 4]</code>: vivir en 2 da 1+0+1+2 = 4, y vivir en 3 da 2+1+0+1 = 4. Por eso <code>len // 2</code> sirve sin caso especial.</p>
+
+<h3>La película con <code>2 6 4</code></h3>
+
+<table>
+  <thead><tr><th>Paso</th><th>Estado</th></tr></thead>
+  <tbody>
+    <tr><td>Leer</td><td><code>[2, 6, 4]</code></td></tr>
+    <tr><td>Ordenar</td><td><code>[2, 4, 6]</code></td></tr>
+    <tr><td>Mediana</td><td><code>posiciones[1]</code> = <b>4</b></td></tr>
+    <tr><td>Sumar</td><td>|4−2| + |4−4| + |4−6| = 2 + 0 + 2 = <b>4</b></td></tr>
+  </tbody>
+</table>
+
+<p>Compruébalo a mano: X=3 da 5, X=5 da 5. El 4 es el mínimo.</p>
+
+<h2>📖 Problema 2 — Canada Goose</h2>
+
+<div class="jc-problema">
+
+<h3>Canada Goose</h3>
+<p><em>Simulación</em></p>
+
+<p><strong>Descripción.</strong> Se quieren construir edificios en fila sobre un terreno de longitud <code>L</code>. Cada edificio ocupa <code>H</code> metros y necesita un espacio mínimo de <code>S</code> metros entre él y el siguiente. ¿Cuántos edificios caben?</p>
+
+<p><strong>Entrada.</strong> Tres enteros <code>L</code>, <code>H</code> y <code>S</code> en una línea.</p>
+
+<p><strong>Salida.</strong> El número máximo de edificios que caben.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>50 15 5</code></td><td><code>2</code></td></tr></tbody>
+</table>
+
+<p><strong>Explicación.</strong> El primero ocupa de 0 a 15; el segundo, de 20 a 35. Un tercero empezaría en 40 y terminaría en 55, que se pasa de 50.</p>
+
+</div>
+
+<h3>Aquí no hay técnica: hay reglas</h3>
+
+<p>No es DP, no es recursión, no hay nada que optimizar. Se ponen edificios mientras quepan. La única decisión de diseño es <strong><code>while</code> y no <code>for</code></strong>: no se sabe de antemano cuántas vueltas van a ser.</p>
+
+<pre><code>datos = input().split()
+L = int(datos[0])
+H = int(datos[1])
+S = int(datos[2])
+
+edificios = 0
+pos = 0
+
+while pos + H &lt;= L:      # ¿cabe otro edificio desde aquí?
+    edificios += 1
+    pos += H + S         # avanza el edificio Y su separación
+
+print(edificios)</code></pre>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué</th></tr></thead>
+  <tbody>
+    <tr><td><code>pos + H &lt;= L</code></td><td>La pregunta exacta: ¿el edificio termina dentro del terreno?</td></tr>
+    <tr><td><code>&lt;=</code> y no <code>&lt;</code></td><td>Un edificio que termina justo en el borde sí cabe</td></tr>
+    <tr><td><code>pos += H + S</code></td><td>El siguiente arranca después del edificio <em>y</em> de la separación</td></tr>
+    <tr><td>La separación no se resta al final</td><td>Después del último edificio no hace falta espacio: por eso la condición mira solo <code>H</code></td></tr>
+  </tbody>
+</table>
+
+<h3>La película con <code>50 15 5</code></h3>
+
+<table>
+  <thead><tr><th>Vuelta</th><th>pos</th><th>pos + H</th><th>¿≤ 50?</th><th>edificios</th><th>pos nueva</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>0</td><td>15</td><td>sí</td><td>1</td><td>20</td></tr>
+    <tr><td>2</td><td>20</td><td>35</td><td>sí</td><td>2</td><td>40</td></tr>
+    <tr><td>3</td><td>40</td><td>55</td><td><b>no</b></td><td>—</td><td>sale del ciclo</td></tr>
+  </tbody>
+</table>
+
+<p>Resultado: <strong>2</strong>. Fíjate en que el caso <code>H &gt; L</code> no necesita tratamiento aparte: la condición del <code>while</code> es falsa desde la primera vuelta y el programa imprime 0.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Confundir mediana con media</h3>
+<pre><code>mediana = sum(posiciones) / len(posiciones)   # ❌ eso es el promedio</code></pre>
+<p>Con <code>[1, 2, 100]</code> el promedio es 34.33 y da una suma de 131,33; la mediana es 2 y da 99. La media minimiza los <strong>cuadrados</strong>, no las distancias.</p>
+
+<h3>2. Tomar la mediana sin ordenar</h3>
+<pre><code>mediana = posiciones[len(posiciones) // 2]    # ❌ falta el sort()</code></pre>
+<p>Con <code>[2, 6, 4]</code> tomaría el 6 y daría 8 en vez de 4. El error es silencioso: el programa corre y da un número.</p>
+
+<h3>3. Usar <code>for</code> en la simulación</h3>
+<pre><code>for i in range(L // H):      # ❌ ignora la separación S</code></pre>
+<p>Con <code>50 15 5</code> daría 3. Cuando no sabes cuántas vueltas son, el ciclo es <code>while</code>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Antes de escribir greedy, <strong>busca un contraejemplo pequeño</strong>. Si lo encuentras, era DP.</li>
+  <li>Si el enunciado pide minimizar distancias absolutas, la respuesta es la mediana. Si pide cuadrados, la media.</li>
+  <li>Ordenar es casi siempre el primer paso de un greedy.</li>
+  <li>En simulación no optimices: traduce las reglas del enunciado tal cual, una línea por regla.</li>
+  <li>Si no sabes cuántas vueltas dará el ciclo, es <code>while</code>.</li>
+  <li>Traza el ejemplo del enunciado a mano antes de enviar. En simulación, los errores son de <code>&lt;</code> contra <code>&lt;=</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>lista.sort()</code></td><td>Ordena en el sitio; casi todo greedy empieza aquí</td></tr>
+    <tr><td><code>lista[len(lista) // 2]</code></td><td>La mediana, <strong>ya ordenada</strong></td></tr>
+    <tr><td><code>abs(a - b)</code></td><td>Distancia entre dos posiciones</td></tr>
+    <tr><td><code>sum(l) / len(l)</code></td><td>La media — minimiza cuadrados, <em>no</em> distancias</td></tr>
+    <tr><td><code>while condicion:</code></td><td>Repetir sin saber cuántas veces</td></tr>
+    <tr><td><code>pos += H + S</code></td><td>Avanzar en una simulación de ocupación</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Greedy que no sabes demostrar es una apuesta. A veces la ganas, y eso es lo peligroso: aprendes que la técnica funciona justo antes del problema donde no.</blockquote>

@@ -1,0 +1,141 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es el caso base del superdígito?",
+    "data": { "options": [
+      { "id": "a", "text": "Un número de un solo dígito" },
+      { "id": "b", "text": "Un número negativo" },
+      { "id": "c", "text": "Cero" },
+      { "id": "d", "text": "Cuando la suma deja de cambiar" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El propio enunciado lo define: si tiene un solo dígito, ese dígito ES el superdígito. Poner el caso base en 0 sería un error, porque la suma de dígitos nunca llega a 0 y la recursión no pararía."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Si n = \"148\" y k = 3, ¿por qué NO construir la cadena \"148148148\"?",
+    "data": { "options": [
+      { "id": "a", "text": "Es innecesario, y con k = 10⁵ la cadena tendría diez mil millones de caracteres" },
+      { "id": "b", "text": "Python no permite multiplicar cadenas" },
+      { "id": "c", "text": "Porque daría un resultado incorrecto" },
+      { "id": "d", "text": "Porque hay que convertirla a entero primero" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con este ejemplo pequeño funcionaría. El problema son los límites: |n| hasta 10⁵ y k hasta 10⁵. Repetir los dígitos multiplica su suma, así que suma(n) × k da lo mismo sin construir nada."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuál es la reducción del problema del superdígito?",
+    "data": { "options": [
+      { "id": "a", "text": "Reemplazar el número por la suma de sus dígitos" },
+      { "id": "b", "text": "Restarle 1 al número" },
+      { "id": "c", "text": "Dividirlo entre 10" },
+      { "id": "d", "text": "Quitarle el último dígito" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Y esa reducción sí progresa: la suma de dígitos de cualquier número de dos o más cifras es siempre menor que el número, así que se acerca al caso base."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Cuánto vale superdigito(9875)?",
+    "data": { "options": [
+      { "id": "a", "text": "2" },
+      { "id": "b", "text": "5" },
+      { "id": "c", "text": "29" },
+      { "id": "d", "text": "11" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "9+8+7+5 = 29 → 2+9 = 11 → 1+1 = 2. Se repite hasta quedar en un solo dígito: por eso 29 y 11 no son respuestas válidas."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "En 'return n + sumar(n - 1)' hay una operación pendiente al volver. ¿Cómo se llama esa forma y qué implica en Python?",
+    "data": { "options": [
+      { "id": "a", "text": "Recursión de pila: cada llamada queda esperando en el stack, y Python revienta alrededor de las mil" },
+      { "id": "b", "text": "Recursión de cola: Python la optimiza y no crece el stack" },
+      { "id": "c", "text": "Recursión infinita" },
+      { "id": "d", "text": "Iteración disfrazada, sin costo de memoria" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "En la de cola —suma_cola(n-1, total+n)— no queda nada pendiente. Otros lenguajes la optimizan; Python NO, así que las dos consumen la misma profundidad de pila."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "def sumar(n):\n    if n == 0:\n        return 0\n    return n + sumar(n - 1)\n\nprint(sumar(4))",
+    "data": { "options": [
+      { "id": "a", "text": "10" },
+      { "id": "b", "text": "4" },
+      { "id": "c", "text": "0" },
+      { "id": "d", "text": "RecursionError" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "4+3+2+1+0 = 10. De bajada cada llamada queda congelada esperando; de subida completan: S(0)=0 → S(1)=1 → S(2)=3 → S(3)=6 → S(4)=10."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "facil",
+    "prompt": "Este programa lanza RecursionError. ¿En qué línea está el problema?",
+    "data": { "lines": [
+      "def superdigito(x):",
+      "    suma = sum(int(c) for c in str(x))",
+      "    return superdigito(suma)",
+      "    if x < 10:",
+      "        return x"
+    ]},
+    "correct": { "line_number": 3 },
+    "explanation": "Se llama a sí misma ANTES de preguntar por el caso base, y las líneas 4 y 5 nunca se ejecutan. El caso base va de primero, siempre: es la condición de parada."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el superdígito.",
+    "data": {
+      "code": "def superdigito(x):\n    if ___1___:\n        return x\n\n    suma = 0\n    for c in str(x):\n        suma += int(c)\n\n    return ___2___",
+      "blanks": [
+        { "id": "1", "pista": "un solo dígito" },
+        { "id": "2", "pista": "delegar el mismo problema, ya reducido" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["x < 10"],
+      "2": ["superdigito(suma)"]
+    }},
+    "explanation": "El caso base es tener una sola cifra, y la delegación se hace sobre el número reducido. No hay nada que combinar al volver: se devuelve tal cual lo que llegue."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa el truco que evita construir la cadena gigante.",
+    "data": {
+      "code": "suma_base = 0\nfor c in n:\n    suma_base += int(c)\n\ninicial = suma_base ___1___ k\n\nprint(superdigito(inicial))",
+      "blanks": [
+        { "id": "1", "pista": "repetir el número repite sus dígitos" }
+      ]
+    },
+    "correct": { "answers": { "1": ["*"] } },
+    "explanation": "Concatenar n consigo mismo k veces repite exactamente sus dígitos, así que la suma total es suma(n) × k. Con 148 y k=3: 13 × 3 = 39, la misma suma de 148148148."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arma la función recursiva del superdígito",
+    "data": { "lines": [
+      { "id": "r1", "text": "def superdigito(x):", "indent": 0 },
+      { "id": "r2", "text": "if x < 10:", "indent": 1 },
+      { "id": "r3", "text": "return x", "indent": 2 },
+      { "id": "r4", "text": "suma = 0", "indent": 1 },
+      { "id": "r5", "text": "for c in str(x):", "indent": 1 },
+      { "id": "r6", "text": "suma += int(c)", "indent": 2 },
+      { "id": "r7", "text": "return superdigito(suma)", "indent": 1 }
+    ]},
+    "correct": { "order": ["r1", "r2", "r3", "r4", "r5", "r6", "r7"] },
+    "explanation": "El caso base arriba del todo. Si la llamada recursiva quedara antes, el resto del cuerpo sería código muerto y la función no pararía nunca."
+  }
+]

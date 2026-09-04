@@ -3,10 +3,31 @@
 	"autor": "JuanCode",
 	"track": "avanzado",
 	"partes": [
-		{ "number": 1, "title": "Entrada y salida", "emoji": "⚙️" },
-		{ "number": 2, "title": "Estructuras", "emoji": "🧱" },
-		{ "number": 3, "title": "Recursión y búsqueda", "emoji": "🌳" },
-		{ "number": 4, "title": "Técnicas de diseño", "emoji": "🧠" }
+		{
+			"number": 1,
+			"title": "Entrada y salida",
+			"emoji": "⚙️"
+		},
+		{
+			"number": 2,
+			"title": "Estructuras",
+			"emoji": "🧱"
+		},
+		{
+			"number": 3,
+			"title": "Recursión y búsqueda",
+			"emoji": "🌳"
+		},
+		{
+			"number": 4,
+			"title": "Técnicas de diseño",
+			"emoji": "🧠"
+		},
+		{
+			"number": 5,
+			"title": "Recorridos y grafos",
+			"emoji": "🧭"
+		}
 	],
 	"capitulos": [
 		{
@@ -72,6 +93,54 @@
 			"title": "Greedy y simulación",
 			"emoji": "🎯",
 			"description": "Cuándo la decisión codiciosa es correcta, y cuándo toca simular."
+		},
+		{
+			"number": 9,
+			"part": 4,
+			"slug": "kadane",
+			"title": "Kadane",
+			"emoji": "📈",
+			"description": "La mejor racha contigua: programación dinámica con dos variables."
+		},
+		{
+			"number": 10,
+			"part": 5,
+			"slug": "busqueda-binaria",
+			"title": "Búsqueda binaria",
+			"emoji": "🔍",
+			"description": "La plantilla exacta, los ±1 que cuelgan el programa y buscar el primero que cumple."
+		},
+		{
+			"number": 11,
+			"part": 5,
+			"slug": "two-pointers",
+			"title": "Two pointers",
+			"emoji": "👉",
+			"description": "Dos índices que se acercan: cambiar O(N²) por O(N)."
+		},
+		{
+			"number": 12,
+			"part": 5,
+			"slug": "sliding-window",
+			"title": "Ventana deslizante",
+			"emoji": "🪟",
+			"description": "Reutilizar la cuenta anterior en vez de recalcular la ventana entera."
+		},
+		{
+			"number": 13,
+			"part": 5,
+			"slug": "bfs",
+			"title": "BFS — camino más corto",
+			"emoji": "🌐",
+			"description": "Explorar por niveles con una cola: la primera vez que lo ves, es el camino mínimo."
+		},
+		{
+			"number": 14,
+			"part": 5,
+			"slug": "dfs",
+			"title": "DFS — componentes conexas",
+			"emoji": "🕳️",
+			"description": "Hasta el fondo antes de retroceder. Un DFS lanzado = una componente."
 		}
 	]
 }

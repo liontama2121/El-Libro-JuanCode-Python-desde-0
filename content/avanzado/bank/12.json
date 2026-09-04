@@ -1,0 +1,162 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es la línea que define la ventana deslizante de tamaño fijo?",
+    "data": { "options": [
+      { "id": "a", "text": "suma += arr[i] - arr[i - k]" },
+      { "id": "b", "text": "suma = sum(arr[i:i+k])" },
+      { "id": "c", "text": "suma += arr[i]" },
+      { "id": "d", "text": "suma = max(suma, arr[i])" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Entra uno por la derecha, sale uno por la izquierda, y los K−2 del medio no se vuelven a tocar. La opción b recorre los K elementos cada vez: es la fuerza bruta escrita corta."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué la fuerza bruta desperdicia trabajo al recorrer ventanas de tamaño K?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque entre una ventana y la siguiente hay K−1 elementos idénticos que vuelve a sumar" },
+      { "id": "b", "text": "Porque usa demasiada memoria" },
+      { "id": "c", "text": "Porque recorre el arreglo al revés" },
+      { "id": "d", "text": "Porque ordena el arreglo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Solo cambian los dos de los bordes. Con N = 10⁵ y K = 10³, recalcular todo son 10⁸ operaciones contra 10⁵ deslizando."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "En la ventana variable, ¿por qué el encogimiento se hace con while y no con if?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque después de encoger una vez la ventana puede seguir cumpliendo, y hay que seguir encogiendo" },
+      { "id": "b", "text": "Porque if no permite restar" },
+      { "id": "c", "text": "Porque el for ya usa un if" },
+      { "id": "d", "text": "Porque while es más rápido" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con [1, 4, 4] y S = 4 la respuesta es 1. Un if encoge una sola vez y nunca llega a la ventana de un solo elemento."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Por qué la ventana variable sigue siendo O(N), si tiene un while dentro de un for?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque izq solo avanza y nunca retrocede: en total se mueve como máximo N veces" },
+      { "id": "b", "text": "Porque el while casi nunca se ejecuta" },
+      { "id": "c", "text": "Porque el arreglo está ordenado" },
+      { "id": "d", "text": "No lo es: es O(N²)" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Los dos índices juntos hacen a lo sumo 2N pasos. Contar ciclos anidados no sirve aquí: hay que contar cuánto se mueve cada índice en toda la ejecución."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "¿Qué requisito tienen los datos para que la ventana variable funcione?",
+    "data": { "options": [
+      { "id": "a", "text": "Que sean positivos, para que quitar por la izquierda baje la suma" },
+      { "id": "b", "text": "Que estén ordenados" },
+      { "id": "c", "text": "Que no haya repetidos" },
+      { "id": "d", "text": "Que la cantidad sea par" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con negativos, quitar un elemento por la izquierda puede SUBIR la suma, y todo el argumento del encogimiento se cae. Ese caso es otro problema: Kadane o sumas acumuladas."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "¿Qué imprime este programa?",
+    "code_snippet": "arr = [2, 1, 5, 1, 3, 2]\nk = 3\nsuma = sum(arr[:k])\nmejor = suma\nfor i in range(k, len(arr)):\n    suma += arr[i] - arr[i - k]\n    if suma > mejor:\n        mejor = suma\nprint(mejor)",
+    "data": { "options": [
+      { "id": "a", "text": "9" },
+      { "id": "b", "text": "8" },
+      { "id": "c", "text": "14" },
+      { "id": "d", "text": "6" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Las ventanas suman 8, 7, 9 y 6. La mejor es 5 1 3 = 9. El 14 sería la suma de todo el arreglo, que no es una ventana de tamaño 3."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este programa vuelve a ser O(N × K). ¿En qué línea está el problema?",
+    "data": { "lines": [
+      "mejor = 0",
+      "for i in range(len(arr) - k + 1):",
+      "    suma = sum(arr[i:i+k])",
+      "    if suma > mejor:",
+      "        mejor = suma",
+      "print(mejor)"
+    ]},
+    "correct": { "line_number": 3 },
+    "explanation": "sum() de un pedazo recorre los K elementos en cada vuelta. Escribirlo en una línea no lo hace rápido: sigue siendo la fuerza bruta."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa la ventana fija de tamaño k.",
+    "data": {
+      "code": "suma = 0\nfor i in range(k):\n    suma += arr[i]\n\nmejor = suma\n\nfor i in range(k, len(arr)):\n    suma += arr[i] - arr[___1___]\n    if suma > mejor:\n        mejor = ___2___",
+      "blanks": [
+        { "id": "1", "pista": "el que sale por la izquierda" },
+        { "id": "2", "pista": "la suma de la ventana actual" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["i - k"],
+      "2": ["suma"]
+    }},
+    "explanation": "El que sale está exactamente k posiciones atrás del que entra. La primera ventana sí hay que sumarla completa: es la única."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa la ventana variable que busca el subarreglo más corto con suma >= S.",
+    "data": {
+      "code": "izq = 0\nsuma = 0\nmejor = len(arr) + 1\n\nfor der in range(len(arr)):\n    suma += arr[der]\n\n    ___1___ suma >= S:\n        if der - izq + 1 < mejor:\n            mejor = der - izq + 1\n        suma -= arr[izq]\n        izq += ___2___",
+      "blanks": [
+        { "id": "1", "pista": "puede seguir cumpliendo después de encoger" },
+        { "id": "2", "pista": "la izquierda avanza una posición" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["while"],
+      "2": ["1"]
+    }},
+    "explanation": "Crece con el for, encoge con el while. Y se mide ANTES de restar, porque la ventana de después de restar quizá ya no cumple."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arma la ventana variable del subarreglo más corto",
+    "data": { "lines": [
+      { "id": "w1", "text": "izq = 0", "indent": 0 },
+      { "id": "w2", "text": "suma = 0", "indent": 0 },
+      { "id": "w3", "text": "mejor = len(arr) + 1", "indent": 0 },
+      { "id": "w4", "text": "for der in range(len(arr)):", "indent": 0 },
+      { "id": "w5", "text": "suma += arr[der]", "indent": 1 },
+      { "id": "w6", "text": "while suma >= S:", "indent": 1 },
+      { "id": "w7", "text": "if der - izq + 1 < mejor:", "indent": 2 },
+      { "id": "w8", "text": "mejor = der - izq + 1", "indent": 3 },
+      { "id": "w9", "text": "suma -= arr[izq]", "indent": 2 },
+      { "id": "w10", "text": "izq += 1", "indent": 2 }
+    ]},
+    "correct": { "order": ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10"] },
+    "explanation": "Primero entra el elemento nuevo, después se intenta encoger. Medir va antes de restar: la ventana actual cumple, la siguiente puede que no."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En [2, 3, 1, 2, 4, 3] con S = 7, ¿cuál es la longitud del subarreglo más corto con suma al menos 7?",
+    "data": { "options": [
+      { "id": "a", "text": "2" },
+      { "id": "b", "text": "3" },
+      { "id": "c", "text": "4" },
+      { "id": "d", "text": "6" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "El 4 y el 3 del final suman exactamente 7 con dos elementos. Hay uno de tres que también alcanza (1 2 4 suma 7), pero se pide el más corto."
+  }
+]

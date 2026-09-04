@@ -1,0 +1,184 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué es indispensable ordenar los pisos antes de la DP del Edificio?",
+    "data": { "options": [
+      { "id": "a", "text": "Para garantizar que todo lo que está antes en la lista puede ir abajo en la torre" },
+      { "id": "b", "text": "Para que el algoritmo sea más rápido" },
+      { "id": "c", "text": "Para poder usar max() al final" },
+      { "id": "d", "text": "Porque sorted() elimina los repetidos" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Ordenados, basta mirar hacia atrás: todos los índices j < i son candidatos a quedar debajo. Sin ordenar habría que recorrer la lista entera en cada paso y la comparación pierde sentido."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Qué representa exactamente dp[i] en el problema del Edificio?",
+    "data": { "options": [
+      { "id": "a", "text": "La altura máxima de una torre que TERMINA en el piso i" },
+      { "id": "b", "text": "La altura máxima usando los primeros i pisos" },
+      { "id": "c", "text": "El tamaño del piso i" },
+      { "id": "d", "text": "Cuántos pisos caben debajo del i" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Por eso la respuesta final es max(dp) y no dp[n-1]: la mejor torre no tiene por qué terminar en el piso más grande. Si dp[i] fuera 'con los primeros i', la respuesta sí sería la última casilla."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "Si la entrada del Edificio es [10, 5, 8], ¿cuál es la salida?",
+    "data": { "options": [
+      { "id": "a", "text": "23" },
+      { "id": "b", "text": "18" },
+      { "id": "c", "text": "10" },
+      { "id": "d", "text": "15" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Ordenado queda [5, 8, 10] y los tres van en orden creciente, así que la torre los usa todos: 5 + 8 + 10 = 23."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "Con pisos [5, 7, -2, 6, 9, -3, 8] la respuesta es 35, no 30. ¿Por qué?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque conviene dejar fuera los negativos: 5+6+7+8+9 da más que usarlos todos" },
+      { "id": "b", "text": "Porque los negativos no se pueden ordenar" },
+      { "id": "c", "text": "Porque la torre solo admite cinco pisos" },
+      { "id": "d", "text": "Porque 30 sería la respuesta si no se ordenara" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Usarlos todos da -3-2+5+6+7+8+9 = 30. El max() de la transición permite EMPEZAR DE NUEVO en vez de apilarse sobre lo anterior, y ahí está la ganancia: 35. Si el problema fuera 'usa todos los que puedas', no habría nada que optimizar."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "En Monedas, ¿por qué dp[0] = 1 y no 0?",
+    "data": { "options": [
+      { "id": "a", "text": "Es el caso base: hay exactamente una forma de armar 0, no usar ninguna moneda" },
+      { "id": "b", "text": "Para que el índice 0 no quede vacío" },
+      { "id": "c", "text": "Porque siempre existe la moneda de 1¢" },
+      { "id": "d", "text": "Es indiferente, el resultado es el mismo" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Cada casilla se construye sumando desde otra anterior. Con dp[0] = 0 toda la tabla quedaría en ceros: no habría de dónde partir."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "dificil",
+    "prompt": "La ÚNICA diferencia real entre el código de Monedas y el de Cintas es:",
+    "data": { "options": [
+      { "id": "a", "text": "La dirección del ciclo interno: adelante permite repetir, atrás no" },
+      { "id": "b", "text": "Que uno usa max() y el otro suma" },
+      { "id": "c", "text": "El tamaño de la tabla dp" },
+      { "id": "d", "text": "Que Cintas necesita ordenar las pistas" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Hacia adelante, dp[m - x] ya fue actualizado en esta misma pasada y por eso el elemento se puede repetir. Hacia atrás, esa casilla todavía no incluye el elemento, así que entra máximo una vez."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "Cintas mal hecho: el ciclo va hacia ADELANTE. ¿Qué imprime?",
+    "code_snippet": "duraciones = [3]\ntotal = 6\ndp = [0] * (total + 1)\n\nfor d in duraciones:\n    for m in range(d, total + 1):        # adelante, deberia ser atras\n        dp[m] = max(dp[m], dp[m - d] + d)\n\nprint(dp[total])",
+    "data": { "options": [
+      { "id": "a", "text": "6" },
+      { "id": "b", "text": "3" },
+      { "id": "c", "text": "0" },
+      { "id": "d", "text": "9" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "En m=6 consulta dp[3], que YA fue actualizado en esta misma pasada con la pista de 3 minutos. Resultado: la misma pista se grabó dos veces. Con el ciclo hacia atrás daría 3, que es lo correcto."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este Edificio devuelve un resultado menor del que debería. ¿En qué línea está el error?",
+    "data": { "lines": [
+      "pisos_ordenados = sorted(pisos)",
+      "dp = pisos_ordenados[:]",
+      "for i in range(1, len(pisos_ordenados)):",
+      "    for j in range(i):",
+      "        if pisos_ordenados[j] < pisos_ordenados[i]:",
+      "            dp[i] = max(dp[i], dp[j] + pisos_ordenados[i])",
+      "return dp[-1]"
+    ]},
+    "correct": { "line_number": 7 },
+    "explanation": "dp[i] es la altura de la torre que TERMINA en i, así que la respuesta es max(dp). Devolver la última casilla asume que la mejor torre termina en el piso más grande, y eso no siempre pasa."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "dificil",
+    "prompt": "Completa las dos versiones. La diferencia es una sola cosa.",
+    "data": {
+      "code": "# Monedas: se puede repetir la misma moneda\nfor moneda in monedas:\n    for m in range(moneda, cantidad + 1):\n        dp[m] ___1___ dp[m - moneda]\n\n# Cintas: cada pista una sola vez\nfor duracion in duraciones:\n    for m in range(total, duracion - 1, ___2___):\n        dp[m] = max(dp[m], dp[m - duracion] + duracion)",
+      "blanks": [
+        { "id": "1", "pista": "contar formas: se acumulan" },
+        { "id": "2", "pista": "el paso que hace que el ciclo vaya al revés" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["+="],
+      "2": ["-1"]
+    }},
+    "explanation": "Monedas cuenta formas, así que acumula con +=. Cintas maximiza, así que usa max(). Y el -1 del range es lo que hace el recorrido hacia atrás: sin él, cada pista se usaría varias veces."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el corazón de la DP del Edificio.",
+    "data": {
+      "code": "for i in range(1, n):\n    for j in range(i):\n        if ___1___:\n            dp[i] = max(dp[i], ___2___)",
+      "blanks": [
+        { "id": "1", "pista": "el piso de abajo tiene que ser estrictamente menor" },
+        { "id": "2", "pista": "la mejor torre que termina en j, más este piso" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["pisos_ordenados[j] < pisos_ordenados[i]"],
+      "2": ["dp[j] + pisos_ordenados[i]"]
+    }},
+    "explanation": "La comparación implementa 'estrictamente creciente': con <= aceptaría pisos iguales. Y la transición es la decisión clave: quedarse solo, o apilarse sobre la mejor torre que termina en j."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuál es la complejidad del Edificio?",
+    "data": { "options": [
+      { "id": "a", "text": "O(N²)" },
+      { "id": "b", "text": "O(N)" },
+      { "id": "c", "text": "O(N log N)" },
+      { "id": "d", "text": "O(2^N)" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Dos ciclos anidados sobre los pisos: por cada i se miran todos los j anteriores. El sorted() aporta N log N, que queda absorbido por el N²."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Con monedas [5, 1] y cantidad 6, ¿cuántas formas hay?",
+    "data": { "options": [
+      { "id": "a", "text": "2" },
+      { "id": "b", "text": "3" },
+      { "id": "c", "text": "1" },
+      { "id": "d", "text": "6" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Solo dos: 5+1, o seis monedas de 1. El orden no cuenta como forma distinta, por eso 1+5 no se suma aparte."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arma la mochila 0/1 de las Cintas",
+    "data": { "lines": [
+      { "id": "k1", "text": "dp = [0] * (minutos_totales + 1)", "indent": 0 },
+      { "id": "k2", "text": "for duracion in duraciones:", "indent": 0 },
+      { "id": "k3", "text": "for m in range(minutos_totales, duracion - 1, -1):", "indent": 1 },
+      { "id": "k4", "text": "dp[m] = max(dp[m], dp[m - duracion] + duracion)", "indent": 2 },
+      { "id": "k5", "text": "return dp[minutos_totales]", "indent": 0 }
+    ]},
+    "correct": { "order": ["k1", "k2", "k3", "k4", "k5"] },
+    "explanation": "El ciclo de las pistas va por fuera y el de la cinta por dentro, hacia atrás. Invertirlos rompe la garantía de usar cada pista una sola vez."
+  }
+]

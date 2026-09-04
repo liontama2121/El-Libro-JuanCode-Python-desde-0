@@ -1,0 +1,189 @@
+<p class="jc-gancho">Backtracking es fuerza bruta con memoria de dónde venías. Pruebas una opción, sigues, y si el camino no lleva a nada, <strong>deshaces</strong> y pruebas la siguiente. Todo el arte está en cortar ramas temprano: sin poda, el árbol crece hasta que el juez te da Time Limit.</p>
+
+<h2>💡 La idea</h2>
+
+<p>Backtracking explora un <strong>árbol de decisiones</strong>. En cada nodo hay una elección: tomar o no tomar, poner o no poner. Se avanza por una rama, y cuando la rama se muere, se regresa al nodo anterior y se toma la otra.</p>
+
+<h3>El esqueleto</h3>
+
+<pre><code>def explorar(estado):
+    if es_solucion(estado):
+        contar_o_guardar()
+        return
+
+    if no_puede_funcionar(estado):    # PODA
+        return
+
+    for opcion in opciones(estado):
+        aplicar(opcion)               # elegir
+        explorar(estado)              # seguir
+        deshacer(opcion)              # BACKTRACK</code></pre>
+
+<p>Los tres pilares:</p>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Qué hace</th><th>Si falta</th></tr></thead>
+  <tbody>
+    <tr><td>Caso de éxito</td><td>Reconoce una solución completa</td><td>Nunca cuentas nada</td></tr>
+    <tr><td><strong>Poda</strong></td><td>Abandona ramas imposibles</td><td>Funciona, pero se demora una eternidad</td></tr>
+    <tr><td><strong>Deshacer</strong></td><td>Devuelve el estado como estaba</td><td>Las ramas se contaminan entre sí</td></tr>
+  </tbody>
+</table>
+
+<p>La poda no cambia el resultado, cambia el tiempo. Y en competencia el tiempo <em>es</em> el resultado.</p>
+
+<h2>📖 El problema</h2>
+
+<div class="jc-problema">
+
+<h3>Suma de potencias</h3>
+<p><em>Basado en The Power Sum</em></p>
+
+<p><strong>Descripción.</strong> Dados dos enteros <code>X</code> y <code>N</code>, hay que contar de cuántas formas se puede escribir <code>X</code> como la suma de las potencias <code>N</code>-ésimas de enteros positivos <strong>distintos</strong>.</p>
+
+<p>Es decir, cuántos conjuntos <code>{a₁, a₂, …, a_k}</code> de enteros positivos distintos cumplen:</p>
+
+<pre><code>X = a₁ᴺ + a₂ᴺ + … + a_kᴺ</code></pre>
+
+<p><strong>Entrada.</strong> Dos líneas: <code>X</code> en la primera, <code>N</code> en la segunda. 1 ≤ X ≤ 1000, 2 ≤ N ≤ 10.</p>
+
+<p><strong>Salida.</strong> Un entero: la cantidad de formas posibles.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody>
+    <tr><td><code>10</code><br><code>2</code></td><td><code>1</code></td></tr>
+    <tr><td><code>100</code><br><code>2</code></td><td><code>3</code></td></tr>
+  </tbody>
+</table>
+
+<p><strong>Explicación.</strong> Para 10 con N=2 la única forma es 1² + 3² = 1 + 9. Para 100 con N=2 hay tres: 1²+3²+4²+5²+7², 6²+8², y 10².</p>
+
+</div>
+
+<h2>💡 Análisis y estrategia</h2>
+
+<h3>Por qué no sirve un ciclo</h3>
+
+<p>No se sabe de antemano <em>cuántos</em> números lleva la suma: para 100 una forma usa cinco números y otra usa uno solo. Con ciclos anidados habría que fijar la profundidad de antemano. Con recursión, no.</p>
+
+<h3>La decisión, base por base</h3>
+
+<p>Se recorren las bases en orden: 1, 2, 3, 4… y en cada una hay exactamente <strong>dos</strong> opciones:</p>
+
+<ol>
+  <li><strong>Usarla</strong> → el restante baja en <code>baseᴺ</code>, y se sigue desde <code>base + 1</code>.</li>
+  <li><strong>No usarla</strong> → el restante queda igual, y se sigue desde <code>base + 1</code>.</li>
+</ol>
+
+<p>Que siempre se avance a <code>base + 1</code> es lo que garantiza los números <strong>distintos</strong> y que ningún conjunto se cuente dos veces: nunca se vuelve atrás a una base ya decidida.</p>
+
+<h3>Los tres finales de una rama</h3>
+
+<table>
+  <thead><tr><th>Situación</th><th>Significa</th><th>Devuelve</th></tr></thead>
+  <tbody>
+    <tr><td><code>baseᴺ == restante</code></td><td>La suma cerró exacta</td><td><strong>1</strong> (una forma encontrada)</td></tr>
+    <tr><td><code>baseᴺ &gt; restante</code></td><td>Ya se pasó, y las bases siguientes son aún mayores</td><td><strong>0</strong> — esta es la poda</td></tr>
+    <tr><td>Ninguna de las dos</td><td>Todavía cabe</td><td>La suma de las dos ramas</td></tr>
+  </tbody>
+</table>
+
+<p>La segunda fila es la clave. Como las potencias crecen, en cuanto <code>baseᴺ</code> se pasa del restante <strong>ninguna base mayor va a servir</strong>, y se corta el subárbol entero. Sin esa poda el programa probaría bases hasta el infinito.</p>
+
+<h2>💻 Código paso a paso</h2>
+
+<pre><code>def contar(restante, base, n):
+    p = base ** n
+
+    if p &gt; restante:        # PODA: ya se pasó, y las siguientes son mayores
+        return 0
+
+    if p == restante:       # ÉXITO: la suma cerró exacta
+        return 1
+
+    # Rama 1: usar esta base.  Rama 2: saltársela
+    return contar(restante - p, base + 1, n) + contar(restante, base + 1, n)
+
+
+x = int(input())
+n = int(input())
+
+print(contar(x, 1, n))</code></pre>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué está ahí</th></tr></thead>
+  <tbody>
+    <tr><td><code>p = base ** n</code></td><td>Se calcula una sola vez; se usa tres veces</td></tr>
+    <tr><td><code>if p &gt; restante: return 0</code></td><td>La poda. Va <strong>antes</strong> que el éxito porque descarta más rápido</td></tr>
+    <tr><td><code>base + 1</code> en las dos ramas</td><td>Garantiza enteros distintos y que cada conjunto se cuente una sola vez</td></tr>
+    <tr><td>Devolver la suma</td><td>Aquí no hay que deshacer nada: el estado viaja en los parámetros, no en una lista compartida</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Cuando el estado viaja como parámetro, el <em>backtrack</em> es gratis: al volver de la llamada, las variables de este nivel siguen intactas. Cuando el estado es una lista compartida, hay que hacer <code>pop()</code> a mano.</blockquote>
+
+<h3>La película con <code>X = 10</code>, <code>N = 2</code></h3>
+
+<table>
+  <thead><tr><th>Llamada</th><th>base²</th><th>restante</th><th>Qué pasa</th></tr></thead>
+  <tbody>
+    <tr><td>contar(10, 1)</td><td>1</td><td>10</td><td>cabe → se abren dos ramas</td></tr>
+    <tr><td>· contar(9, 2) <em>usó el 1</em></td><td>4</td><td>9</td><td>cabe → dos ramas</td></tr>
+    <tr><td>· · contar(5, 3)</td><td>9</td><td>5</td><td>9 &gt; 5 → <b>poda, 0</b></td></tr>
+    <tr><td>· · contar(9, 3) <em>saltó el 2</em></td><td>9</td><td>9</td><td>9 == 9 → <b>¡éxito, 1!</b> (1²+3²)</td></tr>
+    <tr><td>· contar(10, 2) <em>saltó el 1</em></td><td>4</td><td>10</td><td>cabe → dos ramas</td></tr>
+    <tr><td>· · contar(6, 3)</td><td>9</td><td>6</td><td>9 &gt; 6 → <b>poda, 0</b></td></tr>
+    <tr><td>· · contar(10, 3)</td><td>9</td><td>10</td><td>cabe → dos ramas</td></tr>
+    <tr><td>· · · contar(1, 4)</td><td>16</td><td>1</td><td>16 &gt; 1 → <b>poda, 0</b></td></tr>
+    <tr><td>· · · contar(10, 4)</td><td>16</td><td>10</td><td>16 &gt; 10 → <b>poda, 0</b></td></tr>
+  </tbody>
+</table>
+
+<p>Total: <strong>1</strong>. Nueve nodos visitados, para un árbol que sin poda sería infinito. Fíjate en que la respuesta sube sumándose por el árbol: cada nodo devuelve lo que le reporten sus dos hijos.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Sin poda</h3>
+<pre><code>if p == restante:
+    return 1
+return contar(restante - p, base + 1, n) + contar(restante, base + 1, n)
+# ❌ falta el 'if p > restante: return 0'</code></pre>
+<p>La rama "no usar esta base" nunca termina: la base sube y sube y ninguna condición la para. <code>RecursionError</code>.</p>
+
+<h3>2. No avanzar la base</h3>
+<pre><code>return contar(restante - p, base, n) + contar(restante, base + 1, n)
+#                                ↑ ❌ sin el +1</code></pre>
+<p>Permitiría usar el mismo número varias veces, y el enunciado pide enteros <strong>distintos</strong>.</p>
+
+<h3>3. Olvidar el deshacer (en la versión con lista)</h3>
+<pre><code>actual.append(base)
+explorar(...)
+# ❌ falta actual.pop()</code></pre>
+<p>La lista se va llenando con decisiones de ramas ya abandonadas, y todo lo que venga después trabaja con basura. Regla: <strong>por cada <code>append</code>, un <code>pop</code></strong>.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Identifica la <strong>decisión</strong> que se repite: casi siempre es "tomar o no tomar".</li>
+  <li>Escribe primero los finales de rama: éxito y poda. Sin ellos no para.</li>
+  <li>La poda va <strong>antes</strong>: entre menos nodos se abran, mejor.</li>
+  <li>Avanza siempre el índice (<code>base + 1</code>) para no repetir ni contar el mismo conjunto dos veces.</li>
+  <li>Si el estado es una lista compartida, cada <code>append</code> necesita su <code>pop</code>.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>if imposible: return 0</code></td><td>Poda: corta el subárbol completo</td></tr>
+    <tr><td><code>if completo: return 1</code></td><td>Solución encontrada</td></tr>
+    <tr><td><code>f(con) + f(sin)</code></td><td>Las dos ramas de "tomar o no tomar"</td></tr>
+    <tr><td><code>base + 1</code></td><td>Elementos distintos, sin conjuntos repetidos</td></tr>
+    <tr><td><code>append</code> … <code>pop</code></td><td>Backtrack manual sobre estado compartido</td></tr>
+    <tr><td><code>base ** n</code></td><td>Potencia; guárdala en variable si se usa varias veces</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Fuerza bruta que se demora una eternidad y backtracking con buena poda son el mismo código. La diferencia son dos líneas.</blockquote>

@@ -1,0 +1,35 @@
+[
+  {
+    "orden": 1,
+    "title": "La mejor racha",
+    "difficulty": "medio",
+    "statement_html": "<p>Encuentra la suma máxima de una subsecuencia <strong>contigua</strong>. La entrada trae los números en una línea.</p><pre><code>Entrada:\n-2 1 -3 4 -1 2 1 -5 4\n\nSalida:\n6</code></pre><p>Ojo con el caso de puros negativos: la respuesta es el <strong>menos malo</strong>, no cero. Aquí la subsecuencia tiene que tener al menos un elemento.</p>",
+    "hint_html": "<p>Dos variables. En cada paso: <code>max(arr[i], max_actual + arr[i])</code> — empezar de nuevo o seguir. Inicializa con <code>arr[0]</code>, no con 0.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Maxima subsecuencia contigua (Kadane)\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Encuentra la mejor racha contigua en una sola pasada, con dos\n    variables y sin tabla: O(N) tiempo, O(1) memoria.\n'''\n\n\ndef kadane(arr):\n    '''\n    Calcula la suma maxima de una subsecuencia contigua.\n\n    Parametros:\n        arr (list): numeros, pueden ser negativos\n\n    Retorna:\n        int: la mejor suma contigua\n    '''\n    if not arr:\n        return 0\n\n    # Se arranca con el primer elemento y NO con 0: asi, si todos son\n    # negativos, la respuesta es el menos malo y no un cero inventado\n    max_actual = arr[0]   # mejor racha que TERMINA en la posicion actual\n    max_global = arr[0]   # mejor racha vista en todo el recorrido\n\n    for i in range(1, len(arr)):\n        # La unica decision del algoritmo: si lo acumulado es negativo,\n        # arrastrarlo solo resta, asi que conviene empezar de nuevo\n        max_actual = max(arr[i], max_actual + arr[i])\n\n        # Va DESPUES: max_global tiene que ver el valor recien calculado\n        max_global = max(max_global, max_actual)\n\n    return max_global\n\n\n# Inicio\nnumeros = [int(x) for x in input().split()]\nprint(kadane(numeros))\n# Fin</code></pre><p>Todo el algoritmo cabe en una frase: <strong>si lo que traes acumulado es negativo, déjalo ir</strong>. Nada que venga después mejora por cargar un lastre.</p><p>Los dos detalles que deciden si está bien:</p><ul><li><strong>Inicializar en <code>arr[0]</code>.</strong> Con 0, un arreglo de puros negativos devuelve 0 — que significa \"no tomo nada\". Eso solo es correcto si el enunciado permite la subsecuencia vacía. Léelo: las dos versiones del problema existen y piden inicializaciones distintas.</li><li><strong>El orden dentro del ciclo.</strong> Primero se decide <code>max_actual</code>, después se guarda en <code>max_global</code>. Al revés, se compara contra el valor de la vuelta anterior y se pierde la racha del último elemento.</li></ul><p>Compáralo con el Edificio del módulo 7: la misma pregunta — <em>¿cuál es la mejor solución que termina aquí?</em> — pero como la transición solo mira un paso atrás, la tabla de N casillas se reduce a una variable.</p>",
+    "starter_code": "'''\nPrograma: Maxima subsecuencia contigua (Kadane)\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef kadane(arr):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "-2 1 -3 4 -1 2 1 -5 4\n", "expected_output": "6\n" },
+      { "stdin": "3 -1 4 -1 2 1 -5 4\n", "expected_output": "8\n" },
+      { "stdin": "-1 -2 -3 -4\n", "expected_output": "-1\n" },
+      { "stdin": "1 2 3 4 5\n", "expected_output": "15\n" },
+      { "stdin": "5 -1 5 -1 5\n", "expected_output": "13\n" },
+      { "stdin": "-7\n", "expected_output": "-7\n" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "¿Dónde empieza y dónde termina?",
+    "difficulty": "dificil",
+    "statement_html": "<p>Además de la suma, imprime <strong>en qué posiciones</strong> está la mejor racha.</p><pre><code>Entrada:\n-2 1 -3 4 -1 2 1 -5 4\n\nSalida:\n6 3 6</code></pre><p>Es decir: suma 6, desde el índice 3 hasta el 6 (los elementos <code>4 -1 2 1</code>).</p><p>Si hay empate, quédate con la racha que aparece <strong>primero</strong>.</p>",
+    "hint_html": "<p>Cuando el <code>max</code> escoge <code>arr[i]</code>, ahí empieza una racha nueva: guarda ese índice. Cuando <code>max_actual</code> supera a <code>max_global</code>, ahí cierras la mejor.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Kadane con posiciones\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Kadane que ademas reporta donde empieza y donde termina la mejor\n    racha contigua.\n'''\n\n\ndef kadane_con_indices(arr):\n    '''\n    Encuentra la mejor racha contigua y sus limites.\n\n    Parametros:\n        arr (list): numeros, pueden ser negativos\n\n    Retorna:\n        tuple: (suma, indice_inicio, indice_fin)\n    '''\n    max_actual = arr[0]\n    max_global = arr[0]\n\n    inicio_actual = 0   # donde arranca la racha que se esta armando\n    inicio = 0          # donde arranca la mejor racha encontrada\n    fin = 0\n\n    for i in range(1, len(arr)):\n        # Si conviene empezar de nuevo, la racha nace AQUI: se anota\n        if arr[i] > max_actual + arr[i]:\n            max_actual = arr[i]\n            inicio_actual = i\n        else:\n            max_actual = max_actual + arr[i]\n\n        # Estrictamente mayor: con >= se quedaria con la ultima racha\n        # empatada, y el enunciado pide la primera\n        if max_actual > max_global:\n            max_global = max_actual\n            inicio = inicio_actual\n            fin = i\n\n    return max_global, inicio, fin\n\n\n# Inicio\nnumeros = [int(x) for x in input().split()]\nsuma, i, j = kadane_con_indices(numeros)\nprint(suma, i, j)\n# Fin</code></pre><p>El cambio respecto al Kadane simple es que ya no basta con saber <em>cuánto</em>: hay que saber <em>cuándo</em> el algoritmo tomó cada decisión. Por eso el <code>max</code> se abre en un <code>if</code>.</p><ul><li><strong><code>inicio_actual</code> se mueve solo cuando la racha se reinicia.</strong> Esa es la rama en la que el algoritmo decidió botar lo acumulado.</li><li><strong>Hay dos \"inicio\" distintos.</strong> <code>inicio_actual</code> es el de la racha que se está armando; <code>inicio</code> es el de la mejor encontrada. Confundirlos hace que se reporten posiciones de una racha que no ganó.</li><li><strong><code>&gt;</code> y no <code>&gt;=</code>.</strong> Con <code>&gt;=</code>, una racha empatada posterior desplazaría a la primera. El enunciado pide la primera, así que la comparación tiene que ser estricta.</li></ul>",
+    "starter_code": "'''\nPrograma: Kadane con posiciones\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef kadane_con_indices(arr):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "-2 1 -3 4 -1 2 1 -5 4\n", "expected_output": "6 3 6\n" },
+      { "stdin": "1 2 3\n", "expected_output": "6 0 2\n" },
+      { "stdin": "-5 -2 -9\n", "expected_output": "-2 1 1\n" },
+      { "stdin": "2 -1 2\n", "expected_output": "3 0 2\n" },
+      { "stdin": "4\n", "expected_output": "4 0 0\n" }
+    ]
+  }
+]

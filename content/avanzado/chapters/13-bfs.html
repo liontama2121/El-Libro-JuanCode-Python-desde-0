@@ -1,0 +1,163 @@
+<p class="jc-gancho">BFS explora por niveles: primero todo lo que está a un paso, después todo lo que está a dos. Por eso <strong>la primera vez que llega a una celda, llegó por el camino más corto</strong>. Esa propiedad no es un detalle: es toda la razón para usarlo.</p>
+
+<h2>💡 La idea</h2>
+
+<p>Se usa una <strong>cola</strong>: lo primero que entra es lo primero que sale. Se saca una celda, se meten sus vecinos no visitados, se repite. Como los vecinos de nivel 1 entraron antes que los de nivel 2, salen antes — y el recorrido avanza en ondas.</p>
+
+<pre><code>Salida = S, muro = #
+
+. . . .        0 1 2 3
+S # # .   →    ↓ # # 4      cada número es la distancia
+. . . .        1 2 3 4      desde la salida</code></pre>
+
+<blockquote><strong>La propiedad clave:</strong> en un grafo donde todos los pasos cuestan lo mismo, la primera vez que BFS visita un nodo lo hace con la distancia mínima. Por eso se marca visitado <em>al encolar</em> y no al sacar.</blockquote>
+
+<h3>BFS contra DFS</h3>
+
+<table>
+  <thead><tr><th></th><th>BFS</th><th>DFS</th></tr></thead>
+  <tbody>
+    <tr><td>Estructura</td><td>Cola (<code>popleft</code>)</td><td>Pila o recursión</td></tr>
+    <tr><td>Cómo explora</td><td>Por niveles, en ondas</td><td>Hasta el fondo, después retrocede</td></tr>
+    <tr><td>Sirve para</td><td><strong>Camino más corto</strong></td><td>Conectividad, componentes, ciclos</td></tr>
+  </tbody>
+</table>
+
+<p>DFS también encuentra <em>un</em> camino. BFS encuentra <strong>el más corto</strong>. Si el enunciado dice "mínimo número de pasos", es BFS y no hay discusión.</p>
+
+<h2>📖 El problema</h2>
+
+<div class="jc-problema">
+
+<h3>El laberinto</h3>
+
+<p><strong>Descripción.</strong> Un mapa rectangular donde <code>.</code> es una casilla libre y <code>#</code> es un muro. Empezando en la esquina superior izquierda, hay que llegar a la inferior derecha moviéndose en las <strong>cuatro direcciones</strong> (arriba, abajo, izquierda, derecha), una casilla por paso.</p>
+
+<p><strong>Entrada.</strong> La primera línea trae dos enteros: filas y columnas. Después vienen las filas del mapa.</p>
+
+<p><strong>Salida.</strong> El mínimo número de pasos, o <code>-1</code> si no hay camino.</p>
+
+<table>
+  <thead><tr><th>Entrada</th><th>Salida</th></tr></thead>
+  <tbody><tr><td><code>3 4</code><br><code>....</code><br><code>.##.</code><br><code>....</code></td><td><code>5</code></td></tr></tbody>
+</table>
+
+<p><strong>Explicación.</strong> Bajando por la primera columna y avanzando por la última fila: 2 + 3 = 5 pasos.</p>
+
+</div>
+
+<h2>💻 Código paso a paso</h2>
+
+<pre><code>from collections import deque
+
+datos = input().split()
+n = int(datos[0])
+m = int(datos[1])
+
+grid = []
+for i in range(n):
+    grid.append(input())
+
+# dist[f][c] = pasos desde la salida. -1 significa "no visitada"
+dist = []
+for i in range(n):
+    dist.append([-1] * m)
+
+dist[0][0] = 0
+cola = deque()
+cola.append((0, 0))
+
+# Las cuatro direcciones: arriba, abajo, izquierda, derecha
+direcciones = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+while len(cola) &gt; 0:
+    f, c = cola.popleft()               # POPLEFT: cola, no pila
+
+    for df, dc in direcciones:
+        nf = f + df
+        nc = c + dc
+
+        if 0 &lt;= nf &lt; n and 0 &lt;= nc &lt; m:          # dentro del mapa
+            if grid[nf][nc] == "." and dist[nf][nc] == -1:
+                dist[nf][nc] = dist[f][c] + 1     # marcar AL ENCOLAR
+                cola.append((nf, nc))
+
+print(dist[n - 1][m - 1])</code></pre>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué</th></tr></thead>
+  <tbody>
+    <tr><td><code>popleft()</code></td><td>Cola. Con <code>pop()</code> sería una pila y el recorrido pasa a ser DFS: los caminos que encuentre ya no son mínimos</td></tr>
+    <tr><td><code>dist</code> hace de visitados</td><td>Dos cosas en una matriz: <code>-1</code> es "no visitada" y cualquier otro valor es la distancia</td></tr>
+    <tr><td>Marcar <strong>al encolar</strong></td><td>Si se marca al sacar, la misma celda entra varias veces y la cola explota</td></tr>
+    <tr><td>Chequear límites <em>antes</em></td><td>En Python <code>grid[-1]</code> no falla: da la última fila. El error sería silencioso</td></tr>
+    <tr><td><code>dist[n-1][m-1]</code></td><td>Si quedó en −1 es que nunca se llegó: justo el <code>-1</code> que pide el enunciado</td></tr>
+  </tbody>
+</table>
+
+<h3>La película, en ondas</h3>
+
+<p>Con el mapa del ejemplo, así crecen las distancias:</p>
+
+<pre><code>Nivel 0:  (0,0)
+Nivel 1:  (0,1)  (1,0)
+Nivel 2:  (0,2)  (2,0)
+Nivel 3:  (0,3)  (2,1)
+Nivel 4:  (1,3)  (2,2)
+Nivel 5:  (2,3)   ← la meta</code></pre>
+
+<p>Fíjate en que la meta aparece en el nivel 5 y no antes: eso <em>es</em> la respuesta. Y aparece una sola vez, porque al encolarla quedó marcada.</p>
+
+<h2>🔍 La variante: varias fuentes a la vez</h2>
+
+<p>Si en vez de una salida hay muchas —un incendio que empieza en varias casillas, por ejemplo— <strong>se meten todas en la cola al principio, todas con distancia 0</strong>. El resto del código no cambia.</p>
+
+<pre><code>for i in range(n):
+    for j in range(m):
+        if grid[i][j] == "F":
+            dist[i][j] = 0
+            cola.append((i, j))</code></pre>
+
+<p>El resultado es la distancia de cada celda <strong>a la fuente más cercana</strong>, calculada en una sola pasada. Hacer un BFS por fuente y quedarse con el mínimo daría lo mismo, pero costaría F veces más.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Marcar visitado al sacar de la cola</h3>
+<pre><code>f, c = cola.popleft()
+dist[f][c] = ...          # ❌ tarde</code></pre>
+<p>Entre que una celda se encola y se saca, otros vecinos la pueden encolar otra vez. La cola crece sin control y el programa se demora una eternidad — o da distancias mayores que las reales.</p>
+
+<h3>2. Usar <code>pop()</code> en vez de <code>popleft()</code></h3>
+<pre><code>f, c = cola.pop()         # ❌ eso es una pila: se volvió DFS</code></pre>
+<p>Sigue encontrando un camino, pero ya no el más corto. Y es el error más difícil de ver, porque el programa <em>funciona</em> en los casos pequeños.</p>
+
+<h3>3. Índices negativos sin revisar</h3>
+<pre><code>if grid[nf][nc] == ".":   # ❌ sin chequear límites primero</code></pre>
+<p>Con <code>nf = -1</code>, Python devuelve la última fila en vez de fallar. El recorrido se teletransporta de un borde al otro y nadie se entera.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>¿El enunciado dice "mínimo número de pasos/movimientos"? BFS.</li>
+  <li><code>deque</code> y <code>popleft</code>. Nunca <code>pop()</code>.</li>
+  <li>Marca visitado <strong>al encolar</strong>, no al sacar.</li>
+  <li>Chequea límites antes de leer la casilla.</li>
+  <li>Una matriz <code>dist</code> con <code>-1</code> sirve de visitados y de respuesta al mismo tiempo.</li>
+  <li>¿Varias salidas? Todas a la cola con distancia 0, y una sola pasada.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>from collections import deque</code></td><td>La cola eficiente de Python</td></tr>
+    <tr><td><code>cola.append(x)</code></td><td>Encolar por el final</td></tr>
+    <tr><td><code>cola.popleft()</code></td><td>Sacar por el frente — esto es lo que hace BFS</td></tr>
+    <tr><td><code>[(-1,0), (1,0), (0,-1), (0,1)]</code></td><td>Las cuatro direcciones</td></tr>
+    <tr><td><code>dist[nf][nc] == -1</code></td><td>"Todavía no visitada"</td></tr>
+    <tr><td><code>0 &lt;= nf &lt; n and 0 &lt;= nc &lt; m</code></td><td>Dentro del mapa</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Si tu BFS da caminos más largos de lo que deberían, mira dos líneas: si estás usando <code>pop()</code>, y si marcas visitado al sacar.</blockquote>

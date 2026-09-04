@@ -1,0 +1,172 @@
+<p class="jc-gancho">La búsqueda binaria es cuatro líneas que casi nadie escribe bien a la primera. El <code>+1</code> y el <code>−1</code> mal puestos no dan una respuesta equivocada: <strong>cuelgan el programa</strong>. Y cuando la dominas, resulta que sirve para muchísimo más que buscar un número en una lista.</p>
+
+<h2>💡 La plantilla, memorizada</h2>
+
+<p>En el módulo 6 ya viste la idea de partir el problema por la mitad. Aquí lo que importa es la <strong>plantilla exacta</strong>, porque en competencia se escribe de memoria y sin dudar:</p>
+
+<pre><code>def buscar(arr, x):
+    izq = 0
+    der = len(arr) - 1
+
+    while izq &lt;= der:
+        medio = (izq + der) // 2
+
+        if arr[medio] == x:
+            return medio
+
+        if arr[medio] &lt; x:
+            izq = medio + 1      # el objetivo está a la derecha
+        else:
+            der = medio - 1      # el objetivo está a la izquierda
+
+    return -1                    # no está</code></pre>
+
+<p>Requisito no negociable: <strong>el arreglo tiene que estar ordenado</strong>. Sobre datos desordenados no falla con error — devuelve basura.</p>
+
+<h3>Las cuatro piezas que no se pueden cambiar</h3>
+
+<table>
+  <thead><tr><th>Pieza</th><th>Por qué así</th><th>Si la cambias</th></tr></thead>
+  <tbody>
+    <tr><td><code>der = len(arr) - 1</code></td><td>El último índice válido</td><td><code>IndexError</code> al leer <code>arr[medio]</code></td></tr>
+    <tr><td><code>while izq &lt;= der</code></td><td>Con <code>izq == der</code> todavía queda un elemento por revisar</td><td>Con <code>&lt;</code>, no encuentra elementos que están</td></tr>
+    <tr><td><code>izq = medio + 1</code></td><td>El del medio ya se descartó</td><td>Sin el <code>+1</code>: <strong>ciclo infinito</strong></td></tr>
+    <tr><td><code>der = medio - 1</code></td><td>Igual, por el otro lado</td><td>Sin el <code>−1</code>: <strong>ciclo infinito</strong></td></tr>
+  </tbody>
+</table>
+
+<p><strong>Por qué se cuelga.</strong> Cuando quedan dos elementos, <code>(izq + der) // 2</code> devuelve <code>izq</code> por la división entera. Si haces <code>izq = medio</code> en vez de <code>medio + 1</code>, <code>izq</code> no se mueve, el rango no encoge y el <code>while</code> gira para siempre. No es un detalle de estilo: es la diferencia entre resolver y recibir Time Limit.</p>
+
+<h3>Por qué log N importa</h3>
+
+<table>
+  <thead><tr><th>N</th><th>Lineal (peor caso)</th><th>Binaria</th></tr></thead>
+  <tbody>
+    <tr><td>1 000</td><td>1 000 pasos</td><td>10</td></tr>
+    <tr><td>1 000 000</td><td>1 000 000</td><td>20</td></tr>
+    <tr><td>1 000 000 000</td><td>mil millones</td><td><b>30</b></td></tr>
+  </tbody>
+</table>
+
+<p>Cada paso bota la mitad. Multiplicar el tamaño por mil solo agrega diez pasos.</p>
+
+<h2>🔍 La variante que de verdad se usa: el primero que cumple</h2>
+
+<p>Buscar un valor exacto es el caso fácil. En competencia casi siempre se pide otra cosa: <strong>el primer elemento que cumple una condición</strong> — el primer <code>≥ x</code>, el primer día en que alcanza, la mínima capacidad que sirve.</p>
+
+<p>La plantilla cambia, y hay que aprendérsela aparte:</p>
+
+<pre><code>def primero_que_cumple(arr, x):
+    izq = 0
+    der = len(arr)          # ojo: len, NO len - 1
+
+    while izq &lt; der:        # ojo: &lt;, NO &lt;=
+        medio = (izq + der) // 2
+
+        if arr[medio] &gt;= x:
+            der = medio     # este sirve, pero quizá hay uno mejor a la izquierda
+        else:
+            izq = medio + 1 # este no sirve, descartado
+
+    return izq              # queda apuntando al primero que cumple</code></pre>
+
+<table>
+  <thead><tr><th>Diferencia</th><th>Búsqueda exacta</th><th>Primero que cumple</th></tr></thead>
+  <tbody>
+    <tr><td>Rango</td><td><code>[0, len−1]</code></td><td><code>[0, len)</code></td></tr>
+    <tr><td>Condición</td><td><code>izq &lt;= der</code></td><td><code>izq &lt; der</code></td></tr>
+    <tr><td>Cuando sirve</td><td>Devuelve de una</td><td><code>der = medio</code> — <em>sin</em> el −1, porque el candidato no se descarta</td></tr>
+    <tr><td>Devuelve</td><td>El índice, o −1</td><td><code>izq</code>: el primero que cumple, o <code>len</code> si ninguno</td></tr>
+  </tbody>
+</table>
+
+<p>Con <code>[1, 3, 3, 3, 5, 7]</code> buscando el primer <code>≥ 3</code>: devuelve <strong>1</strong>, el primer 3 de los tres. La búsqueda exacta habría devuelto cualquiera de ellos.</p>
+
+<blockquote>La regla mental: si el elemento del medio <em>ya sirve</em>, no lo botes — muévete hacia la izquierda dejándolo dentro del rango (<code>der = medio</code>). Si no sirve, descártalo (<code>izq = medio + 1</code>).</blockquote>
+
+<h2>🚀 Búsqueda binaria sobre la respuesta</h2>
+
+<p>El salto conceptual del módulo: <strong>no hace falta un arreglo</strong>. Basta con que la pregunta tenga esta forma:</p>
+
+<pre><code>si una respuesta R sirve, entonces cualquier R más grande también sirve</code></pre>
+
+<p>Eso convierte el espacio de respuestas en una recta ordenada de <code>NO NO NO SÍ SÍ SÍ</code>, y se busca binariamente <strong>la frontera</strong>.</p>
+
+<p>Ejemplo: hay que repartir una pila de paquetes en <code>D</code> días, en orden, y se busca la <strong>mínima capacidad diaria</strong> que alcanza.</p>
+
+<table>
+  <thead><tr><th>Pregunta</th><th>Respuesta</th></tr></thead>
+  <tbody>
+    <tr><td>¿Cuál es el rango de la respuesta?</td><td>De <code>max(pesos)</code> — al menos el paquete más pesado — a <code>sum(pesos)</code> — todo en un día</td></tr>
+    <tr><td>¿Cómo verifico un candidato?</td><td>Simulo los días con esa capacidad y cuento cuántos necesito</td></tr>
+    <tr><td>¿Es monótono?</td><td>Sí: con más capacidad nunca hacen falta más días</td></tr>
+  </tbody>
+</table>
+
+<pre><code>def dias_necesarios(pesos, cap):
+    dias = 1
+    carga = 0
+    for p in pesos:
+        if carga + p &gt; cap:
+            dias += 1
+            carga = 0
+        carga += p
+    return dias
+
+
+def capacidad_minima(pesos, D):
+    izq = max(pesos)
+    der = sum(pesos)
+
+    while izq &lt; der:
+        medio = (izq + der) // 2
+        if dias_necesarios(pesos, medio) &lt;= D:
+            der = medio          # sirve: busca una capacidad menor
+        else:
+            izq = medio + 1      # no alcanza: sube
+
+    return izq</code></pre>
+
+<p>Es la plantilla de "el primero que cumple", con la condición cambiada por una simulación. Con pesos <code>1..10</code> y D=5, la respuesta es <strong>15</strong>: probar una por una las capacidades entre 10 y 55 funcionaría, pero con sumas de millones no.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. El ciclo infinito</h3>
+<pre><code>if arr[medio] &lt; x:
+    izq = medio          # ❌ falta el +1</code></pre>
+<p>Con dos elementos, <code>medio</code> es <code>izq</code>, así que <code>izq</code> no se mueve nunca. El programa no falla: se queda pensando hasta que el juez lo mata.</p>
+
+<h3>2. Buscar en un arreglo sin ordenar</h3>
+<pre><code>print(buscar([5, 2, 9, 1], 9))   # ❌ devuelve -1 aunque el 9 está</code></pre>
+<p>La binaria descarta media lista confiando en el orden. Sin orden, descarta justo donde estaba la respuesta.</p>
+
+<h3>3. Mezclar las dos plantillas</h3>
+<pre><code>der = len(arr) - 1
+while izq &lt; der:          # ❌ mezcla: se salta el último elemento</code></pre>
+<p><code>len−1</code> va con <code>&lt;=</code>, y <code>len</code> va con <code>&lt;</code>. Cada plantilla completa, o falla por uno.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Verifica que esté <strong>ordenado</strong>. Si no, ordena primero — sigue siendo O(N log N).</li>
+  <li>Escoge plantilla: valor exacto (<code>len−1</code>, <code>&lt;=</code>) o primero que cumple (<code>len</code>, <code>&lt;</code>).</li>
+  <li>Cada rama tiene que <strong>encoger el rango</strong>. Si una deja <code>izq</code> y <code>der</code> igual que estaban, se cuelga.</li>
+  <li>Si el enunciado pide "el mínimo X tal que…", piensa en binaria <strong>sobre la respuesta</strong>: define el rango y escribe la función que verifica un candidato.</li>
+  <li>Prueba siempre con 1 elemento, 2 elementos, el primero y el último. Ahí viven todos los errores.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead><tr><th>Escribes</th><th>Pasa esto</th></tr></thead>
+  <tbody>
+    <tr><td><code>izq, der = 0, len(arr) - 1</code></td><td>Rango cerrado, va con <code>while izq &lt;= der</code></td></tr>
+    <tr><td><code>izq, der = 0, len(arr)</code></td><td>Rango medio abierto, va con <code>while izq &lt; der</code></td></tr>
+    <tr><td><code>medio = (izq + der) // 2</code></td><td>El del centro; con dos elementos, el de la izquierda</td></tr>
+    <tr><td><code>izq = medio + 1</code></td><td>Descartar el medio y todo lo de la izquierda</td></tr>
+    <tr><td><code>der = medio</code></td><td>El medio sirve, pero puede haber uno mejor antes</td></tr>
+    <tr><td><code>return izq</code></td><td>Al salir, apunta a la frontera entre NO y SÍ</td></tr>
+  </tbody>
+</table>
+
+<blockquote>Si tu búsqueda binaria se cuelga, no la mires entera: mira si alguna rama puede dejar el rango igual que estaba.</blockquote>

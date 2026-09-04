@@ -1,0 +1,52 @@
+[
+  {
+    "orden": 1,
+    "title": "Edificio",
+    "difficulty": "medio",
+    "statement_html": "<p>Construye la torre más alta posible: cada piso tiene que ser <strong>estrictamente mayor</strong> que el que tiene debajo.</p><p>La entrada trae los tamaños de los pisos en una línea. Imprime la altura máxima.</p><pre><code>Entrada:\n5 7 -2 6 9 -3 8\n\nSalida:\n35</code></pre><p>Ojo con ese ejemplo: usar los siete pisos da 30. La mejor torre <strong>deja fuera los negativos</strong>.</p>",
+    "hint_html": "<p>Ordena primero. <code>dp[i]</code> = altura máxima de una torre que <strong>termina</strong> en el piso <code>i</code>. La respuesta es <code>max(dp)</code>, no <code>dp[-1]</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Edificio\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Altura maxima de una torre con pisos estrictamente crecientes,\n    resuelto con programacion dinamica en O(N^2).\n'''\n\n\ndef solve_edificio(pisos):\n    '''\n    Calcula la altura maxima de la torre.\n\n    Parametros:\n        pisos (list): tamanos de los pisos disponibles\n\n    Retorna:\n        int: la altura de la mejor torre\n    '''\n    if not pisos:\n        return 0\n\n    # Ordenar es lo que hace que la DP funcione: garantiza que todo lo\n    # que esta antes en la lista puede ir DEBAJO en la torre\n    pisos_ordenados = sorted(pisos)\n    n = len(pisos_ordenados)\n\n    # dp[i] = altura maxima de una torre que TERMINA en el piso i.\n    # Se arranca con cada piso solo, que ya es una torre valida\n    dp = pisos_ordenados[:]\n\n    for i in range(1, n):\n        for j in range(i):\n            # Estrictamente creciente: con <= aceptaria pisos iguales\n            if pisos_ordenados[j] < pisos_ordenados[i]:\n                # La decision: quedarse solo, o apilarse sobre la mejor\n                # torre que termina en j\n                dp[i] = max(dp[i], dp[j] + pisos_ordenados[i])\n\n    # max(dp) y no dp[-1]: la mejor torre no tiene por que terminar en\n    # el piso mas grande\n    return max(dp)\n\n\n# Inicio\npisos = [int(x) for x in input().split()]\nprint(solve_edificio(pisos))\n# Fin</code></pre><p>Las dos líneas que deciden si el programa está bien:</p><ul><li><strong><code>dp = pisos_ordenados[:]</code></strong> — el punto de partida es cada piso solo. Si empezaras en ceros, el <code>max</code> nunca podría escoger \"empezar aquí\".</li><li><strong><code>return max(dp)</code></strong> — como <code>dp[i]</code> significa \"torre que termina en <code>i</code>\", hay que mirar todas.</li></ul><p>Y el caso del enunciado enseña de qué se trata realmente la DP. Con <code>[-3, -2, 5, 6, 7, 8, 9]</code> todos van en orden creciente, así que <em>caben</em> todos: suman 30. Pero el <code>max</code> de la transición le permite al algoritmo <strong>arrancar de nuevo</strong> en el 5 y dejar los negativos afuera: 5+6+7+8+9 = <strong>35</strong>. Si el problema fuera \"usa todos los que puedas\", no habría nada que optimizar.</p>",
+    "starter_code": "'''\nPrograma: Edificio\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef solve_edificio(pisos):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "5 7 -2 6 9 -3 8\n", "expected_output": "35\n" },
+      { "stdin": "2 5 3\n", "expected_output": "10\n" },
+      { "stdin": "10 5 8\n", "expected_output": "23\n" },
+      { "stdin": "1 2 3 4 5\n", "expected_output": "15\n" },
+      { "stdin": "7\n", "expected_output": "7\n" },
+      { "stdin": "-5 -3 -1\n", "expected_output": "-1\n" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "Monedas — contar formas",
+    "difficulty": "medio",
+    "statement_html": "<p>Con monedas de 50¢, 25¢, 10¢, 5¢ y 1¢, ¿de cuántas formas distintas se puede armar una cantidad?</p><p>La entrada trae la cantidad. El orden no cuenta: <code>5+1</code> y <code>1+5</code> son la misma forma.</p><pre><code>Entrada:\n11\n\nSalida:\n4</code></pre><p>Las cuatro: 10+1 · 5+5+1 · 5+1×6 · 1×11.</p>",
+    "hint_html": "<p><code>dp[0] = 1</code> — hay una forma de armar cero: no usar nada. Y el ciclo de la cantidad va <strong>hacia adelante</strong>, porque una misma moneda se puede repetir.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Monedas\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Cuenta de cuantas formas distintas se arma una cantidad, con\n    monedas que se pueden repetir (mochila ilimitada).\n'''\n\n\ndef solve_monedas(cantidad):\n    '''\n    Cuenta las combinaciones de monedas que suman la cantidad.\n\n    Parametros:\n        cantidad (int): centavos a armar\n\n    Retorna:\n        int: cuantas formas distintas hay\n    '''\n    monedas = [50, 25, 10, 5, 1]\n\n    # dp[m] = de cuantas formas se arma la cantidad m\n    dp = [0] * (cantidad + 1)\n\n    # Caso base: hay UNA forma de armar 0, no poner ninguna moneda.\n    # Con 0 aqui, toda la tabla quedaria en ceros\n    dp[0] = 1\n\n    # La moneda por fuera y la cantidad por dentro: asi cada combinacion\n    # se cuenta una sola vez, sin importar el orden\n    for moneda in monedas:\n        # ADELANTE: dp[m - moneda] ya incluye esta moneda, y por eso se\n        # puede usar varias veces\n        for m in range(moneda, cantidad + 1):\n            dp[m] += dp[m - moneda]\n\n    return dp[cantidad]\n\n\n# Inicio\nprint(solve_monedas(int(input())))\n# Fin</code></pre><p>Dos decisiones y una consecuencia:</p><ul><li><strong>La moneda por fuera.</strong> Así se cuentan <em>combinaciones</em>, no <em>permutaciones</em>. Si el ciclo de la cantidad fuera el de afuera, <code>5+1</code> y <code>1+5</code> contarían como dos formas distintas y el resultado se dispararía.</li><li><strong>El ciclo interno hacia adelante.</strong> Cuando llega a <code>m</code>, la casilla <code>dp[m - moneda]</code> <strong>ya fue actualizada</strong> con esta misma moneda en esta pasada. Eso es exactamente lo que permite repetirla.</li></ul><p>Compáralo con el ejercicio de las Cintas: mismo esqueleto, ciclo al revés, y la moneda deja de poder repetirse.</p>",
+    "starter_code": "'''\nPrograma: Monedas\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef solve_monedas(cantidad):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "11\n", "expected_output": "4\n" },
+      { "stdin": "5\n", "expected_output": "2\n" },
+      { "stdin": "0\n", "expected_output": "1\n" },
+      { "stdin": "25\n", "expected_output": "13\n" },
+      { "stdin": "100\n", "expected_output": "292\n" }
+    ]
+  },
+  {
+    "orden": 3,
+    "title": "Cintas — cada pista una vez",
+    "difficulty": "dificil",
+    "statement_html": "<p>Tienes una cinta de <code>N</code> minutos y varias pistas. Llénala lo más posible, pero <strong>cada pista se graba una vez o ninguna</strong>.</p><p>La primera línea trae las duraciones; la segunda, los minutos de la cinta.</p><pre><code>Entrada:\n30 25 50 20\n100\n\nSalida:\n100</code></pre><p>Este es el mismo código de Monedas con <strong>una línea distinta</strong>. Encuéntrala.</p>",
+    "hint_html": "<p>El ciclo de la cinta va de mayor a menor: <code>range(total, duracion - 1, -1)</code>. Así <code>dp[m - duracion]</code> todavía no incluye esta pista.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Cintas\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Llena una cinta al maximo usando cada pista a lo sumo una vez\n    (mochila 0/1).\n'''\n\n\ndef solve_cintas(duraciones, minutos_totales):\n    '''\n    Calcula los minutos maximos que se pueden grabar.\n\n    Parametros:\n        duraciones (list): duracion de cada pista\n        minutos_totales (int): largo de la cinta\n\n    Retorna:\n        int: minutos llenados en el mejor caso\n    '''\n    # dp[m] = minutos maximos que se pueden llenar teniendo m de cinta\n    dp = [0] * (minutos_totales + 1)\n\n    for duracion in duraciones:\n        # ATRAS. Es LA linea que separa este problema del de Monedas:\n        # al ir de mayor a menor, dp[m - duracion] todavia NO incluye\n        # esta pista, asi que entra maximo una vez\n        for m in range(minutos_totales, duracion - 1, -1):\n            # No grabarla, o grabarla: se escoge lo que llene mas\n            dp[m] = max(dp[m], dp[m - duracion] + duracion)\n\n    return dp[minutos_totales]\n\n\n# Inicio\nduraciones = [int(x) for x in input().split()]\nminutos = int(input())\nprint(solve_cintas(duraciones, minutos))\n# Fin</code></pre><p>Para ver por qué la dirección importa, hay que escoger bien el ejemplo: con una pista de 3 minutos y una cinta de <strong>5</strong>, adelante y atrás dan lo mismo. El error solo se asoma cuando la cinta es <strong>al menos el doble</strong> de la pista.</p><p>Con una pista de 3 y una cinta de 6:</p><table><thead><tr><th>m</th><th>Consulta</th><th>Vale</th><th>dp[m]</th></tr></thead><tbody><tr><td>3</td><td><code>dp[0] + 3</code></td><td>0</td><td>3</td></tr><tr><td>4</td><td><code>dp[1] + 3</code></td><td>0</td><td>3</td></tr><tr><td>5</td><td><code>dp[2] + 3</code></td><td>0</td><td>3</td></tr><tr><td>6</td><td><code>dp[3] + 3</code></td><td><b>3 — ya usó la pista</b></td><td><b>6</b> ❌</td></tr></tbody></table><p>Yendo hacia atrás, cuando se calcula <code>dp[6]</code> la casilla <code>dp[3]</code> todavía está intacta, así que la pista no se puede grabar dos veces. Resultado correcto: 3.</p>",
+    "starter_code": "'''\nPrograma: Cintas\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef solve_cintas(duraciones, minutos_totales):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "30 25 50 20\n100\n", "expected_output": "100\n" },
+      { "stdin": "3 5\n8\n", "expected_output": "8\n" },
+      { "stdin": "3\n6\n", "expected_output": "3\n" },
+      { "stdin": "5 10 15\n30\n", "expected_output": "30\n" },
+      { "stdin": "3 7 5\n15\n", "expected_output": "15\n" },
+      { "stdin": "7 11\n10\n", "expected_output": "7\n" }
+    ]
+  }
+]
