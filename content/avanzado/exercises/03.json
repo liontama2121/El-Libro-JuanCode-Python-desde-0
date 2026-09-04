@@ -1,0 +1,49 @@
+[
+  {
+    "orden": 1,
+    "title": "Buscaminas",
+    "difficulty": "medio",
+    "statement_html": "<p>El ejercicio completo: varios campos, cada uno con sus dimensiones, hasta la línea <code>0 0</code>.</p><pre><code>Entrada:\n4 4\n*...\n....\n.*..\n....\n3 5\n**...\n.....\n.*...\n0 0\n\nSalida:\nField #1:\n*100\n2210\n1*10\n1110\n\nField #2:\n**100\n33200\n1*100</code></pre><p>Las minas se copian tal cual. Cada <code>.</code> se reemplaza por cuántas minas tiene entre sus <strong>ocho</strong> vecinas.</p>",
+    "hint_html": "<p>Recorre <code>dx</code> y <code>dy</code> en <code>(-1, 0, 1)</code>, sáltate <code>(0, 0)</code> y valida <code>0 &lt;= ni &lt; n and 0 &lt;= nj &lt; m</code> antes de mirar la celda.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Buscaminas\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Cuenta las minas vecinas de cada celda vacia y reconstruye el campo\n    en el formato que pide el juez.\n'''\n\nimport sys\n\n\ndef resolver_campo(grid, n, m):\n    '''\n    Reemplaza cada celda vacia por su numero de minas vecinas.\n\n    Parametros:\n        grid (list): las n lineas del campo\n        n (int): filas\n        m (int): columnas\n\n    Retorna:\n        list: las n lineas transformadas\n    '''\n    salida = []\n\n    for i in range(n):\n        fila = []\n        for j in range(m):\n            # Las minas se conservan tal cual: solo se cuentan vecinos\n            # de las celdas vacias\n            if grid[i][j] == '*':\n                fila.append('*')\n                continue\n\n            minas = 0\n\n            # Las nueve combinaciones de dx y dy son los 8 vecinos\n            # mas la celda misma\n            for dx in (-1, 0, 1):\n                for dy in (-1, 0, 1):\n                    if dx == 0 and dy == 0:\n                        continue\n\n                    ni = i + dx\n                    nj = j + dy\n\n                    # El guardia del borde. Sin el, por la izquierda\n                    # Python lee desde el final (indice negativo) y por\n                    # la derecha lanza IndexError\n                    if 0 <= ni < n and 0 <= nj < m:\n                        if grid[ni][nj] == '*':\n                            minas += 1\n\n            fila.append(str(minas))\n\n        salida.append(\"\".join(fila))\n\n    return salida\n\n\n# Inicio\ndata = sys.stdin.read().split(\"\\n\")\nidx = 0\ncampo_num = 1\nprimero = True\n\nwhile idx < len(data):\n    linea = data[idx].strip()\n\n    if not linea:\n        idx += 1\n        continue\n\n    partes = linea.split()\n    n = int(partes[0])\n    m = int(partes[1])\n\n    # \"0 0\" cierra la entrada y NO es un campo: no lleva Field #\n    if n == 0 and m == 0:\n        break\n\n    idx += 1\n    grid = []\n    for _ in range(n):\n        grid.append(data[idx])\n        idx += 1\n\n    # El separador va ENTRE campos\n    if not primero:\n        print()\n    primero = False\n\n    print(f\"Field #{campo_num}:\")\n    for fila in resolver_campo(grid, n, m):\n        print(fila)\n\n    campo_num += 1\n# Fin</code></pre><p>Lo que decide este problema no es contar: es <strong>el borde</strong>.</p><ul><li><strong>Los índices negativos no fallan en Python.</strong> Desde la celda (0,0), el vecino de arriba a la izquierda es <code>grid[-1][-1]</code>, que devuelve la esquina opuesta del campo. El programa corre, no avisa nada y cuenta minas que están al otro lado.</li><li><strong>Los positivos sí fallan.</strong> En la esquina derecha, la columna <code>m</code> no existe y salta <code>IndexError</code>. Por eso hay que validar los dos extremos, no solo uno.</li><li><strong>El <code>continue</code> de <code>(0,0)</code></strong> evita que una celda se mire a sí misma.</li></ul><p>Y del formato: la línea <code>0 0</code> <strong>no</strong> es un campo — imprimirle un <code>Field #</code> ya es otra salida — y el separador va entre campos, no después de cada uno.</p>",
+    "starter_code": "'''\nPrograma: Buscaminas\nAutor:\nFecha:\nDescripcion:\n'''\n\nimport sys\n\n\ndef resolver_campo(grid, n, m):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "4 4\n*...\n....\n.*..\n....\n3 5\n**...\n.....\n.*...\n0 0\n",
+        "expected_output": "Field #1:\n*100\n2210\n1*10\n1110\n\nField #2:\n**100\n33200\n1*100\n"
+      },
+      {
+        "stdin": "1 1\n*\n0 0\n",
+        "expected_output": "Field #1:\n*\n"
+      },
+      {
+        "stdin": "1 1\n.\n0 0\n",
+        "expected_output": "Field #1:\n0\n"
+      },
+      {
+        "stdin": "2 2\n**\n**\n0 0\n",
+        "expected_output": "Field #1:\n**\n**\n"
+      },
+      {
+        "stdin": "3 3\n...\n.*.\n...\n0 0\n",
+        "expected_output": "Field #1:\n111\n1*1\n111\n"
+      }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "El vecindario de una celda",
+    "difficulty": "facil",
+    "statement_html": "<p>Solo la parte que se equivoca todo el mundo: contar los vecinos de <strong>una</strong> celda, incluida la de una esquina.</p><p>La entrada trae <code>n</code> y <code>m</code>, luego el campo, y en la última línea la fila y la columna de la celda a consultar. Imprime cuántas minas tiene alrededor.</p><pre><code>Entrada:\n3 3\n*.*\n...\n*.*\n1 1\n\nSalida:\n4</code></pre>",
+    "hint_html": "<p>Si la celda consultada es una mina, el enunciado igual pide contar sus vecinas. El guardia del borde va <strong>antes</strong> de leer <code>grid[ni][nj]</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Vecinos de una celda\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Practica aislada del recorrido de las 8 direcciones con validacion\n    de bordes.\n'''\n\nimport sys\n\n\ndef contar_vecinas(grid, n, m, i, j):\n    '''\n    Cuenta las minas alrededor de la celda (i, j).\n\n    Parametros:\n        grid (list): lineas del campo\n        n (int): filas\n        m (int): columnas\n        i (int): fila de la celda\n        j (int): columna de la celda\n\n    Retorna:\n        int: cuantas de las 8 vecinas son minas\n    '''\n    minas = 0\n\n    for dx in (-1, 0, 1):\n        for dy in (-1, 0, 1):\n            if dx == 0 and dy == 0:\n                continue\n\n            ni = i + dx\n            nj = j + dy\n\n            if 0 <= ni < n and 0 <= nj < m:\n                if grid[ni][nj] == '*':\n                    minas += 1\n\n    return minas\n\n\n# Inicio\ndata = sys.stdin.read().split(\"\\n\")\n\nprimera = data[0].split()\nn = int(primera[0])\nm = int(primera[1])\n\ngrid = []\nfor k in range(1, n + 1):\n    grid.append(data[k])\n\nconsulta = data[n + 1].split()\ni = int(consulta[0])\nj = int(consulta[1])\n\nprint(contar_vecinas(grid, n, m, i, j))\n# Fin</code></pre><p>Pruébalo con la celda <code>0 0</code> de ese mismo campo: ella misma es una mina, y sus tres vecinas que existen — derecha, abajo y diagonal — están vacías, así que la respuesta es <strong>0</strong>. Si tu programa devuelve 2, te falta el guardia del borde: está leyendo las minas de la esquina opuesta por índice negativo.</p><p>El orden dentro del ciclo es el que importa: primero se descarta <code>(0,0)</code>, después se calcula el vecino, y <strong>solo entonces</strong> se pregunta si existe. Preguntar después de leer <code>grid[ni][nj]</code> ya sería tarde.</p>",
+    "starter_code": "'''\nPrograma: Vecinos de una celda\nAutor:\nFecha:\nDescripcion:\n'''\n\nimport sys\n\n\ndef contar_vecinas(grid, n, m, i, j):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "3 3\n*.*\n...\n*.*\n1 1\n", "expected_output": "4\n" },
+      { "stdin": "3 3\n*.*\n...\n*.*\n0 0\n", "expected_output": "0\n" },
+      { "stdin": "4 4\n*...\n....\n.*..\n....\n1 0\n", "expected_output": "2\n" },
+      { "stdin": "2 2\n**\n**\n0 0\n", "expected_output": "3\n" },
+      { "stdin": "1 1\n.\n0 0\n", "expected_output": "0\n" }
+    ]
+  }
+]

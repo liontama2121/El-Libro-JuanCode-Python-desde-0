@@ -1,0 +1,101 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Qué hace `for linea in sys.stdin`?",
+    "data": { "options": [
+      { "id": "a", "text": "Lee una línea" },
+      { "id": "b", "text": "Lee todas las líneas hasta EOF" },
+      { "id": "c", "text": "Lee un archivo específico del disco" },
+      { "id": "d", "text": "Espera a que el usuario escriba y presione Enter una vez" }
+    ]},
+    "correct": { "option_id": "b" },
+    "explanation": "sys.stdin se comporta como una lista de líneas que el juez va entregando. El for termina solo cuando el archivo se acaba: eso es EOF, y no hace falta ni contador ni marca de fin."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Si usamos input() dentro de un bucle infinito, ¿cómo terminamos al llegar a EOF?",
+    "data": { "options": [
+      { "id": "a", "text": "Con un break manual cuando llegue una línea vacía" },
+      { "id": "b", "text": "Con try / except EOFError" },
+      { "id": "c", "text": "No se puede: toca usar sys.stdin" },
+      { "id": "d", "text": "input() devuelve None y se compara con None" }
+    ]},
+    "correct": { "option_id": "b" },
+    "explanation": "Al agotarse la entrada, input() no devuelve nada especial: lanza EOFError. Por eso el ciclo se corta atrapando la excepción, no comparando el valor."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué NO usar print(\"Ingrese numeros:\") en DOMjudge?",
+    "data": { "options": [
+      { "id": "a", "text": "Porque es lento" },
+      { "id": "b", "text": "Porque el juez compara la salida carácter por carácter y esa línea sobra" },
+      { "id": "c", "text": "No importa, el juez ignora los mensajes" },
+      { "id": "d", "text": "Porque print no funciona en DOMjudge" }
+    ]},
+    "correct": { "option_id": "b" },
+    "explanation": "El juez no es una persona: no ve un mensaje amable, ve una línea de más. Todo lo que sigue queda corrido y la respuesta es Wrong Answer aunque tus cuentas estén bien."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "medio",
+    "prompt": "La entrada trae las líneas \"2 3\" y \"10 20\". ¿Qué imprime?",
+    "code_snippet": "import sys\n\nfor linea in sys.stdin:\n    a, b = linea.split()\n    print(a + b)",
+    "data": { "options": [
+      { "id": "a", "text": "23\n1020" },
+      { "id": "b", "text": "5\n30" },
+      { "id": "c", "text": "Lanza TypeError" },
+      { "id": "d", "text": "5 30" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "split() devuelve TEXTO. Sobre dos textos, el + concatena en vez de sumar: \"2\" + \"3\" es \"23\". Falta convertir con int() antes de operar."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este programa falla con Wrong Answer aunque las sumas están bien. ¿En qué línea está el problema?",
+    "data": { "lines": [
+      "import sys",
+      "print(\"Ingrese los pares de numeros:\")",
+      "for linea in sys.stdin:",
+      "    a, b = map(int, linea.split())",
+      "    print(a + b)"
+    ]},
+    "correct": { "line_number": 2 },
+    "explanation": "El mensaje sale por la misma salida que compara el juez. Esa línea extra desalinea todo lo demás. En competencia solo se imprime lo que el enunciado pide."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa la lectura hasta EOF.",
+    "data": {
+      "code": "import sys\n\nfor linea in ___1___:\n    partes = linea.___2___\n    if len(partes) < 2:\n        continue\n    print(int(partes[0]) + int(partes[1]))",
+      "blanks": [
+        { "id": "1", "pista": "la entrada que alimenta el juez" },
+        { "id": "2", "pista": "partir la línea por espacios" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["sys.stdin"],
+      "2": ["split()"]
+    }},
+    "explanation": "sys.stdin recorrido con for llega hasta EOF sin necesitar contador. split() sin argumentos trata varios espacios seguidos como uno solo, que es justo lo que pide el enunciado."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "facil",
+    "prompt": "Arma la solución de Suma hasta el fin",
+    "data": { "lines": [
+      { "id": "s1", "text": "import sys", "indent": 0 },
+      { "id": "s2", "text": "for linea in sys.stdin:", "indent": 0 },
+      { "id": "s3", "text": "partes = linea.split()", "indent": 1 },
+      { "id": "s4", "text": "if len(partes) < 2:", "indent": 1 },
+      { "id": "s5", "text": "continue", "indent": 2 },
+      { "id": "s6", "text": "print(int(partes[0]) + int(partes[1]))", "indent": 1 }
+    ]},
+    "correct": { "order": ["s1", "s2", "s3", "s4", "s5", "s6"] },
+    "explanation": "El guardia contra líneas cortas va ANTES de leer partes[0] y partes[1]. Si va después, una línea vacía al final del archivo revienta con IndexError."
+  }
+]

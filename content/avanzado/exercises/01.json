@@ -1,0 +1,32 @@
+[
+  {
+    "orden": 1,
+    "title": "Suma hasta el fin",
+    "difficulty": "facil",
+    "statement_html": "<p>El ejercicio del enunciado, tal como lo pide el juez: lee pares de enteros <strong>hasta EOF</strong> e imprime la suma de cada par.</p><pre><code>Entrada:\n2 3\n-4 10\n100 250\n\nSalida:\n5\n6\n350</code></pre><p>Sin contador al inicio, sin marca de fin, y <strong>sin un solo mensaje</strong> que el enunciado no pida.</p>",
+    "hint_html": "<p><code>for linea in sys.stdin:</code> recorre hasta que se acabe la entrada. Acuérdate de convertir con <code>int()</code>: <code>split()</code> devuelve texto.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Suma hasta el fin\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Lee pares de enteros hasta EOF e imprime la suma de cada par,\n    en el formato exacto que espera DOMjudge.\n'''\n\nimport sys\n\n# Inicio\n# sys.stdin se recorre como una lista de lineas: el for termina solo\n# cuando la entrada se acaba. No hay contador ni marca de fin\nfor linea in sys.stdin:\n    partes = linea.split()\n\n    # Blindaje: una linea vacia al final del archivo es normal.\n    # Sin esto, partes[0] reventaria con IndexError\n    if len(partes) < 2:\n        continue\n\n    # split() devuelve TEXTO: sin int(), el + concatenaria\n    a = int(partes[0])\n    b = int(partes[1])\n\n    print(a + b)\n# Fin</code></pre><p>Tres decisiones que separan un <em>Accepted</em> de un <em>Wrong Answer</em>:</p><ul><li><strong>Leer hasta EOF, no hasta un contador.</strong> El enunciado dice \"cero o más líneas\" y \"termina al alcanzar EOF\". Un <code>n = int(input())</code> se tragaría el primer par creyendo que es la cantidad.</li><li><strong>El guardia de la línea corta.</strong> Casi todos los archivos terminan con un salto de línea, así que la última vuelta puede traer una línea vacía. <code>continue</code> la ignora sin romper nada.</li><li><strong>Nada de mensajes.</strong> El juez compara carácter por carácter. Un <code>print(\"Ingrese...\")</code> desalinea toda la salida.</li></ul><p>La otra forma válida, si prefieres <code>input()</code>:</p><pre><code>while True:\n    try:\n        linea = input()\n    except EOFError:\n        break\n    ...</code></pre><p>Al agotarse la entrada, <code>input()</code> no devuelve nada especial: <strong>lanza <code>EOFError</code></strong>. Por eso el corte va con <code>try/except</code> y no con una comparación.</p>",
+    "starter_code": "'''\nPrograma: Suma hasta el fin\nAutor:\nFecha:\nDescripcion:\n'''\n\nimport sys\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "2 3\n-4 10\n100 250\n", "expected_output": "5\n6\n350\n" },
+      { "stdin": "1000000000 1000000000\n", "expected_output": "2000000000\n" },
+      { "stdin": "5    7\n-3   -9\n", "expected_output": "12\n-12\n" },
+      { "stdin": "", "expected_output": "" },
+      { "stdin": "8 9\n\n", "expected_output": "17\n" }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "La otra forma: try / except EOFError",
+    "difficulty": "facil",
+    "statement_html": "<p>El mismo problema, pero leyendo con <code>input()</code> en vez de <code>sys.stdin</code>. Sirve para entender <strong>qué pasa exactamente</strong> cuando la entrada se acaba.</p><p>Misma entrada y misma salida que el ejercicio anterior.</p>",
+    "hint_html": "<p><code>input()</code> no devuelve <code>None</code> ni cadena vacía al final: <strong>lanza <code>EOFError</code></strong>. El ciclo se corta atrapando esa excepción.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Suma hasta el fin (con input y EOFError)\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    La misma lectura hasta EOF, hecha con input() y try/except.\n'''\n\n# Inicio\nwhile True:\n    try:\n        linea = input()\n    except EOFError:\n        # La entrada se acabo: no es un error del programa, es el final\n        break\n\n    partes = linea.split()\n    if len(partes) < 2:\n        continue\n\n    print(int(partes[0]) + int(partes[1]))\n# Fin</code></pre><p>Las dos formas son correctas y el juez las acepta igual. La diferencia está en el detalle:</p><ul><li><strong>La excepción no es un fallo.</strong> <code>EOFError</code> es la manera que tiene Python de decir \"ya no hay más\". Atraparla es el uso legítimo de <code>try/except</code>, no un parche.</li><li><strong>El <code>break</code> va adentro del <code>except</code>.</strong> Puesto después del <code>try</code>, cortaría en la primera vuelta.</li><li><strong>Con entradas grandes, <code>sys.stdin</code> gana.</strong> <code>input()</code> hace más trabajo por línea; con cien mil líneas la diferencia se nota. Por eso la versión recomendada es la del ejercicio anterior.</li></ul>",
+    "starter_code": "'''\nPrograma: Suma hasta el fin (con input y EOFError)\nAutor:\nFecha:\nDescripcion:\n'''\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "2 3\n-4 10\n100 250\n", "expected_output": "5\n6\n350\n" },
+      { "stdin": "", "expected_output": "" },
+      { "stdin": "42 8\n", "expected_output": "50\n" }
+    ]
+  }
+]

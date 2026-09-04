@@ -1,0 +1,45 @@
+[
+  {
+    "orden": 1,
+    "title": "Decodificando el mensaje",
+    "difficulty": "medio",
+    "statement_html": "<p>El ejercicio completo del enunciado: varios casos, cada uno con varias líneas, separados por líneas en blanco.</p><pre><code>Entrada:\n2\n\nHey good lawyer\nas I previously previewed\nyam does a soup\n\nFirst I give money to Teresa\nafter I inform dad of\nyour horrible soup\n\nSalida:\nCase #1:\nHow\nare\nyou\n\nCase #2:\nFine\nand\nyou</code></pre><p>Cuidado con dos cosas: la posición <strong>no avanza</strong> cuando una palabra es muy corta, y la línea en blanco va <strong>entre</strong> casos, no después del último.</p>",
+    "hint_html": "<p>Lee todo de una con <code>sys.stdin.read().split(\"\\n\")</code> y muévete con un índice. La posición vive dentro de la función que decodifica una línea, para que nazca en 0 cada vez.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Decodificando el mensaje\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Decodifica cada linea tomando la letra de la posicion que avanza\n    solo cuando la palabra alcanza, y respeta el formato de casos\n    que exige el juez.\n'''\n\nimport sys\n\n\ndef decodificar_linea(linea):\n    '''\n    Decodifica una linea del mensaje.\n\n    Parametros:\n        linea (str): las palabras separadas por espacios\n\n    Retorna:\n        str: la palabra oculta en esa linea\n    '''\n    palabras = linea.split()\n    resultado = []\n\n    # La posicion nace en 0 en CADA linea: cada una produce su propia\n    # palabra, independiente de la anterior\n    posicion = 0\n\n    for palabra in palabras:\n        if posicion < len(palabra):\n            resultado.append(palabra[posicion])\n            # El incremento va ADENTRO del if: si la palabra no alcanza,\n            # se busca esa MISMA posicion en la siguiente\n            posicion += 1\n\n    return \"\".join(resultado)\n\n\n# Inicio\ndata = sys.stdin.read().split(\"\\n\")\nT = int(data[0].strip())\n\n# data[0] es T y data[1] es la linea en blanco: el primer caso empieza en 2\nidx = 2\n\nfor caso in range(1, T + 1):\n    # El separador va ENTRE casos: se imprime antes de cada uno menos\n    # del primero, y asi no sobra al final\n    if caso > 1:\n        print()\n\n    print(f\"Case #{caso}:\")\n\n    # El caso se acaba en la linea en blanco\n    while idx < len(data) and data[idx].strip() != \"\":\n        print(decodificar_linea(data[idx]))\n        idx += 1\n\n    idx += 1  # saltar esa linea en blanco\n# Fin</code></pre><p>El corazón del problema cabe en dos líneas, y una de ellas es la que casi todos ponen mal:</p><ul><li><strong><code>posicion += 1</code> va adentro del <code>if</code>.</strong> Es la traducción literal de <em>\"se ignora y se intenta obtener esa misma posición de la siguiente palabra\"</em>. Afuera, la posición avanzaría al saltar y <code>as I previously previewed</code> daría <code>aee</code> en vez de <code>are</code>.</li><li><strong>La posición vive dentro de la función.</strong> Así vuelve a 0 en cada línea sin tener que acordarse de reiniciarla.</li></ul><p>Y del formato:</p><ul><li><strong><code>idx = 2</code></strong> porque después de <code>T</code> viene una línea en blanco antes del primer caso.</li><li><strong>El <code>idx += 1</code> final va fuera del <code>while</code></strong>: es el que consume la línea en blanco que cerró el caso. Adentro se comería líneas del mensaje.</li><li><strong><code>if caso > 1: print()</code></strong> deja el separador exactamente entre bloques. Imprimirlo al final de cada caso agrega una línea de más al terminar, y para el juez eso ya es otra salida.</li></ul>",
+    "starter_code": "'''\nPrograma: Decodificando el mensaje\nAutor:\nFecha:\nDescripcion:\n'''\n\nimport sys\n\n\ndef decodificar_linea(linea):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      {
+        "stdin": "2\n\nHey good lawyer\nas I previously previewed\nyam does a soup\n\nFirst I give money to Teresa\nafter I inform dad of\nyour horrible soup\n",
+        "expected_output": "Case #1:\nHow\nare\nyou\n\nCase #2:\nFine\nand\nyou\n"
+      },
+      {
+        "stdin": "1\n\nHey good lawyer\n",
+        "expected_output": "Case #1:\nHow\n"
+      },
+      {
+        "stdin": "1\n\na I xyz\n",
+        "expected_output": "Case #1:\nay\n"
+      },
+      {
+        "stdin": "2\n\nHola\n\nQue tal\n",
+        "expected_output": "Case #1:\nH\n\nCase #2:\nQa\n"
+      }
+    ]
+  },
+  {
+    "orden": 2,
+    "title": "La posición que no avanza",
+    "difficulty": "facil",
+    "statement_html": "<p>Solo la parte difícil, para practicarla aislada. Escribe la función que decodifica <strong>una</strong> línea.</p><p>La entrada trae una línea de palabras; imprime la palabra decodificada.</p><pre><code>Entrada:\nas I previously previewed\n\nSalida:\nare</code></pre><p>Prueba también con <code>a I xyz</code>: la respuesta es <code>ay</code>, no <code>aI</code> ni <code>az</code>.</p>",
+    "hint_html": "<p>Dos variables: la lista de letras y la posición. La posición <strong>solo</strong> sube dentro del <code>if</code>.</p>",
+    "solution_html": "<pre><code>'''\nPrograma: Decodificar una linea\nAutor:    Ana Gomez\nFecha:    2026-09-04\nDescripcion:\n    Practica aislada de la regla que decide el problema: la posicion\n    avanza solo cuando la palabra alcanza.\n'''\n\n\ndef decodificar_linea(linea):\n    '''\n    Toma la letra de la posicion actual de cada palabra que alcance.\n\n    Parametros:\n        linea (str): palabras separadas por espacios\n\n    Retorna:\n        str: la palabra decodificada\n    '''\n    resultado = []\n    posicion = 0\n\n    for palabra in linea.split():\n        if posicion < len(palabra):\n            resultado.append(palabra[posicion])\n            posicion += 1\n\n    return \"\".join(resultado)\n\n\n# Inicio\nprint(decodificar_linea(input()))\n# Fin</code></pre><p>Sigue la traza de <code>a I xyz</code>, que es el caso que descubre el error:</p><table><thead><tr><th>Palabra</th><th>posicion</th><th>¿alcanza?</th><th>Toma</th><th>posicion queda</th></tr></thead><tbody><tr><td><code>a</code></td><td>0</td><td>✅</td><td><b>a</b></td><td>1</td></tr><tr><td><code>I</code></td><td>1</td><td>❌ mide 1</td><td>—</td><td><b>1</b></td></tr><tr><td><code>xyz</code></td><td>1</td><td>✅</td><td><b>y</b></td><td>2</td></tr></tbody></table><p>Sale <code>ay</code>. Con el incremento afuera del <code>if</code> saldría <code>az</code>, que se ve razonable y está mal.</p>",
+    "starter_code": "'''\nPrograma: Decodificar una linea\nAutor:\nFecha:\nDescripcion:\n'''\n\n\ndef decodificar_linea(linea):\n    pass\n\n\n# Inicio\n\n# Fin\n",
+    "tests": [
+      { "stdin": "as I previously previewed\n", "expected_output": "are\n" },
+      { "stdin": "Hey good lawyer\n", "expected_output": "How\n" },
+      { "stdin": "a I xyz\n", "expected_output": "ay\n" },
+      { "stdin": "yam does a soup\n", "expected_output": "you\n" },
+      { "stdin": "I I I\n", "expected_output": "I\n" }
+    ]
+  }
+]

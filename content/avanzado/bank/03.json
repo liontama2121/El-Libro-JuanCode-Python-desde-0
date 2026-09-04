@@ -1,0 +1,259 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Cuántos vecinos tiene una celda interna de la cuadrícula?",
+    "data": {
+      "options": [
+        {
+          "id": "a",
+          "text": "4"
+        },
+        {
+          "id": "b",
+          "text": "8"
+        },
+        {
+          "id": "c",
+          "text": "9"
+        },
+        {
+          "id": "d",
+          "text": "Depende del tamaño del campo"
+        }
+      ]
+    },
+    "correct": {
+      "option_id": "b"
+    },
+    "explanation": "Horizontales, verticales y diagonales: 8. Las nueve combinaciones de dx y dy incluyen (0,0), que es la celda misma y no cuenta."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "¿Por qué hay que validar `0 <= ni < n`?",
+    "data": {
+      "options": [
+        {
+          "id": "a",
+          "text": "Por rendimiento"
+        },
+        {
+          "id": "b",
+          "text": "Para no salirse de la matriz: en Python un índice negativo lee desde el final y cuenta minas del otro lado del campo"
+        },
+        {
+          "id": "c",
+          "text": "Por el formato de salida que pide el juez"
+        },
+        {
+          "id": "d",
+          "text": "Para que no se repitan vecinos"
+        }
+      ]
+    },
+    "correct": {
+      "option_id": "b"
+    },
+    "explanation": "grid[-1][-1] no lanza error: devuelve la esquina opuesta. El programa corre, no avisa nada y el conteo sale mal. Ese es el peor tipo de bug."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "Con dx y dy en (-1, 0, 1) se generan 9 combinaciones. ¿Por qué se salta (0, 0)?",
+    "data": {
+      "options": [
+        {
+          "id": "a",
+          "text": "Porque siempre es una mina"
+        },
+        {
+          "id": "b",
+          "text": "Porque es la celda misma, no un vecino"
+        },
+        {
+          "id": "c",
+          "text": "Para ahorrar memoria"
+        },
+        {
+          "id": "d",
+          "text": "Porque ya se contó en la iteración anterior"
+        }
+      ]
+    },
+    "correct": {
+      "option_id": "b"
+    },
+    "explanation": "Sumar 0 a la fila y 0 a la columna deja la misma posición. Sin el continue, una celda se contaría a sí misma."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "El campo es 4×4 y se cuentan los vecinos de la esquina superior DERECHA (0, 3), sin validar el borde. ¿Qué pasa?",
+    "code_snippet": "campo = [\"*...\", \"....\", \".*..\", \"....\"]\n\nminas = 0\ni, j = 0, 3\nfor dx in (-1, 0, 1):\n    for dy in (-1, 0, 1):\n        if dx == 0 and dy == 0:\n            continue\n        if campo[i + dx][j + dy] == '*':\n            minas += 1\nprint(minas)",
+    "data": {
+      "options": [
+        {
+          "id": "a",
+          "text": "Lanza IndexError"
+        },
+        {
+          "id": "b",
+          "text": "Imprime 0"
+        },
+        {
+          "id": "c",
+          "text": "Imprime 1"
+        },
+        {
+          "id": "d",
+          "text": "Imprime 2"
+        }
+      ]
+    },
+    "correct": {
+      "option_id": "a"
+    },
+    "explanation": "Aquí está la asimetría que hay que conocer: el vecino de la derecha es la columna 4, que NO existe, y un índice positivo fuera de rango sí lanza IndexError. En cambio, en la esquina izquierda los índices negativos no fallan: leen desde el final en silencio. Por eso hay que validar los dos lados."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "medio",
+    "prompt": "Este conteo funciona en el centro del campo pero se rompe o miente en los bordes. ¿En qué línea falta algo?",
+    "data": {
+      "lines": [
+        "for dx in (-1, 0, 1):",
+        "    for dy in (-1, 0, 1):",
+        "        if dx == 0 and dy == 0:",
+        "            continue",
+        "        ni, nj = i + dx, j + dy",
+        "        if grid[ni][nj] == '*':",
+        "            minas += 1"
+      ]
+    },
+    "correct": {
+      "line_number": 6
+    },
+    "explanation": "Antes de leer grid[ni][nj] falta preguntar si esa celda existe: 0 <= ni < n and 0 <= nj < m. Sin ese guardia, por la izquierda cuenta minas del otro extremo del campo y por la derecha lanza IndexError."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa el recorrido de los ocho vecinos.",
+    "data": {
+      "code": "for dx in (-1, 0, 1):\n    for dy in (-1, 0, 1):\n        if ___1___:\n            continue\n        ni, nj = i + dx, j + dy\n        if ___2___ and 0 <= nj < m:\n            if grid[ni][nj] == '*':\n                minas += 1",
+      "blanks": [
+        {
+          "id": "1",
+          "pista": "cuando el desplazamiento es nulo, esa es la celda misma"
+        },
+        {
+          "id": "2",
+          "pista": "la fila del vecino tiene que existir"
+        }
+      ]
+    },
+    "correct": {
+      "answers": {
+        "1": [
+          "dx == 0 and dy == 0"
+        ],
+        "2": [
+          "0 <= ni < n"
+        ]
+      }
+    },
+    "explanation": "El primer hueco evita contarse a uno mismo; el segundo ataja los índices negativos, que en Python no fallan sino que leen desde el final de la lista."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "La entrada termina con la línea \"0 0\". ¿Qué hay que hacer con ella?",
+    "data": {
+      "options": [
+        {
+          "id": "a",
+          "text": "Procesarla como un campo vacío e imprimir su Field #"
+        },
+        {
+          "id": "b",
+          "text": "Detectarla y salir sin imprimir nada para ella"
+        },
+        {
+          "id": "c",
+          "text": "Imprimir una línea en blanco y seguir leyendo"
+        },
+        {
+          "id": "d",
+          "text": "Ignorarla: el archivo se acaba ahí de todos modos"
+        }
+      ]
+    },
+    "correct": {
+      "option_id": "b"
+    },
+    "explanation": "El enunciado lo dice: esa línea NO es un campo. Imprimir un 'Field #' de más es una salida distinta a la esperada, aunque todo lo anterior esté bien."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "dificil",
+    "prompt": "Arma el conteo de minas vecinas de una celda",
+    "data": {
+      "lines": [
+        {
+          "id": "v1",
+          "text": "minas = 0",
+          "indent": 0
+        },
+        {
+          "id": "v2",
+          "text": "for dx in (-1, 0, 1):",
+          "indent": 0
+        },
+        {
+          "id": "v3",
+          "text": "for dy in (-1, 0, 1):",
+          "indent": 1
+        },
+        {
+          "id": "v4",
+          "text": "if dx == 0 and dy == 0:",
+          "indent": 2
+        },
+        {
+          "id": "v5",
+          "text": "continue",
+          "indent": 3
+        },
+        {
+          "id": "v6",
+          "text": "ni, nj = i + dx, j + dy",
+          "indent": 2
+        },
+        {
+          "id": "v7",
+          "text": "if 0 <= ni < n and 0 <= nj < m and grid[ni][nj] == '*':",
+          "indent": 2
+        },
+        {
+          "id": "v8",
+          "text": "minas += 1",
+          "indent": 3
+        }
+      ]
+    },
+    "correct": {
+      "order": [
+        "v1",
+        "v2",
+        "v3",
+        "v4",
+        "v5",
+        "v6",
+        "v7",
+        "v8"
+      ]
+    },
+    "explanation": "El orden importa: primero se descarta la celda misma, después se calcula el vecino, y solo entonces se pregunta si existe y si tiene mina. Validar después de leer grid[ni][nj] ya sería tarde."
+  }
+]

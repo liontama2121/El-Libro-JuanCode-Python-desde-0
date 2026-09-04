@@ -1,0 +1,183 @@
+<p class="jc-gancho">Este problema no tiene un algoritmo difícil: es tomar una letra de cada palabra. Lo que tumba a la gente es el <strong>formato</strong> — las líneas en blanco entre casos, el <code>Case #k:</code> exacto, y una regla escondida en una sola frase del enunciado que cambia todo el resultado.</p>
+
+<h2>📖 Enunciado</h2>
+
+<div class="jc-problema">
+
+<h3>Decodificando el mensaje</h3>
+<p><em>Basado en Decoding the message</em></p>
+
+<p><strong>Descripción.</strong> Chico y María viven en pueblos diferentes y envían mensajes por medio de sus padres. Para evitar que otras personas los lean, inventaron un código sencillo.</p>
+
+<p>Para decodificar una línea se toma la <strong>primera letra de la primera palabra</strong>, la <strong>segunda letra de la segunda palabra</strong>, la <strong>tercera letra de la tercera palabra</strong> y así sucesivamente. Si una palabra no tiene la posición requerida, <strong>se ignora</strong> y se intenta obtener esa misma posición de la siguiente palabra. Al terminar la línea se termina también la palabra decodificada; la siguiente línea comienza otra vez desde la primera letra de la primera palabra.</p>
+
+<p><strong>Entrada.</strong> La primera línea contiene el número de casos <code>T</code>, con 1 ≤ T ≤ 30. Después aparece una línea en blanco. Cada caso contiene entre 1 y 100 líneas. Cada línea contiene entre 1 y 30 palabras, separadas por uno o más espacios. Una palabra contiene únicamente letras A-Z, mayúsculas o minúsculas, con máximo 30 caracteres. Una línea en blanco marca el final de cada caso.</p>
+
+<p><strong>Salida.</strong> Para cada caso imprima primero <code>Case #k:</code>, donde <code>k</code> comienza en 1. Después imprima, una por línea, las palabras obtenidas al decodificar cada línea del mensaje. Imprima una línea en blanco <strong>entre</strong> casos consecutivos.</p>
+
+<table>
+  <thead>
+    <tr><th>Ejemplo de entrada</th><th>Ejemplo de salida</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><pre><code>2
+
+Hey good lawyer
+as I previously previewed
+yam does a soup
+
+First I give money to Teresa
+after I inform dad of
+your horrible soup</code></pre></td>
+      <td><pre><code>Case #1:
+How
+are
+you
+
+Case #2:
+Fine
+and
+you</code></pre></td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+<h2>💡 Análisis y estrategia</h2>
+
+<h3>La regla que decide todo</h3>
+
+<p>Léela otra vez: <em>"Si una palabra no tiene la posición requerida, se ignora y se intenta obtener <strong>esa misma posición</strong> de la siguiente palabra."</em></p>
+
+<p>Eso significa que la posición <strong>no es el número de palabra</strong>. Es un contador propio que <strong>solo avanza cuando se logra tomar una letra</strong>.</p>
+
+<pre><code># ❌ Lo que casi todos escriben primero
+for i, palabra in enumerate(palabras):
+    resultado.append(palabra[i])       # explota, y además está mal
+
+# ✅ La posición es su propia variable
+posicion = 0
+for palabra in palabras:
+    if posicion &lt; len(palabra):
+        resultado.append(palabra[posicion])
+        posicion += 1                  # solo avanza si tomó letra</code></pre>
+
+<p>Con <code>"Hey good lawyer"</code> las dos versiones dan lo mismo, porque todas las palabras alcanzan. Pero mira qué pasa con <code>"as I previously previewed"</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>Palabra</th><th>posicion</th><th>¿alcanza?</th><th>Toma</th><th>posicion queda</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>as</code></td><td>0</td><td>✅ sí</td><td><b>a</b></td><td>1</td></tr>
+    <tr><td><code>I</code></td><td>1</td><td>❌ mide 1, no hay posición 1</td><td>—</td><td><b>1</b> (no avanza)</td></tr>
+    <tr><td><code>previously</code></td><td>1</td><td>✅ sí</td><td><b>r</b></td><td>2</td></tr>
+    <tr><td><code>previewed</code></td><td>2</td><td>✅ sí</td><td><b>e</b></td><td>3</td></tr>
+  </tbody>
+</table>
+
+<p>Resultado: <code>are</code>. Si la posición hubiera avanzado al saltarse la <code>I</code>, habría salido <code>aee</code> — y el juez diría Wrong Answer sin explicar por qué.</p>
+
+<h3>Reiniciar en cada línea</h3>
+
+<p><em>"Al terminar la línea se termina también la palabra decodificada; la siguiente línea comienza otra vez desde la primera letra."</em> Cada línea produce <strong>una palabra independiente</strong>: la posición vuelve a 0. Por eso vive dentro de la función, no afuera.</p>
+
+<h3>El formato de la salida</h3>
+
+<p>Tres detalles que el juez sí revisa:</p>
+
+<ul>
+  <li><code>Case #1:</code> — con almohadilla, sin espacio antes de los dos puntos, y empezando en <strong>1</strong>, no en 0.</li>
+  <li>La línea en blanco va <strong>entre</strong> casos. No después del último.</li>
+  <li>La primera línea de la entrada es <code>T</code>, y <strong>después viene una línea en blanco</strong> antes del primer caso.</li>
+</ul>
+
+<h2>💻 Código paso a paso</h2>
+
+<pre><code>import sys
+
+def decodificar_linea(linea):
+    palabras = linea.split()
+    resultado = []
+    posicion = 0
+    for palabra in palabras:
+        if posicion &lt; len(palabra):
+            resultado.append(palabra[posicion])
+            posicion += 1
+    return "".join(resultado)
+
+data = sys.stdin.read().split("\n")
+T = int(data[0].strip())
+idx = 2  # saltar la línea en blanco que va después de T
+
+for caso in range(1, T + 1):
+    if caso &gt; 1:
+        print()
+    print(f"Case #{caso}:")
+    while idx &lt; len(data) and data[idx].strip() != "":
+        print(decodificar_linea(data[idx]))
+        idx += 1
+    idx += 1  # saltar la línea en blanco del final del caso</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Pieza</th><th>Por qué está ahí</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>sys.stdin.read().split("\n")</code></td><td>Trae toda la entrada de una vez. Con casos separados por líneas en blanco, es más cómodo tener la lista completa que ir leyendo de a una</td></tr>
+    <tr><td><code>idx = 2</code></td><td><code>data[0]</code> es T y <code>data[1]</code> es la línea en blanco. El primer caso empieza en <code>data[2]</code></td></tr>
+    <tr><td><code>if caso &gt; 1: print()</code></td><td>La línea en blanco va <strong>entre</strong> casos: se imprime antes de cada uno menos del primero. Así no sobra al final</td></tr>
+    <tr><td><code>while … data[idx].strip() != ""</code></td><td>El caso se acaba en la línea en blanco. El <code>idx &lt; len(data)</code> protege el final del archivo</td></tr>
+    <tr><td><code>idx += 1</code> al final</td><td>Salta esa línea en blanco para que el siguiente caso arranque en su primera línea</td></tr>
+    <tr><td><code>posicion</code> dentro de la función</td><td>Nace en 0 en cada línea. Si viviera afuera, la segunda línea seguiría contando desde donde quedó la primera</td></tr>
+  </tbody>
+</table>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Usar el índice de la palabra como posición</h3>
+<pre><code>for i, palabra in enumerate(palabras):
+    resultado.append(palabra[i])   # ❌ IndexError, y la lógica es otra</code></pre>
+<p>La posición avanza <strong>solo cuando se toma una letra</strong>. No es lo mismo que el número de palabra.</p>
+
+<h3>2. No reiniciar la posición en cada línea</h3>
+<pre><code>posicion = 0            # ❌ afuera del ciclo de líneas
+for linea in lineas:
+    ...</code></pre>
+
+<h3>3. La línea en blanco de más al final</h3>
+<pre><code>print(f"Case #{caso}:")
+...
+print()                 # ❌ deja una línea en blanco después del último caso</code></pre>
+<p>"Entre casos" no es "después de cada caso". Imprimirla antes, saltándose el primero, deja el formato exacto.</p>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Lee la regla del enunciado dos veces antes de codificar: aquí, "esa misma posición" lo cambia todo.</li>
+  <li>El contador de posición es una variable propia, no el índice del ciclo.</li>
+  <li>Lo que el enunciado dice que se reinicia, se reinicia — y donde toca.</li>
+  <li>Separador entre bloques: imprímelo <strong>antes</strong> de cada uno menos del primero.</li>
+  <li>Copia el <code>Case #k:</code> carácter por carácter del enunciado.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>sys.stdin.read().split("\n")</code></td><td>Toda la entrada como lista de líneas</td></tr>
+    <tr><td><code>linea.split()</code></td><td>Palabras, aguantando varios espacios</td></tr>
+    <tr><td><code>palabra[posicion]</code></td><td>La letra en esa posición (desde 0)</td></tr>
+    <tr><td><code>len(palabra)</code></td><td>Para saber si la posición existe</td></tr>
+    <tr><td><code>"".join(lista)</code></td><td>Pega las letras en una palabra</td></tr>
+    <tr><td><code>linea.strip() != ""</code></td><td>¿La línea tiene algo?</td></tr>
+    <tr><td><code>if caso &gt; 1: print()</code></td><td>Separador entre bloques, sin sobrar al final</td></tr>
+  </tbody>
+</table>
+
+<blockquote>El algoritmo era tomar una letra. El problema era leer bien el enunciado.</blockquote>

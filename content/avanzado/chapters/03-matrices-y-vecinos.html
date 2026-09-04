@@ -1,0 +1,222 @@
+<p class="jc-gancho">Ocho vecinos. Suena fácil hasta que estás en la esquina de arriba a la izquierda y tres de esos vecinos no existen. Preguntar por ellos con <code>grid[-1][-1]</code> no da error en Python: <strong>da la esquina opuesta</strong>, y tu campo minado sale mal sin que nada se queje.</p>
+
+<h2>📖 Enunciado</h2>
+
+<div class="jc-problema">
+
+<h3>Buscaminas</h3>
+
+<p><strong>Descripción.</strong> Un campo de Buscaminas se representa mediante una cuadrícula. Cada celda contiene una mina, marcada con <code>*</code>, o está vacía, marcada con <code>.</code>. Para cada celda vacía se debe calcular cuántas minas existen entre sus <strong>ocho vecinas</strong>: horizontales, verticales y diagonales.</p>
+
+<p><strong>Entrada.</strong> Varios campos. Cada campo comienza con dos enteros <code>n</code> y <code>m</code> (filas y columnas), 1 ≤ n, m ≤ 100. Siguen <code>n</code> líneas de <code>m</code> caracteres con <code>*</code> y <code>.</code>. Termina con <code>0 0</code> (esa línea <strong>no</strong> es un campo).</p>
+
+<p><strong>Salida.</strong> Para cada campo imprima <code>Field #k:</code> (k empieza en 1). Luego la cuadrícula transformada: conserve cada <code>*</code> y reemplace cada <code>.</code> por el número de minas vecinas. Imprima una línea en blanco entre campos consecutivos.</p>
+
+<table>
+  <thead>
+    <tr><th>Ejemplo de entrada</th><th>Ejemplo de salida</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><pre><code>4 4
+*...
+....
+.*..
+....
+3 5
+**...
+.....
+.*...
+0 0</code></pre></td>
+      <td><pre><code>Field #1:
+*100
+2210
+1*10
+1110
+
+Field #2:
+**100
+33200
+1*100</code></pre></td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+<h2>💡 Análisis y estrategia</h2>
+
+<h3>La matriz es una lista de textos</h3>
+
+<p>No hace falta convertirla a lista de listas: en Python, un texto ya se indexa por posición. <code>grid[i][j]</code> es el carácter de la fila <code>i</code>, columna <code>j</code>.</p>
+
+<pre><code>grid = ["*...", "....", ".*..", "...."]
+grid[0][0]   # '*'
+grid[2][1]   # '*'</code></pre>
+
+<h3>Los ocho vecinos, sin escribir ocho <code>if</code></h3>
+
+<p>La forma torpe es listar las ocho posiciones a mano. La forma que se usa en competencia es recorrer los desplazamientos:</p>
+
+<pre><code>for dx in (-1, 0, 1):
+    for dy in (-1, 0, 1):
+        if dx == 0 and dy == 0:
+            continue          # ese es uno mismo, no un vecino
+        ni, nj = i + dx, j + dy</code></pre>
+
+<p>Las dos listas de tres valores dan <strong>nueve</strong> combinaciones: los ocho vecinos más <code>(0, 0)</code>, que es la celda misma. Por eso el <code>continue</code>.</p>
+
+<table>
+  <thead>
+    <tr><th>dx, dy</th><th>−1</th><th>0</th><th>+1</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>−1</th><td>↖</td><td>↑</td><td>↗</td></tr>
+    <tr><th>0</th><td>←</td><td><b>tú</b></td><td>→</td></tr>
+    <tr><th>+1</th><td>↙</td><td>↓</td><td>↘</td></tr>
+  </tbody>
+</table>
+
+<h3>El borde: la trampa silenciosa</h3>
+
+<p>En la celda <code>(0, 0)</code>, el vecino de arriba a la izquierda sería <code>(-1, -1)</code>. En otros lenguajes eso revienta. En Python <strong>funciona</strong>: <code>grid[-1][-1]</code> es la última fila, última columna — la esquina opuesta del campo.</p>
+
+<p>Tu programa no falla, no avisa, y cuenta minas que están al otro lado del tablero. Por eso la validación no es opcional:</p>
+
+<pre><code>if 0 &lt;= ni &lt; n and 0 &lt;= nj &lt; m:
+    ...</code></pre>
+
+<p>Ese <code>0 &lt;= ni</code> es exactamente el que ataja los índices negativos.</p>
+
+<h2>💻 Código paso a paso</h2>
+
+<pre><code>import sys
+
+def resolver_campo(grid, n, m):
+    salida = []
+    for i in range(n):
+        fila = []
+        for j in range(m):
+            if grid[i][j] == '*':
+                fila.append('*')
+            else:
+                minas = 0
+                for dx in (-1, 0, 1):
+                    for dy in (-1, 0, 1):
+                        if dx == 0 and dy == 0:
+                            continue
+                        ni, nj = i + dx, j + dy
+                        if 0 &lt;= ni &lt; n and 0 &lt;= nj &lt; m:
+                            if grid[ni][nj] == '*':
+                                minas += 1
+                fila.append(str(minas))
+        salida.append("".join(fila))
+    return salida
+
+data = sys.stdin.read().split("\n")
+idx = 0
+campo_num = 1
+primero = True
+
+while idx &lt; len(data):
+    linea = data[idx].strip()
+    if not linea:
+        idx += 1
+        continue
+    partes = linea.split()
+    n, m = int(partes[0]), int(partes[1])
+    if n == 0 and m == 0:
+        break
+    idx += 1
+    grid = []
+    for _ in range(n):
+        grid.append(data[idx])
+        idx += 1
+
+    if not primero:
+        print()
+    primero = False
+    print(f"Field #{campo_num}:")
+    for fila in resolver_campo(grid, n, m):
+        print(fila)
+    campo_num += 1</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Pieza</th><th>Por qué está ahí</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>if grid[i][j] == '*': fila.append('*')</code></td><td>Las minas se copian tal cual. Solo se cuentan vecinos de las celdas vacías</td></tr>
+    <tr><td><code>for dx … for dy …</code></td><td>Los ocho vecinos en cuatro líneas, sin listar posiciones a mano</td></tr>
+    <tr><td><code>if dx == 0 and dy == 0: continue</code></td><td>Salta la celda misma: no es vecina de sí misma</td></tr>
+    <tr><td><code>0 &lt;= ni &lt; n and 0 &lt;= nj &lt; m</code></td><td>El borde. Sin esto, los índices negativos leen la esquina opuesta y el conteo sale mal en silencio</td></tr>
+    <tr><td><code>str(minas)</code></td><td>La fila se arma con <code>join</code>, que solo pega textos</td></tr>
+    <tr><td><code>if n == 0 and m == 0: break</code></td><td>La línea <code>0 0</code> cierra la entrada y <strong>no</strong> es un campo: no se imprime <code>Field #</code> para ella</td></tr>
+    <tr><td><code>primero</code></td><td>El separador va entre campos: se imprime antes de cada uno menos del primero</td></tr>
+  </tbody>
+</table>
+
+<h3>La película de una celda</h3>
+
+<p>Campo del ejemplo, celda <code>(1, 0)</code> — fila 1, columna 0, que en la salida vale <code>2</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>dx, dy</th><th>Vecino</th><th>¿Existe?</th><th>Contenido</th><th>minas</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>−1, −1</td><td>(0, −1)</td><td>❌ nj &lt; 0</td><td>—</td><td>0</td></tr>
+    <tr><td>−1, 0</td><td>(0, 0)</td><td>✅</td><td><b>*</b></td><td>1</td></tr>
+    <tr><td>−1, +1</td><td>(0, 1)</td><td>✅</td><td>.</td><td>1</td></tr>
+    <tr><td>0, −1</td><td>(1, −1)</td><td>❌ nj &lt; 0</td><td>—</td><td>1</td></tr>
+    <tr><td>0, +1</td><td>(1, 1)</td><td>✅</td><td>.</td><td>1</td></tr>
+    <tr><td>+1, −1</td><td>(2, −1)</td><td>❌ nj &lt; 0</td><td>—</td><td>1</td></tr>
+    <tr><td>+1, 0</td><td>(2, 0)</td><td>✅</td><td>.</td><td>1</td></tr>
+    <tr><td>+1, +1</td><td>(2, 1)</td><td>✅</td><td><b>*</b></td><td><b>2</b></td></tr>
+  </tbody>
+</table>
+
+<p>Sin la validación, los tres vecinos con <code>nj = −1</code> habrían leído la <strong>última columna</strong> de esas filas. En este campo daría lo mismo por casualidad; en otro, no.</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Confiar en que Python avisa del borde</h3>
+<pre><code>if grid[i-1][j-1] == '*':   # ❌ con i=0, j=0 lee la esquina opuesta</code></pre>
+
+<h3>2. Contarse a sí misma</h3>
+<pre><code>for dx in (-1, 0, 1):
+    for dy in (-1, 0, 1):
+        # ❌ sin el continue, una celda con mina al lado suma de más
+        #    y las vacías se cuentan a sí mismas cuando son '*'</code></pre>
+
+<h3>3. Imprimir un campo para la línea <code>0 0</code></h3>
+<pre><code>n, m = 0, 0
+print(f"Field #{campo_num}:")   # ❌ ese campo no existe</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>La matriz se recorre con dos ciclos: <code>i</code> filas, <code>j</code> columnas.</li>
+  <li>Los vecinos, con <code>dx</code> y <code>dy</code> en <code>(-1, 0, 1)</code>, saltando <code>(0, 0)</code>.</li>
+  <li><strong>Siempre</strong> validar <code>0 &lt;= ni &lt; n and 0 &lt;= nj &lt; m</code>.</li>
+  <li>Lo que el enunciado manda conservar, se copia sin tocar.</li>
+  <li>La marca de fin no es un caso: se detecta y se sale.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>grid[i][j]</code></td><td>Carácter de la fila i, columna j</td></tr>
+    <tr><td><code>for dx in (-1, 0, 1)</code></td><td>Los desplazamientos de las 8 direcciones</td></tr>
+    <tr><td><code>if dx == 0 and dy == 0: continue</code></td><td>Saltarse a uno mismo</td></tr>
+    <tr><td><code>0 &lt;= ni &lt; n</code></td><td>El guardia del borde</td></tr>
+    <tr><td><code>"".join(fila)</code></td><td>Pega la fila de caracteres en una línea</td></tr>
+    <tr><td><code>str(numero)</code></td><td>Número a texto, para poder pegarlo</td></tr>
+  </tbody>
+</table>
+
+<blockquote>En Python el índice −1 no es un error: es la última posición. Por eso el borde se valida a mano — nadie te va a avisar.</blockquote>

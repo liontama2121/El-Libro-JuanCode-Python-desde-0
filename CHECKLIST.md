@@ -180,9 +180,18 @@
       · normaliza espacios, no perdona nombres ni lógica (11/11 en pruebas)
       · todo o nada: medio algoritmo no cuenta
 - [x] El quiz del avanzado usa los 5 tipos; el básico sigue con mcq y predict
-- [x] Módulo 6 completo: burbuja, merge sort, complejidad medida y búsqueda
-      binaria · 12 preguntas · 4 ejercicios (14/14 casos en Python real)
-- [ ] Módulos 1–5, 7 y 8: creados en borrador, esperan los enunciados del curso
+- [x] Módulo 1 · Setup DOMjudge — Suma hasta el fin (lectura hasta EOF)
+- [x] Módulo 2 · Strings avanzados — Decodificando el mensaje
+- [x] Módulo 3 · Matrices y vecinos — Buscaminas (las 8 direcciones)
+- [x] Módulo 6 · Dividir y Conquistar — burbuja, merge sort, complejidad
+      medida y búsqueda binaria
+- [ ] Módulo 4 · Recursión — hay material, falta escribirlo
+- [ ] Módulo 5 · Backtracking — hay material, falta escribirlo
+- [ ] Módulo 7 · Programación Dinámica — **falta el material del curso**
+- [ ] Módulo 8 · Greedy y simulación — hay material, falta escribirlo
+
+Los enunciados son los del curso DDYA, copiados palabra por palabra. Ninguna
+solución entra sin pasar por `npm run content:verificar` (41/41 casos hoy).
 
 ### Contenido del avanzado
 

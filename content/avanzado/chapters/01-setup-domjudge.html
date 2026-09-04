@@ -1,0 +1,167 @@
+<p class="jc-gancho">Tu programa funciona perfecto en tu computador. Lo subes a DOMjudge y te responde <strong>Wrong Answer</strong>. No es que el algoritmo esté mal: es que el juez no es una persona. No lee tus mensajes, no escribe cuando le pides datos, y compara tu salida carácter por carácter. Este módulo es sobre hablarle a esa máquina.</p>
+
+<h2>📖 Enunciado</h2>
+
+<div class="jc-problema">
+
+<h3>Suma hasta el fin</h3>
+<p><em>Problema introductorio — Lectura hasta EOF</em></p>
+
+<p><strong>Descripción.</strong> Este ejercicio permite familiarizarse con el flujo de trabajo de DOMjudge. Se reciben varios pares de enteros y se debe imprimir la suma de cada par. La cantidad de pares no aparece al inicio: el programa debe continuar leyendo hasta alcanzar el fin del archivo, conocido como <strong>EOF</strong>.</p>
+
+<p><strong>Entrada.</strong> La entrada contiene cero o más líneas. Cada línea contiene dos enteros <code>a</code> y <code>b</code>, separados por uno o más espacios, con −10⁹ ≤ a, b ≤ 10⁹. La entrada termina al alcanzar EOF.</p>
+
+<p><strong>Salida.</strong> Por cada línea de entrada, imprima una línea con el valor <code>a + b</code>. No agregue etiquetas, mensajes ni texto adicional.</p>
+
+<table>
+  <thead>
+    <tr><th>Ejemplo de entrada</th><th>Ejemplo de salida</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><pre><code>2 3
+-4 10
+100 250</code></pre></td>
+      <td><pre><code>5
+6
+350</code></pre></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Observación.</strong> DOMjudge proporciona la entrada automáticamente. No use mensajes como "Ingrese un número". La solución debe funcionar aunque la cantidad de líneas cambie.</p>
+
+</div>
+
+<h2>💡 Análisis y estrategia</h2>
+
+<p>Tres cosas que en clase no importan y aquí deciden si pasas o no:</p>
+
+<h3>1. No hay contador: hay EOF</h3>
+
+<p>En los ejercicios de clase te dicen <em>"lo primero que llega es cuántos casos son"</em>. Aquí no. El juez te entrega un archivo y tú lees <strong>hasta que se acabe</strong>. Ese final se llama EOF (<em>end of file</em>), y no es un valor que puedas comparar: es un estado.</p>
+
+<pre><code># ❌ Esto espera un contador que nunca llega
+n = int(input())
+for _ in range(n):
+    ...
+
+# ❌ Esto espera una marca de fin que el enunciado no menciona
+while True:
+    a, b = map(int, input().split())
+    if a == 0 and b == 0:
+        break</code></pre>
+
+<p>El enunciado dice <em>"la entrada termina al alcanzar EOF"</em>. Inventarse un <code>0 0</code> es responder otro problema.</p>
+
+<h3>2. <code>sys.stdin</code> es un iterable de líneas</h3>
+
+<p>La forma directa de decir "recorre lo que llegue, hasta donde llegue":</p>
+
+<pre><code>import sys
+
+for linea in sys.stdin:
+    ...</code></pre>
+
+<p>Ese <code>for</code> termina solo cuando el archivo se acaba. Es la misma idea de recorrer una lista, pero la lista la va entregando el juez.</p>
+
+<p>La alternativa con <code>input()</code> también sirve — cuando no hay más datos, <code>input()</code> <strong>lanza una excepción</strong>:</p>
+
+<pre><code>while True:
+    try:
+        linea = input()
+    except EOFError:
+        break
+    ...</code></pre>
+
+<p>Las dos son correctas. La primera es más corta y más rápida cuando la entrada es grande.</p>
+
+<h3>3. Cero mensajes</h3>
+
+<p>El juez compara tu salida con la esperada <strong>carácter por carácter</strong>. Un <code>print("Ingrese los números:")</code> mete una línea que no debería estar, y todo lo demás queda corrido. La respuesta es <strong>Wrong Answer</strong>, aunque tus sumas estén perfectas.</p>
+
+<p>Regla: en competencia <strong>solo se imprime lo que el enunciado pide</strong>. Ni saludos, ni "El resultado es:", ni líneas de adorno.</p>
+
+<h2>💻 Código paso a paso</h2>
+
+<pre><code>import sys
+
+for linea in sys.stdin:
+    partes = linea.split()
+    if len(partes) &lt; 2:
+        continue
+    a = int(partes[0])
+    b = int(partes[1])
+    print(a + b)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Línea</th><th>Qué hace y por qué está ahí</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>import sys</code></td><td>Da acceso a <code>sys.stdin</code>, que es la entrada que el juez alimenta</td></tr>
+    <tr><td><code>for linea in sys.stdin:</code></td><td>Recorre línea por línea <strong>hasta EOF</strong>. Sin contador y sin marca de fin</td></tr>
+    <tr><td><code>linea.split()</code></td><td>Parte por espacios. Sin argumentos, <code>split()</code> trata varios espacios seguidos como uno solo — el enunciado dice "uno o más espacios"</td></tr>
+    <tr><td><code>if len(partes) &lt; 2: continue</code></td><td>Blindaje: una línea vacía al final del archivo es normal. Sin esto, <code>partes[0]</code> reventaría con <code>IndexError</code></td></tr>
+    <tr><td><code>int(partes[0])</code></td><td><code>split()</code> devuelve <strong>texto</strong>. Sin convertir, <code>a + b</code> pegaría <code>"2" + "3" = "23"</code></td></tr>
+    <tr><td><code>print(a + b)</code></td><td>Una línea por cada par. Nada más</td></tr>
+  </tbody>
+</table>
+
+<h3>La película de la entrada del ejemplo</h3>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th>linea</th><th>partes</th><th>imprime</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><code>"2 3\n"</code></td><td><code>["2", "3"]</code></td><td><code>5</code></td></tr>
+    <tr><td>2</td><td><code>"-4 10\n"</code></td><td><code>["-4", "10"]</code></td><td><code>6</code></td></tr>
+    <tr><td>3</td><td><code>"100 250"</code></td><td><code>["100", "250"]</code></td><td><code>350</code></td></tr>
+    <tr><td>4</td><td>EOF</td><td>—</td><td>el <code>for</code> termina</td></tr>
+  </tbody>
+</table>
+
+<p>Fíjate en que la entrada vacía también es válida: si el archivo no trae ninguna línea, el <code>for</code> no entra ni una vez y el programa no imprime nada. Eso es <strong>correcto</strong> según el enunciado ("cero o más líneas").</p>
+
+<h2>⚠️ Errores que todos cometen</h2>
+
+<h3>1. Imprimir mensajes</h3>
+<pre><code>print("Ingrese dos numeros:")   # ❌ Wrong Answer garantizado
+a, b = map(int, input().split())</code></pre>
+<p>En tu computador se ve amigable. Para el juez es una línea de más.</p>
+
+<h3>2. Esperar un contador que no existe</h3>
+<pre><code>n = int(input())    # ❌ se traga el primer par como si fuera n</code></pre>
+
+<h3>3. Sumar texto sin convertir</h3>
+<pre><code>a, b = linea.split()
+print(a + b)        # ❌ imprime "23" en vez de 5</code></pre>
+
+<h2>🎯 El patrón</h2>
+
+<ol>
+  <li>Sin contador en el enunciado → <code>for linea in sys.stdin</code>.</li>
+  <li><code>split()</code> sin argumentos, que aguanta espacios de más.</li>
+  <li>Saltar las líneas que no traigan lo esperado.</li>
+  <li>Convertir a <code>int</code> antes de operar.</li>
+  <li>Imprimir <strong>solo</strong> lo que el enunciado pide.</li>
+</ol>
+
+<h2>📋 Chuleta</h2>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Pasa esto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>for linea in sys.stdin:</code></td><td>Recorre hasta EOF</td></tr>
+    <tr><td><code>sys.stdin.read()</code></td><td>Trae toda la entrada de una vez, como un solo texto</td></tr>
+    <tr><td><code>try: input() / except EOFError:</code></td><td>La otra forma de detectar el fin</td></tr>
+    <tr><td><code>linea.split()</code></td><td>Parte por espacios, aguantando varios seguidos</td></tr>
+    <tr><td><code>int(x)</code></td><td>Texto a número: sin esto, <code>+</code> concatena</td></tr>
+    <tr><td><code>print(a + b)</code></td><td>Una línea de salida. Nada de mensajes</td></tr>
+  </tbody>
+</table>
+
+<blockquote>El juez no lee lo que quisiste decir: compara lo que imprimiste, carácter por carácter. Programar para un juez es aprender a callarse.</blockquote>

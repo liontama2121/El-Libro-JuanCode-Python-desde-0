@@ -1,0 +1,116 @@
+[
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "Si una palabra es más corta que la posición actual, ¿qué pasa?",
+    "data": { "options": [
+      { "id": "a", "text": "Se detiene la decodificación de esa línea" },
+      { "id": "b", "text": "Se salta la palabra y la posición NO avanza" },
+      { "id": "c", "text": "Se salta la palabra y la posición avanza igual" },
+      { "id": "d", "text": "Se toma la última letra de esa palabra" }
+    ]},
+    "correct": { "option_id": "b" },
+    "explanation": "El enunciado dice que se intenta 'esa misma posición' en la siguiente palabra. Si la posición avanzara al saltar, en 'as I previously previewed' saldría 'aee' en vez de 'are'."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "¿Por qué se reinicia posicion = 0 en cada línea?",
+    "data": { "options": [
+      { "id": "a", "text": "Por optimización" },
+      { "id": "b", "text": "Porque cada línea produce una palabra independiente" },
+      { "id": "c", "text": "Porque lo exige el formato del juez" },
+      { "id": "d", "text": "Para no pasarse del largo de la primera palabra" }
+    ]},
+    "correct": { "option_id": "b" },
+    "explanation": "El enunciado es explícito: al terminar la línea termina la palabra decodificada, y la siguiente empieza otra vez desde la primera letra de la primera palabra."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "facil",
+    "prompt": "En \"Hey good lawyer\", ¿cuál es la palabra decodificada?",
+    "data": { "options": [
+      { "id": "a", "text": "Hgl" },
+      { "id": "b", "text": "How" },
+      { "id": "c", "text": "Hoy" },
+      { "id": "d", "text": "Hew" }
+    ]},
+    "correct": { "option_id": "b" },
+    "explanation": "H de 'Hey' en la posición 0, o de 'good' en la posición 1, w de 'lawyer' en la posición 2. La respuesta 'Hgl' sale de tomar siempre la primera letra."
+  },
+  {
+    "type": "predict_output",
+    "difficulty": "dificil",
+    "prompt": "¿Qué imprime esta decodificación?",
+    "code_snippet": "def decodificar(linea):\n    resultado = []\n    posicion = 0\n    for palabra in linea.split():\n        if posicion < len(palabra):\n            resultado.append(palabra[posicion])\n            posicion += 1\n    return \"\".join(resultado)\n\nprint(decodificar(\"as I previously previewed\"))",
+    "data": { "options": [
+      { "id": "a", "text": "are" },
+      { "id": "b", "text": "aIpp" },
+      { "id": "c", "text": "aee" },
+      { "id": "d", "text": "aIre" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "'as' da la a y la posición pasa a 1. 'I' mide 1 y no tiene posición 1: se salta SIN avanzar. 'previously' da la r (posición 1) y 'previewed' da la e (posición 2). Queda 'are'."
+  },
+  {
+    "type": "find_bug",
+    "difficulty": "dificil",
+    "prompt": "Esta versión decodifica mal. ¿En qué línea está el error?",
+    "data": { "lines": [
+      "resultado = []",
+      "posicion = 0",
+      "for palabra in linea.split():",
+      "    if posicion < len(palabra):",
+      "        resultado.append(palabra[posicion])",
+      "    posicion += 1"
+    ]},
+    "correct": { "line_number": 6 },
+    "explanation": "El incremento quedó FUERA del if, así que la posición avanza aunque la palabra se haya saltado. Tiene que ir adentro: solo avanza cuando de verdad se tomó una letra."
+  },
+  {
+    "type": "fill_blank",
+    "difficulty": "medio",
+    "prompt": "Completa la decodificación de una línea.",
+    "data": {
+      "code": "posicion = 0\nfor palabra in linea.split():\n    if ___1___:\n        resultado.append(palabra[posicion])\n        ___2___",
+      "blanks": [
+        { "id": "1", "pista": "¿la palabra alcanza para esa posición?" },
+        { "id": "2", "pista": "avanzar, y solo aquí adentro" }
+      ]
+    },
+    "correct": { "answers": {
+      "1": ["posicion < len(palabra)", "len(palabra) > posicion"],
+      "2": ["posicion += 1", "posicion = posicion + 1"]
+    }},
+    "explanation": "La comparación evita el IndexError y el incremento adentro del if es lo que implementa 'se ignora y se intenta esa misma posición en la siguiente palabra'."
+  },
+  {
+    "type": "mcq",
+    "difficulty": "medio",
+    "prompt": "La salida pide una línea en blanco ENTRE casos. ¿Cómo se logra sin que sobre al final?",
+    "data": { "options": [
+      { "id": "a", "text": "Imprimirla antes de cada caso, saltándose el primero" },
+      { "id": "b", "text": "Imprimirla después de cada caso" },
+      { "id": "c", "text": "Imprimirla después de cada caso y borrar la última con rstrip()" },
+      { "id": "d", "text": "El juez ignora las líneas en blanco sobrantes" }
+    ]},
+    "correct": { "option_id": "a" },
+    "explanation": "Con 'if caso > 1: print()' el separador aparece exactamente entre bloques. Imprimirlo después deja una línea de más al final, y eso ya es otra salida para el juez."
+  },
+  {
+    "type": "parsons",
+    "difficulty": "medio",
+    "prompt": "Arma el recorrido de un caso completo",
+    "data": { "lines": [
+      { "id": "c1", "text": "if caso > 1:", "indent": 0 },
+      { "id": "c2", "text": "print()", "indent": 1 },
+      { "id": "c3", "text": "print(f\"Case #{caso}:\")", "indent": 0 },
+      { "id": "c4", "text": "while idx < len(data) and data[idx].strip() != \"\":", "indent": 0 },
+      { "id": "c5", "text": "print(decodificar_linea(data[idx]))", "indent": 1 },
+      { "id": "c6", "text": "idx += 1", "indent": 1 },
+      { "id": "c7", "text": "idx += 1", "indent": 0 }
+    ]},
+    "correct": { "order": ["c1", "c2", "c3", "c4", "c5", "c6", "c7"] },
+    "explanation": "El último idx += 1 va FUERA del while, con indentación 0: es el que salta la línea en blanco que cerró el caso. Adentro del while se saltarían líneas del mensaje."
+  }
+]
