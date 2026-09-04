@@ -101,7 +101,9 @@ for (const p of peliculas) {
 		`SELECT id, ${p.orden}, ${txt(p.title)}, ${txt(p.description)}, ${txt(p.code)}, ${txt(
 			JSON.stringify(p.columns),
 		)}, ${txt(JSON.stringify(pasos))}, 1`,
-		`FROM chapters WHERE number = ${p.chapter}`,
+		// El track importa: sin el filtro, la película se pegaría también al
+		// capítulo con el mismo número del track avanzado.
+		`FROM chapters WHERE number = ${p.chapter} AND track = 'basico'`,
 		"ON CONFLICT(chapter_id, orden) DO UPDATE SET",
 		"  title = excluded.title,",
 		"  description = excluded.description,",
