@@ -343,3 +343,13 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
    escondido detrás de la barra. */
 section[id]{scroll-margin-top:92px;}
 @media (max-width:880px){section[id]{scroll-margin-top:76px;}}
+
+/* El 50/50 no puede quedar en letra chica: va en su propia banda, con el
+   dorado del acento para que se lea antes de llegar al contacto. */
+.pago-nota{display:flex;align-items:flex-start;gap:16px;margin-top:26px;padding:22px 26px;border-radius:20px;background:rgba(255,212,59,.06);border:1px solid rgba(255,212,59,.3);font-size:17px;color:var(--muted);}
+.pago-nota strong{color:var(--text);}
+.pago-nota .pn-emoji{font-size:28px;line-height:1.2;flex-shrink:0;}
+@media (max-width:880px){
+  .pago-nota{padding:20px;gap:13px;font-size:16px;}
+  .pago-nota .pn-emoji{font-size:24px;}
+}
