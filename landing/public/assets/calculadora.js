@@ -1,9 +1,17 @@
 /* ==========================================================================
    calculadora.js — el wizard "Calcula tu proyecto" de /web. Cero librerías.
 
-   Siete preguntas, una a la vez. Cada opción suma un precio; al final sale
+   Seis preguntas, una a la vez. Cada opción suma un precio; al final sale
    el resumen, el "desde $X" y un botón que abre WhatsApp con todo escrito.
    El progreso vive en localStorage: si el visitante recarga, sigue donde iba.
+
+   El panel para que el cliente actualice su contenido no se pregunta ni se
+   cobra: va incluido en todo proyecto, así no hay que pedirle a Juan cada
+   cambio. Sale en el resumen (ver resumen()).
+
+   Vender productos suma un fijo. Si el cliente sube sus productos con el
+   panel, no suma más; si Juan los sube a mano, se cobra por producto con un
+   tope de 100 (ver extraProductos()).
 
    Cambiar un precio o un texto es cambiar PREGUNTAS, nada más.
    ========================================================================== */
@@ -39,17 +47,9 @@
 			titulo: "¿Vas a vender productos?",
 			opciones: [
 				{ id: "no", texto: "No, solo información y contacto", precio: 0, resumen: null },
-				{ id: "pocos", texto: "Sí, pocos productos (menos de 20)", precio: 500000, incluye: "catálogo, carrito, checkout, pagos (Wompi/PayPal/Nequi)", resumen: "Catálogo hasta 20 productos con carrito y pagos (Wompi, PayPal, Nequi)" },
-				{ id: "muchos", texto: "Sí, catálogo grande (más de 20 productos)", precio: 1000000, incluye: "gestión de categorías, filtros, búsqueda, inventario", resumen: "Catálogo grande con categorías, filtros, búsqueda e inventario" },
-			],
-		},
-		{
-			id: "panel",
-			titulo: "¿Quieres poder actualizar el contenido tú mismo?",
-			opciones: [
-				{ id: "no", texto: "No, tú me avisas y yo hago los cambios", precio: 0, resumen: null },
-				{ id: "textos", texto: "Sí, quiero editar textos e imágenes", precio: 400000, incluye: "panel privado con login, editor visual", resumen: "Panel donde tú mismo cambias textos e imágenes" },
-				{ id: "gestion", texto: "Sí, quiero gestionar productos, pedidos y clientes", precio: 800000, incluye: "dashboard completo, gestión de inventario, estadísticas de ventas", resumen: "Panel donde tú gestionas productos, pedidos y clientes" },
+				{ id: "panel", texto: "Sí, y yo subo mis productos con el panel", precio: 500000, incluye: "catálogo, carrito, checkout, pagos (Wompi/PayPal/Nequi)", resumen: "Catálogo con carrito y pagos (Wompi, PayPal, Nequi)" },
+				// La línea "Carga de N productos" se arma con la cantidad (ver resumen())
+				{ id: "juan", texto: "Sí, y quiero que Juan suba mis productos", precio: 500000, incluye: "lo mismo + yo cargo tus productos, hasta 100", resumen: "Catálogo con carrito y pagos (Wompi, PayPal, Nequi)", cantidad: true },
 			],
 		},
 		{
@@ -105,6 +105,15 @@
 	// en cualquier navegador, tenga o no los datos del locale es-CO.
 	const pesos = (n) => "$" + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
+	/* Carga a mano: $500.000 por 100 productos, proporcional (regla de 3),
+	   a miles. Tope de 100: lo que pase de ahí lo sube el cliente con el panel.
+	   20 → $100.000 · 50 → $250.000 · 100 → $500.000 */
+	const PRECIO_POR_100 = 500000;
+	const MAX_PRODUCTOS = 100;
+	const extraProductos = (n) => Math.round((n * PRECIO_POR_100) / 100 / 1000) * 1000;
+
+	const productosValidos = (n) => Number.isInteger(n) && n >= 1 && n <= MAX_PRODUCTOS;
+
 	const etiquetaPrecio = (p, o) => {
 		if (p.id === "tipo") return pesos(o.precio);
 		return o.precio ? "+ " + pesos(o.precio) : "+ $0";
@@ -113,16 +122,26 @@
 	const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 	// Opciones marcadas de una pregunta, siempre como arreglo
-	const elegidas = (p) => {
-		const r = estado.resp[p.id];
+	const elegidas = (p, resp = estado.resp) => {
+		const r = resp[p.id];
 		const ids = Array.isArray(r) ? r : r ? [r] : [];
 		return p.opciones.filter((o) => ids.includes(o.id));
 	};
 
-	const respondida = (p) => elegidas(p).length > 0;
+	// La opción con cantidad (vender productos) exige además el número
+	const pideCantidad = (p, resp = estado.resp) => elegidas(p, resp).some((o) => o.cantidad);
+
+	const respondida = (p, resp = estado.resp) =>
+		elegidas(p, resp).length > 0 && (!pideCantidad(p, resp) || productosValidos(resp.productos));
 
 	const precioActual = () =>
-		PREGUNTAS.reduce((suma, p) => suma + elegidas(p).reduce((s, o) => s + o.precio, 0), 0);
+		PREGUNTAS.reduce(
+			(suma, p) =>
+				suma +
+				elegidas(p).reduce((s, o) => s + o.precio, 0) +
+				(pideCantidad(p) && productosValidos(estado.resp.productos) ? extraProductos(estado.resp.productos) : 0),
+			0,
+		);
 
 	/* --- 3. Estado + localStorage ------------------------------------------ */
 
@@ -142,11 +161,12 @@
 				limpio.resp[p.id] = r;
 			}
 		}
+		if (productosValidos(crudo.resp.productos)) limpio.resp.productos = crudo.resp.productos;
 
 		// No se puede quedar parado más allá de la primera pregunta sin responder
 		let paso = Number.isInteger(crudo.paso) ? crudo.paso : 0;
 		paso = Math.max(0, Math.min(paso, TOTAL));
-		const primeraVacia = PREGUNTAS.findIndex((p) => !limpio.resp[p.id]);
+		const primeraVacia = PREGUNTAS.findIndex((p) => !respondida(p, limpio.resp));
 		if (primeraVacia !== -1) paso = Math.min(paso, primeraVacia);
 		limpio.paso = paso;
 		return limpio;
@@ -175,10 +195,17 @@
 
 	const resumen = () => {
 		const tipo = elegidas(PREGUNTAS[0])[0];
-		const lineas = PREGUNTAS.slice(0, -1)
-			.flatMap((p) => elegidas(p))
-			.map((o) => o.resumen)
-			.filter(Boolean);
+		const venta = PREGUNTAS.find((p) => p.id === "venta");
+		const vende = elegidas(venta).some((o) => o.precio > 0);
+		const carga = pideCantidad(venta) ? [`Carga de ${estado.resp.productos} productos hecha por Juan`] : [];
+		const panel = vende
+			? "Panel incluido: tú mismo actualizas productos, pedidos, textos e imágenes"
+			: "Panel incluido: tú mismo cambias textos e imágenes";
+		// El panel va justo después de lo que se vende, antes de los extras
+		const lineas = PREGUNTAS.slice(0, -1).flatMap((p) => {
+			const propias = elegidas(p).map((o) => o.resumen).filter(Boolean);
+			return p.id === "venta" ? [...propias, ...carga, panel] : propias;
+		});
 		const tiempo = elegidas(PREGUNTAS[TOTAL - 1])[0];
 		return { intro: tipo ? tipo.intro : "tu proyecto", lineas, tiempo };
 	};
@@ -220,6 +247,23 @@
 			</label>`;
 	};
 
+	const notaCantidad = (n) => {
+		if (n > MAX_PRODUCTOS) return `Subo a mano hasta ${MAX_PRODUCTOS}. El resto lo subes tú con el panel.`;
+		if (!productosValidos(n)) return `Escribe un número del 1 al ${MAX_PRODUCTOS}.`;
+		return `Carga a mano: + ${pesos(extraProductos(n))} (${pesos(PRECIO_POR_100 / 100)} por producto).`;
+	};
+
+	const htmlCantidad = (p) => {
+		const n = estado.resp.productos;
+		return `
+			<div class="calc-cantidad"${pideCantidad(p) ? "" : " hidden"}>
+				<label for="calc-productos">¿Cuántos productos subo yo? (máximo ${MAX_PRODUCTOS})</label>
+				<input id="calc-productos" type="number" inputmode="numeric" min="1" max="${MAX_PRODUCTOS}" step="1"
+					placeholder="Ej: 30" value="${productosValidos(n) ? n : ""}" aria-describedby="calc-productos-nota">
+				<p class="calc-cantidad-nota" id="calc-productos-nota" aria-live="polite">${notaCantidad(n)}</p>
+			</div>`;
+	};
+
 	const htmlPregunta = (i) => {
 		const p = PREGUNTAS[i];
 		const ids = elegidas(p).map((o) => o.id);
@@ -238,6 +282,7 @@
 				<div class="calc-opts">
 					${p.opciones.map((o) => htmlOpcion(p, o, ids.includes(o.id))).join("")}
 				</div>
+				${p.opciones.some((o) => o.cantidad) ? htmlCantidad(p) : ""}
 			</fieldset>
 			<div class="calc-nav">
 				<button type="button" class="btn btn-ghost" data-accion="anterior"${i === 0 ? " disabled" : ""}>◀ Anterior</button>
@@ -354,7 +399,7 @@
 
 	app.addEventListener("change", (e) => {
 		const input = e.target;
-		if (!(input instanceof HTMLInputElement) || estado.paso >= TOTAL) return;
+		if (!(input instanceof HTMLInputElement) || input.type === "number" || estado.paso >= TOTAL) return;
 		const p = PREGUNTAS[estado.paso];
 
 		if (p.multiple) {
@@ -369,17 +414,45 @@
 				ids = ids.filter((id) => id !== opcion.id);
 			}
 			estado.resp[p.id] = ids;
-			for (const el of app.querySelectorAll("input")) el.checked = ids.includes(el.value);
+			for (const el of app.querySelectorAll(".calc-opt input")) el.checked = ids.includes(el.value);
 		} else {
 			estado.resp[p.id] = input.value;
 		}
 
-		for (const el of app.querySelectorAll("input")) {
+		for (const el of app.querySelectorAll(".calc-opt input")) {
 			el.closest(".calc-opt").classList.toggle("sel", el.checked);
 		}
+
+		// Al marcar "Sí, voy a vender" aparece la casilla de cantidad
+		const cantidad = app.querySelector(".calc-cantidad");
+		if (cantidad) {
+			const pide = pideCantidad(p);
+			cantidad.hidden = !pide;
+			if (pide && !productosValidos(estado.resp.productos)) cantidad.querySelector("input").focus();
+		}
+
 		app.querySelector('[data-accion="siguiente"]').disabled = !respondida(p);
 		guardar();
 		actualizarSticky();
+	});
+
+	app.addEventListener("input", (e) => {
+		if (e.target.id !== "calc-productos") return;
+		const n = Number(e.target.value);
+		if (productosValidos(n)) estado.resp.productos = n;
+		else delete estado.resp.productos;
+
+		document.getElementById("calc-productos-nota").textContent = notaCantidad(n);
+		app.querySelector('[data-accion="siguiente"]').disabled = !respondida(PREGUNTAS[estado.paso]);
+		guardar();
+		actualizarSticky();
+	});
+
+	// Enter en la casilla de cantidad = Siguiente (y no recargar nada)
+	app.addEventListener("keydown", (e) => {
+		if (e.key !== "Enter" || e.target.id !== "calc-productos") return;
+		e.preventDefault();
+		app.querySelector('[data-accion="siguiente"]').click();
 	});
 
 	app.addEventListener("click", (e) => {
