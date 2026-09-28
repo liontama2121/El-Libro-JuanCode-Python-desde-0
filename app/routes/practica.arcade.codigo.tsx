@@ -257,7 +257,7 @@ export default function ArcadeCodigo({ loaderData }: Route.ComponentProps) {
 								💡 Ver pista
 							</summary>
 							<div
-								className="jc-prosa mt-3 rounded-2xl border border-[var(--color-borde)] bg-black/30 p-5 text-[1rem]"
+								className="jc-prosa mt-3 rounded-2xl border border-[var(--color-borde)] bg-tinta/[0.04] p-5 text-[1rem]"
 								dangerouslySetInnerHTML={{ __html: ejercicio.hintHtml }}
 							/>
 						</details>

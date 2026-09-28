@@ -390,13 +390,13 @@ function Parcial({ loaderData }: { loaderData: DatosParcial }) {
 			<Nav user={user} />
 
 			<main className="mx-auto max-w-3xl px-4 py-8 sm:px-5 sm:py-10">
-				<header className="sticky top-16 z-30 -mx-4 mb-8 border-b border-[var(--color-borde)] bg-[#0b0b16]/90 px-4 py-3 backdrop-blur-xl sm:-mx-5 sm:px-5">
+				<header className="sticky top-16 z-30 -mx-4 mb-8 border-b border-[var(--color-borde)] bg-noche/90 px-4 py-3 backdrop-blur-xl sm:-mx-5 sm:px-5">
 					<div className="flex items-center justify-between gap-3">
 						<h1 className="jc-display text-lg sm:text-xl">📝 Parcial</h1>
 						<span
 							className={`jc-mono rounded-full border px-4 py-1.5 text-sm ${
 								restante <= 300
-									? "border-[rgba(255,77,255,.5)] text-[var(--color-magenta)]"
+									? "border-[color-mix(in_srgb,var(--color-magenta)_50%,transparent)] text-[var(--color-magenta)]"
 									: "border-[var(--color-borde)] text-[var(--color-tinta-2)]"
 							}`}
 						>
@@ -529,8 +529,8 @@ function Revision({
 									<span
 										className={`jc-badge ${
 											s.paso
-												? "border-[rgba(52,224,122,.45)] text-[var(--color-verde)]"
-												: "border-[rgba(255,77,255,.45)] text-[var(--color-magenta)]"
+												? "border-[color-mix(in_srgb,var(--color-verde)_45%,transparent)] text-[var(--color-verde)]"
+												: "border-[color-mix(in_srgb,var(--color-magenta)_45%,transparent)] text-[var(--color-magenta)]"
 										}`}
 									>
 										{s.paso ? "tests en verde" : "tests en rojo"}
@@ -554,7 +554,7 @@ function Revision({
 										✅ Solución documentada
 									</summary>
 									<div
-										className="jc-prosa mt-3 rounded-2xl border border-[var(--color-borde)] bg-black/30 p-5 text-[1rem]"
+										className="jc-prosa mt-3 rounded-2xl border border-[var(--color-borde)] bg-tinta/[0.04] p-5 text-[1rem]"
 										dangerouslySetInnerHTML={{ __html: s.solutionHtml }}
 									/>
 								</details>
@@ -567,8 +567,8 @@ function Revision({
 											key={t.n}
 											className={`rounded-xl border px-4 py-2 text-sm ${
 												t.paso
-													? "border-[rgba(52,224,122,.35)] text-[var(--color-verde)]"
-													: "border-[rgba(255,77,255,.3)] text-[var(--color-magenta)]"
+													? "border-[color-mix(in_srgb,var(--color-verde)_35%,transparent)] text-[var(--color-verde)]"
+													: "border-[color-mix(in_srgb,var(--color-magenta)_30%,transparent)] text-[var(--color-magenta)]"
 											}`}
 										>
 											<span className="jc-mono text-xs">

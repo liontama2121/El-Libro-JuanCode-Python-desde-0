@@ -62,7 +62,7 @@ export function ToastInsignias({ insignias }: { insignias: InsigniaGanada[] }) {
 				<div
 					key={i.nombre}
 					className="jc-anim-pop w-full max-w-sm rounded-2xl border
-						border-[rgba(255,212,59,.5)] bg-[#15131f]/95 px-5 py-4 text-center shadow-2xl"
+						border-[color-mix(in_srgb,var(--color-dorado)_50%,transparent)] bg-noche/95 px-5 py-4 text-center shadow-2xl"
 					style={{ animationDelay: `${k * 160}ms` }}
 				>
 					<p className="jc-mono text-[0.62rem] tracking-[0.24em] text-[var(--color-dorado)] uppercase">
@@ -102,7 +102,7 @@ export function BarraProgreso({
 					<span className="jc-mono text-xs text-[var(--color-cyan)]">{pct}%</span>
 				</div>
 			)}
-			<div className="h-2.5 w-full overflow-hidden rounded-full border border-[var(--color-borde)] bg-black/40">
+			<div className="h-2.5 w-full overflow-hidden rounded-full border border-[var(--color-borde)] bg-tinta/10">
 				<div
 					className="h-full rounded-full transition-[width] duration-700 ease-out"
 					style={{
@@ -169,7 +169,7 @@ export function ScoreAnimado({
 					cy="60"
 					r="54"
 					fill="none"
-					stroke="rgba(255,255,255,.08)"
+					stroke="var(--color-borde)"
 					strokeWidth="9"
 				/>
 				<circle
@@ -201,7 +201,7 @@ export function ScoreAnimado({
 /*  Confetti (canvas, sin dependencias)                                        */
 /* -------------------------------------------------------------------------- */
 
-const COLORES = ["#00E5FF", "#FF4DFF", "#b975ff", "#34e07a", "#ffd43b", "#ffa94d"];
+const COLORES = ["#a94b2b", "#c4643c", "#2f4a3a", "#6e7069", "#d9a441", "#e4e2dd"];
 
 export function Confetti({ activo }: { activo: boolean }) {
 	const ref = useRef<HTMLCanvasElement>(null);
@@ -283,7 +283,7 @@ export function Confetti({ activo }: { activo: boolean }) {
 
 export function BloqueCodigo({ codigo }: { codigo: string }) {
 	return (
-		<pre className="jc-mono overflow-x-auto rounded-xl border border-[var(--color-borde)] border-l-[3px] border-l-[var(--color-cyan)] bg-black/60 p-4 text-sm leading-relaxed text-[#d7dcff]">
+		<pre className="jc-mono overflow-x-auto rounded-xl border border-[var(--color-borde)] border-l-[3px] border-l-[var(--color-cyan)] bg-codigo p-4 text-sm leading-relaxed text-[#d7dcff]">
 			<code>{codigo}</code>
 		</pre>
 	);

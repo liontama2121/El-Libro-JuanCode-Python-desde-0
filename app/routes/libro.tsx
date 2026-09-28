@@ -1,5 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
+import { ArrowRight, CheckCircle, LockSimple } from "@phosphor-icons/react";
 import { Link, redirect } from "react-router";
+import { Muro } from "~/components/muro";
 import { Nav } from "~/components/nav";
 import { BarraProgreso, Toast } from "~/components/ui";
 import { getDb, schema } from "~/db";
@@ -112,11 +114,11 @@ export default function Libro({ loaderData }: Route.ComponentProps) {
 			<Nav user={user} stats={navStats} />
 			<Toast />
 
-			<main className="mx-auto max-w-5xl px-5 pb-24">
-				{/* Portada -------------------------------------------------------- */}
-				<section className="jc-anim-in py-16 text-center sm:py-24">
+			{/* Portada ---------------------------------------------------------- */}
+			<section className="grid border-b-2 border-[var(--color-borde)] md:grid-cols-[1.25fr_0.75fr]">
+				<div className="jc-anim-in w-full px-5 py-14 sm:py-20 md:pr-14 md:pl-[max(1.25rem,calc((100vw-64rem)/2+1.25rem))]">
 					<p
-						className={`jc-mono text-xs tracking-[0.32em] uppercase ${
+						className={`text-xs font-bold tracking-[0.06em] uppercase [font-variation-settings:'wdth'_125] ${
 							avanzado
 								? "text-[var(--color-magenta)]"
 								: "text-[var(--color-cyan)]"
@@ -124,19 +126,16 @@ export default function Libro({ loaderData }: Route.ComponentProps) {
 					>
 						{avanzado ? "track avanzado" : "libro digital interactivo"}
 					</p>
-					<h1 className="jc-display jc-grad mt-5 text-6xl leading-[1.05] sm:text-7xl">
+					<h1 className="jc-display mt-5 text-6xl sm:text-8xl">
 						El Libro
 						<br />
 						JuanCode
 					</h1>
-					<p className="jc-display mt-4 text-xl text-[var(--color-tinta)]">
+					<p className="mt-5 text-xl text-[var(--color-tinta-2)]">
 						{info.nombre} {info.emoji}
 					</p>
-					<p className="jc-mono mt-3 text-sm tracking-[0.2em] text-[var(--color-tinta-2)] uppercase">
-						por JuanCode
-					</p>
 
-					<div className="mx-auto mt-10 max-w-md">
+					<div className="mt-10 max-w-md">
 						<BarraProgreso
 							valor={completados}
 							total={total}
@@ -145,12 +144,17 @@ export default function Libro({ loaderData }: Route.ComponentProps) {
 							}`}
 						/>
 					</div>
-				</section>
+				</div>
+				<div className="relative hidden min-h-[320px] border-l border-[var(--color-borde)] md:block">
+					<Muro />
+				</div>
+			</section>
+
+			<main className="mx-auto max-w-5xl px-5 pt-14 pb-24">
 
 				{/* Aviso de repaso ------------------------------------------------ */}
 				{repaso && repaso.hechos < repaso.total && (
-					<aside className="jc-anim-in mb-10 flex flex-wrap items-center gap-3 rounded-2xl border border-[var(--color-borde)] bg-white/[0.03] px-5 py-4">
-						<span className="text-2xl">🐍</span>
+					<aside className="jc-anim-in mb-10 flex flex-wrap items-center gap-3 border-t border-[var(--color-cyan)] bg-[var(--color-noche-2)] px-5 py-4">
 						<p className="min-w-0 flex-1 text-sm text-[var(--color-tinta-2)]">
 							Este track asume que ya manejas lo básico.{" "}
 							{repaso.hechos > 0
@@ -164,7 +168,7 @@ export default function Libro({ loaderData }: Route.ComponentProps) {
 								rel="noopener"
 								className="jc-btn jc-btn-sm jc-btn-ghost shrink-0"
 							>
-								💬 Escríbeme
+								Escríbeme por WhatsApp
 							</a>
 						)}
 					</aside>
@@ -174,13 +178,13 @@ export default function Libro({ loaderData }: Route.ComponentProps) {
 				<div className="space-y-14">
 					{partes.map((parte) => (
 						<section key={parte.id} className="jc-anim-in">
-							<header className="mb-5 flex items-center gap-3 border-b border-[var(--color-borde)] pb-3">
+							<header className="mb-6 flex items-end gap-4 border-b border-[color-mix(in_srgb,var(--color-cyan)_40%,transparent)] pb-3">
 								<span className="text-3xl">{parte.emoji}</span>
 								<div>
-									<p className="jc-mono text-[0.68rem] tracking-[0.24em] text-[var(--color-tinta-2)] uppercase">
+									<p className="text-sm font-semibold text-[var(--color-tinta-2)]">
 										Parte {romano(parte.number)}
 									</p>
-									<h2 className="jc-display text-2xl">{parte.title}</h2>
+									<h2 className="jc-display text-3xl">{parte.title}</h2>
 								</div>
 							</header>
 
@@ -215,16 +219,16 @@ function CardCapitulo({
 	const contenido = (
 		<>
 			<div className="flex items-start gap-3">
-				<span className={`text-2xl ${bloqueado ? "grayscale" : ""}`}>
-					{bloqueado ? "🔒" : capitulo.emoji}
+				<span className={`text-2xl ${bloqueado ? "opacity-50 grayscale" : ""}`}>
+					{capitulo.emoji}
 				</span>
 				<div className="min-w-0 flex-1">
 					<div className="flex items-center gap-2">
-						<p className="jc-mono text-[0.66rem] tracking-[0.22em] text-[var(--color-tinta-2)] uppercase">
+						<p className="text-sm font-semibold text-[var(--color-tinta-2)]">
 							{palabraCapitulo(track)} {capitulo.number}
 						</p>
 						{track === "avanzado" && (
-							<span className="jc-mono rounded-full border border-[rgba(255,77,255,.4)] bg-[rgba(255,77,255,.12)] px-2 py-[1px] text-[0.58rem] tracking-[0.14em] text-[var(--color-magenta)] uppercase">
+							<span className="jc-mono rounded-full border border-[color-mix(in_srgb,var(--color-magenta)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_12%,transparent)] px-2 py-[1px] text-[0.58rem] tracking-[0.14em] text-[var(--color-magenta)] uppercase">
 								Avanzado
 							</span>
 						)}
@@ -269,10 +273,10 @@ function Estado({
 		);
 	}
 	if (estado === "completado") {
-		return <span className="text-xl text-[var(--color-verde)]">✅</span>;
+		return <CheckCircle size={24} weight="fill" aria-label="Completado" className="text-[var(--color-verde)]" />;
 	}
 	if (estado === "disponible") {
-		return <span className="text-xl">📖</span>;
+		return <ArrowRight size={22} aria-label="Disponible" className="text-[var(--color-cyan)]" />;
 	}
-	return <span className="text-xl opacity-60">🔒</span>;
+	return <LockSimple size={22} aria-label="Bloqueado" className="text-[var(--color-tinta-2)]" />;
 }

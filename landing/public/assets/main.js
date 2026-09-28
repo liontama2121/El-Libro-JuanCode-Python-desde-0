@@ -39,12 +39,13 @@
 	const anio = document.getElementById("anio");
 	if (anio) anio.textContent = new Date().getFullYear();
 
-	/* --- 3. Aparición al hacer scroll -------------------------------------- */
+	/* --- 3. Aparición al entrar en pantalla ------------------------------- */
 
+	// El contenido es visible por defecto: solo se oculta si la página marcó
+	// <html class="js"> (script en el <head>). Sin IntersectionObserver o con
+	// movimiento reducido, se muestra todo de una.
 	const objetivos = document.querySelectorAll(".reveal");
 
-	// Si el navegador no soporta IntersectionObserver, o el usuario pidió menos
-	// movimiento, se muestra todo de una en vez de dejarlo invisible.
 	const sinAnimacion =
 		!("IntersectionObserver" in window) ||
 		window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -57,7 +58,8 @@
 	const obs = new IntersectionObserver(
 		(entries) => {
 			for (const e of entries) {
-				if (e.isIntersecting) {
+				// Lo que ya quedó arriba (salto con ancla) también se muestra
+				if (e.isIntersecting || e.boundingClientRect.top < 0) {
 					e.target.classList.add("in");
 					obs.unobserve(e.target);
 				}
@@ -67,42 +69,4 @@
 	);
 
 	for (const el of objetivos) obs.observe(el);
-
-	// Red de seguridad: si el observer no llega a dispararse (la pestaña abrió
-	// en segundo plano, el usuario saltó con un ancla, un motor viejo), lo que
-	// esté a la vista se muestra igual. Nada puede quedarse en opacity 0.
-	let pendiente = false;
-
-	const revelarLoVisible = () => {
-		pendiente = false;
-		let faltan = 0;
-
-		for (const el of objetivos) {
-			if (el.classList.contains("in")) continue;
-			// Todo lo que ya quedó por encima del borde inferior se muestra,
-			// incluso si el usuario saltó con un ancla y nunca pasó por ahí.
-			const r = el.getBoundingClientRect();
-			if (r.top < window.innerHeight * 0.92) {
-				el.classList.add("in");
-				obs.unobserve(el);
-			} else {
-				faltan++;
-			}
-		}
-
-		if (faltan === 0) window.removeEventListener("scroll", alScrollear);
-	};
-
-	// El throttle va con setTimeout y no con requestAnimationFrame: en una
-	// pestaña en segundo plano rAF queda congelado, que es justo el caso que
-	// esta red de seguridad tiene que cubrir.
-	function alScrollear() {
-		if (pendiente) return;
-		pendiente = true;
-		setTimeout(revelarLoVisible, 80);
-	}
-
-	window.addEventListener("scroll", alScrollear, { passive: true });
-	window.addEventListener("load", revelarLoVisible, { once: true });
-	revelarLoVisible();
 })();

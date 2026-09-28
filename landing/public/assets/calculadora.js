@@ -285,9 +285,9 @@
 				${p.opciones.some((o) => o.cantidad) ? htmlCantidad(p) : ""}
 			</fieldset>
 			<div class="calc-nav">
-				<button type="button" class="btn btn-ghost" data-accion="anterior"${i === 0 ? " disabled" : ""}>◀ Anterior</button>
-				<button type="button" class="btn btn-grad" data-accion="siguiente"${respondida(p) ? "" : " disabled"}>
-					${ultima ? "Ver mi precio ▶" : "Siguiente ▶"}
+				<button type="button" class="btn btn-linea" data-accion="anterior"${i === 0 ? " disabled" : ""}><i class="ph ph-arrow-left" aria-hidden="true"></i> Anterior</button>
+				<button type="button" class="btn btn-ladrillo" data-accion="siguiente"${respondida(p) ? "" : " disabled"}>
+					${ultima ? "Ver mi precio" : "Siguiente"} <i class="ph ph-arrow-right" aria-hidden="true"></i>
 				</button>
 			</div>`;
 	};
@@ -315,8 +315,8 @@
 					<li>El código es tuyo desde el día uno</li>
 				</ul>
 				<div class="calc-acciones">
-					<a class="calc-wa" href="${linkWhatsApp()}" target="_blank" rel="noopener">💬 Enviar por WhatsApp y cotizar</a>
-					<button type="button" class="btn btn-ghost calc-reset" data-accion="reiniciar">🔄 Empezar de nuevo</button>
+					<a class="calc-wa" href="${linkWhatsApp()}" target="_blank" rel="noopener"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i> Enviar por WhatsApp y cotizar</a>
+					<button type="button" class="btn btn-linea calc-reset" data-accion="reiniciar"><i class="ph ph-arrows-clockwise" aria-hidden="true"></i> Empezar de nuevo</button>
 				</div>
 			</div>`;
 	};

@@ -145,18 +145,18 @@ function Opciones({ pregunta, respuesta, onRespuesta, correccion, bloqueada }: S
 						onClick={() => onRespuesta({ option_id: op.id })}
 						className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition ${
 							esCorrecta
-								? "border-[rgba(52,224,122,.6)] bg-[rgba(52,224,122,.1)]"
+								? "border-[color-mix(in_srgb,var(--color-verde)_60%,transparent)] bg-[color-mix(in_srgb,var(--color-verde)_10%,transparent)]"
 								: esErrorTuyo
-									? "border-[rgba(255,77,255,.6)] bg-[rgba(255,77,255,.08)]"
+									? "border-[color-mix(in_srgb,var(--color-magenta)_60%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_8%,transparent)]"
 									: activa
-										? "border-[rgba(0,229,255,.6)] bg-[rgba(0,229,255,.09)]"
-										: "border-[var(--color-borde)] bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]"
+										? "border-[color-mix(in_srgb,var(--color-cyan)_60%,transparent)] bg-[color-mix(in_srgb,var(--color-cyan)_9%,transparent)]"
+										: "border-[var(--color-borde)] bg-tinta/[0.04] hover:border-tinta/30 hover:bg-tinta/[0.07]"
 						} ${bloqueada ? "cursor-default" : ""}`}
 					>
 						<span
 							className={`jc-mono grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-xs uppercase ${
 								activa || esCorrecta
-									? "border-transparent bg-[var(--color-cyan)] text-[#08131a]"
+									? "border-transparent bg-[var(--color-cyan)] text-[var(--color-sobre)]"
 									: "border-[var(--color-borde)] text-[var(--color-tinta-2)]"
 							}`}
 						>
@@ -181,7 +181,7 @@ function Lineas({ pregunta, respuesta, onRespuesta, correccion, bloqueada }: Sub
 	const correcta = correccion?.correcta as number | undefined;
 
 	return (
-		<div className="overflow-hidden rounded-xl border border-[var(--color-borde)] bg-black/60">
+		<div className="overflow-hidden rounded-xl border border-[var(--color-borde)] bg-codigo">
 			{(pregunta.lineas ?? []).map((texto, i) => {
 				const n = i + 1;
 				const activa = marcada === n;
@@ -196,12 +196,12 @@ function Lineas({ pregunta, respuesta, onRespuesta, correccion, bloqueada }: Sub
 						onClick={() => onRespuesta({ line_number: n })}
 						className={`jc-mono flex w-full items-start gap-3 px-3 py-1.5 text-left text-[0.82rem] leading-relaxed transition sm:text-sm ${
 							esCorrecta
-								? "bg-[rgba(52,224,122,.16)]"
+								? "bg-[color-mix(in_srgb,var(--color-verde)_16%,transparent)]"
 								: esErrorTuyo
-									? "bg-[rgba(255,77,255,.14)]"
+									? "bg-[color-mix(in_srgb,var(--color-magenta)_14%,transparent)]"
 									: activa
-										? "bg-[rgba(0,229,255,.14)]"
-										: "hover:bg-white/5"
+										? "bg-[color-mix(in_srgb,var(--color-cyan)_14%,transparent)]"
+										: "hover:bg-tinta/5"
 						} ${bloqueada ? "cursor-default" : ""}`}
 					>
 						<span className="w-6 shrink-0 select-none text-right text-[var(--color-tinta-2)]">
@@ -302,9 +302,9 @@ function Parsons({ pregunta, respuesta, onRespuesta, correccion, bloqueada }: Su
 						onDragStart={() => setArrastrando(i)}
 						onDragOver={(e) => e.preventDefault()}
 						onDrop={() => soltarEn(i)}
-						className={`flex items-stretch gap-2 rounded-xl border bg-black/40 p-2 transition ${
+						className={`flex items-stretch gap-2 rounded-xl border bg-codigo p-2 transition ${
 							arrastrando === i
-								? "border-[rgba(0,229,255,.6)]"
+								? "border-[color-mix(in_srgb,var(--color-cyan)_60%,transparent)]"
 								: "border-[var(--color-borde)]"
 						}`}
 					>
@@ -344,7 +344,7 @@ function Parsons({ pregunta, respuesta, onRespuesta, correccion, bloqueada }: Su
 					<p className="jc-mono mb-2 text-xs tracking-[0.18em] text-[var(--color-verde)] uppercase">
 						así iba
 					</p>
-					<pre className="jc-mono overflow-x-auto rounded-xl border border-[rgba(52,224,122,.35)] bg-black/60 p-4 text-sm text-[#d7dcff]">
+					<pre className="jc-mono overflow-x-auto rounded-xl border border-[color-mix(in_srgb,var(--color-verde)_35%,transparent)] bg-codigo p-4 text-sm text-[#d7dcff]">
 						<code>
 							{solucion.map((l) => `${"    ".repeat(l.indent)}${l.text}`).join("\n")}
 						</code>
@@ -371,7 +371,7 @@ function BotonPieza({
 			title={etiqueta}
 			onClick={onClick}
 			className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--color-borde)]
-				bg-white/5 text-sm text-[var(--color-tinta-2)] transition hover:border-[rgba(0,229,255,.5)]
+				bg-tinta/5 text-sm text-[var(--color-tinta-2)] transition hover:border-[color-mix(in_srgb,var(--color-cyan)_50%,transparent)]
 				hover:text-[var(--color-cyan)]"
 		>
 			{children}
@@ -399,8 +399,8 @@ function Explicacion({
 		<div
 			className={`rounded-2xl border p-5 ${
 				correccion.acerto
-					? "border-[rgba(52,224,122,.4)] bg-[rgba(52,224,122,.07)]"
-					: "border-[rgba(255,169,77,.4)] bg-[rgba(255,169,77,.07)]"
+					? "border-[color-mix(in_srgb,var(--color-verde)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-verde)_7%,transparent)]"
+					: "border-[color-mix(in_srgb,var(--color-naranja)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-naranja)_7%,transparent)]"
 			}`}
 		>
 			<p className="jc-display text-lg">
@@ -449,7 +449,7 @@ function Huecos({
 
 	return (
 		<div className="mt-4">
-			<pre className="jc-mono overflow-x-auto rounded-xl border border-[var(--color-borde)] bg-black/50 p-4 text-[0.82rem] leading-[1.9] whitespace-pre-wrap">
+			<pre className="jc-mono overflow-x-auto rounded-xl border border-[var(--color-borde)] bg-codigo p-4 text-[0.82rem] leading-[1.9] whitespace-pre-wrap">
 				{trozos.map((trozo, i) => {
 					// Los índices impares son los ids de los huecos
 					if (i % 2 === 0) return <span key={`t-${i}`}>{trozo}</span>;
@@ -459,8 +459,8 @@ function Huecos({
 					const estado = !d
 						? "border-[var(--color-borde)] bg-white/[0.06] text-[var(--color-cyan)]"
 						: d.acerto
-							? "border-[rgba(52,224,122,.5)] bg-[rgba(52,224,122,.12)] text-[var(--color-verde)]"
-							: "border-[rgba(255,77,255,.5)] bg-[rgba(255,77,255,.12)] text-[var(--color-magenta)]";
+							? "border-[color-mix(in_srgb,var(--color-verde)_50%,transparent)] bg-[color-mix(in_srgb,var(--color-verde)_12%,transparent)] text-[var(--color-verde)]"
+							: "border-[color-mix(in_srgb,var(--color-magenta)_50%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_12%,transparent)] text-[var(--color-magenta)]";
 
 					return (
 						<input
@@ -473,7 +473,7 @@ function Huecos({
 							autoCapitalize="off"
 							autoCorrect="off"
 							aria-label={`Hueco ${id}`}
-							className={`jc-mono mx-1 inline-block rounded-md border px-2 py-0.5 text-[0.82rem] outline-none focus:border-[rgba(0,229,255,.6)] ${estado}`}
+							className={`jc-mono mx-1 inline-block rounded-md border px-2 py-0.5 text-[0.82rem] outline-none focus:border-[color-mix(in_srgb,var(--color-cyan)_60%,transparent)] ${estado}`}
 						/>
 					);
 				})}

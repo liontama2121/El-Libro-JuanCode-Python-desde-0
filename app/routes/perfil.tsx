@@ -155,7 +155,7 @@ export default function Perfil({ loaderData }: Route.ComponentProps) {
 								key={i.id}
 								className={`rounded-2xl border p-4 ${
 									i.ganada
-										? "border-[rgba(255,212,59,.45)] bg-[rgba(255,212,59,.07)]"
+										? "border-[color-mix(in_srgb,var(--color-dorado)_45%,transparent)] bg-[color-mix(in_srgb,var(--color-dorado)_7%,transparent)]"
 										: "border-[var(--color-borde)] bg-white/[0.02] opacity-45 grayscale"
 								}`}
 							>
@@ -191,7 +191,7 @@ export default function Perfil({ loaderData }: Route.ComponentProps) {
 									height: `${8 + (a.n / maxActividad) * 72}px`,
 									background:
 										a.n === 0
-											? "rgba(255,255,255,.07)"
+											? "var(--color-borde)"
 											: "linear-gradient(180deg, var(--color-cyan), var(--color-purpura))",
 								}}
 							/>

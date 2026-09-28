@@ -3,74 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JuanCode — Clases de programación y páginas web</title>
-<meta name="description" content="Soy Juan, ingeniero de sistemas de Bogotá. Doy clases de programación 1 a 1 y construyo páginas web que se sienten premium. Elige por dónde empezamos.">
-<meta name="theme-color" content="#070A12">
+<title>JuanCode · Páginas web y clases de programación</title>
+<meta name="description" content="Soy Juan, ingeniero de sistemas y arquitecto de software en Bogotá. Construyo páginas web que duran años y doy clases de programación 1 a 1. Elige por dónde empezamos.">
+<meta name="theme-color" content="#05070b">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="JuanCode — Clases de programación y páginas web">
-<meta property="og:description" content="Clases de Python 1 a 1 que rescatan semestres, y páginas web que se sienten premium. Elige por dónde empezamos.">
+<meta property="og:title" content="JuanCode · Páginas web y clases de programación">
+<meta property="og:description" content="Páginas web pensadas como un arquitecto piensa una casa, y clases de Python 1 a 1 que rescatan semestres. Elige por dónde empezamos.">
 <meta property="og:locale" content="es_CO">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/styles.css">
 <link rel="stylesheet" href="/assets/bienvenida.css">
+<link rel="stylesheet" href="/assets/hud.css">
 </head>
 <body class="bienvenida">
-<div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
 
-<main class="wrap portada">
+<header class="portada-head">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="JuanCode, inicio"><span class="j">&lt;J&gt;</span>JUANCODE</a>
+    <nav class="portada-extras" aria-label="Enlaces rápidos">
+      <a data-jc="libro" href="/clases" target="_blank" rel="noopener"><i class="ph ph-book-open-text" aria-hidden="true"></i><span>El Libro</span></a>
+      <a data-jc="tiktok" href="/" target="_blank" rel="noopener" aria-label="TikTok"><i class="ph ph-tiktok-logo" aria-hidden="true"></i></a>
+      <a data-jc="instagram" href="/" target="_blank" rel="noopener" aria-label="Instagram"><i class="ph ph-instagram-logo" aria-hidden="true"></i></a>
+      <a data-jc="whatsapp" href="/" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i></a>
+    </nav>
+  </div>
+</header>
 
-  <header class="portada-head">
-    <span class="big-j chico" aria-hidden="true">&lt;J&gt;</span>
-    <p class="marca">JUANCODE</p>
-    <div class="hero-tag">◉ Bogotá, Colombia · Disponible</div>
-    <h1>Hola, soy <span class="grad-text">Juan</span> 👋</h1>
-    <p class="portada-sub">Ingeniero de sistemas. Hago <strong>dos cosas</strong>, y las tengo aparte para no revolverlas. ¿A cuál vienes?</p>
-  </header>
+<main class="portada">
+
+  <div class="saludo wrap">
+    <h1>Hola, soy <span class="neon">Juan</span>. Hago dos cosas, y las tengo aparte.</h1>
+    <p class="lead">Ingeniero de sistemas y arquitecto de software en Bogotá. ¿A cuál vienes?</p>
+  </div>
 
   <div class="caminos">
 
-    <a class="camino camino-clases" href="/clases">
-      <span class="camino-emoji">🐍</span>
-      <h2>Quiero aprender<br><b>a programar</b></h2>
-      <p>Clases de Python 1 a 1, guías a tu medida y simulacros pre-parcial. Para rescatar el semestre o arrancar desde cero.</p>
-      <ul>
-        <li>Clases en vivo, a tu ritmo</li>
-        <li>Simulacros con soluciones explicadas</li>
-        <li>Reservas y horarios en línea</li>
-      </ul>
-      <span class="camino-cta">Ver las clases →</span>
+    <a class="camino camino-web" href="/web">
+      <canvas class="muro" data-muro aria-hidden="true"></canvas>
+      <span class="camino-placa">
+        <span class="ancha">Para negocios</span>
+        <strong>Quiero una página web</strong>
+        <span class="camino-desc">Landings, tiendas con pagos, plataformas a la medida y asistentes con IA. Hechas a mano, para durar años.</span>
+        <span class="camino-cta">Ver proyectos y precios <i class="ph ph-arrow-right" aria-hidden="true"></i></span>
+      </span>
     </a>
 
-    <a class="camino camino-web" href="/web">
-      <span class="camino-emoji">🌐</span>
-      <h2>Quiero una<br><b>página web</b></h2>
-      <p>Landings, portafolios, tiendas con pagos y plataformas a la medida. Rápidas, seguras y con identidad propia.</p>
-      <ul>
-        <li>Diseño con marca, no plantillas</li>
-        <li>Pagos en línea y catálogos</li>
-        <li>Proyectos reales que puedes visitar</li>
-      </ul>
-      <span class="camino-cta">Ver el portafolio →</span>
+    <a class="camino camino-clases" href="/clases">
+      <span class="camino-placa">
+        <span class="ancha">Para estudiantes</span>
+        <strong>Quiero aprender a programar</strong>
+        <span class="camino-desc">Clases de Python 1 a 1, guías a tu medida y simulacros pre-parcial. Para rescatar el semestre o arrancar de cero.</span>
+        <span class="camino-cta">Ver clases y agenda <i class="ph ph-arrow-right" aria-hidden="true"></i></span>
+      </span>
+      <span class="codigo" aria-hidden="true"><b>while</b> semestre.en_riesgo():<br>&nbsp;&nbsp;&nbsp;&nbsp;estudiar_con_juan()<br><br><b>print</b>("¡Ahh, ya entendí!")</span>
     </a>
 
   </div>
 
-  <nav class="portada-extras" aria-label="Enlaces rápidos">
-    <a data-jc="libro" href="/clases" target="_blank" rel="noopener">📖 El Libro JuanCode</a>
-    <a data-jc="tiktok" href="/" target="_blank" rel="noopener">🎵 TikTok</a>
-    <a data-jc="instagram" href="/" target="_blank" rel="noopener">📷 Instagram</a>
-    <a data-jc="whatsapp" href="/" target="_blank" rel="noopener">💬 WhatsApp</a>
-  </nav>
-
-  <p class="portada-pie">// Hecho con amor por JuanCode · Bogotá ☕ · <span id="anio"></span></p>
-
 </main>
+
+<footer class="pie">
+  <div class="wrap">
+    <small>Hecho a mano por JuanCode en Bogotá · <span id="anio"></span></small>
+  </div>
+</footer>
 
 <script src="/assets/config.js"></script>
 <script src="/assets/main.js"></script>
+<script src="/assets/muro.js"></script>
 </body>
 </html>

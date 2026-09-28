@@ -145,7 +145,7 @@ export default function Arcade({ loaderData }: Route.ComponentProps) {
 								<span className="text-4xl">{m.emoji}</span>
 								<h2
 									className="jc-display mt-3 text-xl"
-									style={{ color: `rgb(${m.color})` }}
+									style={{ color: m.color }}
 								>
 									{m.nombre}
 								</h2>
@@ -183,7 +183,7 @@ export default function Arcade({ loaderData }: Route.ComponentProps) {
 								key={slug}
 								to={`/practica/arcade/${slug}`}
 								className="jc-cap jc-cap-disponible flex flex-col p-6"
-								style={{ borderColor: `rgba(${m.color},.35)` }}
+								style={{ borderColor: `color-mix(in srgb, ${m.color} 35%, transparent)` }}
 							>
 								{contenido}
 							</Link>

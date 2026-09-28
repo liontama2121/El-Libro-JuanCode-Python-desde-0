@@ -95,7 +95,7 @@ export function ProbarCodigo({
 			</div>
 
 			{datos?.error && (
-				<p className="rounded-xl border border-[rgba(255,169,77,.4)] bg-[rgba(255,169,77,.08)] px-4 py-2 text-sm text-[var(--color-naranja)]">
+				<p className="rounded-xl border border-[color-mix(in_srgb,var(--color-naranja)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-naranja)_8%,transparent)] px-4 py-2 text-sm text-[var(--color-naranja)]">
 					{datos.error}
 				</p>
 			)}
@@ -107,8 +107,8 @@ export function ProbarCodigo({
 							key={r.n}
 							className={`rounded-2xl border p-4 ${
 								r.paso
-									? "border-[rgba(52,224,122,.4)] bg-[rgba(52,224,122,.06)]"
-									: "border-[rgba(255,77,255,.35)] bg-[rgba(255,77,255,.05)]"
+									? "border-[color-mix(in_srgb,var(--color-verde)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-verde)_6%,transparent)]"
+									: "border-[color-mix(in_srgb,var(--color-magenta)_35%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_5%,transparent)]"
 							}`}
 						>
 							<p className="jc-mono text-xs">
@@ -147,7 +147,7 @@ function Bloque({ titulo, texto }: { titulo: string; texto: string }) {
 			<p className="jc-mono text-[0.62rem] tracking-[0.16em] text-[var(--color-tinta-2)] uppercase">
 				{titulo}
 			</p>
-			<pre className="jc-mono mt-1 overflow-x-auto rounded-lg border border-[var(--color-borde)] bg-black/50 p-3 text-xs text-[#d7dcff]">
+			<pre className="jc-mono mt-1 overflow-x-auto rounded-lg border border-[var(--color-borde)] bg-codigo p-3 text-xs text-[#d7dcff]">
 				<code>{texto}</code>
 			</pre>
 		</div>

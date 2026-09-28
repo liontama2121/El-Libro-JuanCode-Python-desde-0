@@ -87,7 +87,7 @@ export default function Ranking({ loaderData }: Route.ComponentProps) {
 								key={f.userId}
 								className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${
 									yo
-										? "border-[rgba(0,229,255,.55)] bg-[rgba(0,229,255,.09)]"
+										? "border-[color-mix(in_srgb,var(--color-cyan)_55%,transparent)] bg-[color-mix(in_srgb,var(--color-cyan)_9%,transparent)]"
 										: "border-[var(--color-borde)] bg-white/[0.03]"
 								}`}
 							>

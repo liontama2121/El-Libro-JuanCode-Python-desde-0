@@ -1,65 +1,63 @@
 /* ==========================================================================
-   Portada — la bienvenida que separa los dos caminos.
-   Mobile-first: en celular las dos opciones van una debajo de otra.
+   Portada: la bienvenida que separa los dos caminos.
+   Dos puertas: la de ladrillo (negocios) y la de cerro (estudiantes).
    ========================================================================== */
 
 body.bienvenida { display: flex; flex-direction: column; min-height: 100dvh; }
 
-.portada { display: flex; flex-direction: column; justify-content: center; flex: 1; padding: 44px 20px 34px; text-align: center; gap: 30px; }
+.portada-head { border-bottom: 2px solid var(--junta); }
+.portada-head .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; }
 
-.portada-head { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.big-j.chico { font-size: clamp(72px, 16vw, 108px); line-height: 1; animation: flotar 5s ease-in-out infinite; }
-.marca { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: .42em; color: var(--muted); margin-bottom: 12px; }
-.portada-head h1 { font-family: 'Sora', sans-serif; font-size: clamp(30px, 7vw, 44px); font-weight: 800; letter-spacing: -.02em; }
-.portada-sub { color: var(--muted); font-size: 18px; max-width: 520px; margin: 4px auto 0; }
-.portada-sub strong { color: var(--text); }
+.portada-extras { display: flex; align-items: center; gap: 4px; }
+.portada-extras a { display: inline-flex; align-items: center; gap: 8px; min-width: 44px; min-height: 44px; justify-content: center; padding: 0 10px; color: var(--tinta-2); text-decoration: none; font-size: 15px; font-weight: 650; transition: color 0.2s; }
+.portada-extras a:hover { color: var(--ladrillo); }
+.portada-extras .ph { font-size: 22px; }
 
-/* Los dos caminos */
-.caminos { display: grid; gap: 16px; }
+.portada { flex: 1; display: flex; flex-direction: column; }
 
-.camino { display: flex; flex-direction: column; gap: 10px; text-align: left; padding: 28px 24px; border-radius: 26px; border: 1px solid var(--border); background: var(--glass); backdrop-filter: blur(12px); text-decoration: none; color: var(--text); position: relative; overflow: hidden; border-top: 4px solid; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
-.camino::before { content: ''; position: absolute; inset: -2px; opacity: 0; transition: opacity .18s ease; pointer-events: none; }
-.camino:hover { transform: translateY(-5px); }
-.camino:hover::before { opacity: .1; }
-.camino:focus-visible { outline: 3px solid var(--cyan); outline-offset: 4px; }
+.saludo { padding-top: clamp(40px, 7vh, 80px); padding-bottom: clamp(32px, 5vh, 56px); display: grid; gap: 18px; width: 100%; }
+.saludo h1 { font-size: clamp(40px, 5vw, 72px); max-width: 22ch; }
+.saludo .lead { max-width: 30ch; }
 
-.camino-clases { border-top-color: var(--cyan); }
-.camino-clases::before { background: linear-gradient(135deg, #00E5FF, #b975ff); }
-.camino-clases:hover { border-color: rgba(0,229,255,.45); box-shadow: 0 22px 54px -26px rgba(0,229,255,.9); }
+/* Las dos puertas */
+.caminos { flex: 1; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); min-height: 480px; border-top: 2px solid var(--junta); }
 
-.camino-web { border-top-color: var(--magenta); }
-.camino-web::before { background: linear-gradient(135deg, #FF4DFF, #b975ff); }
-.camino-web:hover { border-color: rgba(255,77,255,.45); box-shadow: 0 22px 54px -26px rgba(255,77,255,.9); }
+.camino { position: relative; display: flex; align-items: flex-end; overflow: hidden; padding: clamp(24px, 4vw, 56px); text-decoration: none; color: inherit; }
+.camino:focus-visible { outline: 1px solid var(--junta-fuerte); outline-offset: -8px; }
 
-.camino > * { position: relative; z-index: 1; }
-.camino-emoji { font-size: 42px; line-height: 1; }
-.camino h2 { font-family: 'Sora', sans-serif; font-size: 25px; font-weight: 700; line-height: 1.2; }
-.camino h2 b { font-weight: 800; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.camino p { color: var(--muted); font-size: 16.5px; }
-.camino ul { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-top: 2px; }
-.camino li { display: flex; gap: 10px; align-items: flex-start; color: var(--muted); font-size: 15.5px; }
-.camino li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
-.camino-cta { margin-top: 8px; font-family: 'Sora', sans-serif; font-weight: 800; font-size: 16.5px; color: var(--cyan); display: inline-flex; gap: 8px; transition: gap .18s ease; }
-.camino-web .camino-cta { color: var(--magenta); }
-.camino:hover .camino-cta { gap: 14px; }
+.camino-web { background: var(--muro-junta); }
+.camino-web .muro { position: absolute; inset: 0; transition: transform 1.4s var(--ease); }
+.camino-web:hover .muro { transform: scale(1.03); }
 
-/* Enlaces de abajo */
-.portada-extras { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-.portada-extras a { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--muted); text-decoration: none; font-size: 14.5px; font-weight: 700; transition: color .15s, border-color .15s; }
-.portada-extras a:hover { color: var(--cyan); border-color: rgba(0,229,255,.4); }
+.camino-clases { background: var(--cerro); color: var(--sobre-cerro); flex-direction: column; justify-content: space-between; align-items: stretch; gap: 40px; }
 
-.portada-pie { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--muted); opacity: .8; }
+.camino-placa { position: relative; z-index: 1; display: grid; gap: 12px; max-width: 480px; }
+.camino-web .camino-placa { background: var(--suelo); padding: clamp(24px, 3vw, 36px); border-top: 1px solid var(--junta-fuerte); box-shadow: var(--sombra); }
+.camino-clases .camino-placa { order: 2; }
 
-/* Volver, en las páginas de cada camino */
-.volver-camino { display: inline-block; margin-bottom: 16px; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .1em; }
-.volver-camino:hover { color: var(--cyan); }
+.camino-placa .ancha { font-size: 13px; color: var(--tinta-2); }
+.camino-clases .camino-placa .ancha { color: var(--sobre-cerro-2); }
+.camino-placa strong { font-size: clamp(30px, 3.2vw, 46px); font-variation-settings: "wdth" 78; font-weight: 750; line-height: 1.02; letter-spacing: -0.02em; }
+.camino-desc { color: var(--tinta-2); font-size: 16.5px; }
+.camino-clases .camino-desc { color: var(--sobre-cerro-2); }
 
-/* Una sola tarjeta de servicio ocupa el ancho, pero sin quedar gigante */
-.servicios.una { grid-template-columns: 1fr; max-width: 780px; }
-.btns.btns-centro { justify-content: center; }
+.camino-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; font-weight: 750; font-size: 17px; color: var(--ladrillo); }
+.camino-clases .camino-cta { color: var(--sobre-cerro); }
+.camino-cta .ph { transition: transform 0.25s var(--ease); }
+.camino:hover .camino-cta .ph { transform: translateX(6px); }
 
-@media (min-width: 820px) {
-  .portada { padding: 56px 20px 40px; gap: 38px; }
-  .caminos { grid-template-columns: 1fr 1fr; gap: 22px; }
-  .camino { padding: 34px 30px; }
+.codigo { order: 1; font-family: var(--mono); font-size: clamp(14px, 1.3vw, 17px); line-height: 1.8; color: var(--sobre-cerro-2); border-left: 2px solid color-mix(in srgb, var(--sobre-cerro) 30%, transparent); padding-left: 18px; }
+.codigo b { color: #f0b48f; font-weight: 600; }
+
+.bienvenida .pie { border-top: 0; }
+
+@media (max-width: 900px) {
+  .caminos { grid-template-columns: 1fr; }
+  .camino-web { min-height: 440px; }
+  .camino-clases { min-height: 0; }
+  .portada-extras span { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .camino-web:hover .muro { transform: none; }
 }

@@ -35,11 +35,11 @@ export function TraceStepper({ pelicula }: { pelicula: Pelicula }) {
 
 			<div className="space-y-5 p-4 sm:p-6">
 				{/* Código, estilo editor ----------------------------------------- */}
-				<div className="overflow-hidden rounded-xl border border-[var(--color-borde)] bg-[#12132b]">
+				<div className="overflow-hidden rounded-xl border border-[var(--color-borde)] bg-codigo">
 					<div className="flex items-center gap-1.5 border-b border-[var(--color-borde)] px-3 py-2">
-						<span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-						<span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-						<span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+						<span className="h-2.5 w-2.5 rounded-full bg-[#d6d2cb]/30" />
+						<span className="h-2.5 w-2.5 rounded-full bg-[#d6d2cb]/30" />
+						<span className="h-2.5 w-2.5 rounded-full bg-[#d6d2cb]/30" />
 						<span className="jc-mono ml-2 text-[0.62rem] tracking-[0.16em] text-[var(--color-tinta-2)] uppercase">
 							programa.py
 						</span>
@@ -110,7 +110,7 @@ export function TraceStepper({ pelicula }: { pelicula: Pelicula }) {
 									<tr
 										key={i}
 										className={`border-b border-[var(--color-borde)] transition-colors last:border-0 ${
-											ultima ? "bg-[rgba(0,229,255,.12)]" : ""
+											ultima ? "bg-[color-mix(in_srgb,var(--color-cyan)_12%,transparent)]" : ""
 										}`}
 									>
 										{paso.cells.map((celda, j) => (
@@ -145,11 +145,11 @@ export function TraceStepper({ pelicula }: { pelicula: Pelicula }) {
 				</div>
 
 				{/* Consola -------------------------------------------------------- */}
-				<div className="overflow-hidden rounded-xl border border-[var(--color-borde)] bg-black/70">
+				<div className="overflow-hidden rounded-xl border border-[var(--color-borde)] bg-codigo">
 					<div className="jc-mono border-b border-[var(--color-borde)] px-4 py-2 text-[0.62rem] tracking-[0.16em] text-[var(--color-tinta-2)] uppercase">
 						▶ salida en pantalla
 					</div>
-					<pre className="jc-mono min-h-[5.5rem] overflow-x-auto px-4 py-3 text-[0.8rem] leading-[1.7] text-[#5ce87a] sm:text-[0.85rem]" style={{ whiteSpace: "pre-wrap" }}>
+					<pre className="jc-mono min-h-[5.5rem] overflow-x-auto px-4 py-3 text-[0.8rem] leading-[1.7] text-[#9fd8ae] sm:text-[0.85rem]" style={{ whiteSpace: "pre-wrap" }}>
 						{salida || (
 							<span className="text-[var(--color-tinta-2)] opacity-60">
 								(todavía no ha impreso nada)
@@ -159,7 +159,7 @@ export function TraceStepper({ pelicula }: { pelicula: Pelicula }) {
 				</div>
 
 				{termino && (
-					<p className="jc-anim-pop inline-flex items-center gap-2 rounded-full border border-[rgba(52,224,122,.4)] bg-[rgba(52,224,122,.1)] px-4 py-1.5 text-sm font-semibold text-[var(--color-verde)]">
+					<p className="jc-anim-pop inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--color-verde)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-verde)_10%,transparent)] px-4 py-1.5 text-sm font-semibold text-[var(--color-verde)]">
 						🏁 Programa terminado
 					</p>
 				)}

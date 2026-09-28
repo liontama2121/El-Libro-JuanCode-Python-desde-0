@@ -306,7 +306,7 @@ function Configurador({ loaderData }: { loaderData: DatosConfig }) {
 									/>
 									<span
 										className="jc-btn jc-btn-sm peer-checked:border-transparent
-											peer-checked:bg-[var(--color-cyan)] peer-checked:text-[#08131a]"
+											peer-checked:bg-[var(--color-cyan)] peer-checked:text-[var(--color-sobre)]"
 									>
 										{n}
 									</span>
@@ -441,7 +441,7 @@ function Corriendo({ loaderData }: { loaderData: DatosQuiz }) {
 							<span
 								className={`jc-mono rounded-full border px-4 py-1.5 text-sm ${
 									restante <= 30
-										? "border-[rgba(255,77,255,.5)] text-[var(--color-magenta)]"
+										? "border-[color-mix(in_srgb,var(--color-magenta)_50%,transparent)] text-[var(--color-magenta)]"
 										: "border-[var(--color-borde)] text-[var(--color-tinta-2)]"
 								}`}
 							>
@@ -598,8 +598,8 @@ function ResultadoSimulacroVista({
 								return (
 									<article
 										key={f.questionId}
-										className="rounded-2xl border border-[rgba(255,77,255,.35)]
-											bg-[rgba(255,77,255,.05)] p-5 sm:p-6"
+										className="rounded-2xl border border-[color-mix(in_srgb,var(--color-magenta)_35%,transparent)]
+											bg-[color-mix(in_srgb,var(--color-magenta)_5%,transparent)] p-5 sm:p-6"
 									>
 										<p className="jc-mono mb-3 text-xs text-[var(--color-tinta-2)]">
 											{capitulos[String(f.chapterId)] ?? "Capítulo"}

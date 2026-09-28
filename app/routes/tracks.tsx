@@ -88,8 +88,8 @@ export default function Tracks({ loaderData }: Route.ComponentProps) {
 								to={rutaLibro(track)}
 								className={`jc-glass group flex flex-col gap-3 rounded-3xl border-t-4 p-7 transition hover:-translate-y-1.5 ${
 									avanzado
-										? "border-t-[var(--color-magenta)] hover:border-[rgba(255,77,255,.45)]"
-										: "border-t-[var(--color-cyan)] hover:border-[rgba(0,229,255,.45)]"
+										? "border-t-[var(--color-magenta)] hover:border-[color-mix(in_srgb,var(--color-magenta)_45%,transparent)]"
+										: "border-t-[var(--color-cyan)] hover:border-[color-mix(in_srgb,var(--color-cyan)_45%,transparent)]"
 								}`}
 							>
 								<span className="text-5xl">{info.emoji}</span>
@@ -97,7 +97,7 @@ export default function Tracks({ loaderData }: Route.ComponentProps) {
 								<div className="flex items-center gap-2">
 									<h2 className="jc-display text-2xl">{info.nombre}</h2>
 									{avanzado && (
-										<span className="jc-badge border-[rgba(255,77,255,.4)] bg-[rgba(255,77,255,.1)] text-[var(--color-magenta)]">
+										<span className="jc-badge border-[color-mix(in_srgb,var(--color-magenta)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_10%,transparent)] text-[var(--color-magenta)]">
 											Avanzado
 										</span>
 									)}
@@ -112,14 +112,14 @@ export default function Tracks({ loaderData }: Route.ComponentProps) {
 										</span>
 										<span>{porcentaje}%</span>
 									</div>
-									<div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+									<div className="mt-2 h-1.5 overflow-hidden rounded-full bg-tinta/10">
 										<div
 											className="h-full rounded-full transition-[width] duration-700"
 											style={{
 												width: `${porcentaje}%`,
 												background: avanzado
-													? "linear-gradient(90deg,#b975ff,#FF4DFF)"
-													: "linear-gradient(90deg,#00E5FF,#b975ff)",
+													? "var(--color-magenta)"
+													: "var(--color-cyan)",
 											}}
 										/>
 									</div>

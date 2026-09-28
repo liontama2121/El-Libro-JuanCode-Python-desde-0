@@ -134,7 +134,7 @@ export default function AdminEjercicios({
 							key={ej.id}
 							className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${
 								editando?.id === ej.id
-									? "border-[rgba(0,229,255,.5)] bg-[rgba(0,229,255,.07)]"
+									? "border-[color-mix(in_srgb,var(--color-cyan)_50%,transparent)] bg-[color-mix(in_srgb,var(--color-cyan)_7%,transparent)]"
 									: "border-[var(--color-borde)] bg-white/[0.03]"
 							}`}
 						>

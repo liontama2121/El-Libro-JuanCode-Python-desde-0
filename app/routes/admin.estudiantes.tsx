@@ -391,7 +391,7 @@ function FilaEstudiante({ estudiante: e }: { estudiante: Estudiante }) {
 						className={`jc-input jc-mono !w-auto !px-3 !py-1.5 text-xs ${
 							track === "basico"
 								? ""
-								: "!border-[rgba(255,77,255,.45)] text-[var(--color-magenta)]"
+								: "!border-[color-mix(in_srgb,var(--color-magenta)_45%,transparent)] text-[var(--color-magenta)]"
 						} ${guardando ? "opacity-60" : ""}`}
 					>
 						{TRACKS_USUARIO.map((t) => (
@@ -413,15 +413,15 @@ function FilaEstudiante({ estudiante: e }: { estudiante: Estudiante }) {
 						return (
 							<div key={t} className="flex items-center gap-2">
 								<span className="w-4 text-xs">{TRACK_INFO[t].emoji}</span>
-								<div className="h-1.5 w-20 overflow-hidden rounded-full bg-white/10">
+								<div className="h-1.5 w-20 overflow-hidden rounded-full bg-tinta/10">
 									<div
 										className="h-full rounded-full"
 										style={{
 											width: `${pct}%`,
 											background:
 												t === "avanzado"
-													? "linear-gradient(90deg,#b975ff,#FF4DFF)"
-													: "linear-gradient(90deg,#00E5FF,#b975ff)",
+													? "var(--color-magenta)"
+													: "var(--color-cyan)",
 										}}
 									/>
 								</div>

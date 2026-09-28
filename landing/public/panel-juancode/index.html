@@ -3,26 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi agenda — JuanCode</title>
+<title>Mi agenda · JuanCode</title>
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#070A12">
+<meta name="theme-color" content="#05070b">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/styles.css">
 <link rel="stylesheet" href="/assets/formularios.css">
 <link rel="stylesheet" href="/assets/panel.css">
+<link rel="stylesheet" href="/assets/hud.css">
 </head>
 <body>
-<div class="orb orb-1"></div><div class="orb orb-2"></div>
 
-<nav>
+<nav class="nav" aria-label="Principal">
   <div class="wrap">
-    <a class="logo" href="/">&lt;J&gt; JUANCODE</a>
+    <a class="logo" href="/" aria-label="JuanCode, inicio"><span class="j">&lt;J&gt;</span>JUANCODE</a>
     <div class="nav-links">
       <a href="/clases#agenda" target="_blank" rel="noopener">Ver mi agenda pública</a>
-      <a href="#" id="salir" class="oculto">Cerrar sesión</a>
+      <a href="#" id="salir" class="oculto"><i class="ph ph-sign-out" aria-hidden="true"></i> Cerrar sesión</a>
     </div>
   </div>
 </nav>
@@ -32,7 +30,7 @@
 <!-- LOGIN ---------------------------------------------------------------- -->
 <section class="login" id="login">
   <form class="tarjeta" id="form-login">
-    <h1>🔐 Mi agenda</h1>
+    <h1>Mi agenda</h1>
     <p class="ayuda">Entra con tu clave para marcar qué horas tienes ocupadas.</p>
     <label class="campo">
       <span>Clave</span>
@@ -40,7 +38,7 @@
     </label>
     <div id="error-login" class="aviso error oculto" role="alert"></div>
     <div class="acciones">
-      <button type="submit" class="btn btn-grad">Entrar</button>
+      <button type="submit" class="btn btn-ladrillo"><i class="ph ph-lock-key" aria-hidden="true"></i> Entrar</button>
     </div>
   </form>
 </section>
@@ -50,8 +48,8 @@
 
   <header class="panel-head">
     <div>
-      <h1>🗓️ Mi disponibilidad</h1>
-      <p class="ayuda">Toca una hora para cambiarla. <b class="v-libre">Verde</b> = se ve libre en la página · <b class="v-ocupado">Roja</b> = ocupada. El cambio se ve al instante.</p>
+      <h1>Mi disponibilidad</h1>
+      <p class="ayuda">Toca una hora para cambiarla. <b class="v-libre">En ladrillo</b> = se ve libre en la página. <b class="v-ocupado">Con borde</b> = ocupada. El cambio se ve al instante.</p>
     </div>
     <div class="tarjetas-resumen">
       <div class="mini"><b id="n-libres">0</b><span>horas libres</span></div>
@@ -64,7 +62,7 @@
       <span>Motivo (opcional, solo lo ves tú)</span>
       <input id="motivo" maxlength="200" placeholder="Clase con Ana, viaje, descanso…">
     </label>
-    <button type="button" class="btn btn-ghost btn-sm" id="recargar">🔄 Recargar</button>
+    <button type="button" class="btn btn-linea btn-sm" id="recargar"><i class="ph ph-arrows-clockwise" aria-hidden="true"></i> Recargar</button>
   </div>
 
   <div id="cargando" class="cargando">Cargando tu agenda…</div>

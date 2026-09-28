@@ -97,7 +97,7 @@ export default function CambiarPassword({
 				</div>
 
 				{actionData?.error && (
-					<p className="mt-4 rounded-xl border border-[rgba(255,77,255,.35)] bg-[rgba(255,77,255,.08)] px-4 py-2 text-sm text-[var(--color-magenta)]">
+					<p className="mt-4 rounded-xl border border-[color-mix(in_srgb,var(--color-magenta)_35%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_8%,transparent)] px-4 py-2 text-sm text-[var(--color-magenta)]">
 						{actionData.error}
 					</p>
 				)}

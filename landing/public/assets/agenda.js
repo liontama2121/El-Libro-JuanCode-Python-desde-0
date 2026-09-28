@@ -39,7 +39,7 @@
 					.map((h) =>
 						h.estado === "libre"
 							? `<a class="hueco libre" href="${linkWhatsApp(d, h)}" target="_blank" rel="noopener">
-                   <b>${escapar(h.etiqueta)}</b><span>✓ Libre</span>
+                   <b>${escapar(h.etiqueta)}</b><span>Libre</span>
                  </a>`
 							: `<span class="hueco ocupado" aria-label="Ocupado">
                    <b>${escapar(h.etiqueta)}</b><span>Ocupado</span>
@@ -61,8 +61,8 @@
 		if (estado) {
 			const total = dias.reduce((n, d) => n + d.libres, 0);
 			estado.textContent = total
-				? `● ${total} ${total === 1 ? "hora libre" : "horas libres"} en las próximas 3 semanas`
-				: "● Agenda llena por ahora";
+				? `${total} ${total === 1 ? "hora libre" : "horas libres"} en las próximas 3 semanas`
+				: "Agenda llena por ahora";
 			estado.classList.toggle("sin-cupos", total === 0);
 		}
 	}
@@ -75,6 +75,10 @@
 		} catch {
 			contenedor.innerHTML =
 				'<p class="agenda-vacia">No se pudo cargar la agenda. Escríbeme por WhatsApp y la miramos.</p>';
+			if (estado) {
+				estado.textContent = "Agenda sin conexión";
+				estado.classList.add("sin-cupos");
+			}
 		}
 	}
 

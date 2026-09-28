@@ -435,7 +435,7 @@ export default function AdminBanco({ loaderData, actionData }: Route.ComponentPr
 								<tr
 									key={q.id}
 									className={`border-b border-[var(--color-borde)] last:border-0 ${
-										editando?.id === q.id ? "bg-[rgba(0,229,255,.07)]" : ""
+										editando?.id === q.id ? "bg-[color-mix(in_srgb,var(--color-cyan)_7%,transparent)]" : ""
 									} ${q.active ? "" : "opacity-50"}`}
 								>
 									<td className="jc-mono px-4 py-3 text-xs">{numeroDe.get(q.chapterId)}</td>

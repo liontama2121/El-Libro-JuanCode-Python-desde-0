@@ -59,7 +59,7 @@ export function EditorCodigo({
 	return (
 		<div>
 			{etiqueta && <span className="jc-label">{etiqueta}</span>}
-			<div className="flex overflow-hidden rounded-xl border border-[var(--color-borde)] bg-black/60">
+			<div className="flex overflow-hidden rounded-xl border border-[var(--color-borde)] bg-codigo">
 				{/* Números de línea */}
 				<div
 					aria-hidden="true"

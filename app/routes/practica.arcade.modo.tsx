@@ -363,7 +363,7 @@ function RetoHecho({ loaderData }: { loaderData: DatosHecho }) {
 							key={f.userId}
 							className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${
 								f.userId === user.id
-									? "border-[rgba(0,229,255,.5)] bg-[rgba(0,229,255,.08)]"
+									? "border-[color-mix(in_srgb,var(--color-cyan)_50%,transparent)] bg-[color-mix(in_srgb,var(--color-cyan)_8%,transparent)]"
 									: "border-[var(--color-borde)] bg-white/[0.03]"
 							}`}
 						>
@@ -541,7 +541,7 @@ function Juego({ loaderData }: { loaderData: DatosJuego }) {
 								<span
 									className={`jc-mono rounded-full border px-3 py-1 text-sm ${
 										restante <= 10
-											? "border-[rgba(255,77,255,.5)] text-[var(--color-magenta)]"
+											? "border-[color-mix(in_srgb,var(--color-magenta)_50%,transparent)] text-[var(--color-magenta)]"
 											: "border-[var(--color-borde)] text-[var(--color-tinta-2)]"
 									}`}
 								>
@@ -561,7 +561,7 @@ function Juego({ loaderData }: { loaderData: DatosJuego }) {
 
 					<h1
 						className="jc-display mt-4 text-2xl sm:text-3xl"
-						style={{ color: `rgb(${modo.color})` }}
+						style={{ color: modo.color }}
 					>
 						{modo.emoji} {modo.nombre}
 					</h1>
@@ -655,7 +655,7 @@ function Cierre({
 					<p className="text-5xl">{modo.emoji}</p>
 					<h1 className="jc-display mt-4 text-3xl">{modo.nombre}</h1>
 
-					<p className="jc-display mt-6 text-5xl" style={{ color: `rgb(${modo.color})` }}>
+					<p className="jc-display mt-6 text-5xl" style={{ color: modo.color }}>
 						{cierre.aciertos}
 						<span className="text-2xl text-[var(--color-tinta-2)]">/{cierre.total}</span>
 					</p>
@@ -678,8 +678,8 @@ function Cierre({
 							{cierre.insignias.map((i) => (
 								<div
 									key={i.nombre}
-									className="jc-anim-pop rounded-2xl border border-[rgba(255,212,59,.45)]
-										bg-[rgba(255,212,59,.08)] px-4 py-3"
+									className="jc-anim-pop rounded-2xl border border-[color-mix(in_srgb,var(--color-dorado)_45%,transparent)]
+										bg-[color-mix(in_srgb,var(--color-dorado)_8%,transparent)] px-4 py-3"
 								>
 									<p className="jc-display text-lg">
 										{i.emoji} {i.nombre}

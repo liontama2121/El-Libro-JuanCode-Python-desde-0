@@ -3,23 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arquitecto digital para tu negocio — JuanCode</title>
+<title>Arquitecto digital para tu negocio · JuanCode</title>
 <meta name="description" content="Tu presencia digital, pensada como un arquitecto piensa una casa: landings, tiendas, plataformas a la medida y asistentes con IA. Calcula el precio de tu proyecto en 60 segundos. Desde $1.000.000 COP con 6 meses de mantenimiento.">
-<meta name="theme-color" content="#070A12">
+<meta name="theme-color" content="#05070b">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="Arquitecto digital para tu negocio — JuanCode">
+<meta property="og:title" content="Arquitecto digital para tu negocio · JuanCode">
 <meta property="og:description" content="Cimientos primero. Estética después. Todo dura años. Landings, tiendas, plataformas a la medida y asistentes con IA.">
 <meta property="og:locale" content="es_CO">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/styles.css">
 <link rel="stylesheet" href="/assets/calculadora.css">
+<link rel="stylesheet" href="/assets/hud.css">
 </head>
 <body>
-<div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
 
 <!--
   Los enlaces de WhatsApp, TikTok e Instagram de esta página van escritos
@@ -28,387 +27,352 @@
   aunque el JavaScript no llegue a correr.
 -->
 
-<nav>
+<nav class="nav" aria-label="Principal">
   <div class="wrap">
-    <a class="logo" href="/">&lt;J&gt; JUANCODE</a>
+    <a class="logo" href="/" aria-label="JuanCode, inicio"><span class="j">&lt;J&gt;</span>JUANCODE</a>
     <div class="nav-links">
       <a href="#quien-soy">Quién soy</a>
       <a href="#como-pienso">Cómo pienso</a>
-      <a href="#web">Lo que hago</a>
       <a href="#portafolio">Portafolio</a>
       <a href="#calculadora">Calculadora</a>
       <a href="#precios">Precios</a>
-      <a href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" class="nav-cta" target="_blank" rel="noopener">Cotizar</a>
+      <a href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" class="btn btn-ladrillo btn-sm" target="_blank" rel="noopener">Cotizar</a>
     </div>
   </div>
 </nav>
 
-<div class="wrap">
+<main>
 
 <!-- HERO -->
 <section class="hero" id="inicio">
-  <div>
-    <a class="volver-camino" href="/">← Volver al inicio</a>
-    <div class="hero-tag">🏗️ Arquitectura digital · JuanCode</div>
-    <h1>Tu presencia digital, pensada como <span class="grad-text">un arquitecto</span> piensa una casa.</h1>
-    <p class="hero-sub"><strong>Cimientos primero. Estética después. Todo dura años.</strong> Soy Juan — diseño la estructura completa de tu negocio en internet: landings, tiendas, plataformas a la medida y asistentes con IA.</p>
-    <p class="hero-cred">🏗️ Arquitecto de software <span aria-hidden="true">·</span> ☁️ AWS Certified <span aria-hidden="true">·</span> 📍 Bogotá</p>
+  <div class="hero-texto">
+    <a class="volver" href="/"><i class="ph ph-arrow-left" aria-hidden="true"></i> Volver al inicio</a>
+    <h1>Tu presencia digital, pensada como <span class="neon">un arquitecto</span> piensa una casa.</h1>
+    <p class="lead"><strong>Cimientos primero. Estética después. Todo dura años.</strong> Landings, tiendas, plataformas a la medida y asistentes con IA.</p>
     <div class="btns">
-      <a class="btn btn-grad" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener">💬 Cotiza tu página</a>
-      <a class="btn btn-ghost" href="#calculadora">🧮 Calcula tu precio en 60 segundos</a>
+      <a class="btn btn-ladrillo" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i> Cotizar por WhatsApp</a>
+      <a class="btn btn-linea" href="#calculadora"><i class="ph ph-calculator" aria-hidden="true"></i> Calcula tu precio</a>
     </div>
-    <p class="hero-micro">No hago plantillas. Cada proyecto empieza con un plano. <a href="#portafolio">Ver proyectos reales →</a></p>
   </div>
-  <div class="hero-visual">
-    <span class="big-j" aria-hidden="true">&lt;J&gt;</span>
-    <div class="hero-chips" aria-hidden="true">
-      <span class="chip ch1"><b>deploy</b> --production</span>
-      <span class="chip ch2">carga en <b>0.8s</b></span>
-      <span class="chip ch3"><b>print</b>("Página lista 🚀")</span>
-      <span class="chip ch4">pagos = <b>True</b></span>
-    </div>
+  <div class="hero-muro">
+    <canvas class="muro" data-muro aria-hidden="true"></canvas>
+    <div class="visor" aria-hidden="true"></div>
+    <p class="placa"><span class="ancha">Arquitecto de software · AWS Certified</span><strong>Juan, ingeniero de sistemas. Bogotá.</strong></p>
   </div>
 </section>
 
 <!-- QUIÉN SOY -->
-<section id="quien-soy">
-  <span class="sec-tag st-cyan">01 · Quién soy</span>
-  <h2>Hola, soy <span class="grad-text">Juan</span> 👋</h2>
-  <div class="about">
-    <div class="reveal">
+<section class="seccion" id="quien-soy">
+  <div class="wrap quien">
+    <div class="prosa reveal">
+      <h2>Hola, soy Juan.</h2>
       <p>Ingeniero de sistemas de Bogotá. Soy <strong>arquitecto de software</strong>: diseño plataformas de IA y arquitecturas que atienden a miles de usuarios cada día.</p>
-      <p>Mi momento favorito es cuando un cliente entra a su sitio por primera vez y dice <strong>"eso no parece hecho en Colombia"</strong> — todo lo que construyo está pensado para provocar esa reacción.</p>
-      <p>Soy de los que <strong>construyen</strong>: landings, tiendas con pagos, plataformas educativas, portafolios... si vive en internet, me emociona hacerlo. Trabajo directo con el dueño del negocio — sin agencias, sin intermediarios, sin meses de espera.</p>
-      <p>Cuando no estoy programando, estoy viendo básquet 🏀, metido en algo de arte, o creando contenido en <strong>@juancode</strong> para que la gente de acá tenga referencias de código y diseño en español.</p>
-      <div class="badges">
-        <span class="badge">🎓 Ing. de Sistemas</span>
-        <span class="badge">☁️ Certificado en AWS</span>
-        <span class="badge">📍 Bogotá, Colombia</span>
-        <span class="badge">🎥 @juancode</span>
-      </div>
+      <p>Mi momento favorito es cuando un cliente entra a su sitio por primera vez y dice <strong>"eso no parece hecho en Colombia"</strong>. Todo lo que construyo está pensado para provocar esa reacción.</p>
+      <p>Soy de los que <strong>construyen</strong>: landings, tiendas con pagos, plataformas educativas, portafolios. Si vive en internet, me emociona hacerlo. Trabajo directo con el dueño del negocio: sin agencias, sin intermediarios, sin meses de espera.</p>
+      <p>Cuando no estoy programando, estoy viendo básquet, metido en algo de arte, o creando contenido en <strong>@juancode</strong> para que la gente de acá tenga referencias de código y diseño en español.</p>
     </div>
-    <div class="pasiones reveal">
-      <div class="pasion"><span class="pe" aria-hidden="true">📅</span><div><strong>+5 años en la web</strong><span>Empecé con WordPress y evolucioné hacia full code moderno. Sé lo que funciona y lo que se queda corto — porque lo he vivido en ambos mundos.</span></div></div>
-      <div class="pasion"><span class="pe" aria-hidden="true">⚡</span><div><strong>Programo a mano, no armo plantillas</strong><span>React, Astro, Next.js — el stack que usan las empresas serias. Cada sitio se diseña desde cero para tu marca, sin temas prefabricados que se ven iguales a los de todo el mundo.</span></div></div>
-      <div class="pasion"><span class="pe" aria-hidden="true">🏗️</span><div><strong>Nivel arquitecto de software</strong><span>Mi trabajo diario es diseñar plataformas de IA a gran escala. Ese mismo nivel técnico, aplicado a tu proyecto — sin agencias en el medio, sin intermediarios.</span></div></div>
-    </div>
+    <dl class="ficha reveal">
+      <div><dt class="ancha">Formación</dt><dd>Ingeniero de Sistemas<small>Certificado en AWS</small></dd></div>
+      <div><dt class="ancha">Oficio</dt><dd>Arquitecto de software<small>Plataformas de IA a gran escala, en el día a día.</small></dd></div>
+      <div><dt class="ancha">En la web</dt><dd>+5 años<small>Empecé con WordPress y evolucioné a código moderno. Sé lo que funciona y lo que se queda corto.</small></dd></div>
+      <div><dt class="ancha">Cómo trabajo</dt><dd>A mano, sin plantillas<small>React, Astro, Next.js. Cada sitio se diseña desde cero para tu marca.</small></dd></div>
+      <div><dt class="ancha">Dónde</dt><dd>Bogotá, Colombia<small>Trabajo con negocios de todo el país y de afuera.</small></dd></div>
+    </dl>
   </div>
 </section>
 
 <!-- CÓMO PIENSO -->
-<section id="como-pienso">
-  <span class="sec-tag st-purple">01.5 · Cómo pienso</span>
-  <h2>Yo no empiezo <span class="grad-text">por los colores</span></h2>
-  <div class="pienso">
-    <div class="pienso-texto reveal">
-      <p class="pienso-lead">Yo <strong>NO</strong> empiezo por el color de los botones.</p>
-      <p>Empiezo por preguntar tres cosas. Con eso, <strong>dibujo el plano</strong>. Después vienen el código y el diseño.</p>
-      <p class="pienso-nota">Es lo mismo que hago todos los días como arquitecto de software, diseñando plataformas de inteligencia artificial. <strong>Ese mismo cerebro, al servicio de tu negocio.</strong></p>
+<section class="seccion" id="como-pienso">
+  <div class="wrap plano-bloque">
+    <div class="prosa reveal">
+      <h2>Yo no empiezo por los colores.</h2>
+      <p>Empiezo por preguntar tres cosas. Con eso <strong>dibujo el plano</strong>. Después vienen el código y el diseño.</p>
+      <p>Es lo mismo que hago todos los días como arquitecto de software, diseñando plataformas de inteligencia artificial. <strong>Ese mismo cerebro, al servicio de tu negocio.</strong></p>
     </div>
-    <ol class="pienso-preguntas reveal" aria-label="Las tres preguntas con las que empieza cada proyecto">
-      <li class="pregunta-plano">
-        <span class="pp-icono" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.8"/><path d="M11.1 6.1 5 20.5M12.9 6.1 19 20.5M7.4 14.8h9.2"/></svg>
-        </span>
-        <div><span class="pp-num">01 · El compás</span><strong>¿Quién entra a tu sitio?</strong></div>
-      </li>
-      <li class="pregunta-plano">
-        <span class="pp-icono" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h8v10M11 14h10M15 4v6"/></svg>
-        </span>
-        <div><span class="pp-num">02 · El plano</span><strong>¿Qué esperas que haga ahí?</strong></div>
-      </li>
-      <li class="pregunta-plano">
-        <span class="pp-icono" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3.5 9h17z"/><rect x="4" y="11" width="16" height="4.5"/><rect x="4" y="15.5" width="16" height="4.5"/><path d="M9 11v4.5M15 11v4.5M6.5 15.5V20M12 15.5V20M17.5 15.5V20"/></svg>
-        </span>
-        <div><span class="pp-num">03 · Los cimientos</span><strong>¿Cómo va a crecer tu negocio en 2 años?</strong></div>
-      </li>
+    <ol class="planta reveal" aria-label="Las tres preguntas con las que empieza cada proyecto">
+      <li class="cuarto"><i class="ph ph-users-three" aria-hidden="true"></i><div><strong>¿Quién entra a tu sitio?</strong><span>El compás: todo se mide desde la persona que llega.</span></div></li>
+      <li class="cuarto"><i class="ph ph-blueprint" aria-hidden="true"></i><div><strong>¿Qué esperas que haga ahí?</strong><span>El plano: cada espacio tiene un uso.</span></div></li>
+      <li class="cuarto"><i class="ph ph-wall" aria-hidden="true"></i><div><strong>¿Cómo va a crecer tu negocio en 2 años?</strong><span>Los cimientos: lo que aguanta lo que viene.</span></div></li>
     </ol>
   </div>
 </section>
 
 <!-- LO QUE HAGO -->
-<section id="web">
-  <span class="sec-tag st-magenta">02 · Lo que hago</span>
-  <h2>Sitios que <span class="grad-text">se sienten bien</span></h2>
-  <p class="sec-desc">No hago de todo. Hago esto — y lo hago con obsesión por el detalle.</p>
-  <div class="servicios">
-    <div class="serv sv-magenta reveal">
-      <span class="se">🌐</span>
-      <h3>Creador de páginas web</h3>
-      <p class="sd">Sitios modernos, rápidos y con identidad — que se sienten premium en celular y en computador.</p>
-      <ul>
-        <li><strong>Landing pages y portafolios</strong> — tu marca con presencia de verdad</li>
-        <li><strong>Tiendas con pagos en línea</strong> — vende con Wompi, PayPal y más</li>
-        <li><strong>Plataformas educativas a medida</strong> — libros digitales, cursos, contenido interactivo</li>
-        <li><strong>Rápidas y seguras</strong> — online 24/7, se actualizan solas y nunca se caen, sin mensualidades infladas</li>
-      </ul>
-      <div class="serv-btns">
-        <a class="btn btn-grad" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener">Cotiza tu página 💬</a>
-        <a class="btn btn-ghost" href="#calculadora">🧮 Calcula tu precio</a>
-      </div>
-    </div>
-    <div class="serv sv-cyan reveal">
-      <span class="se">🤖</span>
-      <h3>Asistentes con IA para tu negocio</h3>
-      <p class="sd">Chatbots que responden con <strong>TUS</strong> documentos. Buscadores inteligentes. Automatización de atención al cliente. La misma tecnología que uso todos los días como arquitecto de software, ahora al servicio de tu empresa.</p>
-      <ul>
-        <li><strong>Chatbot que aprende</strong> de tus catálogos, manuales o PDFs</li>
-        <li><strong>Buscador inteligente</strong> para tu sitio o tienda en línea</li>
-        <li><strong>Respuestas automáticas por WhatsApp</strong> con IA</li>
-        <li><strong>Todo en tu propia infraestructura</strong> — seguro y privado</li>
-      </ul>
-      <div class="serv-btns">
-        <a class="btn btn-grad" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20un%20asistente%20con%20IA%20para%20mi%20negocio%20%F0%9F%A4%96" target="_blank" rel="noopener">Cotiza tu asistente IA 🤖</a>
-        <a class="btn btn-ghost" href="#calculadora">🧮 Calcula tu precio</a>
-      </div>
+<section class="seccion" id="web">
+  <div class="wrap">
+    <h2 class="reveal">No hago de todo. Hago esto.</h2>
+    <p class="lead reveal">Y lo hago con obsesión por el detalle.</p>
+    <div class="servicios reveal">
+      <article class="campo-color campo-ladrillo">
+        <h3>Páginas y plataformas web</h3>
+        <p>Sitios modernos, rápidos y con identidad, que se sienten premium en celular y en computador.</p>
+        <ul>
+          <li><i class="ph ph-globe-simple" aria-hidden="true"></i><span><strong>Landing pages y portafolios.</strong> Tu marca con presencia de verdad.</span></li>
+          <li><i class="ph ph-storefront" aria-hidden="true"></i><span><strong>Tiendas con pagos en línea.</strong> Vende con Wompi, PayPal y más.</span></li>
+          <li><i class="ph ph-book-open-text" aria-hidden="true"></i><span><strong>Plataformas educativas a medida.</strong> Libros digitales, cursos, contenido interactivo.</span></li>
+          <li><i class="ph ph-lightning" aria-hidden="true"></i><span><strong>Rápidas y seguras.</strong> En línea 24/7, sin mensualidades infladas.</span></li>
+        </ul>
+        <div class="btns">
+          <a class="btn btn-claro" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i> Cotizar por WhatsApp</a>
+          <a class="btn btn-linea" href="#calculadora"><i class="ph ph-calculator" aria-hidden="true"></i> Calcula tu precio</a>
+        </div>
+      </article>
+      <article class="campo-color campo-cerro">
+        <h3>Asistentes con IA para tu negocio</h3>
+        <p>Chatbots que responden con <strong>tus</strong> documentos, buscadores inteligentes y atención al cliente automática. La misma tecnología que uso todos los días, al servicio de tu empresa.</p>
+        <ul>
+          <li><i class="ph ph-robot" aria-hidden="true"></i><span><strong>Chatbot que aprende</strong> de tus catálogos, manuales o PDFs.</span></li>
+          <li><i class="ph ph-chat-circle-text" aria-hidden="true"></i><span><strong>Respuestas automáticas por WhatsApp</strong> con IA.</span></li>
+          <li><i class="ph ph-lock-key" aria-hidden="true"></i><span><strong>En tu propia infraestructura.</strong> Seguro y privado.</span></li>
+        </ul>
+        <div class="btns">
+          <a class="btn btn-claro" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20un%20asistente%20con%20IA%20para%20mi%20negocio%20%F0%9F%A4%96" target="_blank" rel="noopener"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i> Cotizar por WhatsApp</a>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
 <!-- PORTAFOLIO -->
-<section id="portafolio">
-  <span class="sec-tag st-purple">03 · Portafolio</span>
-  <h2>Proyectos <span class="grad-text">reales, en línea</span></h2>
-  <p class="sec-desc">No son mockups: son sitios vivos que puedes visitar ahora mismo.</p>
-  <div class="grid-port">
-    <div class="proy reveal">
-      <span class="pemoji">📖</span>
-      <h3>Sharick Platform</h3>
-      <p>Libro digital interactivo para aprender inglés: páginas a pantalla completa estilo editorial, audio real, juegos por módulo y navegación de libro profesional.</p>
-      <div class="tags"><span class="tag-pill">Plataforma educativa</span> <span class="tag-pill">React</span> <span class="tag-pill">Interactivo</span></div>
-      <a class="ver" href="https://sharick-platform.pages.dev/" target="_blank" rel="noopener">Visitar el proyecto →</a>
+<section class="seccion" id="portafolio">
+  <div class="wrap">
+    <h2 class="reveal">Proyectos reales, en línea.</h2>
+    <p class="lead reveal">No son mockups: son sitios vivos que puedes visitar ahora mismo.</p>
+    <div class="obras">
+      <a class="obra reveal" href="https://www.mrcapacho.com/" target="_blank" rel="noopener">
+        <figure><img src="/assets/proyectos/capacho.png" width="1440" height="900" loading="lazy" alt="Portada de Mr. Capacho Coffee: logo de la marca y el titular Mr. Capacho Coffee sobre fondo negro."></figure>
+        <h3>Mr. Capacho Coffee <i class="ph ph-arrow-up-right" aria-hidden="true"></i></h3>
+        <p>Sitio de marca y tienda para café colombiano de origen, con catálogo y pagos en línea. Del grano a la web.</p>
+        <span class="usos ancha">E-commerce · Pagos en línea</span>
+      </a>
+      <a class="obra reveal" href="https://inalperphotography.com/" target="_blank" rel="noopener">
+        <figure><img src="/assets/proyectos/inalper.png" width="1440" height="900" loading="lazy" alt="Portada del portafolio de Inaldo Pérez, fotografía deportiva, con su nombre en letras grandes."></figure>
+        <div>
+          <h3>Inalper Photography <i class="ph ph-arrow-up-right" aria-hidden="true"></i></h3>
+          <p>Portafolio de fotografía: galería inmersiva y marca personal. El trabajo hablando solo.</p>
+          <span class="usos ancha">Portafolio · Galería</span>
+        </div>
+      </a>
+      <a class="obra reveal" href="https://sharick-platform.pages.dev/" target="_blank" rel="noopener">
+        <figure><img src="/assets/proyectos/sharick.png" width="1440" height="900" loading="lazy" alt="Sharick Platform: selección de libros interactivos de idiomas."></figure>
+        <h3>Sharick Platform <i class="ph ph-arrow-up-right" aria-hidden="true"></i></h3>
+        <p>Libro digital interactivo para aprender inglés: páginas estilo editorial, audio real y juegos por módulo.</p>
+        <span class="usos ancha">Plataforma educativa · React</span>
+      </a>
+      <a class="obra reveal" href="https://www.adspharma.co/" target="_blank" rel="noopener">
+        <figure><img src="/assets/proyectos/adspharma.png" width="1440" height="900" loading="lazy" alt="ADS Pharma: titular El instrumento de las manos que salvan vidas junto al logo de la marca."></figure>
+        <h3>ADS Pharma <i class="ph ph-arrow-up-right" aria-hidden="true"></i></h3>
+        <p>Sitio corporativo del sector farmacéutico: catálogo, marca y contacto, claro en cualquier pantalla.</p>
+        <span class="usos ancha">Corporativo · Catálogo</span>
+      </a>
+      <a class="obra reveal" href="https://el-armario-de-lina.pages.dev/" target="_blank" rel="noopener">
+        <figure><img src="/assets/proyectos/armario.png" width="1440" height="900" loading="lazy" alt="El Armario de Lina: tienda de crochet con el titular Tejido a mano, en algodón."></figure>
+        <h3>El Armario de Lina <i class="ph ph-arrow-up-right" aria-hidden="true"></i></h3>
+        <p>Tienda artesanal en Astro: catálogo de crochet y bordado, calculadora de precios y pago por Nequi.</p>
+        <span class="usos ancha">E-commerce · Astro</span>
+      </a>
+      <a class="obra reveal" href="https://empanadacale.pages.dev/" target="_blank" rel="noopener">
+        <figure><img src="/assets/proyectos/calenita.png" width="1440" height="900" loading="lazy" alt="La Caleñita: landing de empanadas con el precio de 3.000 pesos y botón para pedir por WhatsApp."></figure>
+        <h3>La Caleñita <i class="ph ph-arrow-up-right" aria-hidden="true"></i></h3>
+        <p>Landing de negocio local con menú, combos con precio automático y pedidos directo por WhatsApp.</p>
+        <span class="usos ancha">Negocio local · WhatsApp</span>
+      </a>
+      <a class="obra obra-propia reveal" href="/clases#libro">
+        <figure aria-hidden="true"><span><b>for</b> capitulo <b>in</b> libro:<br>&nbsp;&nbsp;&nbsp;&nbsp;leer(capitulo)<br>&nbsp;&nbsp;&nbsp;&nbsp;aprobar_quiz(capitulo)</span></figure>
+        <h3>El Libro JuanCode <i class="ph ph-arrow-right" aria-hidden="true"></i></h3>
+        <p>Mi propio libro digital para aprender Python desde 0, con quiz por capítulo y la "película en vivo" de cada variable. En construcción.</p>
+        <span class="usos ancha">Producto propio · En beta</span>
+      </a>
     </div>
-    <div class="proy reveal">
-      <span class="pemoji">📸</span>
-      <h3>Inalper Photography</h3>
-      <p>Portafolio profesional de fotografía: galería inmersiva y marca personal — el trabajo hablando por sí solo, sin distracciones.</p>
-      <div class="tags"><span class="tag-pill">Portafolio</span> <span class="tag-pill">Galería</span> <span class="tag-pill">Marca personal</span></div>
-      <a class="ver" href="https://inalperphotography.com/" target="_blank" rel="noopener">Visitar el proyecto →</a>
-    </div>
-    <div class="proy reveal">
-      <span class="pemoji">☕</span>
-      <h3>Mr. Capacho Coffee</h3>
-      <p>Sitio de marca y tienda para café colombiano de origen, con catálogo y pagos en línea — del grano a la web.</p>
-      <div class="tags"><span class="tag-pill">E-commerce</span> <span class="tag-pill">Pagos en línea</span> <span class="tag-pill">Marca</span></div>
-      <a class="ver" href="https://www.mrcapacho.com/" target="_blank" rel="noopener">Visitar el proyecto →</a>
-    </div>
-    <div class="proy reveal">
-      <span class="pemoji">💊</span>
-      <h3>ADS Pharma</h3>
-      <p>Sitio corporativo del sector farmacéutico: catálogo, presencia de marca y contacto — información clara y confiable en cualquier pantalla.</p>
-      <div class="tags"><span class="tag-pill">Corporativo</span> <span class="tag-pill">Catálogo</span> <span class="tag-pill">Marca</span></div>
-      <a class="ver" href="https://www.adspharma.co/" target="_blank" rel="noopener">Visitar el proyecto →</a>
-    </div>
-    <div class="proy reveal">
-      <span class="pemoji">🧶</span>
-      <h3>El Armario de Lina</h3>
-      <p>Tienda artesanal multi-página en Astro: catálogo de crochet y bordado con calculadora de precios personalizada, pago vía Nequi y flujo completo de pedido. Estética editorial cálida y hecha a mano.</p>
-      <div class="tags"><span class="tag-pill">E-commerce</span> <span class="tag-pill">Astro</span> <span class="tag-pill">Artesanal</span></div>
-      <a class="ver" href="https://el-armario-de-lina.pages.dev/" target="_blank" rel="noopener">Visitar el proyecto →</a>
-    </div>
-    <div class="proy reveal">
-      <span class="pemoji">🥟</span>
-      <h3>La Caleñita</h3>
-      <p>Landing de negocio local con menú, combos con cálculo automático de precio y pedidos directo por WhatsApp. Colores vivos vallunos, listo para vender en minutos.</p>
-      <div class="tags"><span class="tag-pill">Negocio local</span> <span class="tag-pill">WhatsApp</span> <span class="tag-pill">Landing</span></div>
-      <a class="ver" href="https://empanadacale.pages.dev/" target="_blank" rel="noopener">Visitar el proyecto →</a>
-    </div>
-    <div class="proy soon reveal">
-      <span class="soon-badge">🚧 EN CONSTRUCCIÓN</span>
-      <span class="pemoji">🐍</span>
-      <h3>El Libro JuanCode</h3>
-      <p>Mi propio libro digital para aprender Python desde 0: capítulos con quiz, ejercicios interactivos y la "película en vivo" — mira las variables setearse paso a paso.</p>
-      <div class="tags"><span class="tag-pill">Producto propio</span> <span class="tag-pill">En beta</span></div>
-      <a class="ver" href="/clases#libro">Conoce el libro →</a>
-    </div>
-  </div>
 
-  <!-- Al que ya se convenció con el portafolio no se le pide más scroll -->
-  <div class="cta-banda reveal">
-    <p>¿Te gustó lo que ves?</p>
-    <div class="cta-banda-btns">
-      <a class="btn btn-grad" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20vi%20tu%20portafolio%20y%20quiero%20cotizar%20el%20m%C3%ADo%20%F0%9F%9A%80" target="_blank" rel="noopener">Cotiza el tuyo →</a>
-      <a class="btn btn-ghost" href="#calculadora">🧮 Calcula tu precio en 60 segundos</a>
+    <!-- Al que ya se convenció con el portafolio no se le pide más scroll -->
+    <div class="cierre-obras reveal">
+      <p>¿Te gustó lo que ves? El tuyo puede ser el siguiente.</p>
+      <div class="btns">
+        <a class="btn btn-ladrillo" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20vi%20tu%20portafolio%20y%20quiero%20cotizar%20el%20m%C3%ADo%20%F0%9F%9A%80" target="_blank" rel="noopener"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i> Cotizar por WhatsApp</a>
+        <a class="btn btn-linea" href="#calculadora"><i class="ph ph-calculator" aria-hidden="true"></i> Calcula tu precio</a>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- CALCULADORA — el wizard lo arma /assets/calculadora.js dentro de #calc-app -->
-<section id="calculadora" aria-labelledby="calc-titulo">
-  <span class="sec-tag st-cyan">04.5 · Calcula tu proyecto</span>
-  <h2 id="calc-titulo">Calcula tu proyecto <span class="grad-text">en 60 segundos</span></h2>
-  <p class="sec-desc">Responde 6 preguntas simples y te doy un rango de precio al instante.</p>
-  <div class="calc" id="calc-app">
-    <noscript>
-      <p class="calc-noscript">La calculadora necesita JavaScript. Sin problema: <a href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener">escríbeme por WhatsApp</a> y te cotizo en minutos.</p>
-    </noscript>
+<!-- CALCULADORA: el wizard lo arma /assets/calculadora.js dentro de #calc-app -->
+<section class="seccion calc-seccion" id="calculadora" aria-labelledby="calc-titulo">
+  <div class="wrap calc-bloque">
+    <div class="calc-intro">
+      <h2 id="calc-titulo">Calcula tu proyecto en 60 segundos.</h2>
+      <p class="lead">Responde 6 preguntas simples y te doy un rango de precio al instante.</p>
+    </div>
+    <div class="calc" id="calc-app">
+      <noscript>
+        <p class="calc-noscript">La calculadora necesita JavaScript. Sin problema: <a href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener">escríbeme por WhatsApp</a> y te cotizo en minutos.</p>
+      </noscript>
+    </div>
+    <p class="calc-sr" id="calc-anuncio" aria-live="polite"></p>
   </div>
-  <p class="calc-sr" id="calc-anuncio" aria-live="polite"></p>
 </section>
 <div class="calc-sticky" id="calc-sticky" aria-hidden="true" hidden>Precio actual: <b>$0</b></div>
 
 <!-- PRECIOS -->
-<section id="precios">
-  <span class="sec-tag st-gold">04 · Precios</span>
-  <h2>Planes claros, <span class="grad-text">sin sorpresas</span></h2>
-  <p class="sec-desc">Todos incluyen 6 meses de mantenimiento gratis. Un solo pago, sin mensualidades.</p>
-  <div class="planes">
+<section class="seccion" id="precios">
+  <div class="wrap">
+    <h2 class="reveal">Planes claros, sin sorpresas.</h2>
+    <p class="lead reveal">Todos incluyen 6 meses de mantenimiento. Un solo precio, sin mensualidades.</p>
+    <div class="crujias reveal">
 
-    <div class="plan reveal">
-      <span class="plan-nombre">Esencial</span>
-      <p class="plan-precio">desde <b>$1.000.000</b> <i>COP</i></p>
-      <p class="plan-para">Ideal para: <strong>presencia digital básica</strong></p>
-      <ul>
-        <li>Landing page de una sola vista</li>
-        <li>Diseño con tu marca</li>
-        <li>Formulario o botón de WhatsApp</li>
-        <li>Online 24/7 con tu propio dominio</li>
-        <li>6 meses de mantenimiento</li>
-      </ul>
+      <div class="crujia">
+        <span class="crujia-nombre ancha">Esencial</span>
+        <p class="crujia-precio"><small>desde</small><b class="cifra">$1.000.000</b><small>COP</small></p>
+        <p class="crujia-para">Ideal para <strong>presencia digital básica</strong></p>
+        <ul>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Landing page de una sola vista</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Diseño con tu marca</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Formulario o botón de WhatsApp</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>En línea 24/7 con tu propio dominio</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>6 meses de mantenimiento</li>
+        </ul>
+      </div>
+
+      <div class="crujia crujia-pro">
+        <span class="crujia-nombre ancha">Pro <span>Más elegido</span></span>
+        <p class="crujia-precio"><small>desde</small><b class="cifra">$2.500.000</b><small>COP</small></p>
+        <p class="crujia-para">Ideal para <strong>negocios que venden en línea</strong></p>
+        <ul>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Sitio multi-página</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Tienda con pagos (Wompi, PayPal, Nequi)</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Panel donde tú mismo cambias textos, imágenes y productos</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Blog o catálogo</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Google te encuentra primero</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Ves cuántas personas te visitan y qué buscan</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>6 meses de mantenimiento</li>
+        </ul>
+      </div>
+
+      <div class="crujia">
+        <span class="crujia-nombre ancha">Custom</span>
+        <p class="crujia-precio"><small>desde</small><b class="cifra">$3.000.000</b><small>COP</small></p>
+        <p class="crujia-para">Ideal para <strong>plataformas a la medida</strong></p>
+        <ul>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Tus clientes entran con su propia cuenta</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Funciones hechas para cómo trabaja tu negocio</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Conexión con IA y con las apps que ya usas</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Animaciones avanzadas</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>Cambios ilimitados durante desarrollo</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>30 días de acompañamiento</li>
+          <li><i class="ph ph-check" aria-hidden="true"></i>6 meses de mantenimiento</li>
+        </ul>
+      </div>
+
     </div>
-
-    <div class="plan destacado reveal">
-      <span class="plan-flag">Más elegido</span>
-      <span class="plan-nombre">Pro</span>
-      <p class="plan-precio">desde <b>$2.500.000</b> <i>COP</i></p>
-      <p class="plan-para">Ideal para: <strong>negocios que venden en línea</strong></p>
-      <ul>
-        <li>Sitio multi-página</li>
-        <li>Tienda con pagos (Wompi, PayPal, Nequi)</li>
-        <li>Panel donde tú mismo cambias textos, imágenes y productos</li>
-        <li>Blog o catálogo</li>
-        <li>Google te encuentra primero</li>
-        <li>Ves cuántas personas te visitan y qué buscan</li>
-        <li>6 meses de mantenimiento</li>
-      </ul>
+    <div class="precios-pie reveal">
+      <p>Después de los 6 meses, el mantenimiento anual es opcional y cubre monitoreo y actualizaciones, sin funciones nuevas.</p>
+      <a class="enlace" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20no%20s%C3%A9%20qu%C3%A9%20plan%20me%20sirve.%20%C2%BFMe%20ayudas%20a%20decidir%3F%20%F0%9F%8C%90" target="_blank" rel="noopener">¿No sabes cuál? Te ayudo a decidir <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
     </div>
-
-    <div class="plan reveal">
-      <span class="plan-nombre">Custom</span>
-      <p class="plan-precio">desde <b>$3.000.000</b> <i>COP</i></p>
-      <p class="plan-para">Ideal para: <strong>plataformas a la medida</strong></p>
-      <ul>
-        <li>Tus clientes entran con su propia cuenta</li>
-        <li>Funciones hechas para cómo trabaja tu negocio</li>
-        <li>Conexión con IA y con las apps que ya usas</li>
-        <li>Animaciones avanzadas</li>
-        <li>Cambios ilimitados durante desarrollo</li>
-        <li>30 días de acompañamiento</li>
-        <li>6 meses de mantenimiento</li>
-      </ul>
-    </div>
-
-  </div>
-  <p class="precios-nota">// Después de los 6 meses, el mantenimiento anual es opcional y cubre monitoreo y actualizaciones — sin funciones nuevas.</p>
-  <div class="precios-cta reveal">
-    <p>¿No sabes cuál?</p>
-    <a class="btn btn-grad" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20no%20s%C3%A9%20qu%C3%A9%20plan%20me%20sirve.%20%C2%BFMe%20ayudas%20a%20decidir%3F%20%F0%9F%8C%90" target="_blank" rel="noopener">Escríbeme y te ayudo a decidir →</a>
-    <a class="btn btn-ghost" href="#calculadora">🧮 Calcula tu precio en 60 segundos</a>
   </div>
 </section>
 
 <!-- PROCESO -->
-<section id="proceso">
-  <span class="sec-tag st-cyan">05 · Proceso</span>
-  <h2>Cómo <span class="grad-text">trabajamos</span></h2>
-  <p class="sec-desc">De la primera llamada al deploy — sin misterios.</p>
-  <ol class="pasos">
-    <li class="paso reveal">
-      <span class="paso-num">1</span>
-      <h3>Cotización</h3>
-      <span class="paso-tiempo">1-2 días</span>
-      <p>Me escribes por WhatsApp, te mando propuesta con alcance, tiempo y precio. Si cuadra, pagas el <strong>50%</strong> y arrancamos.</p>
-    </li>
-    <li class="paso reveal">
-      <span class="paso-num">2</span>
-      <h3>Diseño</h3>
-      <span class="paso-tiempo">3-7 días</span>
-      <p>Te muestro mockups y ajustamos hasta que se sienta tuyo. Nada de sorpresas al final.</p>
-    </li>
-    <li class="paso reveal">
-      <span class="paso-num">3</span>
-      <h3>Desarrollo</h3>
-      <span class="paso-tiempo">1-3 semanas</span>
-      <p>Programo con tu marca, tus contenidos, tus pagos. Te voy mostrando avances por semana.</p>
-    </li>
-    <li class="paso reveal">
-      <span class="paso-num">4</span>
-      <h3>Deploy</h3>
-      <span class="paso-tiempo">1 día</span>
-      <p>Pagas el <strong>50%</strong> restante y el sitio queda en vivo con dominio propio. Te enseño a manejarlo y arrancan los 6 meses de mantenimiento gratis.</p>
-    </li>
-  </ol>
-  <p class="pago-nota"><span class="pn-emoji">🤝</span><span><strong>50% para arrancar y 50% al entregar.</strong> Dos pagos, y ya: nada de cuotas escondidas ni mensualidades. Transferencia, Nequi o Bancolombia; PayPal o SWIFT si estás fuera del país.</span></p>
+<section class="seccion" id="proceso">
+  <div class="wrap">
+    <h2 class="reveal">Cómo trabajamos.</h2>
+    <p class="lead reveal">De la primera llamada al sitio en vivo, sin misterios.</p>
+    <ol class="etapas reveal">
+      <li class="etapa">
+        <span class="etapa-tiempo ancha cifra">1-2 días</span>
+        <h3>Cotización</h3>
+        <p>Me escribes por WhatsApp y te mando propuesta con alcance, tiempo y precio. Si cuadra, pagas el <strong>50%</strong> y arrancamos.</p>
+      </li>
+      <li class="etapa">
+        <span class="etapa-tiempo ancha cifra">3-7 días</span>
+        <h3>Diseño</h3>
+        <p>Te muestro mockups y ajustamos hasta que se sienta tuyo. Nada de sorpresas al final.</p>
+      </li>
+      <li class="etapa">
+        <span class="etapa-tiempo ancha cifra">1-3 semanas</span>
+        <h3>Desarrollo</h3>
+        <p>Programo con tu marca, tus contenidos y tus pagos. Te voy mostrando avances cada semana.</p>
+      </li>
+      <li class="etapa">
+        <span class="etapa-tiempo ancha cifra">1 día</span>
+        <h3>Entrega</h3>
+        <p>Pagas el <strong>50%</strong> restante y el sitio queda en vivo con dominio propio. Te enseño a manejarlo y arrancan los 6 meses de mantenimiento.</p>
+      </li>
+    </ol>
+    <div class="pago reveal">
+      <i class="ph ph-handshake" aria-hidden="true"></i>
+      <p><strong>50% para arrancar y 50% al entregar.</strong> Dos pagos, y ya: nada de cuotas escondidas ni mensualidades. Transferencia, Nequi o Bancolombia; PayPal o SWIFT si estás fuera del país.</p>
+    </div>
+  </div>
 </section>
 
 <!-- FAQ -->
-<section id="faq">
-  <span class="sec-tag st-purple">06 · FAQ</span>
-  <h2>Preguntas que <span class="grad-text">siempre me hacen</span></h2>
-  <div class="faq">
-    <details class="faq-item reveal">
-      <summary>¿El dominio quién lo compra?</summary>
-      <p>Tú compras el dominio (te ayudo a elegirlo) y yo lo conecto. Queda a tu nombre — el sitio siempre es tuyo.</p>
-    </details>
-    <details class="faq-item reveal">
-      <summary>¿Puedo editar el sitio yo mismo después?</summary>
-      <p>Sí, si vas por Pro o Custom incluyo editor de contenido para que cambies textos e imágenes sin tocar código.</p>
-    </details>
-    <details class="faq-item reveal">
-      <summary>¿Qué pasa después de los 6 meses de mantenimiento gratis?</summary>
-      <p>Puedes seguir con un plan anual de mantenimiento (opcional) o quedarte solo con el sitio. Cero letra chica.</p>
-    </details>
-    <details class="faq-item reveal">
-      <summary>¿Me lo puedo llevar si algún día no trabajamos más juntos?</summary>
-      <p>Sí. El código es tuyo desde el día uno. Te entrego repositorio, accesos y toda la documentación.</p>
-    </details>
-    <details class="faq-item reveal">
-      <summary>¿Trabajas con plantillas?</summary>
-      <p>No. Cada sitio se diseña y programa desde cero para tu marca. Por eso los tiempos son de semanas, no de días.</p>
-    </details>
-    <details class="faq-item reveal">
-      <summary>¿Cómo se paga?</summary>
-      <p>50% para arrancar y 50% cuando el sitio queda en vivo. Solo esos dos pagos — sin mensualidades ni cuotas escondidas.</p>
-    </details>
-    <details class="faq-item reveal">
-      <summary>¿Aceptas pagos internacionales?</summary>
-      <p>Sí, PayPal o transferencia SWIFT. En Colombia, transferencia, Nequi o Bancolombia.</p>
-    </details>
+<section class="seccion" id="faq">
+  <div class="wrap faq-bloque">
+    <h2 class="reveal">Preguntas que siempre me hacen.</h2>
+    <div class="faq reveal">
+      <details>
+        <summary>¿El dominio quién lo compra? <i class="ph ph-plus" aria-hidden="true"></i></summary>
+        <p>Tú compras el dominio (te ayudo a elegirlo) y yo lo conecto. Queda a tu nombre: el sitio siempre es tuyo.</p>
+      </details>
+      <details>
+        <summary>¿Puedo editar el sitio yo mismo después? <i class="ph ph-plus" aria-hidden="true"></i></summary>
+        <p>Sí. Si vas por Pro o Custom incluyo editor de contenido para que cambies textos e imágenes sin tocar código.</p>
+      </details>
+      <details>
+        <summary>¿Qué pasa después de los 6 meses de mantenimiento? <i class="ph ph-plus" aria-hidden="true"></i></summary>
+        <p>Puedes seguir con un plan anual de mantenimiento (opcional) o quedarte solo con el sitio. Cero letra chica.</p>
+      </details>
+      <details>
+        <summary>¿Me lo puedo llevar si algún día no trabajamos más juntos? <i class="ph ph-plus" aria-hidden="true"></i></summary>
+        <p>Sí. El código es tuyo desde el día uno. Te entrego repositorio, accesos y toda la documentación.</p>
+      </details>
+      <details>
+        <summary>¿Trabajas con plantillas? <i class="ph ph-plus" aria-hidden="true"></i></summary>
+        <p>No. Cada sitio se diseña y programa desde cero para tu marca. Por eso los tiempos son de semanas, no de días.</p>
+      </details>
+      <details>
+        <summary>¿Cómo se paga? <i class="ph ph-plus" aria-hidden="true"></i></summary>
+        <p>50% para arrancar y 50% cuando el sitio queda en vivo. Solo esos dos pagos, sin mensualidades ni cuotas escondidas.</p>
+      </details>
+      <details>
+        <summary>¿Aceptas pagos internacionales? <i class="ph ph-plus" aria-hidden="true"></i></summary>
+        <p>Sí, PayPal o transferencia SWIFT. En Colombia, transferencia, Nequi o Bancolombia.</p>
+      </details>
+    </div>
   </div>
 </section>
 
 <!-- CONTACTO -->
-<section id="contacto">
-  <div class="contacto reveal">
-    <span class="sec-tag st-green">07 · Hablemos</span>
-    <h2>¿Lanzamos <span class="grad-text">tu página</span>?</h2>
-    <p>Escríbeme por WhatsApp con la palabra <strong style="color:var(--text)">"WEB"</strong>, cuéntame qué necesitas y te respondo con el alcance, el tiempo y el precio.</p>
-    <div class="btns contacto-btns">
-      <a class="btn btn-grad" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener">💬 Escríbeme por WhatsApp</a>
-      <a class="btn btn-ghost" href="#calculadora">🧮 Calcula tu precio en 60 segundos</a>
+<section class="contacto" id="contacto">
+  <canvas class="muro" data-muro="piso" aria-hidden="true"></canvas>
+  <div class="contacto-placa reveal">
+    <h2>¿Lanzamos <span class="neon">tu página</span>?</h2>
+    <p>Escríbeme por WhatsApp con la palabra <strong>"WEB"</strong>, cuéntame qué necesitas y te respondo con el alcance, el tiempo y el precio.</p>
+    <div class="btns">
+      <a class="btn btn-ladrillo" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i> Cotizar por WhatsApp</a>
+      <a class="btn btn-linea" href="#calculadora"><i class="ph ph-calculator" aria-hidden="true"></i> Calcula tu precio</a>
     </div>
-    <div class="socials">
-      <a href="https://tiktok.com/@juancode" target="_blank" rel="noopener">🎵 TikTok @juancode</a>
-      <a href="https://instagram.com/juancode" target="_blank" rel="noopener">📷 Instagram @juancode</a>
+    <div class="redes">
+      <a href="https://tiktok.com/@juancode" target="_blank" rel="noopener"><i class="ph ph-tiktok-logo" aria-hidden="true"></i> TikTok @juancode</a>
+      <a href="https://instagram.com/juancode" target="_blank" rel="noopener"><i class="ph ph-instagram-logo" aria-hidden="true"></i> Instagram @juancode</a>
     </div>
   </div>
 </section>
 
-</div><!-- /wrap -->
+</main>
 
-<footer>
+<footer class="pie">
   <div class="wrap">
-    <a class="logo" href="/">&lt;J&gt; JUANCODE</a>
-    <span class="f-copy">// Hecho con amor por JuanCode · Bogotá ☕ · <span id="anio"></span></span>
+    <a class="logo" href="/"><span class="j">&lt;J&gt;</span>JUANCODE</a>
+    <small>Hecho a mano por JuanCode en Bogotá · <span id="anio"></span></small>
   </div>
 </footer>
 
-<a class="wa-float" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener" aria-label="Escríbeme por WhatsApp">💬</a>
+<a class="wa-float" href="https://wa.me/573160996970?text=Hola%20Juan%2C%20quiero%20cotizar%20una%20p%C3%A1gina%20web%20%F0%9F%8C%90" target="_blank" rel="noopener" aria-label="Escríbeme por WhatsApp"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i></a>
 
 <script src="/assets/config.js"></script>
 <script src="/assets/main.js"></script>
+<script src="/assets/muro.js"></script>
 <script src="/assets/calculadora.js"></script>
 </body>
 </html>

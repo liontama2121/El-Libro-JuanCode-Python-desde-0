@@ -52,21 +52,21 @@ const MODOS = [
 		emoji: "🎯",
 		titulo: "Simulacro de quiz",
 		texto: "Preguntas al azar de los capítulos que ya tienes abiertos. Tú eliges cuántas y si quieres cronómetro.",
-		color: "0,229,255",
+		color: "var(--color-cyan)",
 	},
 	{
 		to: "/practica/simulacro-parcial",
 		emoji: "📝",
 		titulo: "Simulacro de parcial",
 		texto: "Cuatro puntos de programación estilo universidad, 90 minutos, con editor de código.",
-		color: "255,169,77",
+		color: "var(--color-naranja)",
 	},
 	{
 		to: "/practica/arcade",
 		emoji: "🕹️",
 		titulo: "Arcade",
 		texto: "Relámpago, Detective, Rompecabezas, Sorpresa y el Reto del día. Rápido y con XP.",
-		color: "255,77,255",
+		color: "var(--color-purpura)",
 	},
 ];
 
@@ -98,14 +98,14 @@ export default function Practica({ loaderData }: Route.ComponentProps) {
 							key={m.to}
 							to={m.to}
 							className="jc-cap jc-cap-disponible flex flex-col p-6 text-left"
-							style={{ borderColor: `rgba(${m.color},.35)` }}
+							style={{ borderColor: `color-mix(in srgb, ${m.color} 35%, transparent)` }}
 						>
 							<span className="text-4xl">{m.emoji}</span>
-							<h2 className="jc-display mt-4 text-xl" style={{ color: `rgb(${m.color})` }}>
+							<h2 className="jc-display mt-4 text-xl" style={{ color: m.color }}>
 								{m.titulo}
 							</h2>
 							<p className="mt-2 flex-1 text-sm text-[var(--color-tinta-2)]">{m.texto}</p>
-							<span className="jc-mono mt-5 text-xs tracking-[0.18em] uppercase" style={{ color: `rgb(${m.color})` }}>
+							<span className="jc-mono mt-5 text-xs tracking-[0.18em] uppercase" style={{ color: m.color }}>
 								empezar →
 							</span>
 						</Link>

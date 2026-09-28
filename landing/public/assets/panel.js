@@ -79,10 +79,10 @@
 
 						const rotulo =
 							h.estado === "libre"
-								? "✓ Libre"
+								? "Libre"
 								: h.estado === "ocupado"
-									? "✕ Ocupada"
-									: "— ya pasó";
+									? "Ocupada"
+									: "Ya pasó";
 
 						return `
               <button type="button" class="celda ${h.estado}"
@@ -99,9 +99,9 @@
           <section class="dia-panel ${d.diaCompletoOcupado ? "dia-cerrado" : ""}">
             <header>
               <b>${escapar(d.etiqueta)}</b>
-              <button type="button" class="btn btn-ghost btn-sm"
+              <button type="button" class="btn btn-linea btn-sm"
                       data-dia="${d.fecha}" data-intent="${d.diaCompletoOcupado ? "liberar" : "ocupar"}">
-                ${d.diaCompletoOcupado ? "↩️ Abrir el día" : "🚫 Cerrar el día"}
+                ${d.diaCompletoOcupado ? "Abrir el día" : "Cerrar el día"}
               </button>
             </header>
             <div class="celdas">${horas}</div>

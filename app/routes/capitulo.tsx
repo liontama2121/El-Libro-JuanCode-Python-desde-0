@@ -141,10 +141,10 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 							const actual = c.id === capitulo.id;
 							const clase = `flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition ${
 								actual
-									? "bg-white/10 text-[var(--color-cyan)]"
+									? "bg-tinta/10 text-[var(--color-cyan)]"
 									: bloqueado
 										? "text-[var(--color-tinta-2)] opacity-50"
-										: "text-[var(--color-tinta-2)] hover:bg-white/5 hover:text-[var(--color-tinta)]"
+										: "text-[var(--color-tinta-2)] hover:bg-tinta/5 hover:text-[var(--color-tinta)]"
 							}`;
 
 							const inner = (
@@ -199,7 +199,7 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 								{palabraCapitulo(track)} {capitulo.number}
 							</p>
 							{track === "avanzado" && (
-								<span className="jc-mono rounded-full border border-[rgba(255,77,255,.4)] bg-[rgba(255,77,255,.12)] px-2.5 py-0.5 text-[0.62rem] tracking-[0.16em] text-[var(--color-magenta)] uppercase">
+								<span className="jc-mono rounded-full border border-[color-mix(in_srgb,var(--color-magenta)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_12%,transparent)] px-2.5 py-0.5 text-[0.62rem] tracking-[0.16em] text-[var(--color-magenta)] uppercase">
 									🚀 Avanzado
 								</span>
 							)}
@@ -213,7 +213,7 @@ export default function Capitulo({ loaderData }: Route.ComponentProps) {
 							</p>
 						)}
 						{!capitulo.published && (
-							<p className="jc-mono mt-4 inline-block rounded-full border border-[rgba(255,169,77,.4)] bg-[rgba(255,169,77,.1)] px-3 py-1 text-xs text-[var(--color-naranja)]">
+							<p className="jc-mono mt-4 inline-block rounded-full border border-[color-mix(in_srgb,var(--color-naranja)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-naranja)_10%,transparent)] px-3 py-1 text-xs text-[var(--color-naranja)]">
 								borrador — solo lo ves porque eres el profe
 							</p>
 						)}
@@ -375,7 +375,7 @@ function Desplegable({ etiqueta, html }: { etiqueta: string; html: string }) {
 				{etiqueta}
 			</summary>
 			<div
-				className="jc-prosa jc-anim-in mt-3 rounded-2xl border border-[var(--color-borde)] bg-black/30 p-5 text-[1rem]"
+				className="jc-prosa jc-anim-in mt-3 rounded-2xl border border-[var(--color-borde)] bg-tinta/[0.04] p-5 text-[1rem]"
 				dangerouslySetInnerHTML={{ __html: html }}
 			/>
 		</details>

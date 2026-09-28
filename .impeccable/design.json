@@ -1,0 +1,26 @@
+{
+  "name": "JuanCode · Visor HUD",
+  "source": "DESIGN.md",
+  "motion": {
+    "ease": "cubic-bezier(0.16, 1, 0.3, 1)",
+    "signature": "escena holográfica en canvas: web = editor escribe index.html y cada línea traza su bloque (780ms por línea); python = código escrito en 1.8s y ejecutado paso a paso (720ms) con panel de variables; ambas en bucle solo mientras están visibles",
+    "barrido": "línea de escaneo vertical en el hero, 5.5s en bucle",
+    "reveal": "opacity + translateY(18px), 0.9s, solo con html.js",
+    "reducedMotion": "escena en estado final quieta; sin barrido ni pulsos"
+  },
+  "glow": {
+    "accion": "0 0 22px -4px rgba(0,229,255,0.7)",
+    "hover": "0 0 0 1px rgba(0,229,255,0.55), 0 0 18px -2px rgba(0,229,255,0.55)",
+    "magenta": "0 0 22px -4px rgba(255,43,214,0.7)"
+  },
+  "overlays": {
+    "reticula": "líneas cian 4.5% cada 64px, fija, con máscara radial",
+    "barrido": "repeating-linear-gradient blanco 2.2% cada 3px, fijo, z 60, sin eventos"
+  },
+  "mira": "corchetes de 14px x 1px en las 4 esquinas, color --mira (cian o magenta)",
+  "themes": ["dark"],
+  "files": {
+    "landing": ["landing/public/assets/styles.css", "landing/public/assets/hud.css", "landing/public/assets/muro.js"],
+    "app": ["app/app.css", "app/components/muro.tsx", "public/muro.js (copia de landing/public/assets/muro.js)"]
+  }
+}

@@ -516,8 +516,8 @@ function Resultado({
 									key={f.questionId}
 									className={`rounded-2xl border p-5 sm:p-6 ${
 										f.acerto
-											? "border-[rgba(52,224,122,.4)] bg-[rgba(52,224,122,.06)]"
-											: "border-[rgba(255,77,255,.35)] bg-[rgba(255,77,255,.05)]"
+											? "border-[color-mix(in_srgb,var(--color-verde)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-verde)_6%,transparent)]"
+											: "border-[color-mix(in_srgb,var(--color-magenta)_35%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_5%,transparent)]"
 									}`}
 								>
 									<p className="jc-mono mb-3 text-xs text-[var(--color-tinta-2)]">

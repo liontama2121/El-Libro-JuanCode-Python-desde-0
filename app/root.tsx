@@ -9,17 +9,15 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { Logo } from "./components/nav";
 
 export const links: Route.LinksFunction = () => [
-	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
 	{
-		rel: "preconnect",
-		href: "https://fonts.gstatic.com",
+		rel: "preload",
+		href: "/fonts/archivo-latin.woff2",
+		as: "font",
+		type: "font/woff2",
 		crossOrigin: "anonymous",
-	},
-	{
-		rel: "stylesheet",
-		href: "https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap",
 	},
 ];
 
@@ -38,6 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<meta name="theme-color" content="#05070b" />
 				<Meta />
 				<Links />
 			</head>
@@ -72,10 +71,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
 	return (
 		<main className="mx-auto flex min-h-dvh max-w-2xl flex-col items-center justify-center gap-5 px-6 text-center">
-			<p className="jc-mono text-xs tracking-[0.3em] text-[var(--color-tinta-2)]">
-				&lt;J&gt; JUANCODE
-			</p>
-			<h1 className="jc-display jc-grad text-5xl">{titulo}</h1>
+			<Logo size="lg" />
+			<h1 className="jc-display text-6xl">{titulo}</h1>
 			<p className="text-[var(--color-tinta-2)]">{detalle}</p>
 			<a className="jc-btn jc-btn-primary" href="/libro">
 				Volver al libro

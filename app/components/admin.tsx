@@ -38,8 +38,8 @@ export function AdminShell({
 							className={({ isActive }) =>
 								`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
 									isActive
-										? "bg-white/10 text-[var(--color-cyan)]"
-										: "text-[var(--color-tinta-2)] hover:bg-white/5"
+										? "bg-tinta/10 text-[var(--color-cyan)]"
+										: "text-[var(--color-tinta-2)] hover:bg-tinta/5"
 								}`
 							}
 						>
@@ -112,8 +112,8 @@ export function Aviso({
 	const estilos = {
 		info: "border-[var(--color-borde)] text-[var(--color-tinta-2)]",
 		error:
-			"border-[rgba(255,77,255,.35)] bg-[rgba(255,77,255,.08)] text-[var(--color-magenta)]",
-		ok: "border-[rgba(52,224,122,.4)] bg-[rgba(52,224,122,.08)] text-[var(--color-verde)]",
+			"border-[color-mix(in_srgb,var(--color-magenta)_35%,transparent)] bg-[color-mix(in_srgb,var(--color-magenta)_8%,transparent)] text-[var(--color-magenta)]",
+		ok: "border-[color-mix(in_srgb,var(--color-verde)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-verde)_8%,transparent)] text-[var(--color-verde)]",
 	}[tipo];
 
 	return (
