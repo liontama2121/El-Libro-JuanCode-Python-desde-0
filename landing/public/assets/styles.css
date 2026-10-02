@@ -442,8 +442,6 @@ p { text-wrap: pretty; }
 .obra { grid-column: span 2; display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit; }
 .obra:nth-child(1) { grid-column: span 4; }
 .obra:nth-child(2) { grid-column: span 2; }
-.obra:nth-child(6) { grid-column: span 3; }
-.obra:nth-child(7) { grid-column: span 3; }
 .obra figure { overflow: hidden; background: var(--suelo-3); border: 2px solid var(--junta); aspect-ratio: 16 / 10; }
 .obra:nth-child(1) figure { aspect-ratio: 16 / 9.3; }
 .obra:nth-child(2) figure { aspect-ratio: auto; height: 100%; }
