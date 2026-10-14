@@ -3,6 +3,7 @@
 
    <canvas class="muro" data-muro></canvas>          código → página web
    <canvas class="muro" data-muro="python"></canvas> la película en vivo
+   <canvas class="muro" data-muro="agentes"></canvas> RAG con supervisor (/cv)
    <canvas class="muro" data-muro="piso"></canvas>   retícula de piso en fuga
 
    Web: un editor escribe la página línea por línea y, al terminar cada
@@ -276,6 +277,129 @@
 		}
 	}
 
+	/* --- Escena agentes: RAG con supervisor (hoja de vida) ----------------- */
+
+	// Una consulta entra, el supervisor reparte a tres agentes, el retriever
+	// busca en el índice vectorial y la respuesta sale con sus fuentes.
+	const CONSULTA = "¿Qué controles pide el MSA de PQRs?";
+	const RESPUESTA = ["Cifrado en tránsito, IAM por rol,", "trazas en CloudWatch y revisión humana."];
+	const T_AG = { escribir: 1500, subir: 2200, repartir: 3000, buscar: 4000, hallar: 4900, volver: 5600, unir: 6300, responder: 8400 };
+	const CICLO_AG = T_AG.responder + 3800;
+
+	// Pulso que viaja de a hacia b
+	function viaje(ctx, ax, ay, bx, by, k, rgb) {
+		if (k <= 0) return;
+		const f = Math.min(1, k);
+		linea(ctx, ax, ay, ax + (bx - ax) * f, ay + (by - ay) * f, rgb, 0.7, 1);
+		if (f < 1) {
+			ctx.fillStyle = c(rgb, 1);
+			ctx.shadowColor = c(rgb, 0.9);
+			ctx.shadowBlur = 12;
+			ctx.fillRect(ax + (bx - ax) * f - 3, ay + (by - ay) * f - 3, 6, 6);
+			ctx.shadowBlur = 0;
+		}
+	}
+
+	function nodo(ctx, x, y, w, h, nombre, sub, rgb, k, activo, tam) {
+		if (k <= 0) return;
+		ctx.fillStyle = activo ? c(rgb, 0.14) : "rgba(3, 6, 10, 0.9)";
+		ctx.fillRect(x, y, w, h);
+		marco(ctx, x, y, w, h, rgb, k, activo ? 1 : 0.6, activo ? 1.2 : 1);
+		if (k < 1) return;
+		texto(ctx, nombre, x + tam * 0.8, y + h * 0.44, activo ? rgb : TINTA, tam * 0.9, 1, 600);
+		texto(ctx, sub, x + tam * 0.8, y + h * 0.78, GRIS, tam * 0.75, 0.85);
+	}
+
+	function escenaAgentes(ctx, w, h, t) {
+		const tam = Math.max(10, Math.min(13.5, w / 46));
+		const k = (ini, dur) => suave(tramo(t, ini, dur));
+
+		// Consulta
+		const qx = w * 0.06, qy = h * 0.05, qw = w * 0.88, qh = tam * 4.4;
+		panelEditor(ctx, qx, qy, qw, qh, "consulta", tam);
+		const escritos = Math.floor(tramo(t, 0, T_AG.escribir) * CONSULTA.length);
+		const finQ = texto(ctx, CONSULTA.slice(0, escritos), qx + tam, qy + tam * 3.4, TINTA, tam);
+		if (t < T_AG.subir && Math.floor(t / 380) % 2 === 0) {
+			ctx.fillStyle = c(CIAN, 0.9);
+			ctx.fillRect(qx + tam + finQ + 2, qy + tam * 2.55, tam * 0.55, tam * 1.05);
+		}
+
+		// Supervisor
+		const sw = w * 0.36, sh = tam * 3.6, sx = w * 0.5 - sw / 2, sy = h * 0.21;
+		const supActivo = (t > T_AG.subir && t < T_AG.repartir + 400) || (t > T_AG.unir - 300 && t < T_AG.unir + 500);
+		viaje(ctx, w * 0.5, qy + qh, w * 0.5, sy, tramo(t, T_AG.escribir, T_AG.subir - T_AG.escribir), CIAN);
+		nodo(ctx, sx, sy, sw, sh, "SUPERVISOR", "LangGraph", MAGENTA, k(T_AG.escribir + 300, 500), supActivo, tam);
+
+		// Tres agentes
+		const aw = w * 0.27, ah = tam * 3.6, ay = h * 0.37;
+		const agentes = [
+			{ x: w * 0.06, n: "retriever", s: "busca contexto" },
+			{ x: w * 0.5 - aw / 2, n: "analista", s: "arma el borrador" },
+			{ x: w * 0.94 - aw, n: "verificador", s: "cita y valida" },
+		];
+		agentes.forEach((a, i) => {
+			const ini = T_AG.repartir + i * 160;
+			const cx = a.x + aw / 2;
+			viaje(ctx, w * 0.5, sy + sh, cx, ay, tramo(t, ini - 600, 600), MAGENTA);
+			const activo = i === 0 ? t > T_AG.repartir && t < T_AG.volver + 300 : t > T_AG.volver - 200 && t < T_AG.unir;
+			nodo(ctx, a.x, ay, aw, ah, a.n, a.s, CIAN, k(ini - 200, 400), activo, tam);
+			// De vuelta al supervisor
+			if (t > T_AG.volver) viaje(ctx, cx, ay, w * 0.5 + (i - 1) * tam * 1.2, sy + sh, tramo(t, T_AG.volver + i * 140, 600), CIAN);
+		});
+
+		// Índice vectorial
+		const ox = w * 0.06, oy = h * 0.54, ow = w * 0.4, oh = h * 0.22;
+		const kIdx = k(T_AG.repartir, 600);
+		if (kIdx > 0) {
+			ctx.fillStyle = "rgba(3, 6, 10, 0.9)";
+			ctx.fillRect(ox, oy, ow, oh);
+			marco(ctx, ox, oy, ow, oh, CIAN, kIdx, 0.45);
+			texto(ctx, "OpenSearch", ox + tam * 0.8, oy + tam * 1.5, GRIS, tam * 0.75, kIdx);
+			viaje(ctx, agentes[0].x + aw / 2, ay + ah, ox + ow / 2, oy, tramo(t, T_AG.buscar - 500, 500), CIAN);
+			const cols = 9, filas = 4;
+			const gx = ox + tam * 0.8, gy = oy + tam * 2.4;
+			const cw = (ow - tam * 1.6) / cols, ch = (oh - tam * 3.2) / filas;
+			const barrido = tramo(t, T_AG.buscar, T_AG.hallar - T_AG.buscar);
+			const hallados = [5, 12, 30];
+			for (let f = 0; f < filas; f++) {
+				for (let col = 0; col < cols; col++) {
+					const i = f * cols + col;
+					const visto = barrido * cols > col;
+					const es = hallados.includes(i) && t > T_AG.hallar;
+					ctx.fillStyle = es ? c(MAGENTA, 0.9) : c(visto && t < T_AG.hallar ? CIAN : GRIS, visto && t < T_AG.hallar ? 0.5 : 0.2 * kIdx);
+					if (es) { ctx.shadowColor = c(MAGENTA, 0.9); ctx.shadowBlur = 10; }
+					ctx.fillRect(gx + col * cw + 2, gy + f * ch + 2, cw - 5, ch - 5);
+					ctx.shadowBlur = 0;
+				}
+			}
+		}
+
+		// Respuesta con fuentes
+		const rx = w * 0.52, ry = h * 0.54, rw = w * 0.42, rh = h * 0.22;
+		const kR = k(T_AG.unir, 500);
+		if (kR > 0) {
+			ctx.fillStyle = "rgba(3, 6, 10, 0.92)";
+			ctx.fillRect(rx, ry, rw, rh);
+			marco(ctx, rx, ry, rw, rh, MAGENTA, kR, 0.6);
+			texto(ctx, "RESPUESTA", rx + tam * 0.8, ry + tam * 1.5, MAGENTA, tam * 0.75, kR, 600);
+			viaje(ctx, w * 0.5, sy + sh, rx + rw / 2, ry, tramo(t, T_AG.unir - 400, 500), MAGENTA);
+			const total = RESPUESTA.join("").length;
+			let resta = Math.floor(tramo(t, T_AG.unir + 300, T_AG.responder - T_AG.unir - 900) * total);
+			const tamR = Math.min(tam * 0.85, (rw - tam * 1.6) / 24);
+			RESPUESTA.forEach((l, i) => {
+				if (resta <= 0) return;
+				texto(ctx, l.slice(0, resta), rx + tam * 0.8, ry + tam * 3.2 + i * tamR * 1.6, TINTA, tamR);
+				resta -= l.length;
+			});
+			const kF = k(T_AG.responder - 500, 400);
+			if (kF > 0) {
+				const fy = ry + rh - tam * 1.1;
+				const a1 = texto(ctx, "[fuente 1]", rx + tam * 0.8, fy, CIAN, tamR, kF, 600);
+				texto(ctx, "[fuente 2]", rx + tam * 1.6 + a1, fy, CIAN, tamR, kF, 600);
+			}
+		}
+	}
+
 	/* --- Piso en fuga ------------------------------------------------------- */
 
 	function escenaPiso(ctx, w, h, t) {
@@ -298,12 +422,13 @@
 	const ESCENAS = {
 		web: { dibujar: escenaWeb, ciclo: CICLO_WEB, final: CODIGO_WEB.length * PASO_WEB + 400 },
 		python: { dibujar: escenaPython, ciclo: CICLO_PY, final: ESCRIBIR_PY + PASOS_PY.length * PASO_PY },
+		agentes: { dibujar: escenaAgentes, ciclo: CICLO_AG, final: T_AG.responder + 200 },
 		piso: { dibujar: escenaPiso, ciclo: 0, final: 0 },
 	};
 
 	function preparar(canvas) {
 		const dato = canvas.dataset.muro;
-		const escena = ESCENAS[dato === "python" ? "python" : dato === "piso" || dato === "celosia" ? "piso" : "web"];
+		const escena = ESCENAS[dato === "celosia" ? "piso" : dato in ESCENAS ? dato : "web"];
 		let medida = null;
 		let inicio = 0;
 		let visible = false;

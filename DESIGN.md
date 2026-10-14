@@ -92,6 +92,7 @@ La pieza firma es la **escena holográfica** en `<canvas>`, un solo motor compar
 
 - **web** (`/web`, portada): un editor escribe `index.html` línea por línea y cada línea traza su bloque en el wireframe de un navegador (nav, titular, botón, imagen, tienda, pagos, deploy en línea).
 - **python** (`/clases`, login y portada del Libro): la película en vivo. El código se escribe, se ejecuta paso a paso con la línea activa resaltada y el panel de variables se actualiza hasta imprimir el resultado.
+- **agentes** (`/cv`, hoja de vida): una consulta entra, el supervisor (magenta) reparte a tres agentes (retriever, analista, verificador), el retriever barre el índice vectorial de OpenSearch y la respuesta sale con sus fuentes. Es el oficio actual de Juan: RAG multi-agente.
 - **piso** (cierres de contacto): retícula en fuga hacia un horizonte magenta.
 
 Las escenas se repiten mientras están en pantalla y se detienen fuera de ella; con movimiento reducido muestran el estado final, quieto.
@@ -132,6 +133,7 @@ Todo recto (radio 0). Las esquinas de mira (corchetes de 14px en las cuatro esqu
 - **Proceso**: línea de tiempo en degradado cian→magenta con marcadores en rombo.
 - **Agenda**: hueco libre = cian lleno con brillo; ocupado = borde magenta tenue, tachado.
 - **Portafolio**: capturas reales dentro de marcos de mira; al pasar, la mira pasa a magenta.
+- **Hoja de vida (`/cv`)**: crónica por capítulos (un empleo por capítulo) con ficha fija de mira a la derecha (contacto, copiar correo, índice que marca el capítulo activo con un rombo cian). Habilidades en bento sin huecos: IA y arquitectura en marco magenta, el resto en cian.
 - **Íconos**: Phosphor regular (autoalojado en la landing, `@phosphor-icons/react` en la app).
 
 ## Do's and Don'ts

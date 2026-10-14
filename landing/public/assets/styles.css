@@ -175,6 +175,7 @@ strong, b { font-weight: 700; }
 .ph-handshake::before { content: "\e582"; }
 .ph-lightning::before { content: "\e2de"; }
 .ph-chat-circle-text::before { content: "\e16e"; }
+.ph-identification-card::before { content: "\e2c8"; }
 
 /* --- Tipografía -------------------------------------------------------- */
 

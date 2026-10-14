@@ -1,0 +1,514 @@
+/* ==========================================================================
+   /cv · Hoja de vida en formato crónica
+   Se carga después de styles.css y hud.css. Hereda el visor HUD: aquí solo
+   va lo propio de la página (capítulos, ficha fija, arsenal, formación).
+   ========================================================================== */
+
+/* Íconos que solo usa esta página (Phosphor regular 2.1) */
+.ph-download-simple::before { content: "\e20c"; }
+.ph-linkedin-logo::before { content: "\e2ee"; }
+.ph-envelope-simple::before { content: "\e218"; }
+.ph-tree-structure::before { content: "\e67c"; }
+.ph-brain::before { content: "\e74e"; }
+.ph-database::before { content: "\e1de"; }
+.ph-cloud-arrow-up::before { content: "\e1ae"; }
+.ph-certificate::before { content: "\e766"; }
+.ph-chalkboard-teacher::before { content: "\e600"; }
+.ph-translate::before { content: "\e4a2"; }
+.ph-graph::before { content: "\eb58"; }
+.ph-cpu::before { content: "\e610"; }
+.ph-medal::before { content: "\e320"; }
+.ph-copy::before { content: "\e1ca"; }
+
+/* --- Hero --------------------------------------------------------------- */
+
+.cv-hero h1 { max-width: 13ch; min-height: 2.04em; margin-bottom: 22px; }
+.rol {
+  font-size: clamp(21px, 1.9vw, 27px);
+  font-variation-settings: "wdth" 104;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  max-width: 30ch;
+  margin-bottom: 18px;
+}
+.cv-hero .lead { margin-bottom: 34px; }
+.cv-hero .placa { --mira: var(--neon-2); }
+
+/* --- Crónica: capítulos + ficha fija ----------------------------------- */
+
+.cronica {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-areas: "capitulos ficha";
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+  padding-top: clamp(72px, 9vw, 130px);
+  padding-bottom: clamp(72px, 9vw, 130px);
+}
+.capitulos { grid-area: capitulos; min-width: 0; }
+
+.capitulo { padding-bottom: clamp(64px, 8vw, 110px); }
+.capitulo + .capitulo { padding-top: clamp(56px, 7vw, 96px); border-top: 1px solid var(--junta); }
+.capitulo:last-child { padding-bottom: 0; }
+.capitulo > h2 { max-width: 20ch; margin-bottom: 30px; }
+
+/* Cada capítulo abre como una lectura del visor: corchete de mira en cian */
+.cap-cabeza { position: relative; margin-bottom: 30px; padding: 18px 0 0 20px; }
+.cap-cabeza::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 14px;
+  height: 14px;
+  border-top: 1px solid var(--ladrillo);
+  border-left: 1px solid var(--ladrillo);
+  box-shadow: -4px -4px 12px -6px rgba(0, 229, 255, 0.9);
+}
+.cap-cabeza h2 { margin-bottom: 14px; }
+.cap-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; color: var(--tinta-2); font-size: 16.5px; }
+.cap-meta strong { color: var(--tinta); font-weight: 650; }
+.cap-meta time { font-size: 12.5px; color: var(--ladrillo); }
+
+.capitulos .prosa p { max-width: 64ch; }
+.capitulos .prosa p:last-child { margin-bottom: 0; }
+.entrada { font-size: clamp(21px, 1.9vw, 25px) !important; line-height: 1.45; color: var(--tinta) !important; }
+
+/* La pieza: el asistente de BBVA como cadena de bloques */
+.pieza { margin: 36px 0; padding: clamp(20px, 2.4vw, 30px); }
+.flujo { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; counter-reset: paso; }
+.flujo li { position: relative; display: grid; gap: 4px; align-content: start; padding: 4px 16px 4px 0; }
+.flujo li + li { padding-left: 16px; border-left: 1px solid var(--junta); }
+.flujo li + li::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 14px;
+  width: 9px;
+  height: 9px;
+  background: var(--suelo);
+  border: 1px solid var(--ladrillo);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+}
+.flujo .ph { font-size: 26px; color: var(--ladrillo); text-shadow: 0 0 12px rgba(0, 229, 255, 0.6); margin-bottom: 6px; }
+.flujo li:nth-child(2) .ph { color: var(--neon-2); text-shadow: 0 0 12px rgba(255, 43, 214, 0.6); }
+.flujo b { font-size: 16px; font-weight: 650; line-height: 1.25; }
+.flujo span { font-size: 14px; color: var(--tinta-2); line-height: 1.35; }
+.pieza figcaption { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--junta); font-size: 14.5px; color: var(--tinta-2); }
+
+/* Cobis Topaz: la cifra de adopción */
+.adopcion {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: center;
+  margin-bottom: 34px;
+  padding: 26px 0;
+  border-top: 1px solid rgba(255, 43, 214, 0.35);
+  border-bottom: 1px solid rgba(255, 43, 214, 0.35);
+}
+.adopcion-cifra {
+  font-family: var(--mono);
+  font-size: clamp(76px, 9vw, 128px);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--neon-2);
+  text-shadow: 0 0 28px rgba(255, 43, 214, 0.55);
+}
+.adopcion-cifra span { font-size: 0.45em; margin-left: 4px; }
+.adopcion p:last-child { color: var(--tinta-2); max-width: 40ch; font-size: 18px; }
+.adopcion strong { color: var(--tinta); }
+
+/* JuanCode: dos puertas hacia el resto del sitio */
+.puertas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 34px; }
+.puertas a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 18px 20px;
+  border: 1px solid var(--junta-fuerte);
+  background: rgba(0, 229, 255, 0.03);
+  text-decoration: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.puertas a > .ph:first-child { font-size: 28px; color: var(--ladrillo); }
+.puertas a:nth-child(2) > .ph:first-child { color: var(--neon-2); }
+.puertas span { display: grid; gap: 2px; font-size: 14.5px; color: var(--tinta-2); line-height: 1.3; }
+.puertas b { color: var(--tinta); font-size: 17px; }
+.puertas a > .ph:last-child { color: var(--tinta-2); transition: transform 0.25s var(--ease), color 0.2s; }
+.puertas a:hover { border-color: var(--ladrillo); box-shadow: var(--brillo); background: rgba(0, 229, 255, 0.06); }
+.puertas a:hover > .ph:last-child { color: var(--ladrillo); transform: translateX(4px); }
+
+/* Antes: línea vertical con rombos */
+.antes { list-style: none; position: relative; display: grid; gap: 36px; padding-left: 34px; }
+.antes::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(180deg, var(--ladrillo), var(--neon-2));
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+.antes li { position: relative; }
+.antes li::before {
+  content: "";
+  position: absolute;
+  left: -33px;
+  top: 4px;
+  width: 11px;
+  height: 11px;
+  background: var(--suelo);
+  border: 1px solid var(--ladrillo);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+}
+.antes li:last-child::before { border-color: var(--neon-2); box-shadow: 0 0 10px rgba(255, 43, 214, 0.8); }
+.antes time { display: block; font-size: 12.5px; color: var(--ladrillo); margin-bottom: 6px; }
+.antes h3 { margin-bottom: 6px; }
+.antes p { color: var(--tinta-2); max-width: 60ch; font-size: 17px; }
+.antes p strong { color: var(--tinta); }
+
+/* Ficha: contacto e índice, fija al bajar */
+.ficha-cv {
+  grid-area: ficha;
+  position: sticky;
+  top: 100px;
+  display: grid;
+  gap: 22px;
+  padding: 22px;
+}
+.ficha-cv, .pieza, .celda, .diploma {
+  --mira: var(--ladrillo);
+  --mira-l: 14px;
+  background:
+    linear-gradient(var(--mira), var(--mira)) top left / var(--mira-l) 1px no-repeat,
+    linear-gradient(var(--mira), var(--mira)) top left / 1px var(--mira-l) no-repeat,
+    linear-gradient(var(--mira), var(--mira)) top right / var(--mira-l) 1px no-repeat,
+    linear-gradient(var(--mira), var(--mira)) top right / 1px var(--mira-l) no-repeat,
+    linear-gradient(var(--mira), var(--mira)) bottom left / var(--mira-l) 1px no-repeat,
+    linear-gradient(var(--mira), var(--mira)) bottom left / 1px var(--mira-l) no-repeat,
+    linear-gradient(var(--mira), var(--mira)) bottom right / var(--mira-l) 1px no-repeat,
+    linear-gradient(var(--mira), var(--mira)) bottom right / 1px var(--mira-l) no-repeat,
+    var(--fondo-mira, rgba(11, 16, 23, 0.86));
+  border: 1px solid var(--junta);
+}
+.ficha-cv { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+
+.ficha-datos { display: grid; gap: 14px; }
+.ficha-datos dt { font-size: 11.5px; color: var(--ladrillo); margin-bottom: 3px; }
+.ficha-datos dd { font-size: 15px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.ficha-datos a { text-decoration: none; }
+.ficha-datos a:hover { color: var(--ladrillo); }
+.ficha-datos .ph { font-size: 14px; color: var(--ladrillo); }
+.correo { display: grid; gap: 8px; justify-items: start; }
+
+.copiar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tinta-2);
+  background: transparent;
+  border: 1px solid var(--junta-fuerte);
+  border-radius: 0;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.copiar .ph { font-size: 15px; color: inherit; }
+.copiar:hover { color: var(--ladrillo); border-color: var(--ladrillo); }
+.copiar.listo { color: var(--ladrillo); border-color: var(--ladrillo); box-shadow: var(--brillo); }
+
+.indice { display: grid; border-top: 1px solid var(--junta); padding-top: 12px; }
+.indice a {
+  position: relative;
+  padding: 7px 0 7px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.indice a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border: 1px solid currentColor;
+  transform: rotate(45deg);
+  opacity: 0.5;
+  transition: background 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.indice a:hover { color: var(--tinta); }
+.indice a[aria-current="true"] { color: var(--ladrillo); }
+.indice a[aria-current="true"]::before { opacity: 1; background: var(--ladrillo); box-shadow: 0 0 10px rgba(0, 229, 255, 0.9); }
+.ficha-pdf { width: 100%; min-height: 46px; font-size: 13px; }
+
+/* --- Arsenal de habilidades -------------------------------------------- */
+
+.arsenal-seccion { border-top: 1px solid var(--junta); }
+.arsenal-seccion h2 { margin-bottom: 48px; }
+.arsenal {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-areas:
+    "ia ia ia ia cloud cloud"
+    "ia ia ia ia datos datos"
+    "leng leng leng idio idio idio";
+  gap: 16px;
+}
+.celda { display: flex; flex-direction: column; gap: 14px; padding: clamp(22px, 2.6vw, 34px); }
+.celda > .ph { font-size: 30px; color: var(--ladrillo); text-shadow: 0 0 12px rgba(0, 229, 255, 0.6); }
+.celda h3 { font-size: clamp(21px, 1.8vw, 26px); }
+.celda > p { color: var(--tinta-2); max-width: 44ch; font-size: 17px; }
+
+.celda-ia { grid-area: ia; --mira: var(--neon-2); --fondo-mira: linear-gradient(155deg, rgba(255, 43, 214, 0.12), rgba(11, 16, 23, 0.9) 58%); border-color: rgba(255, 43, 214, 0.35); }
+.celda-ia > .ph { color: var(--neon-2); text-shadow: 0 0 14px rgba(255, 43, 214, 0.7); font-size: 40px; }
+.celda-ia h3 { font-size: clamp(28px, 2.8vw, 40px); color: var(--neon-2); text-shadow: 0 0 18px rgba(255, 43, 214, 0.45); }
+.celda-cloud { grid-area: cloud; --fondo-mira: linear-gradient(160deg, rgba(0, 229, 255, 0.09), rgba(11, 16, 23, 0.9) 60%); border-color: rgba(0, 229, 255, 0.3); }
+.arsenal .celda:nth-child(3) { grid-area: datos; }
+.arsenal .celda:nth-child(4) { grid-area: leng; }
+.celda-idiomas { grid-area: idio; }
+
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+.chips li {
+  padding: 6px 11px;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--tinta);
+  border: 1px solid var(--junta-fuerte);
+  background: rgba(0, 229, 255, 0.035);
+}
+.celda-ia .chips li { font-size: 16px; padding: 8px 13px; border-color: rgba(255, 43, 214, 0.35); background: rgba(255, 43, 214, 0.05); }
+.grupos { display: grid; gap: 22px; margin-top: auto; padding-top: 12px; }
+.grupos > div { display: grid; grid-template-columns: 6.5em 1fr; gap: 14px; align-items: start; padding-top: 18px; border-top: 1px solid rgba(255, 43, 214, 0.22); }
+.grupos h4 { font: 500 12.5px/1.3 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--neon-2); padding-top: 9px; }
+.grupos .chips { margin-top: 0; padding-top: 0; }
+@media (max-width: 760px) { .grupos > div { grid-template-columns: 1fr; gap: 10px; } .grupos h4 { padding-top: 0; } }
+
+.idiomas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: auto; border-top: 1px solid var(--junta); }
+.idiomas div { padding: 14px 12px 4px 0; }
+.idiomas div + div { padding-left: 14px; border-left: 1px solid var(--junta); }
+.idiomas dt { font-size: 15px; color: var(--tinta-2); }
+.idiomas dd { font-size: 22px; color: var(--ladrillo); letter-spacing: 0.08em; text-shadow: 0 0 12px rgba(0, 229, 255, 0.5); }
+
+/* --- Formación ---------------------------------------------------------- */
+
+.formacion { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
+.diploma { display: grid; gap: 14px; padding: clamp(28px, 4vw, 52px); justify-items: start; }
+.diploma .ph { font-size: 46px; color: var(--ladrillo); text-shadow: 0 0 16px rgba(0, 229, 255, 0.7); }
+.diploma h2 { max-width: 12ch; }
+.diploma p { color: var(--tinta-2); font-size: 18px; max-width: 32ch; }
+.diploma .ancha { font-size: 14px; color: var(--ladrillo); }
+
+.logros { list-style: none; display: grid; }
+.logros li { display: grid; grid-template-columns: 40px 1fr; gap: 18px; padding: 24px 0; }
+.logros li + li { border-top: 1px solid var(--junta); }
+.logros .ph { font-size: 30px; color: var(--ladrillo); margin-top: 2px; }
+.logros li:nth-child(3) .ph { color: var(--neon-2); text-shadow: 0 0 12px rgba(255, 43, 214, 0.6); }
+.logros h3 { font-size: clamp(19px, 1.6vw, 22px); margin-bottom: 6px; }
+.logros p { color: var(--tinta-2); font-size: 16.5px; max-width: 54ch; }
+
+/* --- Responsive --------------------------------------------------------- */
+
+@media (max-width: 1080px) {
+  .cronica { grid-template-columns: 1fr; grid-template-areas: "ficha" "capitulos"; }
+  .ficha-cv { position: static; grid-template-columns: 1fr 1fr; align-items: start; }
+  /* Índice como tira horizontal de capítulos */
+  .indice { grid-column: 1 / -1; display: flex; gap: 6px 18px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .indice a { flex: none; font-size: 14px; }
+  .ficha-pdf { align-self: end; }
+  .flujo { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 22px; }
+  .flujo li:nth-child(4) { padding-left: 0; border-left: 0; }
+  .flujo li:nth-child(4)::before { display: none; }
+  .arsenal { grid-template-columns: 1fr 1fr; grid-template-areas: "ia ia" "cloud datos" "leng idio"; }
+  .formacion { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .ficha-cv { grid-template-columns: 1fr; }
+  .flujo { grid-template-columns: 1fr; row-gap: 0; }
+  .flujo li, .flujo li + li, .flujo li:nth-child(4) { grid-template-columns: 34px 1fr; column-gap: 12px; padding: 12px 0; border-left: 0; }
+  .flujo li + li { border-top: 1px solid var(--junta); }
+  .flujo li + li::before { display: none; }
+  .flujo .ph { grid-row: span 2; margin: 0; }
+  .adopcion { grid-template-columns: 1fr; gap: 12px; }
+  .puertas { grid-template-columns: 1fr; }
+  .arsenal { grid-template-columns: 1fr; grid-template-areas: "ia" "cloud" "datos" "leng" "idio"; }
+  .logros li { grid-template-columns: 32px 1fr; gap: 14px; }
+  .cv-hero .hero-muro { height: clamp(320px, 84vw, 420px); }
+}
+
+/* ==========================================================================
+   Movimiento de /cv
+   Todo parte de un estado visible y solo corre sin movimiento reducido.
+   ========================================================================== */
+
+/* Fondo: paquetes de datos que viajan por la retícula (canvas de cv.js) */
+.red-fondo { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+
+@property --mira-l { syntax: "<length>"; inherits: true; initial-value: 14px; }
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Íconos: se encienden como tubo de neón al aparecer su bloque */
+  @keyframes encender {
+    0% { opacity: 0.15; text-shadow: none; }
+    12% { opacity: 1; }
+    18% { opacity: 0.2; }
+    30% { opacity: 1; }
+    36% { opacity: 0.45; }
+    55%, 100% { opacity: 1; }
+  }
+  .js .reveal:not(.in) .ph { opacity: 0.15; }
+  .reveal.in .ph { animation: encender 1.1s steps(1, end) both; animation-delay: calc(var(--i, 0) * 110ms + 250ms); }
+  .flujo li:nth-child(2), .logros li:nth-child(2), .arsenal .celda:nth-child(2), .puertas a:nth-child(2) { --i: 1; }
+  .flujo li:nth-child(3), .logros li:nth-child(3), .arsenal .celda:nth-child(3) { --i: 2; }
+  .flujo li:nth-child(4), .arsenal .celda:nth-child(4) { --i: 3; }
+  .flujo li:nth-child(5), .arsenal .celda:nth-child(5) { --i: 4; }
+
+  /* Diagrama BBVA: una señal recorre la cadena de la consulta a producción */
+  @keyframes senal {
+    0%, 14%, 100% { transform: none; filter: none; }
+    5% { transform: translateY(-3px) scale(1.18); filter: brightness(1.6) drop-shadow(0 0 8px currentColor); }
+  }
+  @keyframes senal-rombo {
+    0%, 14%, 100% { background: var(--suelo); }
+    4% { background: var(--ladrillo); box-shadow: 0 0 16px rgba(0, 229, 255, 1); }
+  }
+  .pieza.in .flujo li .ph { animation: encender 1.1s steps(1, end) both, senal 4.5s var(--ease) infinite; animation-delay: calc(var(--i, 0) * 110ms + 250ms), calc(var(--i, 0) * 0.42s + 1.6s); }
+  .pieza.in .flujo li + li::before { animation: senal-rombo 4.5s linear infinite; animation-delay: calc(var(--i, 0) * 0.42s + 1.4s); }
+
+  /* Celdas y paneles: las miras se abren al pasar el cursor */
+  .celda, .diploma, .pieza, .ficha-cv { transition: --mira-l 0.45s var(--ease), border-color 0.3s; }
+  .celda:hover, .diploma:hover, .pieza:hover { --mira-l: 28px; }
+  .celda:hover { border-color: var(--junta-fuerte); }
+  .celda-ia:hover { border-color: rgba(255, 43, 214, 0.6); }
+
+  /* Íconos al pasar: interferencia cian/magenta de un monitor */
+  @keyframes interferencia {
+    0%, 100% { transform: none; text-shadow: 0 0 12px currentColor; }
+    20% { transform: translate(-2px, 1px); text-shadow: 3px 0 rgba(255, 43, 214, 0.9), -3px 0 rgba(0, 229, 255, 0.9); }
+    40% { transform: translate(2px, -1px); text-shadow: -3px 0 rgba(255, 43, 214, 0.9), 3px 0 rgba(0, 229, 255, 0.9); }
+    60% { transform: translate(-1px, 0); text-shadow: 2px 0 rgba(255, 43, 214, 0.7), -2px 0 rgba(0, 229, 255, 0.7); }
+  }
+  .celda:hover > .ph, .logros li:hover .ph, .diploma:hover .ph, .puertas a:hover > .ph:first-child, .flujo li:hover .ph { animation: interferencia 0.45s steps(2, end) 2; }
+
+  /* Chips: entran en cascada cuando aparece el arsenal */
+  @keyframes chip { from { opacity: 0; transform: translateY(8px); } }
+  .arsenal.in .chips li { animation: chip 0.55s var(--ease) both; animation-delay: calc(var(--c, 0) * 35ms + 350ms); }
+  .chips li { transition: border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s var(--ease); }
+  .chips li:hover { border-color: var(--ladrillo); color: var(--ladrillo); box-shadow: var(--brillo); transform: translateY(-2px); }
+  .celda-ia .chips li:hover { border-color: var(--neon-2); color: var(--neon-2); box-shadow: var(--brillo-2); }
+
+  /* Antes de todo esto: la línea de tiempo se traza y cada rombo se enciende */
+  .antes::before { transform-origin: top; transition: transform 1.6s var(--ease) 0.2s; }
+  .js .antes:not(.in)::before { transform: scaleY(0); }
+  @keyframes rombo { 0% { transform: rotate(45deg) scale(0); } 70% { transform: rotate(45deg) scale(1.5); } 100% { transform: rotate(45deg) scale(1); } }
+  .antes.in li::before { animation: rombo 0.6s var(--ease) both; }
+  .antes.in li:nth-child(1)::before { animation-delay: 0.35s; }
+  .antes.in li:nth-child(2)::before { animation-delay: 0.85s; }
+  .antes.in li:nth-child(3)::before { animation-delay: 1.35s; }
+
+  /* Índice: el rombo del capítulo activo late */
+  @keyframes latido { 50% { box-shadow: 0 0 2px rgba(0, 229, 255, 0.4); } }
+  .indice a[aria-current="true"]::before { animation: latido 1.6s ease-in-out infinite; }
+
+  /* Cabecera de capítulo: el corchete se dibuja al aparecer */
+  .cap-cabeza::before { transition: width 0.7s var(--ease) 0.15s, height 0.7s var(--ease) 0.15s; }
+  .js .cap-cabeza:not(.in)::before { width: 0; height: 0; }
+
+  /* La cifra de adopción brilla al terminar de contar */
+  @keyframes destello { 0% { text-shadow: 0 0 60px rgba(255, 43, 214, 1); } 100% { text-shadow: 0 0 28px rgba(255, 43, 214, 0.55); } }
+  .adopcion-cifra.contado { animation: destello 1.2s var(--ease); }
+}
+
+/* --- Segunda capa de movimiento ---------------------------------------- */
+
+/* Barra de lectura bajo el nav (scroll-driven, sin JS) */
+.progreso { position: fixed; top: 68px; left: 0; right: 0; height: 2px; z-index: 51; pointer-events: none; transform-origin: left; transform: scaleX(0); background: linear-gradient(90deg, var(--ladrillo), var(--neon-2)); box-shadow: 0 0 12px rgba(0, 229, 255, 0.8); }
+@media (max-width: 760px) { .progreso { top: 60px; } }
+
+/* Luz que sigue al cursor dentro de los paneles (cv.js pone --mx/--my) */
+.celda, .pieza, .diploma { position: relative; isolation: isolate; }
+.celda::after, .pieza::after, .diploma::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(0, 229, 255, 0.13), transparent 70%);
+  transition: opacity 0.35s;
+}
+.celda-ia::after { background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 43, 214, 0.16), transparent 70%); }
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    @keyframes leer { to { transform: scaleX(1); } }
+    .progreso { animation: leer linear both; animation-timeline: scroll(root); }
+  }
+
+  .celda:hover::after, .pieza:hover::after, .diploma:hover::after { opacity: 1; }
+  .celda, .pieza, .diploma { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: --mira-l 0.45s var(--ease), border-color 0.3s, transform 0.5s var(--ease); }
+
+  /* Hero: entra por capas al cargar */
+  @keyframes subir { from { opacity: 0; transform: translateY(16px); filter: blur(6px); } }
+  .cv-hero .rol { animation: subir 0.9s var(--ease) 0.5s both; }
+  .cv-hero .lead { animation: subir 0.9s var(--ease) 0.7s both; }
+  .cv-hero .btns { animation: subir 0.9s var(--ease) 0.9s both; }
+  .cv-hero .placa { animation: subir 1s var(--ease) 1.4s both; }
+  @keyframes abrir-mira { from { --mira-l: 0px; } }
+  .ficha-cv { animation: abrir-mira 1.2s var(--ease) 0.6s both; }
+
+  /* Botón primario: un brillo cruza al pasar el cursor */
+  .btn-ladrillo { position: relative; overflow: hidden; }
+  .btn-ladrillo::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.65), transparent); transform: skewX(-20deg); pointer-events: none; }
+  .btn-ladrillo:hover::after { animation: brillo 0.7s var(--ease); }
+  @keyframes brillo { to { left: 130%; } }
+  .btn .ph { transition: transform 0.3s var(--ease); }
+  .btn:hover .ph-download-simple { animation: bajar 0.6s var(--ease); }
+  @keyframes bajar { 40% { transform: translateY(4px); } }
+
+  /* Arsenal: una línea de escáner barre las celdas una vez al aparecer */
+  .celda { overflow: hidden; }
+  .celda::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 40%; pointer-events: none; z-index: 2; opacity: 0; background: linear-gradient(to bottom, transparent, rgba(0, 229, 255, 0.1) 85%, rgba(0, 229, 255, 0.55)); border-bottom: 1px solid rgba(0, 229, 255, 0.9); }
+  .celda-ia::before { background: linear-gradient(to bottom, transparent, rgba(255, 43, 214, 0.1) 85%, rgba(255, 43, 214, 0.55)); border-bottom-color: rgba(255, 43, 214, 0.9); }
+  @keyframes escaner { 0% { opacity: 1; transform: translateY(-100%); } 90% { opacity: 1; } 100% { opacity: 0; transform: translateY(260%); } }
+  .arsenal.in .celda::before { animation: escaner 1.4s cubic-bezier(0.45, 0, 0.55, 1) both; animation-delay: calc(var(--i, 0) * 120ms + 200ms); }
+
+  /* Prosa: las palabras clave se subrayan en neón al aparecer */
+  .capitulos .prosa strong { background: linear-gradient(var(--ladrillo), var(--ladrillo)) left bottom / 0% 1px no-repeat; transition: background-size 0.9s var(--ease) 0.5s; padding-bottom: 1px; }
+  .capitulos .prosa.in strong { background-size: 100% 1px; }
+
+  /* Línea de tiempo: un pulso viaja de arriba abajo */
+  .antes::after { content: ""; position: absolute; left: 3px; top: 0; width: 7px; height: 60px; background: linear-gradient(to bottom, transparent, var(--ladrillo)); box-shadow: 0 0 14px rgba(0, 229, 255, 0.9); opacity: 0; pointer-events: none; }
+  @keyframes recorrer { 0% { opacity: 0; transform: translateY(0); } 10%, 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(var(--largo, 400px)); } }
+  .antes.in::after { animation: recorrer 3.2s cubic-bezier(0.45, 0, 0.55, 1) 1.8s infinite; width: 1px; left: 6px; }
+
+  /* Diploma: el birrete flota */
+  @keyframes flotar { 50% { transform: translateY(-6px) rotate(-4deg); } }
+  .diploma.in .ph-graduation-cap { animation: encender 1.1s steps(1, end) both, flotar 3.6s ease-in-out 1.4s infinite; }
+
+  /* Puertas: la flecha pulsa hacia adelante */
+  @keyframes empujar { 0%, 70%, 100% { transform: none; } 80% { transform: translateX(5px); } }
+  .puertas.in a > .ph:last-child { animation: empujar 2.8s var(--ease) 1.5s infinite; }
+  .puertas a:nth-child(2) > .ph:last-child { animation-delay: 1.9s; }
+
+  /* Placa de contacto: las esquinas se abren y cierran como mira buscando foco */
+  @keyframes enfocar { 0%, 100% { --mira-l: 14px; } 50% { --mira-l: 30px; } }
+  .contacto-placa.in { animation: enfocar 3.4s ease-in-out infinite; }
+}
