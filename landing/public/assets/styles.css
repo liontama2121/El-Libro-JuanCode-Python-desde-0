@@ -458,6 +458,16 @@ p { text-wrap: pretty; }
 .obra-propia figure span { font-family: var(--mono); font-size: clamp(15px, 1.4vw, 18px); line-height: 1.7; padding: 28px; }
 .obra-propia figure b { color: #f0b48f; font-weight: 600; }
 
+/* La captura vertical del segundo proyecto se encuadra en su titular */
+.obra:nth-child(2) img { object-position: 6% top; }
+
+/* El Libro cierra la grilla a lo ancho: banda de código con el texto al lado */
+@media (min-width: 1081px) {
+  .obra.obra-propia { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: clamp(24px, 3vw, 44px); row-gap: 14px; }
+  .obra-propia figure { grid-row: 1 / -1; aspect-ratio: 21 / 8; }
+  .obra-propia h3 { align-self: end; }
+}
+
 .cierre-obras { margin-top: clamp(56px, 7vw, 90px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px; padding-top: 32px; border-top: 1px solid var(--junta-fuerte); }
 .cierre-obras p { font-size: clamp(24px, 2.6vw, 34px); font-variation-settings: "wdth" 80; font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; }
 
