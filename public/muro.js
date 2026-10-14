@@ -281,8 +281,8 @@
 
 	// Una consulta entra, el supervisor reparte a tres agentes, el retriever
 	// busca en el índice vectorial y la respuesta sale con sus fuentes.
-	const CONSULTA = "¿Qué controles pide el MSA de PQRs?";
-	const RESPUESTA = ["Cifrado en tránsito, IAM por rol,", "trazas en CloudWatch y revisión humana."];
+	const CONSULTA = "¿Cómo despliego un agente con IA en AWS?";
+	const RESPUESTA = ["API Gateway, Lambda y Bedrock;", "logs y trazas en CloudWatch."];
 	const T_AG = { escribir: 1500, subir: 2200, repartir: 3000, buscar: 4000, hallar: 4900, volver: 5600, unir: 6300, responder: 8400 };
 	const CICLO_AG = T_AG.responder + 3800;
 
@@ -328,14 +328,17 @@
 		const sw = w * 0.36, sh = tam * 3.6, sx = w * 0.5 - sw / 2, sy = h * 0.21;
 		const supActivo = (t > T_AG.subir && t < T_AG.repartir + 400) || (t > T_AG.unir - 300 && t < T_AG.unir + 500);
 		viaje(ctx, w * 0.5, qy + qh, w * 0.5, sy, tramo(t, T_AG.escribir, T_AG.subir - T_AG.escribir), CIAN);
-		nodo(ctx, sx, sy, sw, sh, "SUPERVISOR", "LangGraph", MAGENTA, k(T_AG.escribir + 300, 500), supActivo, tam);
+		// La consulta entra por API Gateway
+		const kGw = k(T_AG.escribir, 400);
+		if (kGw > 0 && sy - (qy + qh) > tam * 2.4) texto(ctx, "API Gateway", w * 0.5 + tam * 0.7, (qy + qh + sy) / 2 + tam * 0.35, CIAN, tam * 0.75, kGw * 0.9, 600);
+		nodo(ctx, sx, sy, sw, sh, "SUPERVISOR", "AWS Lambda", MAGENTA, k(T_AG.escribir + 300, 500), supActivo, tam);
 
 		// Tres agentes
 		const aw = w * 0.27, ah = tam * 3.6, ay = h * 0.37;
 		const agentes = [
-			{ x: w * 0.06, n: "retriever", s: "busca contexto" },
-			{ x: w * 0.5 - aw / 2, n: "analista", s: "arma el borrador" },
-			{ x: w * 0.94 - aw, n: "verificador", s: "cita y valida" },
+			{ x: w * 0.06, n: "retriever", s: "S3 + embeddings" },
+			{ x: w * 0.5 - aw / 2, n: "analista", s: "Amazon Bedrock" },
+			{ x: w * 0.94 - aw, n: "verificador", s: "IAM + CloudWatch" },
 		];
 		agentes.forEach((a, i) => {
 			const ini = T_AG.repartir + i * 160;
@@ -354,7 +357,7 @@
 			ctx.fillStyle = "rgba(3, 6, 10, 0.9)";
 			ctx.fillRect(ox, oy, ow, oh);
 			marco(ctx, ox, oy, ow, oh, CIAN, kIdx, 0.45);
-			texto(ctx, "OpenSearch", ox + tam * 0.8, oy + tam * 1.5, GRIS, tam * 0.75, kIdx);
+			texto(ctx, "Amazon OpenSearch", ox + tam * 0.8, oy + tam * 1.5, GRIS, tam * 0.75, kIdx);
 			viaje(ctx, agentes[0].x + aw / 2, ay + ah, ox + ow / 2, oy, tramo(t, T_AG.buscar - 500, 500), CIAN);
 			const cols = 9, filas = 4;
 			const gx = ox + tam * 0.8, gy = oy + tam * 2.4;
