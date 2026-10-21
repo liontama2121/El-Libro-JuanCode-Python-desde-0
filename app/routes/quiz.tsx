@@ -98,8 +98,9 @@ export async function loader({ context, request, params }: Route.LoaderArgs) {
 		// El libro básico pregunta con opción múltiple: el estudiante apenas
 		// está entendiendo qué hace el código. El avanzado además lo hace
 		// escribir y armar — ahí el objetivo es que se sepa los algoritmos.
+		// El Nivel 0 también: sus planas se aprenden de memoria.
 		tipos:
-			track === "avanzado"
+			track !== "basico"
 				? ["mcq", "predict_output", "find_bug", "parsons", "fill_blank"]
 				: ["mcq", "predict_output"],
 		limite: PREGUNTAS_POR_QUIZ,

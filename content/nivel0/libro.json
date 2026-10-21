@@ -1,0 +1,19 @@
+{
+	"titulo": "El Libro JuanCode — Nivel 0: Planas de código",
+	"autor": "JuanCode",
+	"track": "nivel0",
+	"partes": [
+		{ "number": 1, "title": "Los cuatro patrones", "emoji": "✍️" },
+		{ "number": 2, "title": "El contador K", "emoji": "🔑" },
+		{ "number": 3, "title": "Examen", "emoji": "🎯" }
+	],
+	"capitulos": [
+		{ "number": 1, "part": 1, "slug": "llenar-un-vector", "title": "I. Llenar un vector", "emoji": "📥", "description": "El punto de partida. Si no sabes hacer esto, no puedes hacer nada más." },
+		{ "number": 2, "part": 1, "slug": "recorrer-y-contar", "title": "II. Recorrer y contar", "emoji": "🔢", "description": "Cuántos cumplen una condición. El 70% de los ejercicios de examen." },
+		{ "number": 3, "part": 1, "slug": "recorrer-y-acumular", "title": "III. Recorrer y acumular", "emoji": "➕", "description": "Suma, promedio y totales." },
+		{ "number": 4, "part": 1, "slug": "maximo-y-minimo", "title": "IV. Buscar máximo / mínimo", "emoji": "🏔️", "description": "El mejor, el peor, el extremo y dónde está." },
+		{ "number": 5, "part": 2, "slug": "contador-k", "title": "El contador K", "emoji": "🔑", "description": "Por qué i no sirve para el vector nuevo, y la plana de filtrar con k." },
+		{ "number": 6, "part": 2, "slug": "copiar-por-grupos", "title": "V. Copiar por grupos", "emoji": "🧩", "description": "Separar en dos vectores, reorganizar en uno y copiar con un giro." },
+		{ "number": 7, "part": 3, "slug": "simulacro", "title": "Simulacro de examen", "emoji": "🎯", "description": "Cinco enunciados tipo juez que mezclan los patrones." }
+	]
+}

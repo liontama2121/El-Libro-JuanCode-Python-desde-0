@@ -1,0 +1,63 @@
+<p class="jc-plana-sub">Aprende los patrones de memoria. Cuando los dedos los escriban solos, aprobaste.</p>
+
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Todos los vectores se crean con <code>[0] * n</code> y se llenan por índice. Siempre.
+</div>
+
+<div class="jc-plana-intro">
+  <p>Esta sección <strong>NO es para pensar — es para REPETIR</strong>. Vas a escribir los mismos patrones muchas veces, con pequeños cambios. Es la plana de primaria del programador. Cuando puedas escribir el esqueleto sin mirar, estás listo para el examen del juez.</p>
+</div>
+
+<h2>Cómo se hace una plana</h2>
+
+<ol>
+  <li>Lee el esqueleto del patrón <strong>una vez</strong>, despacio.</li>
+  <li>Tápalo y escríbelo <strong>tres veces</strong> en un cuaderno o en el editor, sin mirar.</li>
+  <li>Haz los ejercicios del patrón (están al final de cada capítulo, con el número del patrón: <code>II.3</code>, <code>V-B.2</code>…). En cada uno cambia <strong>solo</strong> lo que el enunciado pide.</li>
+  <li>Si te equivocas en el esqueleto, vuelve al paso 2. Sin vergüenza: así se aprende la plana.</li>
+</ol>
+
+<p>Todos los ejercicios leen como el juez: primero <code>N</code>, después los datos, <strong>uno por línea</strong>, con <code>input()</code> sin mensajes. El botón <em>Ver solución</em> está ahí para comparar <strong>después</strong> de intentarlo, no antes.</p>
+
+<table>
+  <thead>
+    <tr><th>Siempre así</th><th>Para qué</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>vector = [0] * n</code></td><td>Crear un vector de n enteros</td></tr>
+    <tr><td><code>nombres = [""] * n</code></td><td>Crear un vector de n textos</td></tr>
+    <tr><td><code>for i in range(n):</code></td><td>Recorrer por índice</td></tr>
+    <tr><td><code>vector[i] = valor</code></td><td>Guardar en una casilla</td></tr>
+    <tr><td><code>k = 0</code> … <code>k = k + 1</code></td><td>Contador manual para copiar a un vector nuevo</td></tr>
+    <tr><td><code>print("Total: " + str(total))</code></td><td>Pegar texto y números (o <code>print(a, b, c)</code>)</td></tr>
+  </tbody>
+</table>
+
+<h2>El esqueleto</h2>
+
+<p>El punto de partida. Si no sabes hacer esto, no puedes hacer nada más. <strong>Memorízalo en los dedos.</strong></p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto I · escríbelo 3 veces</p>
+<pre><code>n = int(input())
+vector = [0] * n
+for i in range(n):
+    vector[i] = int(input())</code></pre>
+</div>
+
+<p>Cuatro líneas que van al principio de <strong>todos</strong> los ejercicios de este capítulo. Lo que cambia entre ejercicios es lo que viene después:</p>
+
+<table>
+  <thead>
+    <tr><th>Quiero…</th><th>Escribo después del esqueleto</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Todos, en orden</td><td><code>for i in range(n):</code> → <code>print(vector[i])</code></td></tr>
+    <tr><td>Todos, al revés</td><td><code>for i in range(n - 1, -1, -1):</code> → <code>print(vector[i])</code></td></tr>
+    <tr><td>El primero / el último</td><td><code>vector[0]</code> / <code>vector[n - 1]</code></td></tr>
+    <tr><td>El del medio</td><td><code>vector[n // 2]</code></td></tr>
+    <tr><td>Textos en vez de números</td><td><code>[""] * n</code> y <code>input()</code> sin <code>int()</code></td></tr>
+  </tbody>
+</table>
+
+<p>Ejercicios: <strong>I.1 a I.6</strong>.</p>

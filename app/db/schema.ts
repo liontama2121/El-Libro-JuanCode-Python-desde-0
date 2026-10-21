@@ -443,11 +443,11 @@ export const TIPOS_PREGUNTA = [
 ] as const;
 export type TipoPregunta = (typeof TIPOS_PREGUNTA)[number];
 
-/** Los dos libros paralelos. 'ambos' solo aplica a un usuario, no a un capitulo. */
-export const TRACKS = ["basico", "avanzado"] as const;
+/** Los libros paralelos. 'ambos' solo aplica a un usuario, no a un capitulo. */
+export const TRACKS = ["nivel0", "basico", "avanzado"] as const;
 export type Track = (typeof TRACKS)[number];
 
-export const TRACKS_USUARIO = ["basico", "avanzado", "ambos"] as const;
+export const TRACKS_USUARIO = ["basico", "avanzado", "nivel0", "ambos"] as const;
 export type TrackUsuario = (typeof TRACKS_USUARIO)[number];
 
 export const DIFICULTADES = ["facil", "medio", "dificil"] as const;

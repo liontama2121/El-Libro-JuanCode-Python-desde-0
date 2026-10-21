@@ -1,0 +1,34 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Todos los vectores se crean con <code>[0] * n</code> y se llenan por índice. Siempre.
+</div>
+
+<p>Suma, promedio, totales. El patrón que resuelve <em>"imprime el total de X"</em>.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto III · escríbelo 3 veces</p>
+<pre><code>n = int(input())
+vector = [0] * n
+for i in range(n):
+    vector[i] = int(input())
+
+suma = 0
+for i in range(n):
+    suma = suma + vector[i]
+
+print(suma)</code></pre>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Variación</th><th>Qué cambia</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Promedio</td><td><code>print(suma // n)</code> al final</td></tr>
+    <tr><td>Suma solo de algunos</td><td>Envolver la suma en un <code>if</code> (patrón II + III)</td></tr>
+    <tr><td>Por posición</td><td>La condición mira <code>i</code>: <code>if i % 2 == 0:</code></td></tr>
+    <tr><td>Multiplicación</td><td>Arranca en <code>1</code>: <code>producto = producto * vector[i]</code></td></tr>
+    <tr><td>Promedio de algunos</td><td>Contar y sumar en el mismo <code>if</code>, dividir entre <code>cuenta</code></td></tr>
+  </tbody>
+</table>
+
+<p>Ejercicios: <strong>III.1 a III.8</strong>.</p>

@@ -1,0 +1,186 @@
+[
+	{
+		"orden": 1,
+		"title": "IV.1 — El mayor",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime el <strong>mayor</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n4\n-3\n15\n12\n7\n-8</code></pre><p>Salida:</p><pre><code>15</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmejor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mejor:\n        mejor = vector[i]\n\nprint(mejor)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmayor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mayor:\n        mayor = vector[i]\n\nprint(mayor)</code></pre><p><code>mayor</code> arranca en <code>vector[0]</code>, nunca en 0: con puros negativos, 0 ganaría sin estar en el vector.</p>",
+		"starter_code": "# IV.1 — El mayor\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n4\n-3\n15\n12\n7\n-8\n",
+				"expected_output": "15"
+			},
+			{
+				"stdin": "3\n-5\n-2\n-9\n",
+				"expected_output": "-2"
+			},
+			{
+				"stdin": "1\n6\n",
+				"expected_output": "6"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "IV.2 — El menor",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime el <strong>menor</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n4\n-3\n15\n12\n7\n-8</code></pre><p>Salida:</p><pre><code>-8</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmejor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mejor:\n        mejor = vector[i]\n\nprint(mejor)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmenor = vector[0]\nfor i in range(1, n):\n    if vector[i] &lt; menor:\n        menor = vector[i]\n\nprint(menor)</code></pre><p>Igual al anterior con <code>&lt;</code> en vez de <code>&gt;</code>.</p>",
+		"starter_code": "# IV.2 — El menor\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n4\n-3\n15\n12\n7\n-8\n",
+				"expected_output": "-8"
+			},
+			{
+				"stdin": "3\n-5\n-2\n-9\n",
+				"expected_output": "-9"
+			},
+			{
+				"stdin": "1\n6\n",
+				"expected_output": "6"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "IV.3 — El mayor y el menor",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime el mayor en una línea y el menor en la siguiente.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n4\n-3\n15\n12\n7\n-8</code></pre><p>Salida:</p><pre><code>15\n-8</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmejor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mejor:\n        mejor = vector[i]\n\nprint(mejor)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmayor = vector[0]\nmenor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mayor:\n        mayor = vector[i]\n    if vector[i] &lt; menor:\n        menor = vector[i]\n\nprint(mayor)\nprint(menor)</code></pre><p>Dos <code>if</code> separados (no <code>elif</code>): un mismo número se revisa contra los dos.</p>",
+		"starter_code": "# IV.3 — El mayor y el menor\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n4\n-3\n15\n12\n7\n-8\n",
+				"expected_output": "15\n-8"
+			},
+			{
+				"stdin": "3\n-5\n-2\n-9\n",
+				"expected_output": "-2\n-9"
+			},
+			{
+				"stdin": "1\n6\n",
+				"expected_output": "6\n6"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "IV.4 — La edad del mayor",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> edades. Imprime la edad de la persona <strong>mayor</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n17\n45\n30\n9</code></pre><p>Salida:</p><pre><code>45</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmejor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mejor:\n        mejor = vector[i]\n\nprint(mejor)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nedades = [0] * n\nfor i in range(n):\n    edades[i] = int(input())\n\nmayor = edades[0]\nfor i in range(1, n):\n    if edades[i] &gt; mayor:\n        mayor = edades[i]\n\nprint(mayor)</code></pre><p>Patrón IV disfrazado.</p>",
+		"starter_code": "# IV.4 — La edad del mayor\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n17\n45\n30\n9\n",
+				"expected_output": "45"
+			},
+			{
+				"stdin": "1\n20\n",
+				"expected_output": "20"
+			},
+			{
+				"stdin": "3\n3\n3\n2\n",
+				"expected_output": "3"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "IV.5 — La nota más baja",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> calificaciones. Imprime la <strong>más baja</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n80\n45\n60\n99</code></pre><p>Salida:</p><pre><code>45</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmejor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mejor:\n        mejor = vector[i]\n\nprint(mejor)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nnotas = [0] * n\nfor i in range(n):\n    notas[i] = int(input())\n\nmenor = notas[0]\nfor i in range(1, n):\n    if notas[i] &lt; menor:\n        menor = notas[i]\n\nprint(menor)</code></pre><p>Patrón IV con <code>&lt;</code>.</p>",
+		"starter_code": "# IV.5 — La nota más baja\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n80\n45\n60\n99\n",
+				"expected_output": "45"
+			},
+			{
+				"stdin": "1\n100\n",
+				"expected_output": "100"
+			},
+			{
+				"stdin": "3\n70\n20\n20\n",
+				"expected_output": "20"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "IV.6 — Posición del mayor",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime la <strong>posición</strong> del mayor contando desde 1 (es decir, el índice + 1). Si el mayor se repite, la primera vez que aparece.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n4\n-3\n15\n12\n7</code></pre><p>Salida:</p><pre><code>3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmejor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mejor:\n        mejor = vector[i]\n\nprint(mejor)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmayor = vector[0]\npos = 0\nfor i in range(1, n):\n    if vector[i] &gt; mayor:\n        mayor = vector[i]\n        pos = i\n\nprint(pos + 1)</code></pre><p>Se guardan DOS cosas cuando aparece uno mejor: el valor y la posición. <code>&gt;</code> estricto deja la primera aparición.</p>",
+		"starter_code": "# IV.6 — Posición del mayor\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n4\n-3\n15\n12\n7\n",
+				"expected_output": "3"
+			},
+			{
+				"stdin": "3\n9\n9\n1\n",
+				"expected_output": "1"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "3"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "IV.7 — El segundo más grande",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code> números (<code>N</code> ≥ 2). Imprime el segundo más grande: el mayor de todos <strong>sin contar la posición donde está el mayor</strong>. Si el mayor está repetido, el segundo vale lo mismo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n4\n-3\n15\n12\n7</code></pre><p>Salida:</p><pre><code>12</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmejor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mejor:\n        mejor = vector[i]\n\nprint(mejor)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmayor = vector[0]\npos = 0\nfor i in range(1, n):\n    if vector[i] &gt; mayor:\n        mayor = vector[i]\n        pos = i\n\nsegundo = vector[0]\nif pos == 0:\n    segundo = vector[1]\nfor i in range(n):\n    if i != pos and vector[i] &gt; segundo:\n        segundo = vector[i]\n\nprint(segundo)</code></pre><p>Dos recorridos: el primero encuentra DÓNDE está el mayor, el segundo repite el patrón IV saltándose esa posición. El arranque de <code>segundo</code> no puede ser la posición del mayor.</p>",
+		"starter_code": "# IV.7 — El segundo más grande\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n4\n-3\n15\n12\n7\n",
+				"expected_output": "12"
+			},
+			{
+				"stdin": "3\n9\n9\n1\n",
+				"expected_output": "9"
+			},
+			{
+				"stdin": "2\n20\n5\n",
+				"expected_output": "5"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "IV.8 — Diferencia entre el más caro y el más barato",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> precios. Imprime cuánto más caro es el más caro que el más barato.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n5000\n12000\n800\n7000</code></pre><p>Salida:</p><pre><code>11200</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmejor = vector[0]\nfor i in range(1, n):\n    if vector[i] &gt; mejor:\n        mejor = vector[i]\n\nprint(mejor)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nprecios = [0] * n\nfor i in range(n):\n    precios[i] = int(input())\n\ncaro = precios[0]\nbarato = precios[0]\nfor i in range(1, n):\n    if precios[i] &gt; caro:\n        caro = precios[i]\n    if precios[i] &lt; barato:\n        barato = precios[i]\n\nprint(caro - barato)</code></pre><p>Mayor y menor en el mismo ciclo, y una resta al final.</p>",
+		"starter_code": "# IV.8 — Diferencia entre el más caro y el más barato\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n5000\n12000\n800\n7000\n",
+				"expected_output": "11200"
+			},
+			{
+				"stdin": "1\n300\n",
+				"expected_output": "0"
+			},
+			{
+				"stdin": "2\n10\n10\n",
+				"expected_output": "0"
+			}
+		]
+	}
+]

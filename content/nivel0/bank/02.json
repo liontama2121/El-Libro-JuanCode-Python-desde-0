@@ -1,0 +1,170 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "El enunciado dice: \"imprime cuántos estudiantes sacaron más de 80\". ¿Qué patrón es?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "II. Recorrer y contar"
+				},
+				{
+					"id": "b",
+					"text": "III. Recorrer y acumular"
+				},
+				{
+					"id": "c",
+					"text": "IV. Buscar máximo"
+				},
+				{
+					"id": "d",
+					"text": "V. Copiar con k"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "\"Cuántos\" = contar: cuenta = cuenta + 1 dentro de un if."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [3, -1, 0, 5]\ncuenta = 0\nfor i in range(4):\n    if vector[i] > 0:\n        cuenta = cuenta + 1\nprint(cuenta)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "2"
+				},
+				{
+					"id": "b",
+					"text": "3"
+				},
+				{
+					"id": "c",
+					"text": "4"
+				},
+				{
+					"id": "d",
+					"text": "8"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Solo 3 y 5 son mayores que 0. El 0 no es positivo."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "facil",
+		"prompt": "Debe contar los negativos. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"for i in range(n):",
+				"    cuenta = 0",
+				"    if vector[i] < 0:",
+				"        cuenta = cuenta + 1",
+				"print(cuenta)"
+			]
+		},
+		"correct": {
+			"line_number": 2
+		},
+		"explanation": "El contador nace dentro del for y vuelve a 0 en cada vuelta. cuenta = 0 va ANTES del ciclo."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "¿Qué condición cuenta los IMPARES?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "vector[i] % 2 == 1"
+				},
+				{
+					"id": "b",
+					"text": "vector[i] / 2 == 1"
+				},
+				{
+					"id": "c",
+					"text": "vector[i] // 2 == 1"
+				},
+				{
+					"id": "d",
+					"text": "vector[i] % 1 == 2"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "% da el residuo: un impar deja residuo 1 al dividir entre 2."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "edades = [17, 18, 30, 12]\ncuenta = 0\nfor i in range(4):\n    if edades[i] >= 18:\n        cuenta = cuenta + 1\nprint(cuenta)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "2"
+				},
+				{
+					"id": "b",
+					"text": "1"
+				},
+				{
+					"id": "c",
+					"text": "3"
+				},
+				{
+					"id": "d",
+					"text": "4"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "18 y 30 cumplen >= 18. El 18 cuenta porque la condición incluye el igual."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "facil",
+		"prompt": "Completa el contador de divisibles por 3.",
+		"data": {
+			"code": "cuenta = ___1___\nfor i in range(n):\n    if vector[i] % 3 == 0:\n        cuenta = ___2___\nprint(cuenta)",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "valor inicial"
+				},
+				{
+					"id": "2",
+					"pista": "sumar uno"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"0"
+				],
+				"2": [
+					"cuenta + 1",
+					"cuenta+1",
+					"1 + cuenta",
+					"1+cuenta"
+				]
+			}
+		},
+		"explanation": "El contador nace en 0 y sube de a uno dentro del if."
+	}
+]

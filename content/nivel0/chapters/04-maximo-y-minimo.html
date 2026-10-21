@@ -1,0 +1,36 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Todos los vectores se crean con <code>[0] * n</code> y se llenan por índice. Siempre.
+</div>
+
+<p>Encontrar el mejor, el peor, el extremo. Clásico de examen.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto IV · escríbelo 3 veces</p>
+<pre><code>n = int(input())
+vector = [0] * n
+for i in range(n):
+    vector[i] = int(input())
+
+mejor = vector[0]
+for i in range(1, n):
+    if vector[i] &gt; mejor:
+        mejor = vector[i]
+
+print(mejor)</code></pre>
+</div>
+
+<p><code>mejor</code> arranca en <code>vector[0]</code>, <strong>nunca en 0</strong>. Si todos los números son negativos, un 0 inventado ganaría sin estar en el vector. Por eso el <code>for</code> arranca en 1: el primero ya está revisado.</p>
+
+<table>
+  <thead>
+    <tr><th>Quiero…</th><th>Cambio</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>El menor</td><td><code>&lt;</code> en vez de <code>&gt;</code></td></tr>
+    <tr><td>Mayor y menor a la vez</td><td>Dos variables y dos <code>if</code> separados en el mismo ciclo</td></tr>
+    <tr><td>DÓNDE está el mayor</td><td>Guardar también <code>pos = i</code> dentro del <code>if</code>; imprimir <code>pos + 1</code></td></tr>
+    <tr><td>El segundo más grande</td><td>Dos recorridos: el segundo se salta <code>pos</code></td></tr>
+  </tbody>
+</table>
+
+<p>Ejercicios: <strong>IV.1 a IV.8</strong>.</p>

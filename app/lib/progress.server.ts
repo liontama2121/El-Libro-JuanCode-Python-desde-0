@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { type Db, schema } from "~/db";
 import type { Chapter, Part, Track } from "~/db/schema";
-import { tracksVisibles } from "~/lib/tracks";
+import { TODOS_LOS_TRACKS, tracksVisibles } from "~/lib/tracks";
 
 export type EstadoCapitulo = "completado" | "disponible" | "bloqueado";
 
@@ -183,7 +183,7 @@ export async function cargarCapitulosVisibles(
 	trackUsuario: string,
 ): Promise<CapituloConEstado[]> {
 	const tracks = esProfesor
-		? (["basico", "avanzado"] as Track[])
+		? TODOS_LOS_TRACKS
 		: tracksVisibles(trackUsuario);
 
 	const libros = await Promise.all(

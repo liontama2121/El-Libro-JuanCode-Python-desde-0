@@ -1,0 +1,416 @@
+[
+	{
+		"orden": 1,
+		"title": "V-B.1 — Separar pares e impares",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Sepáralos en dos vectores: <strong>pares</strong> e <strong>impares</strong>. Imprime <code>Pares:</code>, los pares uno por línea, luego <code>Impares:</code> y los impares.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n5\n-2\n0\n8\n-7\n3</code></pre><p>Salida:</p><pre><code>Pares:\n-2\n0\n8\nImpares:\n5\n-7\n3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ngrupo1 = [0] * n\ngrupo2 = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        grupo1[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        grupo2[k2] = vector[i]\n        k2 = k2 + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\npares = [0] * n\nimpares = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if vector[i] % 2 == 0:\n        pares[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        impares[k2] = vector[i]\n        k2 = k2 + 1\n\nprint(\"Pares:\")\nfor i in range(k1):\n    print(pares[i])\nprint(\"Impares:\")\nfor i in range(k2):\n    print(impares[i])</code></pre><p>Cada vector tiene SU contador: <code>k1</code> solo avanza al copiar a <code>pares</code>, <code>k2</code> al copiar a <code>impares</code>.</p>",
+		"starter_code": "# V-B.1 — Separar pares e impares\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n5\n-2\n0\n8\n-7\n3\n",
+				"expected_output": "Pares:\n-2\n0\n8\nImpares:\n5\n-7\n3"
+			},
+			{
+				"stdin": "4\n1\n2\n3\n4\n",
+				"expected_output": "Pares:\n2\n4\nImpares:\n1\n3"
+			},
+			{
+				"stdin": "3\n-6\n11\n4\n",
+				"expected_output": "Pares:\n-6\n4\nImpares:\n11"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "V-B.2 — Separar positivos y negativos",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Copia los <strong>positivos</strong> a un vector y los <strong>negativos</strong> a otro (los ceros no van a ninguno). Imprime <code>Positivos:</code> y sus valores, luego <code>Negativos:</code> y los suyos.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n5\n-2\n0\n8\n-7\n3</code></pre><p>Salida:</p><pre><code>Positivos:\n5\n8\n3\nNegativos:\n-2\n-7</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ngrupo1 = [0] * n\ngrupo2 = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        grupo1[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        grupo2[k2] = vector[i]\n        k2 = k2 + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\npositivos = [0] * n\nnegativos = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if vector[i] &gt; 0:\n        positivos[k1] = vector[i]\n        k1 = k1 + 1\n    elif vector[i] &lt; 0:\n        negativos[k2] = vector[i]\n        k2 = k2 + 1\n\nprint(\"Positivos:\")\nfor i in range(k1):\n    print(positivos[i])\nprint(\"Negativos:\")\nfor i in range(k2):\n    print(negativos[i])</code></pre><p>Aquí no hay <code>else</code> sino <code>elif</code>: el cero no cumple ninguna y se queda por fuera.</p>",
+		"starter_code": "# V-B.2 — Separar positivos y negativos\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n5\n-2\n0\n8\n-7\n3\n",
+				"expected_output": "Positivos:\n5\n8\n3\nNegativos:\n-2\n-7"
+			},
+			{
+				"stdin": "4\n1\n2\n3\n4\n",
+				"expected_output": "Positivos:\n1\n2\n3\n4\nNegativos:"
+			},
+			{
+				"stdin": "3\n-6\n11\n4\n",
+				"expected_output": "Positivos:\n11\n4\nNegativos:\n-6"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "V-B.3 — Aprobados y reprobados",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> notas de 0 a 100. Separa las <strong>aprobadas</strong> (60 o más) de las <strong>reprobadas</strong>. Imprime <code>Aprobadas:</code> y sus notas, luego <code>Reprobadas:</code> y las suyas.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n80\n45\n60\n99\n30</code></pre><p>Salida:</p><pre><code>Aprobadas:\n80\n60\n99\nReprobadas:\n45\n30</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ngrupo1 = [0] * n\ngrupo2 = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        grupo1[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        grupo2[k2] = vector[i]\n        k2 = k2 + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nnotas = [0] * n\nfor i in range(n):\n    notas[i] = int(input())\n\naprobadas = [0] * n\nreprobadas = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if notas[i] &gt;= 60:\n        aprobadas[k1] = notas[i]\n        k1 = k1 + 1\n    else:\n        reprobadas[k2] = notas[i]\n        k2 = k2 + 1\n\nprint(\"Aprobadas:\")\nfor i in range(k1):\n    print(aprobadas[i])\nprint(\"Reprobadas:\")\nfor i in range(k2):\n    print(reprobadas[i])</code></pre><p>Patrón V-B con otros nombres.</p>",
+		"starter_code": "# V-B.3 — Aprobados y reprobados\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n80\n45\n60\n99\n30\n",
+				"expected_output": "Aprobadas:\n80\n60\n99\nReprobadas:\n45\n30"
+			},
+			{
+				"stdin": "2\n10\n20\n",
+				"expected_output": "Aprobadas:\nReprobadas:\n10\n20"
+			},
+			{
+				"stdin": "2\n100\n59\n",
+				"expected_output": "Aprobadas:\n100\nReprobadas:\n59"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "V-B.4 — Mayores y menores de edad",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> edades. Separa <strong>mayores de edad</strong> (18 o más) y <strong>menores</strong>. Imprime <code>Mayores:</code> y sus edades, luego <code>Menores:</code> y las suyas.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n17\n18\n25\n9\n40</code></pre><p>Salida:</p><pre><code>Mayores:\n18\n25\n40\nMenores:\n17\n9</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ngrupo1 = [0] * n\ngrupo2 = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        grupo1[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        grupo2[k2] = vector[i]\n        k2 = k2 + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nedades = [0] * n\nfor i in range(n):\n    edades[i] = int(input())\n\nmayores = [0] * n\nmenores = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if edades[i] &gt;= 18:\n        mayores[k1] = edades[i]\n        k1 = k1 + 1\n    else:\n        menores[k2] = edades[i]\n        k2 = k2 + 1\n\nprint(\"Mayores:\")\nfor i in range(k1):\n    print(mayores[i])\nprint(\"Menores:\")\nfor i in range(k2):\n    print(menores[i])</code></pre><p>Si un grupo queda vacío, solo se imprime su título: <code>range(0)</code> no da vueltas.</p>",
+		"starter_code": "# V-B.4 — Mayores y menores de edad\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n17\n18\n25\n9\n40\n",
+				"expected_output": "Mayores:\n18\n25\n40\nMenores:\n17\n9"
+			},
+			{
+				"stdin": "2\n5\n12\n",
+				"expected_output": "Mayores:\nMenores:\n5\n12"
+			},
+			{
+				"stdin": "2\n18\n30\n",
+				"expected_output": "Mayores:\n18\n30\nMenores:"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "V-B.5 — Precios baratos y caros",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> precios. Son <strong>baratos</strong> los menores a 10000 y <strong>caros</strong> los demás. Imprime <code>Baratos:</code> y sus precios, luego <code>Caros:</code> y los suyos.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n5000\n12000\n800\n10000</code></pre><p>Salida:</p><pre><code>Baratos:\n5000\n800\nCaros:\n12000\n10000</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ngrupo1 = [0] * n\ngrupo2 = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        grupo1[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        grupo2[k2] = vector[i]\n        k2 = k2 + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nprecios = [0] * n\nfor i in range(n):\n    precios[i] = int(input())\n\nbaratos = [0] * n\ncaros = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if precios[i] &lt; 10000:\n        baratos[k1] = precios[i]\n        k1 = k1 + 1\n    else:\n        caros[k2] = precios[i]\n        k2 = k2 + 1\n\nprint(\"Baratos:\")\nfor i in range(k1):\n    print(baratos[i])\nprint(\"Caros:\")\nfor i in range(k2):\n    print(caros[i])</code></pre><p>El 10000 exacto no es menor a 10000: va a caros.</p>",
+		"starter_code": "# V-B.5 — Precios baratos y caros\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n5000\n12000\n800\n10000\n",
+				"expected_output": "Baratos:\n5000\n800\nCaros:\n12000\n10000"
+			},
+			{
+				"stdin": "1\n300\n",
+				"expected_output": "Baratos:\n300\nCaros:"
+			},
+			{
+				"stdin": "2\n25000\n9999\n",
+				"expected_output": "Baratos:\n9999\nCaros:\n25000"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "V-B.6 — Separar por posición",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Copia a un vector los que están en <strong>posiciones pares</strong> (0, 2, 4…) y a otro los de <strong>posiciones impares</strong>. Imprime <code>Pares:</code> y los primeros, luego <code>Impares:</code> y los segundos.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n5\n-2\n0\n8\n-7\n3</code></pre><p>Salida:</p><pre><code>Pares:\n5\n0\n-7\nImpares:\n-2\n8\n3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ngrupo1 = [0] * n\ngrupo2 = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        grupo1[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        grupo2[k2] = vector[i]\n        k2 = k2 + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\npares = [0] * n\nimpares = [0] * n\nk1 = 0\nk2 = 0\nfor i in range(n):\n    if i % 2 == 0:\n        pares[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        impares[k2] = vector[i]\n        k2 = k2 + 1\n\nprint(\"Pares:\")\nfor i in range(k1):\n    print(pares[i])\nprint(\"Impares:\")\nfor i in range(k2):\n    print(impares[i])</code></pre><p>La condición mira <code>i</code>, pero se copia <code>vector[i]</code>.</p>",
+		"starter_code": "# V-B.6 — Separar por posición\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n5\n-2\n0\n8\n-7\n3\n",
+				"expected_output": "Pares:\n5\n0\n-7\nImpares:\n-2\n8\n3"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "Pares:\n1\n3\nImpares:\n2"
+			},
+			{
+				"stdin": "1\n42\n",
+				"expected_output": "Pares:\n42\nImpares:"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "V-C.1 — Negativos primero",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Arma un vector nuevo con <strong>primero los negativos</strong> y después el resto, cada grupo en el orden en que llegó. Imprime el vector nuevo completo, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>7\n5\n-2\n0\n8\n-7\n3\n0</code></pre><p>Salida:</p><pre><code>-2\n-7\n5\n0\n8\n3\n0</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):          # pasada 1: el primer grupo\n    if vector[i] (condicion):\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):          # pasada 2: el resto, MISMO k\n    if not (vector[i] (condicion)):\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if vector[i] &lt; 0:\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):\n    if vector[i] &gt;= 0:\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre><p>Dos pasadas por el vector original y UN solo <code>k</code>: la segunda pasada sigue escribiendo donde quedó la primera. No se reinicia <code>k</code>.</p>",
+		"starter_code": "# V-C.1 — Negativos primero\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "7\n5\n-2\n0\n8\n-7\n3\n0\n",
+				"expected_output": "-2\n-7\n5\n0\n8\n3\n0"
+			},
+			{
+				"stdin": "3\n4\n-1\n-2\n",
+				"expected_output": "-1\n-2\n4"
+			},
+			{
+				"stdin": "4\n0\n9\n0\n-3\n",
+				"expected_output": "-3\n0\n9\n0"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "V-C.2 — Pares primero",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Arma un vector nuevo con <strong>primero los pares</strong> y después los impares, conservando el orden de llegada. Imprímelo completo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>7\n5\n-2\n0\n8\n-7\n3\n0</code></pre><p>Salida:</p><pre><code>-2\n0\n8\n0\n5\n-7\n3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):          # pasada 1: el primer grupo\n    if vector[i] (condicion):\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):          # pasada 2: el resto, MISMO k\n    if not (vector[i] (condicion)):\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if vector[i] % 2 == 0:\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):\n    if vector[i] % 2 == 1:\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre><p>Las dos condiciones son opuestas: entre las dos pasadas se copia TODO, por eso el vector queda lleno.</p>",
+		"starter_code": "# V-C.2 — Pares primero\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "7\n5\n-2\n0\n8\n-7\n3\n0\n",
+				"expected_output": "-2\n0\n8\n0\n5\n-7\n3"
+			},
+			{
+				"stdin": "3\n4\n-1\n-2\n",
+				"expected_output": "4\n-2\n-1"
+			},
+			{
+				"stdin": "4\n0\n9\n0\n-3\n",
+				"expected_output": "0\n0\n9\n-3"
+			}
+		]
+	},
+	{
+		"orden": 9,
+		"title": "V-C.3 — Ceros al final",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Arma un vector nuevo con todos los <strong>distintos de cero</strong> primero y los <strong>ceros al final</strong>. Imprímelo completo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>7\n5\n-2\n0\n8\n-7\n3\n0</code></pre><p>Salida:</p><pre><code>5\n-2\n8\n-7\n3\n0\n0</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):          # pasada 1: el primer grupo\n    if vector[i] (condicion):\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):          # pasada 2: el resto, MISMO k\n    if not (vector[i] (condicion)):\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if vector[i] != 0:\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):\n    if vector[i] == 0:\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre><p>Clásico de examen: \"mueve los ceros al final\". Es el patrón V-C.</p>",
+		"starter_code": "# V-C.3 — Ceros al final\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "7\n5\n-2\n0\n8\n-7\n3\n0\n",
+				"expected_output": "5\n-2\n8\n-7\n3\n0\n0"
+			},
+			{
+				"stdin": "3\n4\n-1\n-2\n",
+				"expected_output": "4\n-1\n-2"
+			},
+			{
+				"stdin": "4\n0\n9\n0\n-3\n",
+				"expected_output": "9\n-3\n0\n0"
+			}
+		]
+	},
+	{
+		"orden": 10,
+		"title": "V-C.4 — Tres grupos: negativos, ceros, positivos",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code> números. Arma un vector nuevo con primero los <strong>negativos</strong>, luego los <strong>ceros</strong> y al final los <strong>positivos</strong>, cada grupo en orden de llegada. Imprímelo completo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>7\n5\n-2\n0\n8\n-7\n3\n0</code></pre><p>Salida:</p><pre><code>-2\n-7\n0\n0\n5\n8\n3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):          # pasada 1: el primer grupo\n    if vector[i] (condicion):\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):          # pasada 2: el resto, MISMO k\n    if not (vector[i] (condicion)):\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if vector[i] &lt; 0:\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):\n    if vector[i] == 0:\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):\n    if vector[i] &gt; 0:\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre><p>Tres grupos = tres pasadas. Mismo <code>k</code> en las tres.</p>",
+		"starter_code": "# V-C.4 — Tres grupos: negativos, ceros, positivos\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "7\n5\n-2\n0\n8\n-7\n3\n0\n",
+				"expected_output": "-2\n-7\n0\n0\n5\n8\n3"
+			},
+			{
+				"stdin": "3\n4\n-1\n-2\n",
+				"expected_output": "-1\n-2\n4"
+			},
+			{
+				"stdin": "4\n0\n9\n0\n-3\n",
+				"expected_output": "-3\n0\n0\n9"
+			}
+		]
+	},
+	{
+		"orden": 11,
+		"title": "V-C.5 — Aprobadas primero",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> notas de 0 a 100. Arma un vector nuevo con primero las <strong>aprobadas</strong> (60 o más) y luego las reprobadas. Imprímelo completo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n80\n45\n60\n99\n30</code></pre><p>Salida:</p><pre><code>80\n60\n99\n45\n30</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):          # pasada 1: el primer grupo\n    if vector[i] (condicion):\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):          # pasada 2: el resto, MISMO k\n    if not (vector[i] (condicion)):\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nnotas = [0] * n\nfor i in range(n):\n    notas[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if notas[i] &gt;= 60:\n        nuevo[k] = notas[i]\n        k = k + 1\nfor i in range(n):\n    if notas[i] &lt; 60:\n        nuevo[k] = notas[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre><p>Patrón V-C con otro nombre.</p>",
+		"starter_code": "# V-C.5 — Aprobadas primero\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n80\n45\n60\n99\n30\n",
+				"expected_output": "80\n60\n99\n45\n30"
+			},
+			{
+				"stdin": "2\n10\n20\n",
+				"expected_output": "10\n20"
+			},
+			{
+				"stdin": "2\n59\n100\n",
+				"expected_output": "100\n59"
+			}
+		]
+	},
+	{
+		"orden": 12,
+		"title": "V-C.6 — Mayores que X primero",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code>, luego <code>N</code> números y al final <code>X</code>. Arma un vector nuevo con primero los <strong>mayores que X</strong> y después el resto. Imprímelo completo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n3\n9\n1\n12\n5\n4</code></pre><p>Salida:</p><pre><code>9\n12\n5\n3\n1</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):          # pasada 1: el primer grupo\n    if vector[i] (condicion):\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):          # pasada 2: el resto, MISMO k\n    if not (vector[i] (condicion)):\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\nx = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if vector[i] &gt; x:\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(n):\n    if vector[i] &lt;= x:\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre><p>El opuesto de <code>&gt; x</code> es <code>&lt;= x</code>, no <code>&lt; x</code>: si te equivocas, el que es igual a X se pierde.</p>",
+		"starter_code": "# V-C.6 — Mayores que X primero\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n3\n9\n1\n12\n5\n4\n",
+				"expected_output": "9\n12\n5\n3\n1"
+			},
+			{
+				"stdin": "3\n-1\n-5\n0\n-2\n",
+				"expected_output": "-1\n0\n-5"
+			},
+			{
+				"stdin": "2\n7\n7\n6\n",
+				"expected_output": "7\n7"
+			}
+		]
+	},
+	{
+		"orden": 13,
+		"title": "V-D.1 — Copiar al revés con k",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Cópialos a un vector nuevo <strong>al revés</strong>: el primero queda de último. Usa un <code>k</code> que arranque en <code>n - 1</code> y baje. Imprime el nuevo completo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n5\n-2\n0\n8</code></pre><p>Salida:</p><pre><code>8\n0\n-2\n5</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if (condicion sobre vector[i] o sobre i):\n        nuevo[k] = (lo que se copia)\n        k = k + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = n - 1\nfor i in range(n):\n    nuevo[k] = vector[i]\n    k = k - 1\n\nfor i in range(n):\n    print(nuevo[i])</code></pre><p><code>i</code> sube y <code>k</code> baja: dos índices a distinto ritmo, la idea central del contador.</p>",
+		"starter_code": "# V-D.1 — Copiar al revés con k\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n5\n-2\n0\n8\n",
+				"expected_output": "8\n0\n-2\n5"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "3\n2\n1"
+			},
+			{
+				"stdin": "1\n7\n",
+				"expected_output": "7"
+			}
+		]
+	},
+	{
+		"orden": 14,
+		"title": "V-D.2 — Copiar los mayores al promedio",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code> números. Calcula el promedio (división entera) y copia a un vector nuevo los que son <strong>mayores al promedio</strong>. Imprímelos uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n4\n10\n6\n1\n9</code></pre><p>Salida:</p><pre><code>10\n9</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if (condicion sobre vector[i] o sobre i):\n        nuevo[k] = (lo que se copia)\n        k = k + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\npromedio = suma // n\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if vector[i] &gt; promedio:\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(k):\n    print(nuevo[i])</code></pre><p>Patrón III y después patrón V. Primero hay que tener el promedio completo; por eso son dos ciclos.</p>",
+		"starter_code": "# V-D.2 — Copiar los mayores al promedio\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n4\n10\n6\n1\n9\n",
+				"expected_output": "10\n9"
+			},
+			{
+				"stdin": "3\n3\n3\n9\n",
+				"expected_output": "9"
+			},
+			{
+				"stdin": "2\n-5\n5\n",
+				"expected_output": "5"
+			}
+		]
+	},
+	{
+		"orden": 15,
+		"title": "V-D.3 — El doble de los positivos",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Copia a un vector nuevo el <strong>doble</strong> de cada positivo. Imprímelos uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>7\n5\n-2\n0\n8\n-7\n3\n0</code></pre><p>Salida:</p><pre><code>10\n16\n6</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if (condicion sobre vector[i] o sobre i):\n        nuevo[k] = (lo que se copia)\n        k = k + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if vector[i] &gt; 0:\n        nuevo[k] = vector[i] * 2\n        k = k + 1\n\nfor i in range(k):\n    print(nuevo[i])</code></pre><p>Se puede transformar al copiar: a la derecha del <code>=</code> va cualquier cálculo.</p>",
+		"starter_code": "# V-D.3 — El doble de los positivos\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "7\n5\n-2\n0\n8\n-7\n3\n0\n",
+				"expected_output": "10\n16\n6"
+			},
+			{
+				"stdin": "5\n-1\n4\n21\n-30\n6\n",
+				"expected_output": "8\n42\n12"
+			},
+			{
+				"stdin": "3\n12\n-12\n9\n",
+				"expected_output": "24\n18"
+			}
+		]
+	},
+	{
+		"orden": 16,
+		"title": "V-D.4 — Copiar posiciones impares",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Copia a un vector nuevo los que están en <strong>posiciones impares</strong> (1, 3, 5…). Imprímelos uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n5\n-2\n0\n8\n-7\n3</code></pre><p>Salida:</p><pre><code>-2\n8\n3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if (condicion sobre vector[i] o sobre i):\n        nuevo[k] = (lo que se copia)\n        k = k + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if i % 2 == 1:\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(k):\n    print(nuevo[i])</code></pre><p>Condición sobre <code>i</code>, copia de <code>vector[i]</code>.</p>",
+		"starter_code": "# V-D.4 — Copiar posiciones impares\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n5\n-2\n0\n8\n-7\n3\n",
+				"expected_output": "-2\n8\n3"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "2"
+			},
+			{
+				"stdin": "2\n10\n20\n",
+				"expected_output": "20"
+			}
+		]
+	},
+	{
+		"orden": 17,
+		"title": "V-D.5 — Copiar todos menos el mayor",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code> números (<code>N</code> ≥ 2). Copia a un vector nuevo todos <strong>menos el mayor</strong> (si se repite, solo se quita su primera aparición). Imprime los copiados uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n4\n-3\n15\n12\n7</code></pre><p>Salida:</p><pre><code>4\n-3\n12\n7</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if (condicion sobre vector[i] o sobre i):\n        nuevo[k] = (lo que se copia)\n        k = k + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nmayor = vector[0]\npos = 0\nfor i in range(1, n):\n    if vector[i] &gt; mayor:\n        mayor = vector[i]\n        pos = i\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if i != pos:\n        nuevo[k] = vector[i]\n        k = k + 1\n\nfor i in range(k):\n    print(nuevo[i])</code></pre><p>Patrón IV (posición del mayor) y luego patrón V con la condición <code>i != pos</code>. Así se \"borra\" sin métodos prohibidos.</p>",
+		"starter_code": "# V-D.5 — Copiar todos menos el mayor\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n4\n-3\n15\n12\n7\n",
+				"expected_output": "4\n-3\n12\n7"
+			},
+			{
+				"stdin": "3\n9\n9\n1\n",
+				"expected_output": "9\n1"
+			},
+			{
+				"stdin": "2\n20\n5\n",
+				"expected_output": "5"
+			}
+		]
+	},
+	{
+		"orden": 18,
+		"title": "V-D.6 — Unir dos vectores",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code> y <code>N</code> números (vector A). Luego lee <code>M</code> y <code>M</code> números (vector B). Arma un vector nuevo de tamaño <code>N + M</code> con todo A y después todo B. Imprímelo completo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3\n2\n8\n9</code></pre><p>Salida:</p><pre><code>1\n2\n3\n8\n9</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if (condicion sobre vector[i] o sobre i):\n        nuevo[k] = (lo que se copia)\n        k = k + 1</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\na = [0] * n\nfor i in range(n):\n    a[i] = int(input())\nm = int(input())\nb = [0] * m\nfor i in range(m):\n    b[i] = int(input())\n\nnuevo = [0] * (n + m)\nk = 0\nfor i in range(n):\n    nuevo[k] = a[i]\n    k = k + 1\nfor i in range(m):\n    nuevo[k] = b[i]\n    k = k + 1\n\nfor i in range(n + m):\n    print(nuevo[i])</code></pre><p>El mismo <code>k</code> sigue de un ciclo al otro: termina A en la posición <code>n</code> y desde ahí empieza B.</p>",
+		"starter_code": "# V-D.6 — Unir dos vectores\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n1\n2\n3\n2\n8\n9\n",
+				"expected_output": "1\n2\n3\n8\n9"
+			},
+			{
+				"stdin": "1\n5\n3\n-1\n-2\n-3\n",
+				"expected_output": "5\n-1\n-2\n-3"
+			},
+			{
+				"stdin": "2\n4\n4\n1\n0\n",
+				"expected_output": "4\n4\n0"
+			}
+		]
+	}
+]

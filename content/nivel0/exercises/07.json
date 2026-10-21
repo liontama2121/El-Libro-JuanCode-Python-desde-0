@@ -1,0 +1,117 @@
+[
+	{
+		"orden": 1,
+		"title": "🎯 Simulacro.1 — Temperaturas",
+		"difficulty": "medio",
+		"statement_html": "<p>Una estación registró <code>N</code> temperaturas (enteros). Lee <code>N</code> y las temperaturas. Imprime, con este formato exacto:</p><pre><code>Bajo cero: (cuántas fueron menores a 0)\nMaxima: (la temperatura más alta)</code></pre><p>y después, una por línea, las temperaturas bajo cero en el orden en que llegaron.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n3\n-2\n14\n-5\n0\n9</code></pre><p>Salida:</p><pre><code>Bajo cero: 2\nMaxima: 14\n-2\n-5</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code># 1. Lee el enunciado y subraya QUÉ se pide imprimir.\n# 2. Por cada cosa que se pide, decide el patrón (contar, sumar, máximo, k).\n# 3. Escribe primero la lectura del vector, después cada patrón por separado.</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\ntemps = [0] * n\nfor i in range(n):\n    temps[i] = int(input())\n\nbajo = [0] * n\nk = 0\nfor i in range(n):\n    if temps[i] &lt; 0:\n        bajo[k] = temps[i]\n        k = k + 1\n\nmaxima = temps[0]\nfor i in range(1, n):\n    if temps[i] &gt; maxima:\n        maxima = temps[i]\n\nprint(\"Bajo cero: \" + str(k))\nprint(\"Maxima: \" + str(maxima))\nfor i in range(k):\n    print(bajo[i])</code></pre><p>Patrones: V-A (copiar bajo cero, y <code>k</code> sirve de contador) + IV (máximo). Cada cosa en su ciclo.</p>",
+		"starter_code": "# 🎯 Simulacro.1 — Temperaturas\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n3\n-2\n14\n-5\n0\n9\n",
+				"expected_output": "Bajo cero: 2\nMaxima: 14\n-2\n-5"
+			},
+			{
+				"stdin": "2\n-1\n-8\n",
+				"expected_output": "Bajo cero: 2\nMaxima: -1\n-1\n-8"
+			},
+			{
+				"stdin": "3\n20\n22\n18\n",
+				"expected_output": "Bajo cero: 0\nMaxima: 22"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "🎯 Simulacro.2 — Tienda",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> precios vendidos hoy. Imprime, con este formato exacto:</p><pre><code>Total: (suma)\nPromedio: (suma // N)\nSobre el promedio: (cuántos precios son mayores al promedio)</code></pre><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n5000\n12000\n800\n7000</code></pre><p>Salida:</p><pre><code>Total: 24800\nPromedio: 6200\nSobre el promedio: 2</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code># 1. Lee el enunciado y subraya QUÉ se pide imprimir.\n# 2. Por cada cosa que se pide, decide el patrón (contar, sumar, máximo, k).\n# 3. Escribe primero la lectura del vector, después cada patrón por separado.</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nprecios = [0] * n\nfor i in range(n):\n    precios[i] = int(input())\n\ntotal = 0\nfor i in range(n):\n    total = total + precios[i]\npromedio = total // n\n\ncuenta = 0\nfor i in range(n):\n    if precios[i] &gt; promedio:\n        cuenta = cuenta + 1\n\nprint(\"Total: \" + str(total))\nprint(\"Promedio: \" + str(promedio))\nprint(\"Sobre el promedio: \" + str(cuenta))</code></pre><p>Patrones: III (sumar) + II (contar con condición que depende del promedio).</p>",
+		"starter_code": "# 🎯 Simulacro.2 — Tienda\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n5000\n12000\n800\n7000\n",
+				"expected_output": "Total: 24800\nPromedio: 6200\nSobre el promedio: 2"
+			},
+			{
+				"stdin": "2\n300\n300\n",
+				"expected_output": "Total: 600\nPromedio: 300\nSobre el promedio: 0"
+			},
+			{
+				"stdin": "4\n1\n2\n3\n10\n",
+				"expected_output": "Total: 16\nPromedio: 4\nSobre el promedio: 1"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "🎯 Simulacro.3 — Notas del curso",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code>. Por cada estudiante llegan dos líneas: nombre y nota (0 a 100). Imprime:</p><pre><code>Promedio: (suma // N)\nMejor: (nombre de la nota más alta; si hay empate, el primero)\nReprobados:</code></pre><p>y debajo, uno por línea, los nombres con nota menor a 60.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\nAna\n80\nLuis\n45\nMarta\n99\nPedro\n30</code></pre><p>Salida:</p><pre><code>Promedio: 63\nMejor: Marta\nReprobados:\nLuis\nPedro</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code># 1. Lee el enunciado y subraya QUÉ se pide imprimir.\n# 2. Por cada cosa que se pide, decide el patrón (contar, sumar, máximo, k).\n# 3. Escribe primero la lectura del vector, después cada patrón por separado.</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nnombres = [\"\"] * n\nnotas = [0] * n\nfor i in range(n):\n    nombres[i] = input()\n    notas[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + notas[i]\n\npos = 0\nfor i in range(1, n):\n    if notas[i] &gt; notas[pos]:\n        pos = i\n\nreprobados = [\"\"] * n\nk = 0\nfor i in range(n):\n    if notas[i] &lt; 60:\n        reprobados[k] = nombres[i]\n        k = k + 1\n\nprint(\"Promedio: \" + str(suma // n))\nprint(\"Mejor: \" + nombres[pos])\nprint(\"Reprobados:\")\nfor i in range(k):\n    print(reprobados[i])</code></pre><p>Patrones: III (suma) + IV (posición del mejor, para sacar el nombre con el mismo índice) + V-A (copiar nombres). Tres ciclos, tres ideas.</p>",
+		"starter_code": "# 🎯 Simulacro.3 — Notas del curso\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\nAna\n80\nLuis\n45\nMarta\n99\nPedro\n30\n",
+				"expected_output": "Promedio: 63\nMejor: Marta\nReprobados:\nLuis\nPedro"
+			},
+			{
+				"stdin": "2\nSol\n70\nJuan\n70\n",
+				"expected_output": "Promedio: 70\nMejor: Sol\nReprobados:"
+			},
+			{
+				"stdin": "1\nEva\n10\n",
+				"expected_output": "Promedio: 10\nMejor: Eva\nReprobados:\nEva"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "🎯 Simulacro.4 — Inventario",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> cantidades en bodega. Imprime <code>Agotados: (cuántos están en 0)</code> y después el inventario reorganizado: primero los productos con existencias y al final los agotados, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n0\n12\n0\n3</code></pre><p>Salida:</p><pre><code>Agotados: 2\n5\n12\n3\n0\n0</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code># 1. Lee el enunciado y subraya QUÉ se pide imprimir.\n# 2. Por cada cosa que se pide, decide el patrón (contar, sumar, máximo, k).\n# 3. Escribe primero la lectura del vector, después cada patrón por separado.</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\ncantidades = [0] * n\nfor i in range(n):\n    cantidades[i] = int(input())\n\nnuevo = [0] * n\nk = 0\nfor i in range(n):\n    if cantidades[i] != 0:\n        nuevo[k] = cantidades[i]\n        k = k + 1\nagotados = n - k\nfor i in range(n):\n    if cantidades[i] == 0:\n        nuevo[k] = cantidades[i]\n        k = k + 1\n\nprint(\"Agotados: \" + str(agotados))\nfor i in range(n):\n    print(nuevo[i])</code></pre><p>Patrón V-C (ceros al final). Al terminar la primera pasada, <code>n - k</code> ya es la cantidad de ceros.</p>",
+		"starter_code": "# 🎯 Simulacro.4 — Inventario\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n5\n0\n12\n0\n3\n",
+				"expected_output": "Agotados: 2\n5\n12\n3\n0\n0"
+			},
+			{
+				"stdin": "2\n0\n0\n",
+				"expected_output": "Agotados: 2\n0\n0"
+			},
+			{
+				"stdin": "2\n7\n1\n",
+				"expected_output": "Agotados: 0\n7\n1"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "🎯 Simulacro.5 — Maratón",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code> tiempos en segundos de una carrera (el corredor 1 es el primero que llega en la entrada). Imprime:</p><pre><code>Ganador: (número de corredor, contando desde 1, con el menor tiempo)\nTiempo: (su tiempo)\nLentos: (cuántos tardaron más que el promedio, división entera)</code></pre><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n320\n290\n410\n300</code></pre><p>Salida:</p><pre><code>Ganador: 2\nTiempo: 290\nLentos: 1</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code># 1. Lee el enunciado y subraya QUÉ se pide imprimir.\n# 2. Por cada cosa que se pide, decide el patrón (contar, sumar, máximo, k).\n# 3. Escribe primero la lectura del vector, después cada patrón por separado.</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\ntiempos = [0] * n\nfor i in range(n):\n    tiempos[i] = int(input())\n\npos = 0\nfor i in range(1, n):\n    if tiempos[i] &lt; tiempos[pos]:\n        pos = i\n\nsuma = 0\nfor i in range(n):\n    suma = suma + tiempos[i]\npromedio = suma // n\n\nlentos = 0\nfor i in range(n):\n    if tiempos[i] &gt; promedio:\n        lentos = lentos + 1\n\nprint(\"Ganador: \" + str(pos + 1))\nprint(\"Tiempo: \" + str(tiempos[pos]))\nprint(\"Lentos: \" + str(lentos))</code></pre><p>Patrones: IV (posición del menor) + III (promedio) + II (contar). Guardar la POSICIÓN te da el número del corredor y su tiempo a la vez.</p>",
+		"starter_code": "# 🎯 Simulacro.5 — Maratón\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n320\n290\n410\n300\n",
+				"expected_output": "Ganador: 2\nTiempo: 290\nLentos: 1"
+			},
+			{
+				"stdin": "1\n100\n",
+				"expected_output": "Ganador: 1\nTiempo: 100\nLentos: 0"
+			},
+			{
+				"stdin": "3\n50\n50\n80\n",
+				"expected_output": "Ganador: 1\nTiempo: 50\nLentos: 1"
+			}
+		]
+	}
+]

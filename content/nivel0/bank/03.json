@@ -1,0 +1,163 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Para MULTIPLICAR todos los números de un vector, ¿en qué valor arranca el acumulador?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "1"
+				},
+				{
+					"id": "b",
+					"text": "0"
+				},
+				{
+					"id": "c",
+					"text": "vector[0] * 0"
+				},
+				{
+					"id": "d",
+					"text": "n"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Cualquier número por 0 da 0. El neutro de la multiplicación es 1, igual que el de la suma es 0."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe imprimir el promedio entero de los n números. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"suma = 0",
+				"for i in range(n):",
+				"    suma = suma + vector[i]",
+				"    print(suma // n)"
+			]
+		},
+		"correct": {
+			"line_number": 4
+		},
+		"explanation": "El print quedó dentro del ciclo: imprime n promedios parciales. El resultado va afuera, una sola vez."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [3, -2, 5, -1]\nsuma = 0\nfor i in range(4):\n    if vector[i] > 0:\n        suma = suma + vector[i]\nprint(suma)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "8"
+				},
+				{
+					"id": "b",
+					"text": "5"
+				},
+				{
+					"id": "c",
+					"text": "6"
+				},
+				{
+					"id": "d",
+					"text": "10"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Solo se suman 3 y 5. Los negativos no entran al if."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "Para el promedio SOLO de los aprobados, ¿entre qué se divide la suma?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "suma // cuenta (cuántos aprobaron)"
+				},
+				{
+					"id": "b",
+					"text": "suma // n"
+				},
+				{
+					"id": "c",
+					"text": "cuenta // suma"
+				},
+				{
+					"id": "d",
+					"text": "suma // 2"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "El promedio de un grupo se divide entre el tamaño de ESE grupo, no entre todos."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe sumar los números que están en POSICIONES pares (0, 2, 4…). ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"suma = 0",
+				"for i in range(n):",
+				"    if vector[i] % 2 == 0:",
+				"        suma = suma + vector[i]",
+				"print(suma)"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "La condición mira el VALOR. Para la posición es if i % 2 == 0:."
+	},
+	{
+		"type": "parsons",
+		"difficulty": "facil",
+		"prompt": "Arma el bloque que imprime el promedio entero",
+		"data": {
+			"lines": [
+				{
+					"id": "l1",
+					"text": "suma = 0",
+					"indent": 0
+				},
+				{
+					"id": "l2",
+					"text": "for i in range(n):",
+					"indent": 0
+				},
+				{
+					"id": "l3",
+					"text": "suma = suma + vector[i]",
+					"indent": 1
+				},
+				{
+					"id": "l4",
+					"text": "print(suma // n)",
+					"indent": 0
+				}
+			]
+		},
+		"correct": {
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4"
+			]
+		},
+		"explanation": "La suma nace afuera, se acumula adentro y se divide una sola vez al final."
+	}
+]

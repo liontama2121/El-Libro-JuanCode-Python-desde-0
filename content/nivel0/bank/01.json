@@ -1,0 +1,174 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "En este curso, ¿cómo se crea un vector para guardar n números enteros?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "vector = [0] * n"
+				},
+				{
+					"id": "b",
+					"text": "vector = []"
+				},
+				{
+					"id": "c",
+					"text": "vector = [n]"
+				},
+				{
+					"id": "d",
+					"text": "vector = [0, n]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "[0] * n crea de una vez n casillas en cero, que luego se llenan por índice con vector[i] = valor. [n] es un vector de UNA casilla que guarda el número n."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Hay que guardar n nombres. ¿Cómo nace el vector?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "nombres = [\"\"] * n"
+				},
+				{
+					"id": "b",
+					"text": "nombres = [0] * n"
+				},
+				{
+					"id": "c",
+					"text": "nombres = \"\" * n"
+				},
+				{
+					"id": "d",
+					"text": "nombres = [n] * \"\""
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Para textos el relleno es el texto vacío \"\". \"\" * n (sin corchetes) es un solo texto vacío, no un vector."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [4, 7, 1]\nfor i in range(2, -1, -1):\n    print(vector[i])",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "1\n7\n4"
+				},
+				{
+					"id": "b",
+					"text": "4\n7\n1"
+				},
+				{
+					"id": "c",
+					"text": "7\n4"
+				},
+				{
+					"id": "d",
+					"text": "1\n7"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "range(2, -1, -1) da 2, 1, 0: recorre del último al primero."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "facil",
+		"prompt": "Debe imprimir el ÚLTIMO número leído. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"n = int(input())",
+				"vector = [0] * n",
+				"for i in range(n):",
+				"    vector[i] = int(input())",
+				"print(vector[n])"
+			]
+		},
+		"correct": {
+			"line_number": 5
+		},
+		"explanation": "Con n casillas las posiciones van de 0 a n - 1. vector[n] se sale: IndexError. Es vector[n - 1]."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "facil",
+		"prompt": "Completa de memoria el esqueleto I.",
+		"data": {
+			"code": "n = ___1___\nvector = ___2___\nfor i in range(___3___):\n    vector[i] = int(input())",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "leer N como entero"
+				},
+				{
+					"id": "2",
+					"pista": "vector de n ceros"
+				},
+				{
+					"id": "3",
+					"pista": "cuántas vueltas"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"int(input())"
+				],
+				"2": [
+					"[0] * n",
+					"[0]*n"
+				],
+				"3": [
+					"n"
+				]
+			}
+		},
+		"explanation": "Leer n, crear el vector con [0] * n y llenarlo casilla por casilla."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Si n = 5, ¿cuál es la posición del último elemento?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "4"
+				},
+				{
+					"id": "b",
+					"text": "5"
+				},
+				{
+					"id": "c",
+					"text": "6"
+				},
+				{
+					"id": "d",
+					"text": "-5"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Las posiciones arrancan en 0: van de 0 a 4."
+	}
+]

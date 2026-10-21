@@ -6,7 +6,7 @@ import { getDb, schema } from "~/db";
 import type { Track } from "~/db/schema";
 import { requireUser } from "~/lib/auth.server";
 import { cargarProgreso } from "~/lib/progress.server";
-import { TRACK_INFO, rutaLibro, tracksVisibles } from "~/lib/tracks";
+import { TODOS_LOS_TRACKS, TRACK_INFO, rutaLibro, tracksVisibles } from "~/lib/tracks";
 import type { Route } from "./+types/tracks";
 
 export const meta: Route.MetaFunction = () => [
@@ -20,7 +20,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 
 	const esProfesor = user.role === "teacher";
 	const visibles: Track[] = esProfesor
-		? ["basico", "avanzado"]
+		? TODOS_LOS_TRACKS
 		: tracksVisibles(user.track);
 
 	// Con un solo libro no hay nada que elegir: se entra directo.
@@ -54,6 +54,22 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	return { user, resumen };
 }
 
+/** Acento de cada libro. Clases completas para que Tailwind las vea. */
+const ACENTO: Record<Track, { borde: string; texto: string }> = {
+	nivel0: {
+		borde: "border-t-[var(--color-verde)] hover:border-[color-mix(in_srgb,var(--color-verde)_45%,transparent)]",
+		texto: "text-[var(--color-verde)]",
+	},
+	basico: {
+		borde: "border-t-[var(--color-cyan)] hover:border-[color-mix(in_srgb,var(--color-cyan)_45%,transparent)]",
+		texto: "text-[var(--color-cyan)]",
+	},
+	avanzado: {
+		borde: "border-t-[var(--color-magenta)] hover:border-[color-mix(in_srgb,var(--color-magenta)_45%,transparent)]",
+		texto: "text-[var(--color-magenta)]",
+	},
+};
+
 export default function Tracks({ loaderData }: Route.ComponentProps) {
 	const { user, resumen } = loaderData;
 
@@ -62,10 +78,10 @@ export default function Tracks({ loaderData }: Route.ComponentProps) {
 			<Nav user={user} />
 			<Toast />
 
-			<main className="mx-auto max-w-4xl px-5 py-12">
+			<main className="mx-auto max-w-5xl px-5 py-12">
 				<header className="jc-anim-in text-center">
 					<p className="jc-mono text-xs tracking-[0.26em] text-[var(--color-cyan)] uppercase">
-						Tienes dos libros
+						Tienes {resumen.length} libros
 					</p>
 					<h1 className="jc-display jc-grad mt-3 text-4xl sm:text-5xl">
 						¿Por cuál seguimos hoy?
@@ -76,7 +92,11 @@ export default function Tracks({ loaderData }: Route.ComponentProps) {
 					</p>
 				</header>
 
-				<div className="jc-anim-in mt-10 grid gap-5 md:grid-cols-2">
+				<div
+					className={`jc-anim-in mt-10 grid gap-5 md:grid-cols-2 ${
+						resumen.length > 2 ? "lg:grid-cols-3" : ""
+					}`}
+				>
 					{resumen.map(({ track, total, completados }) => {
 						const info = TRACK_INFO[track];
 						const avanzado = track === "avanzado";
@@ -86,11 +106,7 @@ export default function Tracks({ loaderData }: Route.ComponentProps) {
 							<Link
 								key={track}
 								to={rutaLibro(track)}
-								className={`jc-glass group flex flex-col gap-3 rounded-3xl border-t-4 p-7 transition hover:-translate-y-1.5 ${
-									avanzado
-										? "border-t-[var(--color-magenta)] hover:border-[color-mix(in_srgb,var(--color-magenta)_45%,transparent)]"
-										: "border-t-[var(--color-cyan)] hover:border-[color-mix(in_srgb,var(--color-cyan)_45%,transparent)]"
-								}`}
+								className={`jc-glass group flex flex-col gap-3 rounded-3xl border-t-4 p-7 transition hover:-translate-y-1.5 ${ACENTO[track].borde}`}
 							>
 								<span className="text-5xl">{info.emoji}</span>
 
@@ -117,20 +133,14 @@ export default function Tracks({ loaderData }: Route.ComponentProps) {
 											className="h-full rounded-full transition-[width] duration-700"
 											style={{
 												width: `${porcentaje}%`,
-												background: avanzado
-													? "var(--color-magenta)"
-													: "var(--color-cyan)",
+												background: info.color,
 											}}
 										/>
 									</div>
 								</div>
 
 								<span
-									className={`jc-mono mt-3 text-sm font-semibold transition-[gap] ${
-										avanzado
-											? "text-[var(--color-magenta)]"
-											: "text-[var(--color-cyan)]"
-									}`}
+									className={`jc-mono mt-3 text-sm font-semibold transition-[gap] ${ACENTO[track].texto}`}
 								>
 									Abrir este libro →
 								</span>

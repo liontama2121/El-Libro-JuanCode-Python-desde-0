@@ -1,0 +1,140 @@
+[
+	{
+		"orden": 1,
+		"title": "I.1 — Imprimir tal cual",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> y luego <code>N</code> números enteros, uno por línea. Guárdalos en un vector e imprímelos tal cual, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n8\n-2\n0\n7</code></pre><p>Salida:</p><pre><code>5\n8\n-2\n0\n7</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nfor i in range(n):\n    print(vector[i])</code></pre><p>Dos ciclos iguales: el primero LLENA, el segundo IMPRIME. Nunca mezcles los dos trabajos al empezar.</p>",
+		"starter_code": "# I.1 — Imprimir tal cual\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n5\n8\n-2\n0\n7\n",
+				"expected_output": "5\n8\n-2\n0\n7"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "1\n2\n3"
+			},
+			{
+				"stdin": "1\n42\n",
+				"expected_output": "42"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "I.2 — Imprimir al revés",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números y guárdalos en un vector. Imprímelos en orden <strong>inverso</strong>: del último al primero, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n8\n-2\n0\n7</code></pre><p>Salida:</p><pre><code>7\n0\n-2\n8\n5</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nfor i in range(n - 1, -1, -1):\n    print(vector[i])</code></pre><p><code>range(n - 1, -1, -1)</code> arranca en la última posición y baja hasta 0. El <code>-1</code> del medio es el tope: no entra.</p>",
+		"starter_code": "# I.2 — Imprimir al revés\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n5\n8\n-2\n0\n7\n",
+				"expected_output": "7\n0\n-2\n8\n5"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "3\n2\n1"
+			},
+			{
+				"stdin": "1\n9\n",
+				"expected_output": "9"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "I.3 — El primero y el último",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime solo el <strong>primero</strong> y el <strong>último</strong> del vector, cada uno en su línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n8\n-2\n0\n7</code></pre><p>Salida:</p><pre><code>5\n7</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nprint(vector[0])\nprint(vector[n - 1])</code></pre><p>La última posición es <code>n - 1</code>, no <code>n</code>: con 5 números las posiciones van de 0 a 4.</p>",
+		"starter_code": "# I.3 — El primero y el último\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n5\n8\n-2\n0\n7\n",
+				"expected_output": "5\n7"
+			},
+			{
+				"stdin": "2\n4\n10\n",
+				"expected_output": "4\n10"
+			},
+			{
+				"stdin": "3\n6\n6\n1\n",
+				"expected_output": "6\n1"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "I.4 — El del medio",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime el que está en la posición <code>N // 2</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n8\n-2\n0\n7</code></pre><p>Salida:</p><pre><code>-2</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nprint(vector[n // 2])</code></pre><p><code>//</code> es división entera: con 5 elementos da 2, con 4 da 2 también.</p>",
+		"starter_code": "# I.4 — El del medio\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n5\n8\n-2\n0\n7\n",
+				"expected_output": "-2"
+			},
+			{
+				"stdin": "4\n4\n10\n20\n30\n",
+				"expected_output": "20"
+			},
+			{
+				"stdin": "1\n9\n",
+				"expected_output": "9"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "I.5 — Vector de nombres",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> y luego <code>N</code> nombres, uno por línea. Guárdalos en un vector de textos e imprímelos en el mismo orden.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\nAna\nLuis\nMarta</code></pre><p>Salida:</p><pre><code>Ana\nLuis\nMarta</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nnombres = [\"\"] * n\nfor i in range(n):\n    nombres[i] = input()\n\nfor i in range(n):\n    print(nombres[i])</code></pre><p>Para textos el vector nace con <code>[\"\"] * n</code> y se lee con <code>input()</code> SIN <code>int()</code>.</p>",
+		"starter_code": "# I.5 — Vector de nombres\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "3\nAna\nLuis\nMarta\n",
+				"expected_output": "Ana\nLuis\nMarta"
+			},
+			{
+				"stdin": "1\nPedro\n",
+				"expected_output": "Pedro"
+			},
+			{
+				"stdin": "4\nSol\nJuan\nEva\nTom\n",
+				"expected_output": "Sol\nJuan\nEva\nTom"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "I.6 — Cada número con su posición",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime cada uno con su posición, con este formato exacto:</p><pre><code>Posicion 0: 5</code></pre><p>Arma el texto con <code>+</code> y <code>str()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n5\n8\n-2</code></pre><p>Salida:</p><pre><code>Posicion 0: 5\nPosicion 1: 8\nPosicion 2: -2</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nfor i in range(n):\n    print(\"Posicion \" + str(i) + \": \" + str(vector[i]))</code></pre><p>Un número no se puede pegar a un texto con <code>+</code>: primero pasa por <code>str()</code>. Ojo con los espacios dentro de las comillas.</p>",
+		"starter_code": "# I.6 — Cada número con su posición\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n5\n8\n-2\n",
+				"expected_output": "Posicion 0: 5\nPosicion 1: 8\nPosicion 2: -2"
+			},
+			{
+				"stdin": "1\n10\n",
+				"expected_output": "Posicion 0: 10"
+			},
+			{
+				"stdin": "4\n1\n2\n3\n4\n",
+				"expected_output": "Posicion 0: 1\nPosicion 1: 2\nPosicion 2: 3\nPosicion 3: 4"
+			}
+		]
+	}
+]

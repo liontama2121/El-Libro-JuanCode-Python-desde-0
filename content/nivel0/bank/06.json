@@ -1,0 +1,174 @@
+[
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [5, 0, 8, 0]\nnuevo = [0] * 4\nk = 0\nfor i in range(4):\n    if vector[i] != 0:\n        nuevo[k] = vector[i]\n        k = k + 1\nfor i in range(4):\n    if vector[i] == 0:\n        nuevo[k] = vector[i]\n        k = k + 1\nprint(nuevo)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[5, 8, 0, 0]"
+				},
+				{
+					"id": "b",
+					"text": "[0, 0, 5, 8]"
+				},
+				{
+					"id": "c",
+					"text": "[5, 0, 8, 0]"
+				},
+				{
+					"id": "d",
+					"text": "IndexError"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Dos pasadas con el MISMO k: la primera pone 5 y 8 en las casillas 0 y 1, la segunda sigue en la 2 con los ceros."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "Al separar en dos vectores, ¿por qué cada uno lleva su propio contador?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "Cada vector se llena a su ritmo: un solo k dejaría huecos en los dos"
+				},
+				{
+					"id": "b",
+					"text": "Porque Python no deja usar k dos veces"
+				},
+				{
+					"id": "c",
+					"text": "Para que el programa sea más corto"
+				},
+				{
+					"id": "d",
+					"text": "No hace falta: se puede usar i en los dos"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "k1 cuenta lo que entró al primer vector y k2 lo del segundo. Son cantidades distintas."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe poner los negativos primero y después el resto. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"nuevo = [0] * n",
+				"k = 0",
+				"for i in range(n):",
+				"    if vector[i] < 0:",
+				"        nuevo[k] = vector[i]",
+				"        k = k + 1",
+				"k = 0",
+				"for i in range(n):",
+				"    if vector[i] >= 0:",
+				"        nuevo[k] = vector[i]",
+				"        k = k + 1"
+			]
+		},
+		"correct": {
+			"line_number": 7
+		},
+		"explanation": "Reiniciar k hace que la segunda pasada escriba encima de los negativos. En V-C, k NUNCA se reinicia."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [4, 7, 2, 8]\npares = [0] * 4\nimpares = [0] * 4\nk1 = 0\nk2 = 0\nfor i in range(4):\n    if vector[i] % 2 == 0:\n        pares[k1] = vector[i]\n        k1 = k1 + 1\n    else:\n        impares[k2] = vector[i]\n        k2 = k2 + 1\nprint(k1)\nprint(k2)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "3\n1"
+				},
+				{
+					"id": "b",
+					"text": "2\n2"
+				},
+				{
+					"id": "c",
+					"text": "1\n3"
+				},
+				{
+					"id": "d",
+					"text": "4\n0"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "4, 2 y 8 son pares (k1 = 3); solo el 7 es impar (k2 = 1)."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Para mover los ceros al final usando UN solo vector nuevo, ¿cuántas pasadas por el original?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "2"
+				},
+				{
+					"id": "b",
+					"text": "1"
+				},
+				{
+					"id": "c",
+					"text": "3"
+				},
+				{
+					"id": "d",
+					"text": "n"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Una para los distintos de cero y otra para los ceros, con el mismo k."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [1, 2, 3]\nnuevo = [0] * 3\nk = 2\nfor i in range(3):\n    nuevo[k] = vector[i]\n    k = k - 1\nprint(nuevo)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[3, 2, 1]"
+				},
+				{
+					"id": "b",
+					"text": "[1, 2, 3]"
+				},
+				{
+					"id": "c",
+					"text": "[0, 0, 3]"
+				},
+				{
+					"id": "d",
+					"text": "IndexError"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "i sube de 0 a 2 mientras k baja de 2 a 0: el primero queda de último."
+	}
+]

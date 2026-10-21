@@ -1,0 +1,194 @@
+[
+	{
+		"type": "predict_output",
+		"difficulty": "dificil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [-4, -9, -1]\nmayor = 0\nfor i in range(3):\n    if vector[i] > mayor:\n        mayor = vector[i]\nprint(mayor)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "0"
+				},
+				{
+					"id": "b",
+					"text": "-1"
+				},
+				{
+					"id": "c",
+					"text": "-4"
+				},
+				{
+					"id": "d",
+					"text": "-9"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Por eso el máximo arranca en vector[0] y no en 0: ningún negativo supera al 0, y se imprime un número que ni siquiera está en el vector."
+	},
+	{
+		"type": "parsons",
+		"difficulty": "dificil",
+		"prompt": "Arma el bloque que busca la POSICIÓN del mayor e imprime esa posición contando desde 1",
+		"data": {
+			"lines": [
+				{
+					"id": "l1",
+					"text": "mayor = vector[0]",
+					"indent": 0
+				},
+				{
+					"id": "l2",
+					"text": "pos = 0",
+					"indent": 0
+				},
+				{
+					"id": "l3",
+					"text": "for i in range(1, n):",
+					"indent": 0
+				},
+				{
+					"id": "l4",
+					"text": "if vector[i] > mayor:",
+					"indent": 1
+				},
+				{
+					"id": "l5",
+					"text": "mayor = vector[i]",
+					"indent": 2
+				},
+				{
+					"id": "l6",
+					"text": "pos = i",
+					"indent": 2
+				},
+				{
+					"id": "l7",
+					"text": "print(pos + 1)",
+					"indent": 0
+				}
+			]
+		},
+		"correct": {
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4",
+				"l5",
+				"l6",
+				"l7"
+			]
+		},
+		"explanation": "Cuando aparece uno mejor se actualizan las DOS cosas: el valor y la posición. La posición del vector arranca en 0, por eso se imprime pos + 1."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "En el esqueleto del máximo, ¿por qué el for arranca en 1?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "Porque vector[0] ya es el valor inicial de mejor"
+				},
+				{
+					"id": "b",
+					"text": "Porque la posición 0 siempre es 0"
+				},
+				{
+					"id": "c",
+					"text": "Porque range(n) daría error"
+				},
+				{
+					"id": "d",
+					"text": "Para que el programa sea más rápido"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "mejor = vector[0] ya revisó la primera casilla; compararla consigo misma no cambia nada."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [3, 9, 2, 9]\nmayor = vector[0]\npos = 0\nfor i in range(1, 4):\n    if vector[i] > mayor:\n        mayor = vector[i]\n        pos = i\nprint(pos + 1)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "2"
+				},
+				{
+					"id": "b",
+					"text": "4"
+				},
+				{
+					"id": "c",
+					"text": "1"
+				},
+				{
+					"id": "d",
+					"text": "3"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "El 9 aparece en las posiciones 1 y 3. Con > estricto el segundo 9 no reemplaza al primero: pos queda en 1 y se imprime 2."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "facil",
+		"prompt": "Debe imprimir el MENOR. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"menor = vector[0]",
+				"for i in range(1, n):",
+				"    if vector[i] > menor:",
+				"        menor = vector[i]",
+				"print(menor)"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "Con > busca el mayor. Para el menor la comparación es <."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "medio",
+		"prompt": "Completa: mayor y menor en el mismo ciclo.",
+		"data": {
+			"code": "mayor = ___1___\nmenor = vector[0]\nfor i in range(1, n):\n    if vector[i] > mayor:\n        mayor = vector[i]\n    if vector[i] ___2___ menor:\n        menor = vector[i]",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "valor inicial"
+				},
+				{
+					"id": "2",
+					"pista": "comparación"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"vector[0]"
+				],
+				"2": [
+					"<"
+				]
+			}
+		},
+		"explanation": "Los dos arrancan en vector[0] y cada uno tiene su propio if."
+	}
+]

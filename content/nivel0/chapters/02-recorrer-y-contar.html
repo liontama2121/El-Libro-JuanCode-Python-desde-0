@@ -1,0 +1,42 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Todos los vectores se crean con <code>[0] * n</code> y se llenan por índice. Siempre.
+</div>
+
+<p>Cuenta cuántos elementos cumplen una condición. Es el <strong>70% de los ejercicios de examen</strong>.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto II · escríbelo 3 veces</p>
+<pre><code>n = int(input())
+vector = [0] * n
+for i in range(n):
+    vector[i] = int(input())
+
+cuenta = 0
+for i in range(n):
+    if vector[i] (condición):
+        cuenta = cuenta + 1
+
+print(cuenta)</code></pre>
+</div>
+
+<p>La plana de este patrón es cambiar <strong>solo la condición</strong>:</p>
+
+<table>
+  <thead>
+    <tr><th>El enunciado dice…</th><th>Condición</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>positivos</td><td><code>vector[i] &gt; 0</code></td></tr>
+    <tr><td>negativos</td><td><code>vector[i] &lt; 0</code></td></tr>
+    <tr><td>ceros</td><td><code>vector[i] == 0</code></td></tr>
+    <tr><td>pares</td><td><code>vector[i] % 2 == 0</code></td></tr>
+    <tr><td>impares</td><td><code>vector[i] % 2 == 1</code></td></tr>
+    <tr><td>mayores a 10</td><td><code>vector[i] &gt; 10</code></td></tr>
+    <tr><td>divisibles por 3</td><td><code>vector[i] % 3 == 0</code></td></tr>
+    <tr><td>mayores de edad</td><td><code>edades[i] &gt;= 18</code></td></tr>
+  </tbody>
+</table>
+
+<p>Tres reglas que no se negocian: <code>cuenta = 0</code> va <strong>antes</strong> del <code>for</code>; <code>cuenta = cuenta + 1</code> va <strong>dentro</strong> del <code>if</code>; el <code>print</code> va <strong>afuera</strong>, al final.</p>
+
+<p>Ejercicios: <strong>II.1 a II.8</strong>.</p>

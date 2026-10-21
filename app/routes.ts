@@ -19,6 +19,11 @@ export default [
 	route("avanzado/modulo/:number", "routes/capitulo.tsx", { id: "capitulo-avanzado" }),
 	route("avanzado/modulo/:number/quiz", "routes/quiz.tsx", { id: "quiz-avanzado" }),
 
+	// Nivel 0 — Planas de código: otro libro con los mismos módulos.
+	route("nivel0", "routes/libro.tsx", { id: "libro-nivel0" }),
+	route("nivel0/capitulo/:number", "routes/capitulo.tsx", { id: "capitulo-nivel0" }),
+	route("nivel0/capitulo/:number/quiz", "routes/quiz.tsx", { id: "quiz-nivel0" }),
+
 	// Práctica (no desbloquea capítulos)
 	route("practica", "routes/practica.tsx"),
 	route("practica/simulacro-quiz", "routes/practica.simulacro-quiz.tsx"),

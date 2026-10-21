@@ -1,0 +1,231 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "En el patrón de copiar a un vector nuevo, ¿qué representa k?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "La siguiente casilla libre del vector nuevo, y también cuántos se han copiado"
+				},
+				{
+					"id": "b",
+					"text": "La posición que se está revisando en el vector original"
+				},
+				{
+					"id": "c",
+					"text": "El tamaño del vector original"
+				},
+				{
+					"id": "d",
+					"text": "El valor más grande copiado hasta ahora"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "i recorre el original y avanza siempre; k solo avanza cuando se copia algo. Por eso al final k es la cantidad copiada."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "Terminado el filtrado, ¿hasta dónde se recorre el vector nuevo para imprimir solo lo copiado?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "for i in range(k):"
+				},
+				{
+					"id": "b",
+					"text": "for i in range(n):"
+				},
+				{
+					"id": "c",
+					"text": "for i in range(len(nuevo)):"
+				},
+				{
+					"id": "d",
+					"text": "for i in range(k + 1):"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "nuevo tiene n casillas, pero solo las primeras k tienen datos copiados; el resto son ceros de relleno."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "vector = [4, -2, 7, -5]\nnuevo = [0] * 4\nk = 0\nfor i in range(4):\n    if vector[i] < 0:\n        nuevo[k] = vector[i]\n        k = k + 1\nprint(k)\nprint(nuevo)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "2\n[-2, -5, 0, 0]"
+				},
+				{
+					"id": "b",
+					"text": "2\n[0, -2, 0, -5]"
+				},
+				{
+					"id": "c",
+					"text": "4\n[-2, -5, 0, 0]"
+				},
+				{
+					"id": "d",
+					"text": "2\n[-2, -5]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Los negativos quedan pegados al inicio gracias a k. Las casillas sobrantes siguen en 0 porque el vector nació con [0] * 4."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "facil",
+		"prompt": "Debe copiar los negativos al vector nuevo. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"nuevo = [0] * n",
+				"k = 0",
+				"for i in range(n):",
+				"    if vector[i] < 0:",
+				"        nuevo[k] = vector[i]",
+				"    k = k + 1"
+			]
+		},
+		"correct": {
+			"line_number": 6
+		},
+		"explanation": "k = k + 1 quedó fuera del if: avanza en cada vuelta y deja huecos. Va indentado al mismo nivel de nuevo[k] = vector[i]."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe copiar los pares al vector nuevo. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"nuevo = [0] * n",
+				"for i in range(n):",
+				"    k = 0",
+				"    if vector[i] % 2 == 0:",
+				"        nuevo[k] = vector[i]",
+				"        k = k + 1"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "k nace dentro del for y vuelve a 0 en cada vuelta: todos los pares se escriben encima de nuevo[0]. k = 0 va antes del ciclo."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "medio",
+		"prompt": "Completa de memoria el esqueleto de copiar con k.",
+		"data": {
+			"code": "nuevo = ___1___\nk = 0\nfor i in range(n):\n    if vector[i] > 0:\n        nuevo[___2___] = vector[i]\n        k = ___3___\n\nfor i in range(___4___):\n    print(nuevo[i])",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "vector nuevo de n enteros"
+				},
+				{
+					"id": "2",
+					"pista": "el índice del vector nuevo"
+				},
+				{
+					"id": "3",
+					"pista": "avanzar el contador"
+				},
+				{
+					"id": "4",
+					"pista": "solo lo copiado"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"[0] * n",
+					"[0]*n"
+				],
+				"2": [
+					"k"
+				],
+				"3": [
+					"k + 1",
+					"k+1",
+					"1 + k",
+					"1+k"
+				],
+				"4": [
+					"k"
+				]
+			}
+		},
+		"explanation": "Vector en ceros, escribir en nuevo[k], avanzar k solo al copiar, e imprimir hasta k."
+	},
+	{
+		"type": "parsons",
+		"difficulty": "medio",
+		"prompt": "El vector ya está leído. Arma el bloque que copia los negativos a un vector nuevo e imprime cuántos fueron",
+		"data": {
+			"lines": [
+				{
+					"id": "l1",
+					"text": "nuevo = [0] * n",
+					"indent": 0
+				},
+				{
+					"id": "l2",
+					"text": "k = 0",
+					"indent": 0
+				},
+				{
+					"id": "l3",
+					"text": "for i in range(n):",
+					"indent": 0
+				},
+				{
+					"id": "l4",
+					"text": "if vector[i] < 0:",
+					"indent": 1
+				},
+				{
+					"id": "l5",
+					"text": "nuevo[k] = vector[i]",
+					"indent": 2
+				},
+				{
+					"id": "l6",
+					"text": "k = k + 1",
+					"indent": 2
+				},
+				{
+					"id": "l7",
+					"text": "print(k)",
+					"indent": 0
+				}
+			]
+		},
+		"correct": {
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4",
+				"l5",
+				"l6",
+				"l7"
+			]
+		},
+		"explanation": "El vector nuevo y k nacen afuera. Dentro del if van juntas la copia y el avance de k. Al terminar, k ya es la cantidad."
+	}
+]

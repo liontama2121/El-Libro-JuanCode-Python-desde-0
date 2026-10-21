@@ -69,6 +69,13 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	const estudiantes = filas.map((e) => ({
 		...e,
 		progreso: {
+			nivel0: {
+				hechos: Number(
+					aprobados.find((a) => a.userId === e.id && a.track === "nivel0")
+						?.hechos ?? 0,
+				),
+				total: totalDe("nivel0"),
+			},
 			basico: {
 				hechos: Number(
 					aprobados.find((a) => a.userId === e.id && a.track === "basico")
@@ -334,11 +341,12 @@ export default function AdminEstudiantes({
 	);
 }
 
-/** "Básico", "Avanzado", "Los dos" — como se lee el track en la tabla. */
+/** "Básico + Nivel 0", "Avanzado", "Solo Nivel 0", "Los tres" — como se lee el track en la tabla. */
 function etiquetaTrack(track: TrackUsuario | string): string {
-	if (track === "ambos") return "Los dos";
+	if (track === "ambos") return "Los tres";
+	if (track === "nivel0") return `${TRACK_INFO.nivel0.emoji} Solo Nivel 0`;
 	if (track === "avanzado") return `${TRACK_INFO.avanzado.emoji} Avanzado`;
-	return `${TRACK_INFO.basico.emoji} Básico`;
+	return `${TRACK_INFO.basico.emoji} Básico + Nivel 0`;
 }
 
 type Estudiante = Route.ComponentProps["loaderData"]["estudiantes"][number];
@@ -418,10 +426,7 @@ function FilaEstudiante({ estudiante: e }: { estudiante: Estudiante }) {
 										className="h-full rounded-full"
 										style={{
 											width: `${pct}%`,
-											background:
-												t === "avanzado"
-													? "var(--color-magenta)"
-													: "var(--color-cyan)",
+											background: TRACK_INFO[t].color,
 										}}
 									/>
 								</div>

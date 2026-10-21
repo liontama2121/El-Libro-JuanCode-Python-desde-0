@@ -1,0 +1,65 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Todos los vectores se crean con <code>[0] * n</code> y se llenan por índice. Siempre.
+</div>
+
+<p>Ya sabes filtrar con un <code>k</code>. Este capítulo trae las otras tres sublógicas del patrón V: separar en dos vectores, reorganizar en uno solo y copiar con un giro. Son 18 ejercicios: la plana más larga del libro.</p>
+
+<h2>V-B. Separar: dos vectores, dos contadores</h2>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto V-B · escríbelo 3 veces</p>
+<pre><code>grupo1 = [0] * n
+grupo2 = [0] * n
+k1 = 0
+k2 = 0
+for i in range(n):
+    if vector[i] (condición):
+        grupo1[k1] = vector[i]
+        k1 = k1 + 1
+    else:
+        grupo2[k2] = vector[i]
+        k2 = k2 + 1</code></pre>
+</div>
+
+<p>Cada vector nuevo tiene <strong>su propio</strong> contador. Ambos nacen de tamaño <code>n</code> porque, en el peor caso, todos caen en el mismo grupo. Si hay elementos que no van a ninguno (como el cero entre positivos y negativos), el <code>else</code> se cambia por <code>elif</code>. Ejercicios: <strong>V-B.1 a V-B.6</strong>.</p>
+
+<h2>V-C. Reorganizar: un vector, un k, varias pasadas</h2>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto V-C · escríbelo 3 veces</p>
+<pre><code>nuevo = [0] * n
+k = 0
+for i in range(n):              # pasada 1: el primer grupo
+    if vector[i] (condición):
+        nuevo[k] = vector[i]
+        k = k + 1
+for i in range(n):              # pasada 2: el resto (condición contraria)
+    if vector[i] (contraria):
+        nuevo[k] = vector[i]
+        k = k + 1
+
+for i in range(n):
+    print(nuevo[i])</code></pre>
+</div>
+
+<p>La clave: <strong>k no se reinicia</strong> entre pasadas. La segunda sigue escribiendo justo donde terminó la primera. Las condiciones deben ser opuestas exactas (<code>&gt; x</code> con <code>&lt;= x</code>), o algún elemento se pierde. Tres grupos = tres pasadas. Ejercicios: <strong>V-C.1 a V-C.6</strong>.</p>
+
+<h2>V-D. Copiar con un giro</h2>
+
+<p>El mismo esqueleto con una pieza distinta:</p>
+
+<table>
+  <thead>
+    <tr><th>Giro</th><th>Qué cambia</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Copiar al revés</td><td><code>k = n - 1</code> y <code>k = k - 1</code>: i sube, k baja</td></tr>
+    <tr><td>Mayores al promedio</td><td>Primero patrón III para el promedio, después V-A</td></tr>
+    <tr><td>Transformar al copiar</td><td><code>nuevo[k] = vector[i] * 2</code></td></tr>
+    <tr><td>Por posición</td><td>La condición mira <code>i</code></td></tr>
+    <tr><td>"Borrar" uno</td><td>Patrón IV para su posición, luego copiar con <code>if i != pos:</code></td></tr>
+    <tr><td>Unir dos vectores</td><td>Un solo k que sigue del primer ciclo al segundo</td></tr>
+  </tbody>
+</table>
+
+<p>Ejercicios: <strong>V-D.1 a V-D.6</strong>.</p>

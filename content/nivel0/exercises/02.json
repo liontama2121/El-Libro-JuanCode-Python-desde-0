@@ -1,0 +1,186 @@
+[
+	{
+		"orden": 1,
+		"title": "II.1 — Contar positivos",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime cuántos son <strong>positivos</strong> (mayores que 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>8\n4\n-3\n0\n12\n7\n-8\n0\n15</code></pre><p>Salida:</p><pre><code>4</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] &gt; 0:\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre><p>Lo único que cambió respecto al esqueleto es la condición: <code>vector[i] &gt; 0</code>. Todo lo demás es la plana.</p>",
+		"starter_code": "# II.1 — Contar positivos\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "8\n4\n-3\n0\n12\n7\n-8\n0\n15\n",
+				"expected_output": "4"
+			},
+			{
+				"stdin": "4\n9\n2\n-11\n30\n",
+				"expected_output": "3"
+			},
+			{
+				"stdin": "3\n0\n0\n6\n",
+				"expected_output": "1"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "II.2 — Contar negativos",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime cuántos son <strong>negativos</strong> (menores que 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>8\n4\n-3\n0\n12\n7\n-8\n0\n15</code></pre><p>Salida:</p><pre><code>2</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] &lt; 0:\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre><p>Lo único que cambió respecto al esqueleto es la condición: <code>vector[i] &lt; 0</code>. Todo lo demás es la plana.</p>",
+		"starter_code": "# II.2 — Contar negativos\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "8\n4\n-3\n0\n12\n7\n-8\n0\n15\n",
+				"expected_output": "2"
+			},
+			{
+				"stdin": "4\n9\n2\n-11\n30\n",
+				"expected_output": "1"
+			},
+			{
+				"stdin": "3\n0\n0\n6\n",
+				"expected_output": "0"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "II.3 — Contar ceros",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime cuántos son exactamente <strong>cero</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>8\n4\n-3\n0\n12\n7\n-8\n0\n15</code></pre><p>Salida:</p><pre><code>2</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] == 0:\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre><p>Lo único que cambió respecto al esqueleto es la condición: <code>vector[i] == 0</code>. Todo lo demás es la plana.</p>",
+		"starter_code": "# II.3 — Contar ceros\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "8\n4\n-3\n0\n12\n7\n-8\n0\n15\n",
+				"expected_output": "2"
+			},
+			{
+				"stdin": "4\n9\n2\n-11\n30\n",
+				"expected_output": "0"
+			},
+			{
+				"stdin": "3\n0\n0\n6\n",
+				"expected_output": "2"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "II.4 — Contar pares",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime cuántos son <strong>pares</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>8\n4\n-3\n0\n12\n7\n-8\n0\n15</code></pre><p>Salida:</p><pre><code>5</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] % 2 == 0:\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre><p>Lo único que cambió respecto al esqueleto es la condición: <code>vector[i] % 2 == 0</code>. Todo lo demás es la plana.</p>",
+		"starter_code": "# II.4 — Contar pares\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "8\n4\n-3\n0\n12\n7\n-8\n0\n15\n",
+				"expected_output": "5"
+			},
+			{
+				"stdin": "4\n9\n2\n-11\n30\n",
+				"expected_output": "2"
+			},
+			{
+				"stdin": "3\n0\n0\n6\n",
+				"expected_output": "3"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "II.5 — Contar impares",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime cuántos son <strong>impares</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>8\n4\n-3\n0\n12\n7\n-8\n0\n15</code></pre><p>Salida:</p><pre><code>3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] % 2 == 1:\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre><p>Lo único que cambió respecto al esqueleto es la condición: <code>vector[i] % 2 == 1</code>. Todo lo demás es la plana.</p>",
+		"starter_code": "# II.5 — Contar impares\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "8\n4\n-3\n0\n12\n7\n-8\n0\n15\n",
+				"expected_output": "3"
+			},
+			{
+				"stdin": "4\n9\n2\n-11\n30\n",
+				"expected_output": "2"
+			},
+			{
+				"stdin": "3\n0\n0\n6\n",
+				"expected_output": "0"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "II.6 — Contar mayores a 10",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime cuántos son <strong>mayores a 10</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>8\n4\n-3\n0\n12\n7\n-8\n0\n15</code></pre><p>Salida:</p><pre><code>2</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] &gt; 10:\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre><p>Lo único que cambió respecto al esqueleto es la condición: <code>vector[i] &gt; 10</code>. Todo lo demás es la plana.</p>",
+		"starter_code": "# II.6 — Contar mayores a 10\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "8\n4\n-3\n0\n12\n7\n-8\n0\n15\n",
+				"expected_output": "2"
+			},
+			{
+				"stdin": "4\n9\n2\n-11\n30\n",
+				"expected_output": "1"
+			},
+			{
+				"stdin": "3\n0\n0\n6\n",
+				"expected_output": "0"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "II.7 — Contar divisibles por 3",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime cuántos son <strong>divisibles por 3</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>8\n4\n-3\n0\n12\n7\n-8\n0\n15</code></pre><p>Salida:</p><pre><code>5</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] % 3 == 0:\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre><p>Lo único que cambió respecto al esqueleto es la condición: <code>vector[i] % 3 == 0</code>. Todo lo demás es la plana.</p>",
+		"starter_code": "# II.7 — Contar divisibles por 3\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "8\n4\n-3\n0\n12\n7\n-8\n0\n15\n",
+				"expected_output": "5"
+			},
+			{
+				"stdin": "4\n9\n2\n-11\n30\n",
+				"expected_output": "2"
+			},
+			{
+				"stdin": "3\n0\n0\n6\n",
+				"expected_output": "3"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "II.8 — Contar mayores de edad",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> edades. Imprime cuántas personas son <strong>mayores de edad</strong> (18 o más).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n17\n18\n25\n9\n40</code></pre><p>Salida:</p><pre><code>3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if vector[i] (condicion):\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nedades = [0] * n\nfor i in range(n):\n    edades[i] = int(input())\n\ncuenta = 0\nfor i in range(n):\n    if edades[i] &gt;= 18:\n        cuenta = cuenta + 1\n\nprint(cuenta)</code></pre><p>El vector cambió de nombre (<code>edades</code>) y la condición es <code>&gt;= 18</code>: con 18 ya cuenta. El esqueleto es idéntico.</p>",
+		"starter_code": "# II.8 — Contar mayores de edad\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n17\n18\n25\n9\n40\n",
+				"expected_output": "3"
+			},
+			{
+				"stdin": "2\n5\n12\n",
+				"expected_output": "0"
+			},
+			{
+				"stdin": "1\n18\n",
+				"expected_output": "1"
+			}
+		]
+	}
+]

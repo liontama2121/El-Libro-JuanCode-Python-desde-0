@@ -1,7 +1,7 @@
 import { Form, Link, NavLink } from "react-router";
 import type { Track } from "~/db/schema";
 import type { SessionUser } from "~/lib/auth.server";
-import { rutaLibro, tracksVisibles } from "~/lib/tracks";
+import { TODOS_LOS_TRACKS, rutaLibro, tracksVisibles } from "~/lib/tracks";
 
 export function Logo({ size = "md" }: { size?: "md" | "lg" }) {
 	return (
@@ -32,9 +32,9 @@ export type NavStats = {
 export function Nav({ user, stats }: { user: SessionUser; stats?: NavStats }) {
 	const esProfe = user.role === "teacher";
 
-	// Con los dos libros asignados, el link lleva al selector; con uno solo,
+	// Con varios libros asignados, el link lleva al selector; con uno solo,
 	// directo a ese libro. Nadie ve una puerta que no puede abrir.
-	const libros = esProfe ? ["basico", "avanzado"] : tracksVisibles(user.track);
+	const libros = esProfe ? TODOS_LOS_TRACKS : tracksVisibles(user.track);
 	const destinoLibro = libros.length > 1 ? "/tracks" : rutaLibro(libros[0] as Track);
 
 	return (

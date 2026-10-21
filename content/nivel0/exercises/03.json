@@ -1,0 +1,186 @@
+[
+	{
+		"orden": 1,
+		"title": "III.1 — Suma de todos",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime la <strong>suma</strong> de todos.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n4\n-3\n0\n12\n7\n-8</code></pre><p>Salida:</p><pre><code>12</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre><p><code>suma</code> nace en 0 ANTES del ciclo. Si nace adentro, se borra en cada vuelta.</p>",
+		"starter_code": "# III.1 — Suma de todos\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n4\n-3\n0\n12\n7\n-8\n",
+				"expected_output": "12"
+			},
+			{
+				"stdin": "3\n10\n20\n30\n",
+				"expected_output": "60"
+			},
+			{
+				"stdin": "1\n-5\n",
+				"expected_output": "-5"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "III.2 — Promedio entero",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime el <strong>promedio</strong> usando división entera (<code>//</code>).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n4\n6\n8\n3</code></pre><p>Salida:</p><pre><code>5</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma // n)</code></pre><p>Promedio = suma // cantidad. La división va DESPUÉS del ciclo, una sola vez.</p>",
+		"starter_code": "# III.2 — Promedio entero\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n4\n6\n8\n3\n",
+				"expected_output": "5"
+			},
+			{
+				"stdin": "3\n10\n20\n30\n",
+				"expected_output": "20"
+			},
+			{
+				"stdin": "1\n7\n",
+				"expected_output": "7"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "III.3 — Suma de positivos",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime la suma <strong>solo de los positivos</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n4\n-3\n0\n12\n7\n-8</code></pre><p>Salida:</p><pre><code>23</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    if vector[i] &gt; 0:\n        suma = suma + vector[i]\n\nprint(suma)</code></pre><p>Contar + sumar se combinan: el <code>if</code> del patrón II envuelve la línea del patrón III.</p>",
+		"starter_code": "# III.3 — Suma de positivos\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n4\n-3\n0\n12\n7\n-8\n",
+				"expected_output": "23"
+			},
+			{
+				"stdin": "3\n10\n20\n30\n",
+				"expected_output": "60"
+			},
+			{
+				"stdin": "1\n-5\n",
+				"expected_output": "0"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "III.4 — Suma de pares",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime la suma <strong>solo de los pares</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n4\n-3\n0\n12\n7\n-8</code></pre><p>Salida:</p><pre><code>8</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    if vector[i] % 2 == 0:\n        suma = suma + vector[i]\n\nprint(suma)</code></pre><p>Mismo esqueleto que el anterior. Cambia la condición.</p>",
+		"starter_code": "# III.4 — Suma de pares\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n4\n-3\n0\n12\n7\n-8\n",
+				"expected_output": "8"
+			},
+			{
+				"stdin": "3\n10\n20\n30\n",
+				"expected_output": "60"
+			},
+			{
+				"stdin": "1\n-5\n",
+				"expected_output": "0"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "III.5 — Suma de posiciones pares",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime la suma de los que están en <strong>posiciones pares</strong> del vector (índices 0, 2, 4…).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n4\n-3\n0\n12\n7\n-8</code></pre><p>Salida:</p><pre><code>11</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    if i % 2 == 0:\n        suma = suma + vector[i]\n\nprint(suma)</code></pre><p>La trampa: la condición mira <code>i</code> (la posición), no <code>vector[i]</code> (el valor).</p>",
+		"starter_code": "# III.5 — Suma de posiciones pares\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n4\n-3\n0\n12\n7\n-8\n",
+				"expected_output": "11"
+			},
+			{
+				"stdin": "3\n10\n20\n30\n",
+				"expected_output": "40"
+			},
+			{
+				"stdin": "1\n5\n",
+				"expected_output": "5"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "III.6 — Total a pagar",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> precios de productos. Imprime el <strong>total a pagar</strong>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n5000\n7000\n15000</code></pre><p>Salida:</p><pre><code>27000</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nprecios = [0] * n\nfor i in range(n):\n    precios[i] = int(input())\n\ntotal = 0\nfor i in range(n):\n    total = total + precios[i]\n\nprint(total)</code></pre><p>Es la suma con otros nombres. En el examen los enunciados disfrazan los patrones.</p>",
+		"starter_code": "# III.6 — Total a pagar\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n5000\n7000\n15000\n",
+				"expected_output": "27000"
+			},
+			{
+				"stdin": "1\n1200\n",
+				"expected_output": "1200"
+			},
+			{
+				"stdin": "4\n300\n300\n300\n100\n",
+				"expected_output": "1000"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "III.7 — Aprobados y su promedio",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> calificaciones de 0 a 100. Se aprueba con 60 o más. Imprime en una línea cuántos aprobaron y en la siguiente el promedio (división entera) <strong>solo de los aprobados</strong>. Si nadie aprobó, el promedio es 0.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n80\n45\n60\n99\n30</code></pre><p>Salida:</p><pre><code>3\n79</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nnotas = [0] * n\nfor i in range(n):\n    notas[i] = int(input())\n\ncuenta = 0\nsuma = 0\nfor i in range(n):\n    if notas[i] &gt;= 60:\n        cuenta = cuenta + 1\n        suma = suma + notas[i]\n\nprint(cuenta)\nif cuenta &gt; 0:\n    print(suma // cuenta)\nelse:\n    print(0)</code></pre><p>Contador y acumulador viven juntos dentro del mismo <code>if</code>. El promedio divide entre <code>cuenta</code>, no entre <code>n</code>, y se protege de dividir entre 0.</p>",
+		"starter_code": "# III.7 — Aprobados y su promedio\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n80\n45\n60\n99\n30\n",
+				"expected_output": "3\n79"
+			},
+			{
+				"stdin": "2\n10\n20\n",
+				"expected_output": "0\n0"
+			},
+			{
+				"stdin": "1\n100\n",
+				"expected_output": "1\n100"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "III.8 — Multiplicación de todos",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Imprime la <strong>multiplicación</strong> de todos.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n2\n3\n4</code></pre><p>Salida:</p><pre><code>24</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nsuma = 0\nfor i in range(n):\n    suma = suma + vector[i]\n\nprint(suma)</code></pre>",
+		"solution_html": "<pre><code>n = int(input())\nvector = [0] * n\nfor i in range(n):\n    vector[i] = int(input())\n\nproducto = 1\nfor i in range(n):\n    producto = producto * vector[i]\n\nprint(producto)</code></pre><p>Para multiplicar se arranca en <strong>1</strong>. Si arrancas en 0, todo da 0.</p>",
+		"starter_code": "# III.8 — Multiplicación de todos\n# Escribe el esqueleto de memoria. Sin append, sin f-strings.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n2\n3\n4\n",
+				"expected_output": "24"
+			},
+			{
+				"stdin": "4\n5\n-1\n2\n10\n",
+				"expected_output": "-100"
+			},
+			{
+				"stdin": "1\n7\n",
+				"expected_output": "7"
+			}
+		]
+	}
+]

@@ -33,7 +33,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 
 	const esProfesor = user.role === "teacher";
 
-	// Un mismo componente sirve los dos libros: el track sale de la URL.
+	// Un mismo componente sirve los tres libros: el track sale de la URL.
 	const track = trackDeRuta(request.url);
 	if (!puedeVerTrack(user.track, track, esProfesor)) {
 		throw redirect(rutaLibro(tracksVisibles(user.track)[0]));
@@ -124,7 +124,11 @@ export default function Libro({ loaderData }: Route.ComponentProps) {
 								: "text-[var(--color-cyan)]"
 						}`}
 					>
-						{avanzado ? "track avanzado" : "libro digital interactivo"}
+						{avanzado
+							? "track avanzado"
+							: track === "nivel0"
+								? "nivel 0 · planas de código"
+								: "libro digital interactivo"}
 					</p>
 					<h1 className="jc-display mt-5 text-6xl sm:text-8xl">
 						El Libro

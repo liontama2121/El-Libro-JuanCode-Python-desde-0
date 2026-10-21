@@ -1,0 +1,176 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Enunciado: \"imprime el total recaudado en el día\". ¿Qué patrón?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "II · contar"
+				},
+				{
+					"id": "b",
+					"text": "III · acumular"
+				},
+				{
+					"id": "c",
+					"text": "IV · máximo / mínimo"
+				},
+				{
+					"id": "d",
+					"text": "V-A · filtrar con k"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "\"Total\" = acumular con suma = suma + ..."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "Enunciado: \"imprime el NOMBRE del estudiante con la nota más alta\". ¿Qué patrón?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "IV · máximo guardando la posición"
+				},
+				{
+					"id": "b",
+					"text": "II · contar"
+				},
+				{
+					"id": "c",
+					"text": "III · acumular"
+				},
+				{
+					"id": "d",
+					"text": "V-B · separar"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Se busca el máximo de las notas guardando pos, y se imprime nombres[pos]."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "Enunciado: \"muestra el inventario con los productos agotados al final\". ¿Qué patrón?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "V-C · varias pasadas, un k"
+				},
+				{
+					"id": "b",
+					"text": "V-A · filtrar"
+				},
+				{
+					"id": "c",
+					"text": "IV · mínimo"
+				},
+				{
+					"id": "d",
+					"text": "II · contar"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "\"Primero unos y al final otros\" en un mismo vector es reorganizar: V-C."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Enunciado: \"separa los clientes en VIP y normales\". ¿Qué patrón?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "V-B · dos vectores, dos k"
+				},
+				{
+					"id": "b",
+					"text": "V-C · un vector, un k"
+				},
+				{
+					"id": "c",
+					"text": "III · acumular"
+				},
+				{
+					"id": "d",
+					"text": "IV · máximo"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Separar en dos listas = dos vectores con su propio contador."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Enunciado: \"muestra las temperaturas que superaron 30 grados\". ¿Qué patrón?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "II · contar"
+				},
+				{
+					"id": "b",
+					"text": "III · acumular"
+				},
+				{
+					"id": "c",
+					"text": "IV · máximo / mínimo"
+				},
+				{
+					"id": "d",
+					"text": "V-A · filtrar con k"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "d"
+		},
+		"explanation": "\"Muestra los que…\" = filtrar a un vector nuevo con k e imprimir hasta k."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Enunciado: \"¿cuántos días llovió más de 10 mm?\". ¿Qué patrón?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "II · contar"
+				},
+				{
+					"id": "b",
+					"text": "III · acumular"
+				},
+				{
+					"id": "c",
+					"text": "IV · máximo / mínimo"
+				},
+				{
+					"id": "d",
+					"text": "V-A · filtrar con k"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "\"Cuántos\" = contar."
+	}
+]

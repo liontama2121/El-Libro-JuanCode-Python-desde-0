@@ -485,6 +485,305 @@ html {
 	margin: 2.4em 0;
 }
 
+/* ==========================================================================
+   Nivel 0 — Planas de código (capítulo 0)
+   Banner de reglas, cajas de esqueleto, vectores en celdas y la animación
+   del contador k. Todo es CSS: el content_html no ejecuta scripts.
+   ========================================================================== */
+
+.jc-plana-sub {
+	font-family: var(--font-display);
+	font-size: 1.25rem;
+	line-height: 1.4;
+	color: var(--color-tinta-2);
+}
+
+/* Las reglas del curso se quedan pegadas bajo la barra mientras se lee */
+.jc-reglas {
+	position: sticky;
+	top: 4.25rem;
+	z-index: 10;
+	padding: 0.7rem 1rem;
+	font-size: 0.95rem;
+	line-height: 1.55;
+	background: color-mix(in srgb, var(--color-noche) 88%, var(--color-naranja));
+	border: 1px solid color-mix(in srgb, var(--color-naranja) 45%, transparent);
+	border-left: 3px solid var(--color-naranja);
+	backdrop-filter: blur(8px);
+}
+.jc-reglas strong {
+	color: var(--color-naranja);
+}
+
+.jc-plana-intro {
+	padding: 1.2rem 1.4rem;
+	font-size: 1.12rem;
+	background: color-mix(in srgb, var(--color-cyan) 7%, transparent);
+	border: 1px solid var(--color-borde);
+	border-left: 3px solid var(--color-cyan);
+}
+
+.jc-esqueleto {
+	padding: 0.9rem 1rem 1rem;
+	background: color-mix(in srgb, var(--color-verde) 6%, transparent);
+	border: 1px solid color-mix(in srgb, var(--color-verde) 35%, transparent);
+}
+.jc-esqueleto > * + * {
+	margin-top: 0.6rem;
+}
+.jc-esqueleto-tit {
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--color-verde);
+}
+.jc-esqueleto pre {
+	border-left-color: var(--color-verde);
+}
+
+.jc-frase {
+	font-family: var(--font-display);
+	font-weight: 750;
+	font-size: 1.45rem;
+	line-height: 1.25;
+	color: var(--color-dorado);
+}
+
+/* Un vector dibujado como fila de casillas con su índice debajo */
+.jc-vec {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 0.35rem;
+	padding-bottom: 1.3rem;
+}
+.jc-vec-etq {
+	width: 5.5rem;
+	padding-top: 0.55rem;
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	color: var(--color-tinta-2);
+}
+.jc-celda {
+	position: relative;
+	display: inline-grid;
+	place-items: center;
+	width: 2.9rem;
+	height: 2.6rem;
+	font-family: var(--font-mono);
+	font-size: 0.95rem;
+	background: var(--color-codigo);
+	border: 1px solid var(--color-borde);
+}
+.jc-celda::before {
+	content: attr(data-i);
+	position: absolute;
+	top: 100%;
+	margin-top: 0.15rem;
+	font-size: 0.68rem;
+	color: var(--color-tinta-2);
+}
+.jc-celda.es-si {
+	color: var(--color-verde);
+	border-color: color-mix(in srgb, var(--color-verde) 55%, transparent);
+}
+.jc-celda.es-hueco {
+	color: var(--color-tinta-2);
+	border-style: dashed;
+	background: transparent;
+}
+@media (max-width: 30rem) {
+	.jc-vec-etq {
+		width: 100%;
+		padding-top: 0;
+	}
+	.jc-celda {
+		width: 2.35rem;
+		font-size: 0.85rem;
+	}
+}
+.jc-vec-mal .jc-celda.es-hueco {
+	border-color: color-mix(in srgb, var(--color-magenta) 55%, transparent);
+	color: var(--color-magenta);
+}
+
+.jc-traza tr.es-copia td {
+	background: color-mix(in srgb, var(--color-verde) 9%, transparent);
+	color: var(--color-verde);
+}
+
+/* ── Animación del contador k: 7 pasos de 2 s, ciclo de 14 s ─────────────── */
+.jc-k-anim {
+	padding: 1.2rem 1rem 0.6rem;
+	background: color-mix(in srgb, var(--color-cyan) 4%, transparent);
+	border: 1px solid var(--color-borde);
+}
+.jc-k-leyenda {
+	font-size: 0.85rem;
+	color: var(--color-tinta-2);
+}
+.jc-k-marca-i,
+.jc-k-marca-k {
+	font-family: var(--font-mono);
+	font-weight: 700;
+	padding: 0 0.3rem;
+}
+.jc-k-marca-i {
+	color: #05070b;
+	background: var(--color-cyan);
+}
+.jc-k-marca-k {
+	color: #05070b;
+	background: var(--color-dorado);
+}
+
+/* i: cada casilla se enciende durante su paso */
+.jc-k-i {
+	animation: jc-k-foco 14s linear infinite;
+	animation-delay: calc(var(--paso) * 2s);
+}
+.jc-k-i.es-si {
+	animation-name: jc-k-foco-si;
+}
+@keyframes jc-k-foco {
+	0%,
+	14% {
+		border-color: var(--color-cyan);
+		box-shadow: 0 0 0 2px var(--color-cyan);
+	}
+	14.3%,
+	100% {
+		border-color: var(--color-borde);
+		box-shadow: none;
+	}
+}
+@keyframes jc-k-foco-si {
+	0%,
+	14% {
+		border-color: var(--color-verde);
+		box-shadow:
+			0 0 0 2px var(--color-verde),
+			0 0 18px -2px var(--color-verde);
+	}
+	14.3%,
+	100% {
+		box-shadow: none;
+	}
+}
+
+/* k: la casilla libre de "nuevo" lleva el borde dorado */
+.jc-k-slot0 {
+	animation: jc-k-libre0 14s linear infinite;
+}
+.jc-k-slot1 {
+	animation: jc-k-libre1 14s linear infinite;
+}
+.jc-k-slot2 {
+	animation: jc-k-libre2 14s linear infinite;
+}
+@keyframes jc-k-libre0 {
+	0%,
+	14.2% {
+		box-shadow: 0 0 0 2px var(--color-dorado);
+	}
+	14.3%,
+	100% {
+		box-shadow: none;
+	}
+}
+@keyframes jc-k-libre1 {
+	0%,
+	14.2% {
+		box-shadow: none;
+	}
+	14.3%,
+	57% {
+		box-shadow: 0 0 0 2px var(--color-dorado);
+	}
+	57.2%,
+	100% {
+		box-shadow: none;
+	}
+}
+@keyframes jc-k-libre2 {
+	0%,
+	57% {
+		box-shadow: none;
+	}
+	57.2%,
+	99% {
+		box-shadow: 0 0 0 2px var(--color-dorado);
+	}
+	100% {
+		box-shadow: none;
+	}
+}
+
+/* El dato copiado tapa el cero de relleno */
+.jc-k-cero {
+	color: var(--color-tinta-2);
+	opacity: 0.45;
+}
+.jc-k-dato {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	color: var(--color-verde);
+	background: var(--color-codigo);
+	opacity: 0;
+}
+.jc-k-dato0 {
+	animation: jc-k-copia0 14s linear infinite;
+}
+.jc-k-dato1 {
+	animation: jc-k-copia1 14s linear infinite;
+}
+@keyframes jc-k-copia0 {
+	0%,
+	14.2% {
+		opacity: 0;
+	}
+	17%,
+	99% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+@keyframes jc-k-copia1 {
+	0%,
+	57% {
+		opacity: 0;
+	}
+	60%,
+	99% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+/* Sin movimiento: se muestra el estado final, con k en la casilla 2 */
+@media (prefers-reduced-motion: reduce) {
+	.jc-k-i,
+	.jc-k-slot0,
+	.jc-k-slot1,
+	.jc-k-dato {
+		animation: none;
+	}
+	.jc-k-dato {
+		opacity: 1;
+	}
+	.jc-k-slot2 {
+		animation: none;
+		box-shadow: 0 0 0 2px var(--color-dorado);
+	}
+}
+
 /* Las respuestas y el código viven sobre fondo oscuro en ambos temas */
 .bg-codigo {
 	color-scheme: dark;

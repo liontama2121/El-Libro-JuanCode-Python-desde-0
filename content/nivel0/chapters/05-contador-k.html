@@ -1,0 +1,123 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Todos los vectores se crean con <code>[0] * n</code> y se llenan por índice. Siempre.
+</div>
+
+<p class="jc-plana-sub">El concepto que te hace pasar de "copiar" a "reorganizar". Si entiendes esto, dominas el patrón V y todos los exámenes del juez.</p>
+
+<h3>1. El problema</h3>
+
+<p>Tenemos este vector:</p>
+
+<div class="jc-vec" aria-label="vector: 5, -2, 0, 8, -7, 3, 0">
+  <span class="jc-vec-etq">vector</span>
+  <span class="jc-celda" data-i="0">5</span><span class="jc-celda es-si" data-i="1">-2</span><span class="jc-celda" data-i="2">0</span><span class="jc-celda" data-i="3">8</span><span class="jc-celda es-si" data-i="4">-7</span><span class="jc-celda" data-i="5">3</span><span class="jc-celda" data-i="6">0</span>
+</div>
+
+<p>Queremos un vector nuevo <strong>solo con los negativos</strong>. ¿Qué índice le pongo a cada negativo en el vector nuevo?</p>
+
+<ul>
+  <li><code>i = 0</code>, <code>vector[0] = 5</code> → no es negativo.</li>
+  <li><code>i = 1</code>, <code>vector[1] = -2</code> → sí. ¿Lo pongo en <code>nuevo[1]</code>? ❌ dejaría <code>nuevo[0]</code> vacío.</li>
+  <li><code>i = 4</code>, <code>vector[4] = -7</code> → sí. ¿Lo pongo en <code>nuevo[4]</code>? ❌ quedarían huecos.</li>
+</ul>
+
+<p>Usando el mismo <code>i</code> el resultado queda <strong>mal</strong>, lleno de huecos:</p>
+
+<div class="jc-vec jc-vec-mal" aria-label="resultado mal: hueco, -2, hueco, hueco, -7, hueco, hueco">
+  <span class="jc-vec-etq">❌ nuevo</span>
+  <span class="jc-celda es-hueco" data-i="0">_</span><span class="jc-celda es-si" data-i="1">-2</span><span class="jc-celda es-hueco" data-i="2">_</span><span class="jc-celda es-hueco" data-i="3">_</span><span class="jc-celda es-si" data-i="4">-7</span><span class="jc-celda es-hueco" data-i="5">_</span><span class="jc-celda es-hueco" data-i="6">_</span>
+</div>
+
+<p>Lo que queremos es esto, con los negativos <strong>pegados al principio</strong>:</p>
+
+<div class="jc-vec jc-vec-bien" aria-label="resultado deseado: -2, -7 y luego huecos">
+  <span class="jc-vec-etq">✅ nuevo</span>
+  <span class="jc-celda es-si" data-i="0">-2</span><span class="jc-celda es-si" data-i="1">-7</span><span class="jc-celda es-hueco" data-i="2">_</span><span class="jc-celda es-hueco" data-i="3">_</span><span class="jc-celda es-hueco" data-i="4">_</span><span class="jc-celda es-hueco" data-i="5">_</span><span class="jc-celda es-hueco" data-i="6">_</span>
+</div>
+
+<p class="jc-frase">Los índices del vector original NO sirven para el nuevo. Necesitamos un contador aparte.</p>
+
+<h3>2. La solución: dos índices a distinto ritmo</h3>
+
+<ul>
+  <li><code>i</code> recorre <strong>todo</strong> el vector original. Siempre avanza, no se detiene.</li>
+  <li><code>k</code> solo avanza cuando <strong>efectivamente copiamos</strong> algo al nuevo.</li>
+</ul>
+
+<blockquote>Imagina que revisas una lista de 7 personas (<code>i</code> avanza una por una) y anotas <strong>solo</strong> las que tienen pasaporte en una libreta nueva. El número de renglón de la libreta (<code>k</code>) solo aumenta cuando anotas a alguien.</blockquote>
+
+<h3>3. Traza paso a paso</h3>
+
+<pre><code>nuevo = [0] * 7
+k = 0
+for i in range(7):
+    if vector[i] &lt; 0:
+        nuevo[k] = vector[i]
+        k = k + 1</code></pre>
+
+<p>Mira cómo <code>i</code> camina por todo el vector mientras <code>k</code> espera en la siguiente casilla libre y solo salta cuando hay copia:</p>
+
+<div class="jc-k-anim" role="img" aria-label="Animación: i recorre las 7 casillas del vector; cuando encuentra -2 lo copia en nuevo[0] y k pasa a 1; cuando encuentra -7 lo copia en nuevo[1] y k pasa a 2.">
+  <div class="jc-vec">
+    <span class="jc-vec-etq">vector</span>
+    <span class="jc-celda jc-k-i" style="--paso: 0" data-i="0">5</span><span class="jc-celda jc-k-i es-si" style="--paso: 1" data-i="1">-2</span><span class="jc-celda jc-k-i" style="--paso: 2" data-i="2">0</span><span class="jc-celda jc-k-i" style="--paso: 3" data-i="3">8</span><span class="jc-celda jc-k-i es-si" style="--paso: 4" data-i="4">-7</span><span class="jc-celda jc-k-i" style="--paso: 5" data-i="5">3</span><span class="jc-celda jc-k-i" style="--paso: 6" data-i="6">0</span>
+  </div>
+  <div class="jc-vec">
+    <span class="jc-vec-etq">nuevo</span>
+    <span class="jc-celda jc-k-slot jc-k-slot0" data-i="0"><span class="jc-k-cero">0</span><span class="jc-k-dato jc-k-dato0">-2</span></span><span class="jc-celda jc-k-slot jc-k-slot1" data-i="1"><span class="jc-k-cero">0</span><span class="jc-k-dato jc-k-dato1">-7</span></span><span class="jc-celda jc-k-slot jc-k-slot2" data-i="2"><span class="jc-k-cero">0</span></span><span class="jc-celda" data-i="3"><span class="jc-k-cero">0</span></span><span class="jc-celda" data-i="4"><span class="jc-k-cero">0</span></span><span class="jc-celda" data-i="5"><span class="jc-k-cero">0</span></span><span class="jc-celda" data-i="6"><span class="jc-k-cero">0</span></span>
+  </div>
+  <p class="jc-k-leyenda"><span class="jc-k-marca-i">i</span> revisa una casilla por paso · <span class="jc-k-marca-k">k</span> marca la siguiente casilla libre de <code>nuevo</code></p>
+</div>
+
+<table class="jc-traza">
+  <thead>
+    <tr><th><code>i</code></th><th><code>vector[i]</code></th><th>¿&lt; 0?</th><th>Qué pasa</th><th><code>k</code> después</th><th><code>nuevo</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>0</td><td>5</td><td>No</td><td>nada; k no se mueve</td><td>0</td><td><code>[0, 0, 0, 0, 0, 0, 0]</code></td></tr>
+    <tr class="es-copia"><td>1</td><td>-2</td><td>Sí</td><td><code>nuevo[0] = -2</code></td><td>1</td><td><code>[-2, 0, 0, 0, 0, 0, 0]</code></td></tr>
+    <tr><td>2</td><td>0</td><td>No</td><td>nada</td><td>1</td><td><code>[-2, 0, 0, 0, 0, 0, 0]</code></td></tr>
+    <tr><td>3</td><td>8</td><td>No</td><td>nada</td><td>1</td><td><code>[-2, 0, 0, 0, 0, 0, 0]</code></td></tr>
+    <tr class="es-copia"><td>4</td><td>-7</td><td>Sí</td><td><code>nuevo[1] = -7</code></td><td>2</td><td><code>[-2, -7, 0, 0, 0, 0, 0]</code></td></tr>
+    <tr><td>5</td><td>3</td><td>No</td><td>nada</td><td>2</td><td><code>[-2, -7, 0, 0, 0, 0, 0]</code></td></tr>
+    <tr><td>6</td><td>0</td><td>No</td><td>nada</td><td>2</td><td><code>[-2, -7, 0, 0, 0, 0, 0]</code></td></tr>
+  </tbody>
+</table>
+
+<p>Al terminar, <code>i</code> dio 7 vueltas y <code>k</code> vale <strong>2</strong>. Ese 2 dice dos cosas a la vez: <strong>cuántos se copiaron</strong> y <strong>dónde iría el siguiente</strong>. Los ceros que quedan detrás son relleno del <code>[0] * 7</code>, por eso se imprime solo hasta <code>k</code>:</p>
+
+<pre><code>for i in range(k):
+    print(nuevo[i])</code></pre>
+
+<h3>4. Los tres errores con k</h3>
+
+<p><strong>a) <code>k = k + 1</code> fuera del <code>if</code>.</strong> Avanza en todas las vueltas y vuelve a dejar huecos: es como usar <code>i</code>.</p>
+<pre><code>    if vector[i] &lt; 0:
+        nuevo[k] = vector[i]
+    k = k + 1              # ❌ mal indentado</code></pre>
+
+<p><strong>b) <code>k = 0</code> dentro del <code>for</code>.</strong> Se reinicia en cada vuelta y todo se escribe encima de <code>nuevo[0]</code>.</p>
+<pre><code>for i in range(n):
+    k = 0                  # ❌ va ANTES del for</code></pre>
+
+<p><strong>c) Imprimir con <code>range(n)</code>.</strong> Salen los ceros de relleno y el juez marca respuesta incorrecta.</p>
+<pre><code>for i in range(n):         # ❌ es range(k)
+    print(nuevo[i])</code></pre>
+
+
+<h2>V-A. Filtrar: la plana del contador k</h2>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto V-A · escríbelo 3 veces</p>
+<pre><code>nuevo = [0] * n
+k = 0
+for i in range(n):
+    if vector[i] (condición):
+        nuevo[k] = vector[i]
+        k = k + 1
+
+for i in range(k):
+    print(nuevo[i])</code></pre>
+</div>
+
+<p>Con vectores paralelos (nombre y nota de la misma persona) la condición mira un vector y se copia del otro, con el <strong>mismo</strong> <code>i</code>: <code>if notas[i] &gt;= 60:</code> → <code>aprobados[k] = nombres[i]</code>. Ejercicios: <strong>V-A.1 a V-A.7</strong>.</p>
