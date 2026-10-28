@@ -1,0 +1,176 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "\"¿Cuántas sillas libres hay en toda la sala?\" ¿Qué patrón es?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "M3 · fila congelada"
+				},
+				{
+					"id": "b",
+					"text": "M5 · posición del máximo"
+				},
+				{
+					"id": "c",
+					"text": "M6 · matriz nueva"
+				},
+				{
+					"id": "d",
+					"text": "M2 · contar recorriendo toda la matriz"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "d"
+		},
+		"explanation": "\"Cuántas\" + \"toda\" = contar con doble for."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Filas = tiendas, columnas = días. \"Ventas totales del día 3\". ¿Qué patrón es?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "M2 · suma total"
+				},
+				{
+					"id": "b",
+					"text": "Diagonal principal"
+				},
+				{
+					"id": "c",
+					"text": "M4 · columna congelada en c = 2"
+				},
+				{
+					"id": "d",
+					"text": "M3 · fila congelada en f = 2"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "c"
+		},
+		"explanation": "Un día es una columna. El día 3 (contando desde 1) es la columna 2."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "Filas = estudiantes. \"¿Qué estudiante tuvo el mejor promedio?\" ¿Qué patrón es?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "M6 (transpuesta)"
+				},
+				{
+					"id": "b",
+					"text": "M3 (suma de cada fila) + posición del máximo"
+				},
+				{
+					"id": "c",
+					"text": "M4 (suma de cada columna)"
+				},
+				{
+					"id": "d",
+					"text": "M2 (suma total) y dividir"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "Cada estudiante es una fila: se compara suma_fila de cada uno y se guarda la posición."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "\"Imprime en qué fila y columna está el valor más alto\". ¿Qué patrón es?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "M5 · máximo con pf y pc"
+				},
+				{
+					"id": "b",
+					"text": "M2 · contar"
+				},
+				{
+					"id": "c",
+					"text": "M4 · columna congelada"
+				},
+				{
+					"id": "d",
+					"text": "M6 · matriz nueva"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Dónde = posición. En matriz son dos variables."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "\"Muestra la lista de los valores negativos de la matriz\". ¿Qué patrón es?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "M3 · fila congelada"
+				},
+				{
+					"id": "b",
+					"text": "Matriz nueva del mismo tamaño"
+				},
+				{
+					"id": "c",
+					"text": "M5 · mínimo"
+				},
+				{
+					"id": "d",
+					"text": "Vector nuevo de n * m con el contador k"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "d"
+		},
+		"explanation": "Lista = vector con k, como en el Nivel 0. Doble for para recorrer, k para guardar."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "\"Imprime la matriz con cada valor al cuadrado\". ¿Qué patrón es?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "M4 · columna congelada"
+				},
+				{
+					"id": "b",
+					"text": "Diagonal"
+				},
+				{
+					"id": "c",
+					"text": "M6 · matriz nueva con crear_matriz"
+				},
+				{
+					"id": "d",
+					"text": "M2 · acumular"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "c"
+		},
+		"explanation": "Se transforma casilla por casilla en una matriz nueva y se imprime con imprimir_matriz."
+	}
+]

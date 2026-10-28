@@ -1,0 +1,46 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Para crear matriz: <code>[0] * n</code> + <code>for</code> con <code>matriz[i] = [0] * m</code>. Siempre.
+</div>
+
+<p>Contar y sumar en <strong>toda</strong> la matriz. Son los patrones II y III del Nivel 0 metidos en un doble <code>for</code> — y ahora dentro de una función que <strong>retorna</strong>.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto M2-A · contar · escríbelo 3 veces</p>
+<pre><code>def contar(matriz, n, m):
+    cuenta = 0
+    for i in range(n):
+        for j in range(m):
+            if matriz[i][j] (condición):
+                cuenta = cuenta + 1
+    return cuenta</code></pre>
+</div>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto M2-B · sumar · escríbelo 3 veces</p>
+<pre><code>def suma_total(matriz, n, m):
+    total = 0
+    for i in range(n):
+        for j in range(m):
+            total = total + matriz[i][j]
+    return total</code></pre>
+</div>
+
+<p>Y en <code>main()</code>, después de leer: <code>print(suma_total(matriz, n, m))</code>.</p>
+
+<table>
+  <thead>
+    <tr><th>El enunciado dice…</th><th>Condición / cambio</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>positivos</td><td><code>matriz[i][j] &gt; 0</code></td></tr>
+    <tr><td>pares</td><td><code>matriz[i][j] % 2 == 0</code></td></tr>
+    <tr><td>ceros</td><td><code>matriz[i][j] == 0</code></td></tr>
+    <tr><td>mayores a X</td><td><code>matriz[i][j] &gt; x</code> (y <code>x</code> entra como parámetro)</td></tr>
+    <tr><td>cuántas veces aparece X</td><td><code>matriz[i][j] == x</code></td></tr>
+    <tr><td>promedio</td><td><code>suma_total(matriz, n, m) / (n * m)</code></td></tr>
+  </tbody>
+</table>
+
+<p>Tres reglas: <code>cuenta = 0</code> va antes de los <strong>dos</strong> <code>for</code> (no entre ellos); <code>cuenta = cuenta + 1</code> va dentro del <code>if</code>; el <code>return</code> va afuera de los <strong>dos</strong> <code>for</code>.</p>
+
+<p>Ejercicios: <strong>M2.1 a M2.8</strong>.</p>

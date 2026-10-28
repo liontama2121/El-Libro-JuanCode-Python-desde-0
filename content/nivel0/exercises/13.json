@@ -1,0 +1,94 @@
+[
+	{
+		"orden": 1,
+		"title": "K.1 — La diagonal principal",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee una matriz cuadrada e imprime su diagonal principal, un valor por línea.</p><p><strong>Entrada:</strong> <code>N</code> y luego los <code>N × N</code> enteros de una matriz cuadrada, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3\n4\n5\n6\n7\n8\n9</code></pre><p>Salida:</p><pre><code>1\n5\n9</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>for i in range(n):\n    print(matriz[i][i])        # diagonal: i hace de fila Y de columna</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    matriz = leer_matriz(n, n)\n    for i in range(n):\n        print(matriz[i][i])\n\nmain()</code></pre><p>En la diagonal fila y columna son iguales: un solo índice hace de los dos.</p>",
+		"starter_code": "# K.1 — La diagonal principal\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+				"expected_output": "1\n5\n9"
+			},
+			{
+				"stdin": "4\n2\n0\n0\n1\n0\n3\n1\n0\n0\n1\n4\n0\n1\n0\n0\n5\n",
+				"expected_output": "2\n3\n4\n5"
+			},
+			{
+				"stdin": "1\n10\n",
+				"expected_output": "10"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "K.2 — Suma de la diagonal",
+		"difficulty": "facil",
+		"statement_html": "<p>Imprime la suma de la diagonal principal.</p><p><strong>Entrada:</strong> <code>N</code> y luego los <code>N × N</code> enteros de una matriz cuadrada, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3\n4\n5\n6\n7\n8\n9</code></pre><p>Salida:</p><pre><code>15</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>for i in range(n):\n    print(matriz[i][i])        # diagonal: i hace de fila Y de columna</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_diagonal(matriz, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][i]\n    return total\n\ndef main():\n    n = int(input())\n    matriz = leer_matriz(n, n)\n    print(suma_diagonal(matriz, n))\n\nmain()</code></pre><p>Un <code>for</code>, no dos: recorrer la diagonal con doble <code>for</code> e <code>if i == j</code> funciona, pero da n × n vueltas para usar n.</p>",
+		"starter_code": "# K.2 — Suma de la diagonal\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+				"expected_output": "15"
+			},
+			{
+				"stdin": "4\n2\n0\n0\n1\n0\n3\n1\n0\n0\n1\n4\n0\n1\n0\n0\n5\n",
+				"expected_output": "14"
+			},
+			{
+				"stdin": "1\n10\n",
+				"expected_output": "10"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "K.3 — La diagonal secundaria",
+		"difficulty": "medio",
+		"statement_html": "<p>Imprime la diagonal secundaria (de arriba-derecha a abajo-izquierda), un valor por línea.</p><p><strong>Entrada:</strong> <code>N</code> y luego los <code>N × N</code> enteros de una matriz cuadrada, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3\n4\n5\n6\n7\n8\n9</code></pre><p>Salida:</p><pre><code>3\n5\n7</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>for i in range(n):\n    print(matriz[i][i])        # diagonal: i hace de fila Y de columna</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    matriz = leer_matriz(n, n)\n    for i in range(n):\n        print(matriz[i][n - 1 - i])\n\nmain()</code></pre><p>Cuando <code>i</code> sube, la columna baja: <code>n - 1 - i</code>.</p>",
+		"starter_code": "# K.3 — La diagonal secundaria\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+				"expected_output": "3\n5\n7"
+			},
+			{
+				"stdin": "4\n2\n0\n0\n1\n0\n3\n1\n0\n0\n1\n4\n0\n1\n0\n0\n5\n",
+				"expected_output": "1\n1\n1\n1"
+			},
+			{
+				"stdin": "1\n10\n",
+				"expected_output": "10"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "K.4 — La cruz",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee una matriz, una fila <code>F</code> y una columna <code>C</code>. Imprime la suma de la fila <code>F</code> más la columna <code>C</code>, contando <strong>una sola vez</strong> la casilla del cruce.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final vienen <code>F</code> y <code>C</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n1\n1</code></pre><p>Salida:</p><pre><code>25</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>for i in range(n):\n    print(matriz[i][i])        # diagonal: i hace de fila Y de columna</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total\n\ndef suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    f = int(input())\n    c = int(input())\n    total = suma_fila(matriz, f, m) + suma_columna(matriz, c, n) - matriz[f][c]\n    print(total)\n\nmain()</code></pre><p>Las dos funciones congeladas juntas. El cruce <code>matriz[f][c]</code> está en las dos sumas: se resta una vez.</p>",
+		"starter_code": "# K.4 — La cruz\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n1\n1\n",
+				"expected_output": "25"
+			},
+			{
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n0\n3\n",
+				"expected_output": "13"
+			},
+			{
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n1\n0\n",
+				"expected_output": "16"
+			}
+		]
+	}
+]

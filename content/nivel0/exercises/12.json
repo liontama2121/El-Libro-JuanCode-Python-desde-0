@@ -1,0 +1,140 @@
+[
+	{
+		"orden": 1,
+		"title": "M4.1 — Imprimir la columna C",
+		"difficulty": "facil",
+		"statement_html": "<p>Imprime los valores de la columna <code>C</code>, uno por línea.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>C</code>, el número de columna (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n2</code></pre><p>Salida:</p><pre><code>0\n-1\n9</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    c = int(input())\n    for i in range(n):\n        print(matriz[i][c])\n\nmain()</code></pre><p>Un solo <code>for</code>, con <code>i</code>. La columna queda congelada en <code>c</code>.</p>",
+		"starter_code": "# M4.1 — Imprimir la columna C\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n2\n",
+				"expected_output": "0\n-1\n9"
+			},
+			{
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n0\n",
+				"expected_output": "1\n4"
+			},
+			{
+				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n1\n",
+				"expected_output": "-1\n0\n6"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "M4.2 — Suma de la columna C",
+		"difficulty": "facil",
+		"statement_html": "<p>Imprime la suma de la columna <code>C</code>. Usa <code>suma_columna(matriz, c, n)</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>C</code>, el número de columna (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n0</code></pre><p>Salida:</p><pre><code>6</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    c = int(input())\n    print(suma_columna(matriz, c, n))\n\nmain()</code></pre><p>La columna recorre filas, por eso el tope es <code>n</code>. Es el error número 1 del examen: confundir <code>n</code> y <code>m</code>.</p>",
+		"starter_code": "# M4.2 — Suma de la columna C\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n0\n",
+				"expected_output": "6"
+			},
+			{
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n2\n",
+				"expected_output": "9"
+			},
+			{
+				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n2\n",
+				"expected_output": "-5"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "M4.3 — Menor de la columna C",
+		"difficulty": "facil",
+		"statement_html": "<p>Imprime el menor valor de la columna <code>C</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>C</code>, el número de columna (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n1</code></pre><p>Salida:</p><pre><code>-3</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef menor_columna(matriz, c, n):\n    menor = matriz[0][c]\n    for i in range(1, n):\n        if matriz[i][c] &lt; menor:\n            menor = matriz[i][c]\n    return menor\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    c = int(input())\n    print(menor_columna(matriz, c, n))\n\nmain()</code></pre><p>Se arranca con <code>matriz[0][c]</code>: la primera fila de esa columna.</p>",
+		"starter_code": "# M4.3 — Menor de la columna C\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n1\n",
+				"expected_output": "-3"
+			},
+			{
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n1\n",
+				"expected_output": "2"
+			},
+			{
+				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n0\n",
+				"expected_output": "2"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "M4.4 — Negativos en la columna C",
+		"difficulty": "facil",
+		"statement_html": "<p>Imprime cuántos negativos hay en la columna <code>C</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>C</code>, el número de columna (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n0</code></pre><p>Salida:</p><pre><code>1</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef negativos_columna(matriz, c, n):\n    cuenta = 0\n    for i in range(n):\n        if matriz[i][c] &lt; 0:\n            cuenta = cuenta + 1\n    return cuenta\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    c = int(input())\n    print(negativos_columna(matriz, c, n))\n\nmain()</code></pre><p>Contar sobre una columna: <code>i</code> camina, <code>c</code> quieto.</p>",
+		"starter_code": "# M4.4 — Negativos en la columna C\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n0\n",
+				"expected_output": "1"
+			},
+			{
+				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n2\n",
+				"expected_output": "1"
+			},
+			{
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n1\n",
+				"expected_output": "0"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "M4.5 — Suma de cada columna",
+		"difficulty": "medio",
+		"statement_html": "<p>Imprime la suma de cada columna, una por línea.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>5\n7\n9</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    for j in range(m):\n        print(suma_columna(matriz, j, n))\n\nmain()</code></pre><p>Hay <code>m</code> columnas, por eso el <code>for</code> de afuera va hasta <code>m</code>.</p>",
+		"starter_code": "# M4.5 — Suma de cada columna\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
+				"expected_output": "5\n7\n9"
+			},
+			{
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
+				"expected_output": "6\n6\n8\n9"
+			},
+			{
+				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
+				"expected_output": "13\n5\n-5"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "M4.6 — Promedio de una materia",
+		"difficulty": "medio",
+		"statement_html": "<p>Cada fila es un estudiante y cada columna una materia. Lee la matriz de notas y una columna <code>C</code>. Imprime <code>Promedio: X</code> de esa materia.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>C</code>, el número de columna (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n2\n80\n60\n70\n90\n90\n75\n0</code></pre><p>Salida:</p><pre><code>Promedio: 80.0</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    c = int(input())\n    promedio = suma_columna(matriz, c, n) / n\n    print(\"Promedio: \" + str(promedio))\n\nmain()</code></pre><p>Una columna tiene <code>n</code> valores (uno por estudiante): se divide entre <code>n</code>.</p>",
+		"starter_code": "# M4.6 — Promedio de una materia\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n2\n80\n60\n70\n90\n90\n75\n0\n",
+				"expected_output": "Promedio: 80.0"
+			},
+			{
+				"stdin": "2\n2\n50\n40\n100\n30\n1\n",
+				"expected_output": "Promedio: 35.0"
+			},
+			{
+				"stdin": "1\n1\n33\n0\n",
+				"expected_output": "Promedio: 33.0"
+			}
+		]
+	}
+]

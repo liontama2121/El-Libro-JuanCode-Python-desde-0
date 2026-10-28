@@ -1,0 +1,160 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "¿Qué significa \"congelar la fila\"?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "Se copia la fila a un vector"
+				},
+				{
+					"id": "b",
+					"text": "f no cambia y solo j recorre las columnas"
+				},
+				{
+					"id": "c",
+					"text": "La fila se borra"
+				},
+				{
+					"id": "d",
+					"text": "i y j avanzan juntos"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "Un índice fijo, el otro camina. Por eso basta un solo for."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "¿Qué casillas forman la diagonal principal?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "matriz[i][i]"
+				},
+				{
+					"id": "b",
+					"text": "matriz[i][n - 1 - i]"
+				},
+				{
+					"id": "c",
+					"text": "matriz[0][j]"
+				},
+				{
+					"id": "d",
+					"text": "matriz[i][0]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "En la diagonal fila y columna valen lo mismo."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\nfor i in range(3):\n    print(matriz[i][2 - i])",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "1\n5\n9"
+				},
+				{
+					"id": "b",
+					"text": "7\n5\n3"
+				},
+				{
+					"id": "c",
+					"text": "3\n6\n9"
+				},
+				{
+					"id": "d",
+					"text": "3\n5\n7"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "d"
+		},
+		"explanation": "Diagonal secundaria: [0][2], [1][1], [2][0]."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe sumar la diagonal principal. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"total = 0",
+				"for i in range(n):",
+				"    total = total + matriz[i][j]"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "No hay for de j: en la diagonal el mismo i sirve de fila y de columna, matriz[i][i]."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "medio",
+		"prompt": "Completa la diagonal secundaria de una matriz de n × n.",
+		"data": {
+			"code": "for i in range(n):\n    print(matriz[i][___1___])",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "la columna baja cuando i sube"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"n - 1 - i",
+					"n-1-i",
+					"n - i - 1",
+					"n-i-1"
+				]
+			}
+		},
+		"explanation": "Para i = 0 la columna es n - 1; para i = n - 1 es 0."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "Al sumar la fila f más la columna c, ¿por qué se resta matriz[f][c]?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "Para no salirse de la matriz"
+				},
+				{
+					"id": "b",
+					"text": "Porque la columna empieza en 1"
+				},
+				{
+					"id": "c",
+					"text": "Porque la casilla del cruce quedó sumada dos veces"
+				},
+				{
+					"id": "d",
+					"text": "Porque es negativa"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "c"
+		},
+		"explanation": "El cruce pertenece a la fila y a la columna a la vez."
+	}
+]

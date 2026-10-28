@@ -1,0 +1,30 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Para crear matriz: <code>[0] * n</code> + <code>for</code> con <code>matriz[i] = [0] * m</code>. Siempre.
+</div>
+
+<p>Los cinco últimos ejercicios están escritos como los del juez: un enunciado con historia que esconde dos o tres patrones de matrices. Reglas del simulacro:</p>
+
+<ol>
+  <li>Cronómetro: <strong>20 minutos por ejercicio</strong>.</li>
+  <li>Antes de escribir, anota qué es fila y qué es columna en la historia (tiendas × días, estudiantes × notas…) y qué patrón resuelve cada cosa que se pide. Debe tomarte <strong>menos de 60 segundos</strong>.</li>
+  <li>Escribe primero <code>crear_matriz</code> y <code>leer_matriz</code> de memoria. Después <strong>una función por patrón</strong>, y <code>main()</code> que las llama.</li>
+  <li>Copia el formato de salida <strong>letra por letra</strong>. Si el enunciado cuenta desde 1, imprime <code>i + 1</code>.</li>
+</ol>
+
+<table>
+  <thead>
+    <tr><th>Si el enunciado dice…</th><th>Patrón</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>"crea", "genera", "llena la tabla"</td><td>M1 · crear y llenar</td></tr>
+    <tr><td>"cuántos… en total", "la suma de todo", "el promedio general"</td><td>M2 · recorrer completa</td></tr>
+    <tr><td>"de la tienda / del estudiante X" (una fila)</td><td>M3 · fila congelada</td></tr>
+    <tr><td>"del día / de la materia X" (una columna)</td><td>M4 · columna congelada</td></tr>
+    <tr><td>"diagonal"</td><td><code>matriz[i][i]</code> o <code>matriz[i][n - 1 - i]</code></td></tr>
+    <tr><td>"el mayor", "el menor", "dónde", "quién ganó"</td><td>M5 · buscar (con <code>pf</code>, <code>pc</code> si piden dónde)</td></tr>
+    <tr><td>"imprime la matriz con…", "transpuesta", "suma de matrices"</td><td>M6 · matriz nueva</td></tr>
+    <tr><td>"la lista de los que…"</td><td>M6-K · vector nuevo con <code>k</code></td></tr>
+  </tbody>
+</table>
+
+<p>Cuando resuelvas los cinco sin abrir la solución, presenta el quiz. Si lo apruebas, las matrices ya no te asustan.</p>

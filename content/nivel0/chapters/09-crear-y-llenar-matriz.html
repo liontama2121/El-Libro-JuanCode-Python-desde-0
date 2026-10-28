@@ -1,0 +1,62 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Para crear matriz: <code>[0] * n</code> + <code>for</code> con <code>matriz[i] = [0] * m</code>. Siempre.
+</div>
+
+<p>Crear la matriz y llenar cada casilla. Si no sabes hacer esto, no puedes hacer nada más.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto M1 · escríbelo 3 veces</p>
+<pre><code>def crear_matriz(n, m):
+    matriz = [0] * n
+    for i in range(n):
+        matriz[i] = [0] * m
+    return matriz
+
+def imprimir_matriz(matriz, n, m):
+    for i in range(n):
+        linea = ""
+        for j in range(m):
+            if j &gt; 0:
+                linea = linea + " "
+            linea = linea + str(matriz[i][j])
+        print(linea)
+
+def main():
+    n = int(input())
+    m = int(input())
+    matriz = crear_matriz(n, m)
+    for i in range(n):
+        for j in range(m):
+            matriz[i][j] = (valor)
+    imprimir_matriz(matriz, n, m)
+
+main()</code></pre>
+</div>
+
+<p>La plana de este patrón es cambiar <strong>solo</strong> lo que va después del <code>=</code>:</p>
+
+<table>
+  <thead>
+    <tr><th>El enunciado dice…</th><th><code>matriz[i][j] = …</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>leer del teclado</td><td><code>int(input())</code></td></tr>
+    <tr><td>tabla de multiplicar</td><td><code>(i + 1) * (j + 1)</code></td></tr>
+    <tr><td>suma de posiciones</td><td><code>i + j</code></td></tr>
+    <tr><td>todo en V</td><td><code>v</code></td></tr>
+    <tr><td>numerar 1, 2, 3…</td><td><code>valor</code> y luego <code>valor = valor + 1</code></td></tr>
+    <tr><td>identidad (1 en la diagonal)</td><td><code>if i == j:</code> → <code>1</code></td></tr>
+    <tr><td>ajedrez</td><td><code>if (i + j) % 2 == 0:</code> → <code>1</code></td></tr>
+  </tbody>
+</table>
+
+<div class="jc-mat" role="img" aria-label="tabla de multiplicar de 3 por 4">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span><span class="jc-mat-j">j = 3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda" data-ij="[0][0]">1</span><span class="jc-celda" data-ij="[0][1]">2</span><span class="jc-celda" data-ij="[0][2]">3</span><span class="jc-celda" data-ij="[0][3]">4</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda" data-ij="[1][0]">2</span><span class="jc-celda" data-ij="[1][1]">4</span><span class="jc-celda" data-ij="[1][2]">6</span><span class="jc-celda" data-ij="[1][3]">8</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 2</span><span class="jc-celda" data-ij="[2][0]">3</span><span class="jc-celda" data-ij="[2][1]">6</span><span class="jc-celda" data-ij="[2][2]">9</span><span class="jc-celda" data-ij="[2][3]">12</span></div>
+</div>
+
+<p>Tres reglas que no se negocian: la matriz se crea <strong>antes</strong> del doble <code>for</code>; el <code>for</code> de <code>j</code> va <strong>dentro</strong> del de <code>i</code>; y se imprime <strong>afuera</strong>, cuando ya está llena.</p>
+
+<p>Ejercicios: <strong>M1.1 a M1.6</strong>.</p>

@@ -1,0 +1,79 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Para crear matriz: <code>[0] * n</code> + <code>for</code> con <code>matriz[i] = [0] * m</code>. Siempre.
+</div>
+
+<p class="jc-plana-sub">M3 y M4 son el mismo truco: uno de los dos índices se congela. Si ves el truco, ves también las diagonales.</p>
+
+<h3>1. Las tres formas de recorrer</h3>
+
+<table>
+  <thead>
+    <tr><th>Recorrido</th><th>Índice congelado</th><th>Índice que camina</th><th>Cuántos for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Toda la matriz</td><td>ninguno</td><td><code>i</code> y <code>j</code></td><td>2</td></tr>
+    <tr><td>Una fila</td><td>la fila <code>f</code></td><td><code>j</code></td><td>1</td></tr>
+    <tr><td>Una columna</td><td>la columna <code>c</code></td><td><code>i</code></td><td>1</td></tr>
+    <tr><td>La diagonal</td><td>"atados": fila = columna</td><td><code>i</code></td><td>1</td></tr>
+  </tbody>
+</table>
+
+<p class="jc-frase">Pregúntate siempre: ¿qué índice NO cambia? Ese va fijo dentro de los corchetes.</p>
+
+<h3>2. La cruz: fila y columna congeladas a la vez</h3>
+
+<div class="jc-mat" role="img" aria-label="matriz de 3 filas por 4 columnas: 7, -3, 0, 2 / 5, 8, -1, 4 / -6, 1, 9, 3. Resaltadas la fila 1, la columna 2 y su cruce">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span><span class="jc-mat-j">j = 3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda" data-ij="[0][0]">7</span><span class="jc-celda" data-ij="[0][1]">-3</span><span class="jc-celda es-col" data-ij="[0][2]">0</span><span class="jc-celda" data-ij="[0][3]">2</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda es-fila" data-ij="[1][0]">5</span><span class="jc-celda es-fila" data-ij="[1][1]">8</span><span class="jc-celda es-cruce" data-ij="[1][2]">-1</span><span class="jc-celda es-fila" data-ij="[1][3]">4</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 2</span><span class="jc-celda" data-ij="[2][0]">-6</span><span class="jc-celda" data-ij="[2][1]">1</span><span class="jc-celda es-col" data-ij="[2][2]">9</span><span class="jc-celda" data-ij="[2][3]">3</span></div>
+</div>
+
+<p>Fila 1 (cian) + columna 2 (dorado). La casilla del cruce, <code>[1][2]</code>, está en las dos: si sumas fila y columna, se cuenta <strong>dos veces</strong> y hay que restarla una vez.</p>
+
+<pre><code>total = suma_fila(matriz, f, m) + suma_columna(matriz, c, n) - matriz[f][c]</code></pre>
+
+<h3>3. Las diagonales (solo matrices cuadradas, n × n)</h3>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Principal · matriz[i][i]</p>
+    <div class="jc-mat" role="img" aria-label="diagonal principal de una matriz 3 por 3: 1, 5, 9">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda es-diag" data-ij="[0][0]">1</span><span class="jc-celda" data-ij="[0][1]">2</span><span class="jc-celda" data-ij="[0][2]">3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda" data-ij="[1][0]">4</span><span class="jc-celda es-diag" data-ij="[1][1]">5</span><span class="jc-celda" data-ij="[1][2]">6</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 2</span><span class="jc-celda" data-ij="[2][0]">7</span><span class="jc-celda" data-ij="[2][1]">8</span><span class="jc-celda es-diag" data-ij="[2][2]">9</span></div>
+</div>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Secundaria · matriz[i][n - 1 - i]</p>
+    <div class="jc-mat" role="img" aria-label="diagonal secundaria de una matriz 3 por 3: 3, 5, 7">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda" data-ij="[0][0]">1</span><span class="jc-celda" data-ij="[0][1]">2</span><span class="jc-celda es-diag" data-ij="[0][2]">3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda" data-ij="[1][0]">4</span><span class="jc-celda es-diag" data-ij="[1][1]">5</span><span class="jc-celda" data-ij="[1][2]">6</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 2</span><span class="jc-celda es-diag" data-ij="[2][0]">7</span><span class="jc-celda" data-ij="[2][1]">8</span><span class="jc-celda" data-ij="[2][2]">9</span></div>
+</div>
+  </div>
+</div>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto diagonal · escríbelo 3 veces</p>
+<pre><code>def suma_diagonal(matriz, n):
+    total = 0
+    for i in range(n):
+        total = total + matriz[i][i]
+    return total</code></pre>
+</div>
+
+<h3>4. Los tres errores al congelar</h3>
+
+<p><strong>a) Corchetes al revés.</strong> <code>matriz[j][f]</code> recorre una columna, no la fila <code>f</code>.</p>
+<pre><code>total = total + matriz[j][f]   # ❌ es matriz[f][j]</code></pre>
+
+<p><strong>b) Tope equivocado.</strong> Fila hasta <code>m</code>, columna hasta <code>n</code>.</p>
+<pre><code>for i in range(m):             # ❌ una columna va hasta n
+    total = total + matriz[i][c]</code></pre>
+
+<p><strong>c) Doble for en la diagonal.</strong> Funciona con <code>if i == j</code>, pero da <code>n × n</code> vueltas para usar <code>n</code>. Un solo <code>for</code> con <code>matriz[i][i]</code>.</p>
+
+<p>Ejercicios: <strong>K.1 a K.4</strong>.</p>

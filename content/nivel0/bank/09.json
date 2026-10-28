@@ -1,0 +1,180 @@
+[
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "matriz = [0] * 2\nfor i in range(2):\n    matriz[i] = [0] * 3\nfor i in range(2):\n    for j in range(3):\n        matriz[i][j] = i * 10 + j\nprint(matriz)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[[10, 11, 12], [20, 21, 22]]"
+				},
+				{
+					"id": "b",
+					"text": "[[0, 1, 2], [10, 11, 12]]"
+				},
+				{
+					"id": "c",
+					"text": "[[0, 10], [1, 11], [2, 12]]"
+				},
+				{
+					"id": "d",
+					"text": "[[0, 1, 2], [1, 2, 3]]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "La fila da las decenas (i * 10) y la columna las unidades (j)."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Con n = 3 y m = 4, ¿cuántas veces se ejecuta la línea de adentro de un doble for?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "12"
+				},
+				{
+					"id": "b",
+					"text": "7"
+				},
+				{
+					"id": "c",
+					"text": "4"
+				},
+				{
+					"id": "d",
+					"text": "3"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Por cada una de las 3 filas, el for de j da 4 vueltas: 3 × 4 = 12, una por casilla."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "facil",
+		"prompt": "Debe llenar una matriz de n × m. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"matriz = crear_matriz(n, m)",
+				"for i in range(n):",
+				"    for j in range(n):",
+				"        matriz[i][j] = i + j"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "j recorre columnas: su tope es m. Con range(n) se sale de la fila (o deja columnas sin llenar)."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "facil",
+		"prompt": "Completa la matriz identidad (1 en la diagonal).",
+		"data": {
+			"code": "matriz = crear_matriz(n, n)\nfor i in range(n):\n    for j in range(n):\n        if i ___1___ j:\n            matriz[i][j] = ___2___",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "comparar"
+				},
+				{
+					"id": "2",
+					"pista": "lo que va en la diagonal"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"=="
+				],
+				"2": [
+					"1"
+				]
+			}
+		},
+		"explanation": "En la diagonal fila y columna son iguales. El resto ya es 0 por crear_matriz."
+	},
+	{
+		"type": "parsons",
+		"difficulty": "medio",
+		"prompt": "La matriz ya existe en ceros. Arma el bloque que la numera 1, 2, 3… fila por fila",
+		"data": {
+			"lines": [
+				{
+					"id": "l1",
+					"text": "valor = 1",
+					"indent": 0
+				},
+				{
+					"id": "l2",
+					"text": "for i in range(n):",
+					"indent": 0
+				},
+				{
+					"id": "l3",
+					"text": "for j in range(m):",
+					"indent": 1
+				},
+				{
+					"id": "l4",
+					"text": "matriz[i][j] = valor",
+					"indent": 2
+				},
+				{
+					"id": "l5",
+					"text": "valor = valor + 1",
+					"indent": 2
+				}
+			]
+		},
+		"correct": {
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4",
+				"l5"
+			]
+		},
+		"explanation": "El contador nace afuera y avanza junto con cada casilla, dentro del for de j."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "dificil",
+		"prompt": "¿Por qué matriz = [[0] * m] * n da problemas?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "Crea m filas en vez de n"
+				},
+				{
+					"id": "b",
+					"text": "Python no permite multiplicar listas de listas"
+				},
+				{
+					"id": "c",
+					"text": "Deja la matriz llena de None"
+				},
+				{
+					"id": "d",
+					"text": "Las n filas son la misma lista: cambiar una casilla cambia esa columna en todas las filas"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "d"
+		},
+		"explanation": "* n copia la referencia, no la fila. Por eso el patrón obligatorio crea cada fila por separado: matriz[i] = [0] * m."
+	}
+]

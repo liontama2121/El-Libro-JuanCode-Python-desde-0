@@ -1,0 +1,71 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Para crear matriz: <code>[0] * n</code> + <code>for</code> con <code>matriz[i] = [0] * m</code>. Siempre.
+</div>
+
+<p>Crear una matriz <strong>nueva</strong> a partir de otra. La nueva nace con <code>crear_matriz</code> y se llena con el doble <code>for</code>. Nunca con <code>.append</code>.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto M6 · escríbelo 3 veces</p>
+<pre><code>nueva = crear_matriz(n, m)
+for i in range(n):
+    for j in range(m):
+        nueva[i][j] = (algo con matriz[i][j])
+imprimir_matriz(nueva, n, m)</code></pre>
+</div>
+
+<table>
+  <thead>
+    <tr><th>El enunciado dice…</th><th>Cambio</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>el doble / por K</td><td><code>nueva[i][j] = matriz[i][j] * k</code></td></tr>
+    <tr><td>negativos a 0</td><td><code>if matriz[i][j] &gt; 0:</code> → copiar (el resto ya es 0)</td></tr>
+    <tr><td>espejo</td><td><code>nueva[i][j] = matriz[i][m - 1 - j]</code></td></tr>
+    <tr><td>suma de A y B</td><td><code>s[i][j] = a[i][j] + b[i][j]</code> (<code>leer_matriz</code> dos veces)</td></tr>
+    <tr><td>transpuesta</td><td><code>t = crear_matriz(m, n)</code> y <code>t[j][i] = matriz[i][j]</code></td></tr>
+  </tbody>
+</table>
+
+<h3>La transpuesta: todo al revés</h3>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">matriz · 2 × 3</p>
+    <div class="jc-mat" role="img" aria-label="matriz de 2 por 3: 1, 2, 3 / 4, 5, 6">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda es-fila" data-ij="[0][0]">1</span><span class="jc-celda es-fila" data-ij="[0][1]">2</span><span class="jc-celda es-fila" data-ij="[0][2]">3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda" data-ij="[1][0]">4</span><span class="jc-celda" data-ij="[1][1]">5</span><span class="jc-celda" data-ij="[1][2]">6</span></div>
+</div>
+  </div>
+  <div>
+    <p class="jc-vs-tit">t · 3 × 2</p>
+    <div class="jc-mat" role="img" aria-label="transpuesta de 3 por 2: 1, 4 / 2, 5 / 3, 6">
+    <div class="jc-mat-fila"><span class="jc-mat-i">t</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda es-fila" data-ij="[0][0]">1</span><span class="jc-celda" data-ij="[0][1]">4</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda es-fila" data-ij="[1][0]">2</span><span class="jc-celda" data-ij="[1][1]">5</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 2</span><span class="jc-celda es-fila" data-ij="[2][0]">3</span><span class="jc-celda" data-ij="[2][1]">6</span></div>
+</div>
+  </div>
+</div>
+
+<p>La fila 0 de <code>matriz</code> pasa a ser la columna 0 de <code>t</code>. Se crea al revés <code>(m, n)</code>, se escribe al revés <code>t[j][i]</code> y se imprime al revés <code>imprimir_matriz(t, m, n)</code>.</p>
+
+<h3>De matriz a vector: vuelve el contador k</h3>
+
+<p>Cuando piden una <strong>lista</strong> sacada de la matriz, el resultado es un vector, y el vector se llena con <code>k</code>, igual que en el Nivel 0. <code>i</code> y <code>j</code> recorren la matriz; <code>k</code> solo avanza al copiar.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto M6-K · escríbelo 3 veces</p>
+<pre><code>nuevo = [0] * (n * m)
+k = 0
+for i in range(n):
+    for j in range(m):
+        if matriz[i][j] (condición):
+            nuevo[k] = matriz[i][j]
+            k = k + 1
+
+for i in range(k):
+    print(nuevo[i])</code></pre>
+</div>
+
+<p>Ejercicios: <strong>M6.1 a M6.8</strong>.</p>

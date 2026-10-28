@@ -784,6 +784,128 @@ html {
 	}
 }
 
+/* ==========================================================================
+   Nivel 0.5 — Planas de matrices
+   La matriz se dibuja fila por fila con las mismas casillas del vector; cada
+   casilla lleva su [i][j] en la esquina. Resaltes: fila congelada, columna
+   congelada, cruce y diagonal. El doble for se anima solo con CSS.
+   ========================================================================== */
+
+.jc-vs {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+	gap: 1rem;
+}
+.jc-vs > div {
+	padding: 0.9rem 1rem 0.4rem;
+	background: color-mix(in srgb, var(--color-cyan) 4%, transparent);
+	border: 1px solid var(--color-borde);
+}
+.jc-vs-tit {
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--color-cyan);
+}
+
+.jc-mat {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	padding: 0.4rem 0 0.8rem;
+	overflow-x: auto;
+}
+.jc-mat-fila {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+.jc-mat-i,
+.jc-mat-j {
+	flex: none;
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	color: var(--color-tinta-2);
+}
+.jc-mat-i {
+	width: 3.4rem;
+}
+.jc-mat-j {
+	width: 3.2rem;
+	text-align: center;
+}
+.jc-mat .jc-celda {
+	flex: none;
+	width: 3.2rem;
+	height: 2.9rem;
+}
+.jc-mat .jc-celda::before {
+	content: attr(data-ij);
+	top: 0.12rem;
+	left: 0.22rem;
+	margin-top: 0;
+	font-size: 0.55rem;
+}
+.jc-celda.es-fila {
+	color: var(--color-cyan);
+	border-color: color-mix(in srgb, var(--color-cyan) 60%, transparent);
+	background: color-mix(in srgb, var(--color-cyan) 10%, var(--color-codigo));
+}
+.jc-celda.es-col {
+	color: var(--color-dorado);
+	border-color: color-mix(in srgb, var(--color-dorado) 60%, transparent);
+	background: color-mix(in srgb, var(--color-dorado) 10%, var(--color-codigo));
+}
+.jc-celda.es-cruce {
+	color: var(--color-verde);
+	border-color: var(--color-verde);
+	box-shadow: 0 0 0 1px var(--color-verde);
+}
+.jc-celda.es-diag {
+	color: var(--color-magenta);
+	border-color: color-mix(in srgb, var(--color-magenta) 60%, transparent);
+	background: color-mix(in srgb, var(--color-magenta) 10%, var(--color-codigo));
+}
+@media (max-width: 30rem) {
+	.jc-mat-i,
+	.jc-mat-j,
+	.jc-mat .jc-celda {
+		width: 2.6rem;
+	}
+}
+
+/* ── Animación del doble for: 6 casillas (2 × 3), 2 s cada una, ciclo de 12 s */
+.jc-m-anim {
+	padding: 1rem 1rem 0.4rem;
+	background: color-mix(in srgb, var(--color-cyan) 4%, transparent);
+	border: 1px solid var(--color-borde);
+}
+.jc-m-paso {
+	animation: jc-m-foco 12s linear infinite;
+	animation-delay: calc(var(--paso) * 2s);
+}
+@keyframes jc-m-foco {
+	0%,
+	16.5% {
+		color: var(--color-verde);
+		border-color: var(--color-verde);
+		box-shadow:
+			0 0 0 2px var(--color-verde),
+			0 0 18px -2px var(--color-verde);
+	}
+	16.7%,
+	100% {
+		border-color: var(--color-borde);
+		box-shadow: none;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.jc-m-paso {
+		animation: none;
+	}
+}
+
 /* Las respuestas y el código viven sobre fondo oscuro en ambos temas */
 .bg-codigo {
 	color-scheme: dark;

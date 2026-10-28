@@ -1,0 +1,40 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Para crear matriz: <code>[0] * n</code> + <code>for</code> con <code>matriz[i] = [0] * m</code>. Siempre.
+</div>
+
+<p>A veces no te piden toda la matriz, sino <strong>una fila</strong>: las ventas de una tienda, las notas de un estudiante. Entonces la fila se queda quieta y solo camina <code>j</code>. <strong>Un solo for.</strong></p>
+
+<div class="jc-mat" role="img" aria-label="matriz de 3 filas por 4 columnas: 7, -3, 0, 2 / 5, 8, -1, 4 / -6, 1, 9, 3. Resaltada la fila 1">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span><span class="jc-mat-j">j = 3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda" data-ij="[0][0]">7</span><span class="jc-celda" data-ij="[0][1]">-3</span><span class="jc-celda" data-ij="[0][2]">0</span><span class="jc-celda" data-ij="[0][3]">2</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda es-fila" data-ij="[1][0]">5</span><span class="jc-celda es-fila" data-ij="[1][1]">8</span><span class="jc-celda es-fila" data-ij="[1][2]">-1</span><span class="jc-celda es-fila" data-ij="[1][3]">4</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 2</span><span class="jc-celda" data-ij="[2][0]">-6</span><span class="jc-celda" data-ij="[2][1]">1</span><span class="jc-celda" data-ij="[2][2]">9</span><span class="jc-celda" data-ij="[2][3]">3</span></div>
+</div>
+
+<p>Fila <code>f = 1</code>: <code>matriz[1][0]</code>, <code>matriz[1][1]</code>, <code>matriz[1][2]</code>, <code>matriz[1][3]</code>. El primer índice no cambia.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto M3 · escríbelo 3 veces</p>
+<pre><code>def suma_fila(matriz, f, m):
+    total = 0
+    for j in range(m):
+        total = total + matriz[f][j]
+    return total</code></pre>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Quiero…</th><th>Escribo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>sumar la fila f</td><td><code>suma_fila(matriz, f, m)</code></td></tr>
+    <tr><td>el mayor de la fila f</td><td><code>mayor = matriz[f][0]</code> y <code>for j in range(1, m)</code></td></tr>
+    <tr><td>contar en la fila f</td><td><code>if matriz[f][j] (condición):</code></td></tr>
+    <tr><td>la suma de <strong>cada</strong> fila</td><td><code>for i in range(n):</code> → <code>print(suma_fila(matriz, i, m))</code></td></tr>
+    <tr><td>la fila que más suma</td><td>posición del máximo comparando <code>suma_fila(...)</code></td></tr>
+  </tbody>
+</table>
+
+<p class="jc-frase">Una fila tiene m casillas: el for va hasta m.</p>
+
+<p>Ejercicios: <strong>M3.1 a M3.6</strong>.</p>

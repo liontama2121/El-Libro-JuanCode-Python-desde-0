@@ -1,0 +1,167 @@
+<h2>Nivel 0.5 — Planas de Matrices</h2>
+
+<p class="jc-plana-sub">Dos índices, un solo patrón mental. Cuando lo automatices, nada te asusta.</p>
+
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Para crear matriz: <code>[0] * n</code> + <code>for</code> con <code>matriz[i] = [0] * m</code>. Siempre.
+</div>
+
+<div class="jc-plana-intro">
+  <p>Ya dominas vectores. Ahora toca el salto a <strong>MATRICES</strong> — que es básicamente vectores dentro de vectores. El concepto es simple: en vez de un índice (<code>i</code>), ahora manejas dos (<code>i</code> para fila, <code>j</code> para columna). Esta sección te enseña por repetición hasta que ese "doble for" lo escribas sin pensar.</p>
+</div>
+
+<h2>🧠 De vector a matriz: por qué dos índices</h2>
+
+<p class="jc-plana-sub">El salto conceptual que confunde a todos. Hagámoslo claro.</p>
+
+<h3>1. Vector contra matriz</h3>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Vector · lo que ya sabes</p>
+    <div class="jc-vec" aria-label="vector: 7, -3, 0, 2">
+      <span class="jc-celda" data-i="0">7</span><span class="jc-celda" data-i="1">-3</span><span class="jc-celda" data-i="2">0</span><span class="jc-celda" data-i="3">2</span>
+    </div>
+<pre><code>vector = [0] * m
+vector[i] = valor</code></pre>
+    <p>Una fila. <strong>Un</strong> índice: <code>i</code> dice la casilla.</p>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Matriz · lo nuevo</p>
+    <div class="jc-mat" role="img" aria-label="matriz de 2 filas por 4 columnas">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span><span class="jc-mat-j">j = 3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda" data-ij="[0][0]">7</span><span class="jc-celda" data-ij="[0][1]">-3</span><span class="jc-celda" data-ij="[0][2]">0</span><span class="jc-celda" data-ij="[0][3]">2</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda" data-ij="[1][0]">5</span><span class="jc-celda" data-ij="[1][1]">8</span><span class="jc-celda" data-ij="[1][2]">-1</span><span class="jc-celda" data-ij="[1][3]">4</span></div>
+</div>
+<pre><code>matriz[i] = [0] * m
+matriz[i][j] = valor</code></pre>
+    <p>Varias filas. <strong>Dos</strong> índices: <code>i</code> escoge la fila, <code>j</code> la casilla dentro de esa fila.</p>
+  </div>
+</div>
+
+<p class="jc-frase">Una matriz es un vector de filas. Cada fila es un vector de los que ya sabes llenar.</p>
+
+<h3>2. Cómo se lee matriz[i][j]</h3>
+
+<p>Esta es la matriz de ejemplo de todo el Nivel 0.5: <code>n = 3</code> filas y <code>m = 4</code> columnas.</p>
+
+<div class="jc-mat" role="img" aria-label="matriz de 3 filas por 4 columnas: 7, -3, 0, 2 / 5, 8, -1, 4 / -6, 1, 9, 3. Resaltada la casilla [1][2] que vale -1">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span><span class="jc-mat-j">j = 3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda" data-ij="[0][0]">7</span><span class="jc-celda" data-ij="[0][1]">-3</span><span class="jc-celda" data-ij="[0][2]">0</span><span class="jc-celda" data-ij="[0][3]">2</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda" data-ij="[1][0]">5</span><span class="jc-celda" data-ij="[1][1]">8</span><span class="jc-celda es-cruce" data-ij="[1][2]">-1</span><span class="jc-celda" data-ij="[1][3]">4</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 2</span><span class="jc-celda" data-ij="[2][0]">-6</span><span class="jc-celda" data-ij="[2][1]">1</span><span class="jc-celda" data-ij="[2][2]">9</span><span class="jc-celda" data-ij="[2][3]">3</span></div>
+</div>
+
+<ul>
+  <li><code>matriz[1]</code> es la fila 1 completa: <code>[5, 8, -1, 4]</code>.</li>
+  <li><code>matriz[1][2]</code> es la casilla 2 de esa fila: <code>-1</code>.</li>
+  <li>La última casilla es <code>matriz[n - 1][m - 1]</code> = <code>matriz[2][3]</code> = <code>3</code>.</li>
+</ul>
+
+<p class="jc-frase">Primero la fila, después la columna. Siempre. matriz[fila][columna].</p>
+
+<h3>3. El doble for</h3>
+
+<p>Para visitar <strong>todas</strong> las casillas, el <code>for</code> de <code>i</code> escoge una fila y, dentro, el <code>for</code> de <code>j</code> camina por ella. Cuando <code>j</code> termina la fila, <code>i</code> baja a la siguiente:</p>
+
+<pre><code>for i in range(n):          # filas: 0 .. n-1
+    for j in range(m):      # columnas: 0 .. m-1
+        matriz[i][j] = ...</code></pre>
+
+<div class="jc-m-anim" role="img" aria-label="Animación: el doble for recorre la matriz de 2 por 3 en orden [0][0], [0][1], [0][2], [1][0], [1][1], [1][2].">
+  <div class="jc-mat">
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda jc-m-paso" style="--paso: 0" data-ij="[0][0]">1º</span><span class="jc-celda jc-m-paso" style="--paso: 1" data-ij="[0][1]">2º</span><span class="jc-celda jc-m-paso" style="--paso: 2" data-ij="[0][2]">3º</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda jc-m-paso" style="--paso: 3" data-ij="[1][0]">4º</span><span class="jc-celda jc-m-paso" style="--paso: 4" data-ij="[1][1]">5º</span><span class="jc-celda jc-m-paso" style="--paso: 5" data-ij="[1][2]">6º</span></div>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Vuelta</th><th>i</th><th>j</th><th>Casilla</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>0</td><td>0</td><td><code>[0][0]</code></td></tr>
+    <tr><td>2</td><td>0</td><td>1</td><td><code>[0][1]</code></td></tr>
+    <tr><td>3</td><td>0</td><td>2</td><td><code>[0][2]</code></td></tr>
+    <tr><td>4</td><td>1</td><td>0</td><td><code>[1][0]</code> ← <code>j</code> vuelve a 0</td></tr>
+    <tr><td>5</td><td>1</td><td>1</td><td><code>[1][1]</code></td></tr>
+    <tr><td>6</td><td>1</td><td>2</td><td><code>[1][2]</code></td></tr>
+  </tbody>
+</table>
+
+<p>En total <code>n × m</code> vueltas: una por casilla.</p>
+
+<h3>4. Crear la matriz: el único patrón permitido</h3>
+
+<pre><code>matriz = [0] * n
+for i in range(n):
+    matriz[i] = [0] * m</code></pre>
+
+<p>Primero un vector de <code>n</code> casillas (las filas). Después, cada casilla se cambia por un vector de <code>m</code> ceros. Nunca uses:</p>
+
+<ul>
+  <li>❌ <code>[[0] * m for _ in range(n)]</code> — es una comprensión.</li>
+  <li>❌ <code>matriz.append([0] * m)</code> — es <code>.append</code>.</li>
+  <li>❌ <code>[[0] * m] * n</code> — las <code>n</code> filas quedan siendo <strong>la misma</strong> lista: cambias una casilla y cambia en todas las filas.</li>
+</ul>
+
+<h2>La plana de funciones</h2>
+
+<p>En el examen la matriz se crea, se lee y se imprime en <strong>todos</strong> los ejercicios. Por eso se escriben una vez como funciones y <code>main()</code> las llama. Estas tres funciones son la plana del Nivel 0.5: <strong>escríbelas de memoria hasta que salgan solas.</strong></p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Función 1 · crear_matriz · escríbela 3 veces</p>
+<pre><code>def crear_matriz(n, m):
+    matriz = [0] * n
+    for i in range(n):
+        matriz[i] = [0] * m
+    return matriz</code></pre>
+</div>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Función 2 · leer_matriz · escríbela 3 veces</p>
+<pre><code>def leer_matriz(n, m):
+    matriz = crear_matriz(n, m)
+    for i in range(n):
+        for j in range(m):
+            matriz[i][j] = int(input())
+    return matriz</code></pre>
+</div>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Función 3 · imprimir_matriz · escríbela 3 veces</p>
+<pre><code>def imprimir_matriz(matriz, n, m):
+    for i in range(n):
+        linea = ""
+        for j in range(m):
+            if j &gt; 0:
+                linea = linea + " "
+            linea = linea + str(matriz[i][j])
+        print(linea)</code></pre>
+</div>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">El main · escríbelo 3 veces</p>
+<pre><code>def main():
+    n = int(input())
+    m = int(input())
+    matriz = leer_matriz(n, m)
+    # aquí va lo que pide el enunciado
+
+main()</code></pre>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Regla de funciones</th><th>Por qué</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>La función <strong>retorna</strong> el resultado; <code>main()</code> lo imprime</td><td>Así la misma función sirve para imprimir, comparar o sumar</td></tr>
+    <tr><td>Se le pasa todo lo que necesita: <code>(matriz, n, m)</code></td><td>Una función no adivina el tamaño</td></tr>
+    <tr><td><code>return</code> va <strong>afuera</strong> de los <code>for</code></td><td>Adentro, sale en la primera vuelta</td></tr>
+    <tr><td>La última línea del archivo es <code>main()</code>, sin sangría</td><td>Sin ella el programa no hace nada y el juez ve salida vacía</td></tr>
+    <tr><td><code>imprimir_matriz</code> pega con <code>" "</code> y <code>str()</code></td><td>Sin f-strings; y sin espacio sobrante al final de la línea</td></tr>
+  </tbody>
+</table>
+
+<p>Todos los ejercicios leen como el juez: primero <code>N</code> (filas), después <code>M</code> (columnas) y luego los <code>N × M</code> números, <strong>uno por línea, fila por fila</strong>. Ejercicios: <strong>F.1 a F.4</strong>.</p>

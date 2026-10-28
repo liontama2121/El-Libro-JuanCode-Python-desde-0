@@ -1,0 +1,53 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code> ni comprensiones. Para crear matriz: <code>[0] * n</code> + <code>for</code> con <code>matriz[i] = [0] * m</code>. Siempre.
+</div>
+
+<p>El mayor, el menor y <strong>dónde</strong> está. Es el patrón IV del Nivel 0 con una diferencia: la posición ahora son <strong>dos</strong> números.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto M5-A · el valor · escríbelo 3 veces</p>
+<pre><code>def buscar_mayor(matriz, n, m):
+    mayor = matriz[0][0]
+    for i in range(n):
+        for j in range(m):
+            if matriz[i][j] &gt; mayor:
+                mayor = matriz[i][j]
+    return mayor</code></pre>
+</div>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto M5-B · la posición · escríbelo 3 veces</p>
+<pre><code>pf = 0
+pc = 0
+for i in range(n):
+    for j in range(m):
+        if matriz[i][j] &gt; matriz[pf][pc]:
+            pf = i
+            pc = j
+print("Fila: " + str(pf))
+print("Columna: " + str(pc))</code></pre>
+</div>
+
+<div class="jc-mat" role="img" aria-label="matriz de 3 filas por 4 columnas: 7, -3, 0, 2 / 5, 8, -1, 4 / -6, 1, 9, 3. Resaltado el mayor, 9, en la fila 2 columna 2">
+    <div class="jc-mat-fila"><span class="jc-mat-i">matriz</span><span class="jc-mat-j">j = 0</span><span class="jc-mat-j">j = 1</span><span class="jc-mat-j">j = 2</span><span class="jc-mat-j">j = 3</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 0</span><span class="jc-celda" data-ij="[0][0]">7</span><span class="jc-celda" data-ij="[0][1]">-3</span><span class="jc-celda" data-ij="[0][2]">0</span><span class="jc-celda" data-ij="[0][3]">2</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 1</span><span class="jc-celda" data-ij="[1][0]">5</span><span class="jc-celda" data-ij="[1][1]">8</span><span class="jc-celda" data-ij="[1][2]">-1</span><span class="jc-celda" data-ij="[1][3]">4</span></div>
+    <div class="jc-mat-fila"><span class="jc-mat-i">i = 2</span><span class="jc-celda" data-ij="[2][0]">-6</span><span class="jc-celda" data-ij="[2][1]">1</span><span class="jc-celda es-cruce" data-ij="[2][2]">9</span><span class="jc-celda" data-ij="[2][3]">3</span></div>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Quiero…</th><th>Cambio</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>el menor</td><td><code>&lt;</code> en vez de <code>&gt;</code></td></tr>
+    <tr><td>dónde está</td><td><code>pf</code> y <code>pc</code>, se guardan <strong>juntos</strong></td></tr>
+    <tr><td>buscar X</td><td><code>pf = -1</code> y <code>if matriz[i][j] == x and pf == -1:</code></td></tr>
+    <tr><td>el mayor de cada fila</td><td><code>mayor_fila(matriz, i, m)</code> dentro de <code>for i in range(n)</code></td></tr>
+    <tr><td>el rango</td><td><code>buscar_mayor(...) - buscar_menor(...)</code></td></tr>
+  </tbody>
+</table>
+
+<p>Dos reglas: se arranca con <code>matriz[0][0]</code>, <strong>nunca con 0</strong> (si todos son negativos, 0 da mal); y con <code>&gt;</code> estricto se queda la <strong>primera</strong> aparición.</p>
+
+<p>Ejercicios: <strong>M5.1 a M5.6</strong>.</p>
