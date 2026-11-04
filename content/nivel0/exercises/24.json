@@ -1,0 +1,186 @@
+[
+	{
+		"orden": 1,
+		"title": "L2.1 — Inventario de tienda",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> productos y agrégalos al inventario con <code>.append()</code>. Después lee <code>M</code> productos que se vendieron y quítalos con <code>.remove()</code> (siempre existen). Imprime el inventario.</p><p><strong>Entrada:</strong> <code>N</code>, los <code>N</code> productos, <code>M</code> y los <code>M</code> vendidos, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print(inventario)</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\narroz\nleche\npan\nhuevos\n2\npan\narroz</code></pre><p>Salida:</p><pre><code>['leche', 'huevos']</code></pre>",
+		"hint_html": "<p><code>inventario = []</code> arranca vacía; <code>.append(x)</code> agrega al final y <code>.remove(x)</code> quita la primera aparición.</p>",
+		"solution_html": "<pre><code>def main():\n    n = int(input())\n    inventario = []\n    for i in range(n):\n        inventario.append(input())\n    m = int(input())\n    for i in range(m):\n        inventario.remove(input())\n    print(inventario)\n\n\nmain()</code></pre><p>Fíjate en el caso del café repetido: <code>.remove</code> solo quita <strong>el primero</strong> que encuentra.</p>",
+		"starter_code": "# L2.1 — Inventario de tienda\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\narroz\nleche\npan\nhuevos\n2\npan\narroz\n",
+				"expected_output": "['leche', 'huevos']"
+			},
+			{
+				"stdin": "3\ncafe\ncafe\nazucar\n1\ncafe\n",
+				"expected_output": "['cafe', 'azucar']"
+			},
+			{
+				"stdin": "2\nsal\naceite\n0\n",
+				"expected_output": "['sal', 'aceite']"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "L2.2 — Fila de clientes",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> clientes en orden de llegada. Después lee <code>K</code> y atiende <code>K</code> clientes: el primero de la fila sale con <code>.pop(0)</code>. Por cada atendido imprime <code>Atendido: nombre</code>. Al final imprime <code>Quedan: X</code>.</p><p><strong>Entrada:</strong> <code>N</code>, los <code>N</code> nombres y <code>K</code> (con <code>K &lt;= N</code>), uno por línea.</p><p><strong>Salida:</strong> una línea por atendido y la línea <code>Quedan: X</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\nAna\nLuis\nSara\nPedro\n2</code></pre><p>Salida:</p><pre><code>Atendido: Ana\nAtendido: Luis\nQuedan: 2</code></pre>",
+		"hint_html": "<p><code>.pop(0)</code> saca el de la posición 0 <strong>y lo devuelve</strong>: guárdalo en una variable.</p>",
+		"solution_html": "<pre><code>def main():\n    n = int(input())\n    fila = []\n    for i in range(n):\n        fila.append(input())\n    k = int(input())\n    for i in range(k):\n        cliente = fila.pop(0)\n        print(\"Atendido: \" + cliente)\n    print(\"Quedan: \" + str(len(fila)))\n\n\nmain()</code></pre><p>Una fila (cola) atiende al primero que llegó: <code>.pop(0)</code>.</p>",
+		"starter_code": "# L2.2 — Fila de clientes\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\nAna\nLuis\nSara\nPedro\n2\n",
+				"expected_output": "Atendido: Ana\nAtendido: Luis\nQuedan: 2"
+			},
+			{
+				"stdin": "3\nEva\nJuan\nRosa\n3\n",
+				"expected_output": "Atendido: Eva\nAtendido: Juan\nAtendido: Rosa\nQuedan: 0"
+			},
+			{
+				"stdin": "2\nLeo\nMia\n0\n",
+				"expected_output": "Quedan: 2"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "L2.3 — Pila de platos",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> platos que se van apilando. Lee <code>K</code> y lava <code>K</code> platos: siempre se toma el de <strong>arriba</strong> (el último) con <code>.pop()</code>. Imprime <code>Lavado: plato</code> por cada uno y al final la pila.</p><p><strong>Entrada:</strong> <code>N</code>, los <code>N</code> platos y <code>K</code>, uno por línea.</p><p><strong>Salida:</strong> una línea por plato lavado y la pila con <code>print(pila)</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\nrojo\nazul\nverde\nblanco\n2</code></pre><p>Salida:</p><pre><code>Lavado: blanco\nLavado: verde\n['rojo', 'azul']</code></pre>",
+		"hint_html": "<p><code>.pop()</code> sin número saca el <strong>último</strong>.</p>",
+		"solution_html": "<pre><code>def main():\n    n = int(input())\n    pila = []\n    for i in range(n):\n        pila.append(input())\n    k = int(input())\n    for i in range(k):\n        plato = pila.pop()\n        print(\"Lavado: \" + plato)\n    print(pila)\n\n\nmain()</code></pre><p>Pila: el último en entrar es el primero en salir.</p>",
+		"starter_code": "# L2.3 — Pila de platos\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\nrojo\nazul\nverde\nblanco\n2\n",
+				"expected_output": "Lavado: blanco\nLavado: verde\n['rojo', 'azul']"
+			},
+			{
+				"stdin": "3\na\nb\nc\n1\n",
+				"expected_output": "Lavado: c\n['a', 'b']"
+			},
+			{
+				"stdin": "2\nhondo\nplano\n2\n",
+				"expected_output": "Lavado: plano\nLavado: hondo\n[]"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "L2.4 — Combinar dos listas",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee una lista de <code>N</code> números y otra de <code>M</code> números. Pega la segunda al final de la primera con <code>.extend()</code> e imprime la primera.</p><p><strong>Entrada:</strong> <code>N</code> y sus <code>N</code> números; luego <code>M</code> y sus <code>M</code> números, uno por línea.</p><p><strong>Salida:</strong> la lista combinada con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3\n2\n8\n9</code></pre><p>Salida:</p><pre><code>[1, 2, 3, 8, 9]</code></pre>",
+		"hint_html": "<p><code>a.extend(b)</code> mete <strong>cada elemento</strong> de <code>b</code> al final de <code>a</code>.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    a = leer_lista(int(input()))\n    b = leer_lista(int(input()))\n    a.extend(b)\n    print(a)\n\n\nmain()</code></pre><p>Con <code>a.append(b)</code> quedaría la lista entera como UNA casilla: <code>[1, 2, 3, [8, 9]]</code>. Para pegar listas: <code>.extend</code>.</p>",
+		"starter_code": "# L2.4 — Combinar dos listas\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n1\n2\n3\n2\n8\n9\n",
+				"expected_output": "[1, 2, 3, 8, 9]"
+			},
+			{
+				"stdin": "1\n5\n3\n6\n7\n8\n",
+				"expected_output": "[5, 6, 7, 8]"
+			},
+			{
+				"stdin": "2\n4\n4\n0\n",
+				"expected_output": "[4, 4]"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "L2.5 — Insertar en una posición",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números. Después lee una posición <code>p</code> y un valor <code>v</code>. Inserta <code>v</code> en la posición <code>p</code> con <code>.insert()</code> e imprime la lista.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea. Después <code>p</code> y <code>v</code>.</p><p><strong>Salida:</strong> la lista con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n10\n20\n30\n40\n1\n15</code></pre><p>Salida:</p><pre><code>[10, 15, 20, 30, 40]</code></pre>",
+		"hint_html": "<p><code>lista.insert(posición, dato)</code>: primero dónde, después qué.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    p = int(input())\n    v = int(input())\n    lista.insert(p, v)\n    print(lista)\n\n\nmain()</code></pre><p>Los que estaban de <code>p</code> en adelante se corren una casilla a la derecha.</p>",
+		"starter_code": "# L2.5 — Insertar en una posición\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n10\n20\n30\n40\n1\n15\n",
+				"expected_output": "[10, 15, 20, 30, 40]"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n0\n0\n",
+				"expected_output": "[0, 1, 2, 3]"
+			},
+			{
+				"stdin": "2\n5\n6\n2\n7\n",
+				"expected_output": "[5, 6, 7]"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "L2.6 — Vaciar el carrito",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> productos al carrito. Imprime el carrito y cuántos productos tiene. Luego el cliente cancela la compra: vacíalo con <code>.clear()</code> e imprime otra vez el carrito y su tamaño.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> palabras, una por línea.</p><p><strong>Salida:</strong> cuatro líneas: el carrito, su tamaño, el carrito vacío y <code>0</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\nzapatos\nmedias\ngorra</code></pre><p>Salida:</p><pre><code>['zapatos', 'medias', 'gorra']\n3\n[]\n0</code></pre>",
+		"hint_html": "<p><code>.clear()</code> deja la lista vacía: <code>[]</code>.</p>",
+		"solution_html": "<pre><code>def main():\n    n = int(input())\n    carrito = []\n    for i in range(n):\n        carrito.append(input())\n    print(carrito)\n    print(len(carrito))\n    carrito.clear()\n    print(carrito)\n    print(len(carrito))\n\n\nmain()</code></pre><p><code>.clear()</code> vacía la <strong>misma</strong> lista, no crea otra.</p>",
+		"starter_code": "# L2.6 — Vaciar el carrito\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\nzapatos\nmedias\ngorra\n",
+				"expected_output": "['zapatos', 'medias', 'gorra']\n3\n[]\n0"
+			},
+			{
+				"stdin": "1\nlibro\n",
+				"expected_output": "['libro']\n1\n[]\n0"
+			},
+			{
+				"stdin": "2\npan\nleche\n",
+				"expected_output": "['pan', 'leche']\n2\n[]\n0"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "L2.7 — Entra y sale del equipo",
+		"difficulty": "medio",
+		"statement_html": "<p>El equipo arranca vacío. Lee <code>N</code> movimientos; cada movimiento son dos líneas: la acción (<code>entra</code> o <code>sale</code>) y el nombre del jugador. Si entra, agrégalo al final; si sale, quítalo. Al final imprime cuántos jugadores hay y el equipo.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> pares de líneas acción / nombre. Un jugador que sale siempre está en el equipo.</p><p><strong>Salida:</strong> el tamaño y luego el equipo con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\nentra\nAna\nentra\nLuis\nentra\nSara\nsale\nLuis</code></pre><p>Salida:</p><pre><code>2\n['Ana', 'Sara']</code></pre>",
+		"hint_html": "<p>Un <code>if</code> por movimiento: <code>append</code> o <code>remove</code>.</p>",
+		"solution_html": "<pre><code>def main():\n    n = int(input())\n    equipo = []\n    for i in range(n):\n        accion = input()\n        nombre = input()\n        if accion == \"entra\":\n            equipo.append(nombre)\n        else:\n            equipo.remove(nombre)\n    print(len(equipo))\n    print(equipo)\n\n\nmain()</code></pre><p>Así se simula cualquier lista que cambia con el tiempo: se lee la acción y se aplica el método.</p>",
+		"starter_code": "# L2.7 — Entra y sale del equipo\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\nentra\nAna\nentra\nLuis\nentra\nSara\nsale\nLuis\n",
+				"expected_output": "2\n['Ana', 'Sara']"
+			},
+			{
+				"stdin": "2\nentra\nLeo\nsale\nLeo\n",
+				"expected_output": "0\n[]"
+			},
+			{
+				"stdin": "3\nentra\nEva\nentra\nJuan\nentra\nRosa\n",
+				"expected_output": "3\n['Eva', 'Juan', 'Rosa']"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "L2.8 — Lista de tareas pendientes",
+		"difficulty": "dificil",
+		"statement_html": "<p>Simula una lista de tareas. Lee comandos hasta que llegue <code>fin</code>:</p><ul><li><code>agregar</code> → la siguiente línea es una tarea; va al <strong>final</strong>.</li><li><code>urgente</code> → la siguiente línea es una tarea; va al <strong>principio</strong>.</li><li><code>hacer</code> → se hace la primera tarea: sale de la lista y se imprime <code>Hecha: tarea</code>. Si no hay tareas imprime <code>Nada pendiente</code>.</li></ul><p>Al final imprime <code>Pendientes: X</code> y luego cada tarea pendiente en su línea.</p><p><strong>Entrada:</strong> un comando por línea (y la tarea en la línea siguiente cuando aplica), terminando en <code>fin</code>.</p><p><strong>Salida:</strong> las líneas de <code>hacer</code>, la línea <code>Pendientes: X</code> y las tareas que quedan.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>agregar\nlavar\nagregar\nestudiar\nurgente\npagar luz\nhacer\nfin</code></pre><p>Salida:</p><pre><code>Hecha: pagar luz\nPendientes: 2\nlavar\nestudiar</code></pre>",
+		"hint_html": "<p><code>while comando != \"fin\"</code>. <code>append</code> al final, <code>insert(0, …)</code> al principio, <code>pop(0)</code> para hacer la primera.</p>",
+		"solution_html": "<pre><code>def main():\n    tareas = []\n    comando = input()\n    while comando != \"fin\":\n        if comando == \"agregar\":\n            tareas.append(input())\n        elif comando == \"urgente\":\n            tareas.insert(0, input())\n        elif comando == \"hacer\":\n            if len(tareas) &gt; 0:\n                print(\"Hecha: \" + tareas.pop(0))\n            else:\n                print(\"Nada pendiente\")\n        comando = input()\n    print(\"Pendientes: \" + str(len(tareas)))\n    for tarea in tareas:\n        print(tarea)\n\n\nmain()</code></pre><p>Tres métodos combinados. Antes de <code>pop</code> revisa que la lista no esté vacía: <code>pop</code> en lista vacía da error.</p>",
+		"starter_code": "# L2.8 — Lista de tareas pendientes\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "agregar\nlavar\nagregar\nestudiar\nurgente\npagar luz\nhacer\nfin\n",
+				"expected_output": "Hecha: pagar luz\nPendientes: 2\nlavar\nestudiar"
+			},
+			{
+				"stdin": "hacer\nagregar\nleer\nhacer\nfin\n",
+				"expected_output": "Nada pendiente\nHecha: leer\nPendientes: 0"
+			},
+			{
+				"stdin": "agregar\na\nagregar\nb\nurgente\nc\nurgente\nd\nhacer\nhacer\nfin\n",
+				"expected_output": "Hecha: d\nHecha: c\nPendientes: 2\na\nb"
+			}
+		]
+	}
+]

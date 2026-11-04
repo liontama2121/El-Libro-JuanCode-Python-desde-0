@@ -2,159 +2,150 @@
 	{
 		"type": "mcq",
 		"difficulty": "facil",
-		"prompt": "Para buscar el mayor de la matriz, ¿con qué se inicializa mayor?",
+		"prompt": "En matriz[2][3], ¿qué representa el 2?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "matriz[n][m]"
+					"text": "La fila"
 				},
 				{
 					"id": "b",
-					"text": "matriz[0][0]"
+					"text": "La columna"
 				},
 				{
 					"id": "c",
-					"text": "0"
+					"text": "La cantidad de filas"
 				},
 				{
 					"id": "d",
-					"text": "-1"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "b"
-		},
-		"explanation": "Con un valor que sí está en la matriz. Si todos son negativos, 0 daría una respuesta falsa. matriz[n][m] ni existe."
-	},
-	{
-		"type": "predict_output",
-		"difficulty": "medio",
-		"prompt": "¿Qué imprime este programa?",
-		"code_snippet": "matriz = [[3, 8], [8, 1]]\npf = 0\npc = 0\nfor i in range(2):\n    for j in range(2):\n        if matriz[i][j] > matriz[pf][pc]:\n            pf = i\n            pc = j\nprint(pf, pc)",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "0 1"
-				},
-				{
-					"id": "b",
-					"text": "1 0"
-				},
-				{
-					"id": "c",
-					"text": "0 0"
-				},
-				{
-					"id": "d",
-					"text": "1 1"
+					"text": "El valor guardado"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "a"
 		},
-		"explanation": "El primer 8 está en [0][1]. El segundo 8 no es MAYOR, así que no cambia la posición."
-	},
-	{
-		"type": "find_bug",
-		"difficulty": "facil",
-		"prompt": "Debe encontrar el mayor (la matriz puede tener solo negativos). ¿En qué línea está el error?",
-		"data": {
-			"lines": [
-				"mayor = 0",
-				"for i in range(n):",
-				"    for j in range(m):",
-				"        if matriz[i][j] > mayor:",
-				"            mayor = matriz[i][j]"
-			]
-		},
-		"correct": {
-			"line_number": 1
-		},
-		"explanation": "Con todos negativos ninguno supera a 0 y se imprime 0. Arranca con matriz[0][0]."
-	},
-	{
-		"type": "fill_blank",
-		"difficulty": "medio",
-		"prompt": "Completa la búsqueda de la posición del mayor.",
-		"data": {
-			"code": "pf = 0\npc = 0\nfor i in range(n):\n    for j in range(m):\n        if matriz[i][j] > matriz[___1___][___2___]:\n            pf = i\n            pc = ___3___",
-			"blanks": [
-				{
-					"id": "1",
-					"pista": "fila del mejor"
-				},
-				{
-					"id": "2",
-					"pista": "columna del mejor"
-				},
-				{
-					"id": "3",
-					"pista": "guardar la columna"
-				}
-			]
-		},
-		"correct": {
-			"answers": {
-				"1": [
-					"pf"
-				],
-				"2": [
-					"pc"
-				],
-				"3": [
-					"j"
-				]
-			}
-		},
-		"explanation": "La posición son dos variables y se actualizan juntas."
+		"explanation": "Siempre matriz[fila][columna]: el primer corchete escoge el vector (la fila) y el segundo la casilla dentro de él."
 	},
 	{
 		"type": "mcq",
 		"difficulty": "medio",
-		"prompt": "Al buscar X, ¿para qué sirve empezar con pf = -1?",
+		"prompt": "¿Cuál crea una matriz de 3 × 4 respetando las reglas del curso?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "Para recorrer al revés"
+					"text": "matriz = [[0] * 4 for _ in range(3)]"
 				},
 				{
 					"id": "b",
-					"text": "Porque las filas empiezan en -1"
+					"text": "matriz = [] y luego matriz.append([0] * 4) tres veces"
 				},
 				{
 					"id": "c",
-					"text": "Para que el primer elemento no cuente"
+					"text": "matriz = [[0] * 4] * 3"
 				},
 				{
 					"id": "d",
-					"text": "Marca \"todavía no lo encontré\": ninguna fila real es -1"
+					"text": "matriz = [0] * 3 y luego for i in range(3): matriz[i] = [0] * 4"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "d"
 		},
-		"explanation": "Al final, si pf sigue en -1, X no apareció."
+		"explanation": "La comprensión y el .append están prohibidos. [[0] * 4] * 3 es peor: las 3 filas son la MISMA lista y cambiar una cambia todas."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "matriz = [0] * 2\nfor i in range(2):\n    matriz[i] = [0] * 3\nmatriz[1][2] = 9\nprint(matriz)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[[0, 0], [0, 0], [0, 9]]"
+				},
+				{
+					"id": "b",
+					"text": "[[0, 9, 0], [0, 0, 0]]"
+				},
+				{
+					"id": "c",
+					"text": "[[0, 0, 0], [0, 0, 9]]"
+				},
+				{
+					"id": "d",
+					"text": "[[0, 0, 9], [0, 0, 0]]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "c"
+		},
+		"explanation": "2 filas de 3 columnas. [1][2] es la segunda fila, tercera columna."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "medio",
+		"prompt": "Completa de memoria la función crear_matriz.",
+		"data": {
+			"code": "def crear_matriz(n, m):\n    matriz = ___1___\n    for i in range(___2___):\n        matriz[i] = ___3___\n    return ___4___",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "un vector de n casillas"
+				},
+				{
+					"id": "2",
+					"pista": "cuántas filas"
+				},
+				{
+					"id": "3",
+					"pista": "cada fila: m ceros"
+				},
+				{
+					"id": "4",
+					"pista": "lo que se devuelve"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"[0] * n",
+					"[0]*n"
+				],
+				"2": [
+					"n"
+				],
+				"3": [
+					"[0] * m",
+					"[0]*m"
+				],
+				"4": [
+					"matriz"
+				]
+			}
+		},
+		"explanation": "Primero el vector de filas, después cada fila con m ceros, y se retorna la matriz."
 	},
 	{
 		"type": "parsons",
 		"difficulty": "medio",
-		"prompt": "Arma la función buscar_menor",
+		"prompt": "Arma la función leer_matriz",
 		"data": {
 			"lines": [
 				{
 					"id": "l1",
-					"text": "def buscar_menor(matriz, n, m):",
+					"text": "def leer_matriz(n, m):",
 					"indent": 0
 				},
 				{
 					"id": "l2",
-					"text": "menor = matriz[0][0]",
+					"text": "matriz = crear_matriz(n, m)",
 					"indent": 1
 				},
 				{
@@ -169,17 +160,12 @@
 				},
 				{
 					"id": "l5",
-					"text": "if matriz[i][j] < menor:",
+					"text": "matriz[i][j] = int(input())",
 					"indent": 3
 				},
 				{
 					"id": "l6",
-					"text": "menor = matriz[i][j]",
-					"indent": 4
-				},
-				{
-					"id": "l7",
-					"text": "return menor",
+					"text": "return matriz",
 					"indent": 1
 				}
 			]
@@ -191,10 +177,28 @@
 				"l3",
 				"l4",
 				"l5",
-				"l6",
-				"l7"
+				"l6"
 			]
 		},
-		"explanation": "Mismo esqueleto del mayor con <."
+		"explanation": "Crear, recorrer con doble for, guardar por [i][j] y retornar AFUERA de los dos ciclos."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe leer toda la matriz. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def leer_matriz(n, m):",
+				"    matriz = crear_matriz(n, m)",
+				"    for i in range(n):",
+				"        for j in range(m):",
+				"            matriz[i][j] = int(input())",
+				"        return matriz"
+			]
+		},
+		"correct": {
+			"line_number": 6
+		},
+		"explanation": "El return quedó dentro del for de i: la función sale después de leer la primera fila. Va al nivel del for, no adentro."
 	}
 ]

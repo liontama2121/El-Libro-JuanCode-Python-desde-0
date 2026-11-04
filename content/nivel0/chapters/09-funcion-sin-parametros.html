@@ -1,0 +1,41 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code>, comprensiones ni <code>global</code>. Vectores con <code>[0] * n</code>. Siempre <code>def</code> + <code>main()</code> + última línea <code>main()</code>.
+</div>
+
+<p class="jc-plana-sub">Lo más básico: una función que solo ejecuta algo cuando la llamas.</p>
+
+<p>Paréntesis vacíos: no recibe nada. Sin <code>return</code>: no devuelve nada. Solo hace su trabajo (imprimir, leer, contar) cada vez que <code>main()</code> la llama.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto F1 · escríbelo 3 veces</p>
+<pre><code>def saludar():
+    print("Hola mundo")
+
+
+def main():
+    saludar()
+
+
+main()</code></pre>
+</div>
+
+<p>La plana de este patrón es cambiar <strong>solo</strong> el nombre y el cuerpo:</p>
+
+<table>
+  <thead>
+    <tr><th>La función se llama…</th><th>Su cuerpo hace…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>presentarse()</code></td><td>dos <code>print</code>: nombre y edad</td></tr>
+    <tr><td><code>linea()</code></td><td><code>print("-" * 20)</code></td></tr>
+    <tr><td><code>menu()</code></td><td>tres <code>print</code>, uno por opción</td></tr>
+    <tr><td><code>pedir_datos()</code></td><td><code>int(input())</code> y lo muestra</td></tr>
+    <tr><td><code>contar_hasta_5()</code></td><td>un <code>for</code> de 1 a 5</td></tr>
+  </tbody>
+</table>
+
+<p class="jc-frase">Si la defines y no la llamas, no pasa nada. Si la llamas tres veces, pasa tres veces.</p>
+
+<p>Tres errores que salen en el examen: olvidar los <strong>paréntesis</strong> al llamar (<code>saludar</code> sin <code>()</code> no hace nada), olvidar los <strong>dos puntos</strong> después de <code>def saludar()</code>, y escribir el cuerpo <strong>sin sangría</strong>.</p>
+
+<p>Ejercicios: <strong>F1.1 a F1.5</strong>.</p>

@@ -6,9 +6,11 @@
 		{ "number": 1, "title": "Los cuatro patrones", "emoji": "✍️" },
 		{ "number": 2, "title": "El contador K", "emoji": "🔑" },
 		{ "number": 3, "title": "Examen", "emoji": "🎯" },
-		{ "number": 4, "title": "Nivel 0.5 — Planas de matrices", "emoji": "🔲" },
-		{ "number": 5, "title": "Nivel 0.5 — El índice que no cambia", "emoji": "🧊" },
-		{ "number": 6, "title": "Nivel 0.5 — Examen de matrices", "emoji": "🎯" }
+		{ "number": 4, "title": "Nivel 0.4 — Planas de funciones", "emoji": "🧩" },
+		{ "number": 5, "title": "Nivel 0.5 — Planas de matrices", "emoji": "🔲" },
+		{ "number": 6, "title": "Nivel 0.5 — El índice que no cambia", "emoji": "🧊" },
+		{ "number": 7, "title": "Nivel 0.5 — Examen de matrices", "emoji": "🎯" },
+		{ "number": 8, "title": "Nivel 0.6 — Métodos de listas de Python", "emoji": "🎓" }
 	],
 	"capitulos": [
 		{ "number": 1, "part": 1, "slug": "llenar-un-vector", "title": "I. Llenar un vector", "emoji": "📥", "description": "El punto de partida. Si no sabes hacer esto, no puedes hacer nada más." },
@@ -18,14 +20,81 @@
 		{ "number": 5, "part": 2, "slug": "contador-k", "title": "El contador K", "emoji": "🔑", "description": "Por qué i no sirve para el vector nuevo, y la plana de filtrar con k." },
 		{ "number": 6, "part": 2, "slug": "copiar-por-grupos", "title": "V. Copiar por grupos", "emoji": "🧩", "description": "Separar en dos vectores, reorganizar en uno y copiar con un giro." },
 		{ "number": 7, "part": 3, "slug": "simulacro", "title": "Simulacro de examen", "emoji": "🎯", "description": "Cinco enunciados tipo juez que mezclan los patrones." },
-		{ "number": 8, "part": 4, "slug": "de-vector-a-matriz", "title": "De vector a matriz: por qué dos índices", "emoji": "🧠", "description": "El salto de i a i, j. Y las tres funciones que vas a escribir en todos los ejercicios." },
-		{ "number": 9, "part": 4, "slug": "crear-y-llenar-matriz", "title": "M1. Crear y llenar una matriz", "emoji": "📥", "description": "crear_matriz + doble for. Lo que cambia es solo lo que va después del =." },
-		{ "number": 10, "part": 4, "slug": "recorrer-matriz", "title": "M2. Recorrer la matriz completa", "emoji": "🔢", "description": "Contar y sumar en toda la matriz, dentro de una función que retorna." },
-		{ "number": 11, "part": 4, "slug": "recorrer-una-fila", "title": "M3. Recorrer una fila", "emoji": "➡️", "description": "La fila f quieta, j camina. Un solo for." },
-		{ "number": 12, "part": 4, "slug": "recorrer-una-columna", "title": "M4. Recorrer una columna", "emoji": "⬇️", "description": "La columna c quieta, i camina. El tope es n, no m." },
-		{ "number": 13, "part": 5, "slug": "congelar-el-indice", "title": "El índice que no cambia (congelar)", "emoji": "🧊", "description": "Fila congelada, columna congelada, diagonal y la cruz." },
-		{ "number": 14, "part": 5, "slug": "buscar-en-matriz", "title": "M5. Buscar en la matriz", "emoji": "🏔️", "description": "Máximo, mínimo y su posición: ahora son dos variables, pf y pc." },
-		{ "number": 15, "part": 5, "slug": "transformar-matriz", "title": "M6. Transformar o crear una matriz nueva", "emoji": "🔁", "description": "Doble, transpuesta, suma de matrices, espejo y de matriz a vector con k." },
-		{ "number": 16, "part": 6, "slug": "simulacro-matrices", "title": "Simulacro de examen de matrices", "emoji": "🎯", "description": "Cinco enunciados tipo juez que mezclan los patrones de matrices." }
-	]
+		{ "number": 8, "part": 4, "slug": "que-es-una-funcion", "title": "Qué es una función (la caja negra)", "emoji": "🧠", "description": "La idea más simple del curso: funciones como cajas con entrada y salida." },
+		{ "number": 9, "part": 4, "slug": "funcion-sin-parametros", "title": "F1. Función sin parámetros, sin return", "emoji": "📣", "description": "Lo más básico: función que solo ejecuta algo cuando la llamas." },
+		{ "number": 10, "part": 4, "slug": "funcion-con-parametros", "title": "F2. Función con parámetros, sin return", "emoji": "📥", "description": "La función recibe datos. CLAVE: los nombres adentro y afuera pueden ser distintos." },
+		{ "number": 11, "part": 4, "slug": "funcion-con-return", "title": "F3. Función con return", "emoji": "📤", "description": "La función calcula y devuelve. El resultado se puede guardar o usar directo." },
+		{ "number": 12, "part": 4, "slug": "funcion-que-recibe-vector", "title": "F4. Función que recibe un vector", "emoji": "📊", "description": "La función recibe un vector completo. Adentro se puede llamar distinto que afuera." },
+		{ "number": 13, "part": 4, "slug": "varias-funciones-y-main", "title": "F5. Varias funciones + main()", "emoji": "🎯", "description": "Múltiples funciones pequeñas. main() orquesta. Es como vas a ver código en el mundo real." },
+		{ "number": 14, "part": 5, "slug": "de-vector-a-matriz", "title": "De vector a matriz: por qué dos índices", "emoji": "🧠", "description": "El salto de i a i, j. Y las tres funciones que vas a escribir en todos los ejercicios." },
+		{ "number": 15, "part": 5, "slug": "crear-y-llenar-matriz", "title": "M1. Crear y llenar una matriz", "emoji": "📥", "description": "crear_matriz + doble for. Lo que cambia es solo lo que va después del =." },
+		{ "number": 16, "part": 5, "slug": "recorrer-matriz", "title": "M2. Recorrer la matriz completa", "emoji": "🔢", "description": "Contar y sumar en toda la matriz, dentro de una función que retorna." },
+		{ "number": 17, "part": 5, "slug": "recorrer-una-fila", "title": "M3. Recorrer una fila", "emoji": "➡️", "description": "La fila f quieta, j camina. Un solo for." },
+		{ "number": 18, "part": 5, "slug": "recorrer-una-columna", "title": "M4. Recorrer una columna", "emoji": "⬇️", "description": "La columna c quieta, i camina. El tope es n, no m." },
+		{ "number": 19, "part": 6, "slug": "congelar-el-indice", "title": "El índice que no cambia (congelar)", "emoji": "🧊", "description": "Fila congelada, columna congelada, diagonal y la cruz." },
+		{ "number": 20, "part": 6, "slug": "buscar-en-matriz", "title": "M5. Buscar en la matriz", "emoji": "🏔️", "description": "Máximo, mínimo y su posición: ahora son dos variables, pf y pc." },
+		{ "number": 21, "part": 6, "slug": "transformar-matriz", "title": "M6. Transformar o crear una matriz nueva", "emoji": "🔁", "description": "Doble, transpuesta, suma de matrices, espejo y de matriz a vector con k." },
+		{ "number": 22, "part": 7, "slug": "simulacro-matrices", "title": "Simulacro de examen de matrices", "emoji": "🎯", "description": "Cinco enunciados tipo juez que mezclan los patrones de matrices." },
+		{ "number": 23, "part": 8, "slug": "crear-y-modificar-listas", "title": "Crear y modificar listas", "emoji": "📋", "description": "Lo básico pero ya con sabor Python: listas que crecen, se encogen y mezclan tipos." },
+		{ "number": 24, "part": 8, "slug": "agregar-y-eliminar", "title": "Agregar y eliminar elementos", "emoji": "➕", "description": "Ya no necesitas crear otro vector para agregar. .append y amigos hacen todo el trabajo." },
+		{ "number": 25, "part": 8, "slug": "buscar-contar-verificar", "title": "Buscar, contar y verificar", "emoji": "🔍", "description": "Cómo preguntarle a una lista qué contiene, sin recorrerla a mano." },
+		{ "number": 26, "part": 8, "slug": "ordenar-invertir-copiar", "title": "Ordenar, invertir y copiar", "emoji": "🔀", "description": "Organiza tus datos sin escribir el algoritmo. Pero cuidado con el .copy()." },
+		{ "number": 27, "part": 8, "slug": "built-in-y-slicing", "title": "Funciones built-in y slicing", "emoji": "⚡", "description": "Herramientas de Python que hacen en 1 línea lo que te tomaba 10." },
+		{ "number": 28, "part": 8, "slug": "antes-vs-ahora", "title": "Comparativa: antes vs ahora", "emoji": "🆚", "description": "El mismo ejercicio resuelto con las reglas del Nivel 0 y con los métodos de Python." }
+	],
+	"renumerar": {
+		"_nota": "Se corre ANTES de los upserts. Mueve las filas viejas a su número nuevo conservando su id (y con él unlocks, intentos y preguntas del profe). Cada paso exige el título viejo, así que repetir el seed no hace nada.",
+		"capitulos": [
+			{
+				"de": 16,
+				"a": 22,
+				"title": "Simulacro de examen de matrices"
+			},
+			{
+				"de": 15,
+				"a": 21,
+				"title": "M6. Transformar o crear una matriz nueva"
+			},
+			{
+				"de": 14,
+				"a": 20,
+				"title": "M5. Buscar en la matriz"
+			},
+			{
+				"de": 13,
+				"a": 19,
+				"title": "El índice que no cambia (congelar)"
+			},
+			{
+				"de": 12,
+				"a": 18,
+				"title": "M4. Recorrer una columna"
+			},
+			{
+				"de": 11,
+				"a": 17,
+				"title": "M3. Recorrer una fila"
+			},
+			{
+				"de": 10,
+				"a": 16,
+				"title": "M2. Recorrer la matriz completa"
+			},
+			{
+				"de": 9,
+				"a": 15,
+				"title": "M1. Crear y llenar una matriz"
+			},
+			{
+				"de": 8,
+				"a": 14,
+				"title": "De vector a matriz: por qué dos índices"
+			}
+		],
+		"heredar_desbloqueo": {
+			"de": 14,
+			"a": 8,
+			"_nota": "Quien ya tenía abierto el viejo cap. 8 (pasó el simulacro de vectores) abre funciones."
+		}
+	}
 }

@@ -1,0 +1,182 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "La original es n × m. ¿Cómo se crea su transpuesta?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "crear_matriz(n, n)"
+				},
+				{
+					"id": "b",
+					"text": "crear_matriz(m, m)"
+				},
+				{
+					"id": "c",
+					"text": "crear_matriz(m, n)"
+				},
+				{
+					"id": "d",
+					"text": "crear_matriz(n, m)"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "c"
+		},
+		"explanation": "Las filas pasan a columnas: la transpuesta tiene m filas y n columnas."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "matriz = [[1, 2, 3]]\nnueva = [0] * 1\nnueva[0] = [0] * 3\nfor j in range(3):\n    nueva[0][j] = matriz[0][2 - j]\nprint(nueva)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[[3, 3, 3]]"
+				},
+				{
+					"id": "b",
+					"text": "[[3, 2, 1]]"
+				},
+				{
+					"id": "c",
+					"text": "[[1, 2, 3]]"
+				},
+				{
+					"id": "d",
+					"text": "[[2, 1, 0]]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "Espejo: la columna se voltea con m - 1 - j."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe llenar la transpuesta t. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"t = crear_matriz(m, n)",
+				"for i in range(n):",
+				"    for j in range(m):",
+				"        t[i][j] = matriz[i][j]"
+			]
+		},
+		"correct": {
+			"line_number": 4
+		},
+		"explanation": "En la transpuesta se escribe al revés: t[j][i] = matriz[i][j]."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "facil",
+		"prompt": "Completa la suma de dos matrices.",
+		"data": {
+			"code": "s = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        s[i][j] = ___1___",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "casilla de a más casilla de b"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"a[i][j] + b[i][j]",
+					"a[i][j]+b[i][j]",
+					"b[i][j] + a[i][j]",
+					"b[i][j]+a[i][j]"
+				]
+			}
+		},
+		"explanation": "Casilla por casilla, con el mismo [i][j] en las tres."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "Vas a copiar los positivos de una matriz n × m a un vector. ¿De qué tamaño lo creas?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[0] * (n * m)"
+				},
+				{
+					"id": "b",
+					"text": "[0] * n"
+				},
+				{
+					"id": "c",
+					"text": "[0] * m"
+				},
+				{
+					"id": "d",
+					"text": "[0] * k"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "En el peor caso todos son positivos: n * m. Después se imprime solo hasta k."
+	},
+	{
+		"type": "parsons",
+		"difficulty": "medio",
+		"prompt": "Arma el bloque que crea una matriz nueva con los negativos cambiados por 0",
+		"data": {
+			"lines": [
+				{
+					"id": "l1",
+					"text": "nueva = crear_matriz(n, m)",
+					"indent": 0
+				},
+				{
+					"id": "l2",
+					"text": "for i in range(n):",
+					"indent": 0
+				},
+				{
+					"id": "l3",
+					"text": "for j in range(m):",
+					"indent": 1
+				},
+				{
+					"id": "l4",
+					"text": "if matriz[i][j] > 0:",
+					"indent": 2
+				},
+				{
+					"id": "l5",
+					"text": "nueva[i][j] = matriz[i][j]",
+					"indent": 3
+				},
+				{
+					"id": "l6",
+					"text": "imprimir_matriz(nueva, n, m)",
+					"indent": 0
+				}
+			]
+		},
+		"correct": {
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4",
+				"l5",
+				"l6"
+			]
+		},
+		"explanation": "La nueva nace en ceros: basta copiar los positivos."
+	}
+]

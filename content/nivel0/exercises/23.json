@@ -1,0 +1,186 @@
+[
+	{
+		"orden": 1,
+		"title": "L1.1 — Tu primera lista",
+		"difficulty": "facil",
+		"statement_html": "<p>Crea con corchetes la lista <code>precios = [1200, 3500, 800, 4100, 2600]</code>. Lee una posición <code>p</code> e imprime el precio que está ahí.</p><p><strong>Entrada:</strong> un entero <code>p</code> entre 0 y 4.</p><p><strong>Salida:</strong> el precio de la posición <code>p</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>1</code></pre><p>Salida:</p><pre><code>3500</code></pre>",
+		"hint_html": "<p>La lista se escribe completa entre corchetes. Para leer una casilla: <code>precios[p]</code>.</p>",
+		"solution_html": "<pre><code>def main():\n    precios = [1200, 3500, 800, 4100, 2600]\n    p = int(input())\n    print(precios[p])\n\n\nmain()</code></pre><p>Crear con corchetes es la forma corta: ya no hace falta <code>[0] * n</code> si conoces los datos.</p>",
+		"starter_code": "# L1.1 — Tu primera lista\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "1\n",
+				"expected_output": "3500"
+			},
+			{
+				"stdin": "0\n",
+				"expected_output": "1200"
+			},
+			{
+				"stdin": "4\n",
+				"expected_output": "2600"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "L1.2 — El primero y el último",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee tres números y guárdalos en una lista escrita con corchetes. Imprime el primero y después el último usando <code>[-1]</code>.</p><p><strong>Entrada:</strong> tres enteros, uno por línea.</p><p><strong>Salida:</strong> el primero y el último, cada uno en su línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n9\n7</code></pre><p>Salida:</p><pre><code>4\n7</code></pre>",
+		"hint_html": "<p>Dentro de los corchetes puede ir cualquier expresión, también <code>int(input())</code>. El último es <code>lista[-1]</code>.</p>",
+		"solution_html": "<pre><code>def main():\n    lista = [int(input()), int(input()), int(input())]\n    print(lista[0])\n    print(lista[-1])\n\n\nmain()</code></pre><p><code>lista[-1]</code> siempre es el último, sin importar el tamaño. Adiós a <code>lista[n - 1]</code>.</p>",
+		"starter_code": "# L1.2 — El primero y el último\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n9\n7\n",
+				"expected_output": "4\n7"
+			},
+			{
+				"stdin": "-1\n0\n1\n",
+				"expected_output": "-1\n1"
+			},
+			{
+				"stdin": "5\n5\n8\n",
+				"expected_output": "5\n8"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "L1.3 — Cambiar una casilla",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee cuatro números en una lista. Después lee una posición <code>p</code> y un valor <code>v</code>. Cambia la casilla <code>p</code> por <code>v</code> e imprime la lista completa con <code>print(lista)</code>.</p><p><strong>Entrada:</strong> cuatro enteros, luego <code>p</code> y <code>v</code>, uno por línea.</p><p><strong>Salida:</strong> la lista con el formato de Python: <code>[1, 2, 3, 4]</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>1\n2\n3\n4\n1\n9</code></pre><p>Salida:</p><pre><code>[1, 9, 3, 4]</code></pre>",
+		"hint_html": "<p>Modificar es asignar: <code>lista[p] = v</code>.</p>",
+		"solution_html": "<pre><code>def main():\n    lista = [int(input()), int(input()), int(input()), int(input())]\n    p = int(input())\n    v = int(input())\n    lista[p] = v\n    print(lista)\n\n\nmain()</code></pre><p><code>print(lista)</code> imprime la lista con corchetes y comas. En esta parte ya se vale.</p>",
+		"starter_code": "# L1.3 — Cambiar una casilla\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "1\n2\n3\n4\n1\n9\n",
+				"expected_output": "[1, 9, 3, 4]"
+			},
+			{
+				"stdin": "5\n6\n7\n8\n0\n-1\n",
+				"expected_output": "[-1, 6, 7, 8]"
+			},
+			{
+				"stdin": "0\n0\n0\n0\n3\n7\n",
+				"expected_output": "[0, 0, 0, 7]"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "L1.4 — Contando desde atrás",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee cinco palabras en una lista. Imprime la última y la penúltima usando índices negativos.</p><p><strong>Entrada:</strong> cinco palabras, una por línea.</p><p><strong>Salida:</strong> la última y luego la penúltima, cada una en su línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>sol\nluna\nmar\nrio\ncielo</code></pre><p>Salida:</p><pre><code>cielo\nrio</code></pre>",
+		"hint_html": "<p><code>[-1]</code> es la última, <code>[-2]</code> la penúltima.</p>",
+		"solution_html": "<pre><code>def main():\n    palabras = [input(), input(), input(), input(), input()]\n    print(palabras[-1])\n    print(palabras[-2])\n\n\nmain()</code></pre><p>Los negativos cuentan desde el final: -1, -2, -3…</p>",
+		"starter_code": "# L1.4 — Contando desde atrás\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "sol\nluna\nmar\nrio\ncielo\n",
+				"expected_output": "cielo\nrio"
+			},
+			{
+				"stdin": "a\nb\nc\nd\ne\n",
+				"expected_output": "e\nd"
+			},
+			{
+				"stdin": "uno\ndos\ntres\ncuatro\ncinco\n",
+				"expected_output": "cinco\ncuatro"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "L1.5 — Ficha con tipos mezclados",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee un nombre, una edad y si el estudiante está matriculado (<code>si</code> o <code>no</code>). Guarda todo en <strong>una sola lista</strong>: el nombre como texto, la edad como entero y la matrícula como <code>True</code>/<code>False</code>. Imprime la lista.</p><p><strong>Entrada:</strong> el nombre, la edad y <code>si</code>/<code>no</code>, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print(ficha)</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>Ana\n19\nsi</code></pre><p>Salida:</p><pre><code>['Ana', 19, True]</code></pre>",
+		"hint_html": "<p><code>respuesta == \"si\"</code> ya es un booleano: no necesitas <code>if</code>.</p>",
+		"solution_html": "<pre><code>def main():\n    nombre = input()\n    edad = int(input())\n    respuesta = input()\n    ficha = [nombre, edad, respuesta == \"si\"]\n    print(ficha)\n\n\nmain()</code></pre><p>Una lista de Python acepta tipos distintos en cada casilla.</p>",
+		"starter_code": "# L1.5 — Ficha con tipos mezclados\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "Ana\n19\nsi\n",
+				"expected_output": "['Ana', 19, True]"
+			},
+			{
+				"stdin": "Luis\n22\nno\n",
+				"expected_output": "['Luis', 22, False]"
+			},
+			{
+				"stdin": "Sara\n18\nsi\n",
+				"expected_output": "['Sara', 18, True]"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "L1.6 — Intercambiar extremos",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee cuatro números en una lista. Intercambia el primero con el último e imprime la lista.</p><p><strong>Entrada:</strong> cuatro enteros, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print(lista)</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>1\n2\n3\n4</code></pre><p>Salida:</p><pre><code>[4, 2, 3, 1]</code></pre>",
+		"hint_html": "<p>Guarda el primero en <code>aux</code> antes de pisarlo.</p>",
+		"solution_html": "<pre><code>def main():\n    lista = [int(input()), int(input()), int(input()), int(input())]\n    aux = lista[0]\n    lista[0] = lista[-1]\n    lista[-1] = aux\n    print(lista)\n\n\nmain()</code></pre><p>El clásico intercambio con auxiliar, ahora con <code>[-1]</code>.</p>",
+		"starter_code": "# L1.6 — Intercambiar extremos\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "1\n2\n3\n4\n",
+				"expected_output": "[4, 2, 3, 1]"
+			},
+			{
+				"stdin": "9\n0\n0\n5\n",
+				"expected_output": "[5, 0, 0, 9]"
+			},
+			{
+				"stdin": "7\n7\n7\n7\n",
+				"expected_output": "[7, 7, 7, 7]"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "L1.7 — Duplicar cada casilla",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee cinco números en una lista. Cambia cada casilla por su doble (en la misma lista) e imprímela.</p><p><strong>Entrada:</strong> cinco enteros, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print(lista)</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>1\n2\n3\n4\n5</code></pre><p>Salida:</p><pre><code>[2, 4, 6, 8, 10]</code></pre>",
+		"hint_html": "<p>Para <strong>modificar</strong> necesitas la posición: <code>for i in range(len(datos))</code>.</p>",
+		"solution_html": "<pre><code>def duplicar(datos):\n    for i in range(len(datos)):\n        datos[i] = datos[i] * 2\n\n\ndef main():\n    lista = [int(input()), int(input()), int(input()), int(input()), int(input())]\n    duplicar(lista)\n    print(lista)\n\n\nmain()</code></pre><p>La función recibe la lista y la cambia: no hace falta <code>return</code>, porque es la misma lista.</p>",
+		"starter_code": "# L1.7 — Duplicar cada casilla\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "1\n2\n3\n4\n5\n",
+				"expected_output": "[2, 4, 6, 8, 10]"
+			},
+			{
+				"stdin": "-1\n0\n10\n7\n3\n",
+				"expected_output": "[-2, 0, 20, 14, 6]"
+			},
+			{
+				"stdin": "0\n0\n0\n0\n1\n",
+				"expected_output": "[0, 0, 0, 0, 2]"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "L1.8 — Recorrer por valores",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee cinco números en una lista. Recórrela con <code>for dato in lista</code> e imprime el cuadrado de cada uno.</p><p><strong>Entrada:</strong> cinco enteros, uno por línea.</p><p><strong>Salida:</strong> cada cuadrado en su línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>1\n2\n3\n4\n5</code></pre><p>Salida:</p><pre><code>1\n4\n9\n16\n25</code></pre>",
+		"hint_html": "<p><code>for dato in lista:</code> te da el valor directamente, sin índice.</p>",
+		"solution_html": "<pre><code>def main():\n    lista = [int(input()), int(input()), int(input()), int(input()), int(input())]\n    for dato in lista:\n        print(dato * dato)\n\n\nmain()</code></pre><p>Si solo vas a <strong>leer</strong> los valores, <code>for dato in lista</code> es más corto. Si vas a <strong>cambiarlos</strong>, necesitas el índice.</p>",
+		"starter_code": "# L1.8 — Recorrer por valores\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "1\n2\n3\n4\n5\n",
+				"expected_output": "1\n4\n9\n16\n25"
+			},
+			{
+				"stdin": "-3\n0\n6\n10\n-1\n",
+				"expected_output": "9\n0\n36\n100\n1"
+			},
+			{
+				"stdin": "7\n7\n7\n7\n7\n",
+				"expected_output": "49\n49\n49\n49\n49"
+			}
+		]
+	}
+]

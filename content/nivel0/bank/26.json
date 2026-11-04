@@ -1,0 +1,161 @@
+[
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [3, 1, 2]\nresultado = lista.sort()\nprint(resultado)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "None"
+				},
+				{
+					"id": "b",
+					"text": "[1, 2, 3]"
+				},
+				{
+					"id": "c",
+					"text": "[3, 1, 2]"
+				},
+				{
+					"id": "d",
+					"text": "Da error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": ".sort() ordena la lista en su lugar y devuelve None. resultado queda en None."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista1 = [1, 2, 3]\nlista2 = lista1\nlista2.append(4)\nprint(lista1)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[1, 2, 3, 4]"
+				},
+				{
+					"id": "b",
+					"text": "[1, 2, 3]"
+				},
+				{
+					"id": "c",
+					"text": "[4, 1, 2, 3]"
+				},
+				{
+					"id": "d",
+					"text": "Da error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "lista2 = lista1 no copia: las dos variables apuntan a la MISMA lista. Lo que se agrega por una se ve por la otra."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "¿Cuál es la diferencia entre sorted(lista) y lista.sort()?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "sorted crea una lista nueva; sort cambia la misma"
+				},
+				{
+					"id": "b",
+					"text": "Ninguna"
+				},
+				{
+					"id": "c",
+					"text": "sort crea una lista nueva; sorted cambia la misma"
+				},
+				{
+					"id": "d",
+					"text": "sorted solo sirve para textos"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "sorted devuelve otra lista y deja la original igual; sort modifica la original."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe ordenar e imprimir la lista. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def main():",
+				"    notas = [4, 2, 5]",
+				"    notas = notas.sort()",
+				"    print(notas)",
+				"main()"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "sort devuelve None: al asignarlo, notas queda en None. Se escribe solo notas.sort()."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "facil",
+		"prompt": "Completa para hacer una copia real de la lista.",
+		"data": {
+			"code": "original = [5, 6, 7]\ncopia = original.___1___()",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "método que copia"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"copy"
+				]
+			}
+		},
+		"explanation": "copy() crea una lista nueva con los mismos valores."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [1, 9, 2]\nlista.reverse()\nprint(lista)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[2, 9, 1]"
+				},
+				{
+					"id": "b",
+					"text": "[1, 2, 9]"
+				},
+				{
+					"id": "c",
+					"text": "[9, 2, 1]"
+				},
+				{
+					"id": "d",
+					"text": "[1, 9, 2]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "reverse NO ordena: solo invierte el orden que ya había."
+	}
+]

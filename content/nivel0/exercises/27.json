@@ -1,0 +1,186 @@
+[
+	{
+		"orden": 1,
+		"title": "L5.1 — Promedio en una línea",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números e imprime su promedio entero usando <code>sum()</code>, <code>len()</code> y <code>//</code>.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea. <code>N &gt;= 1</code>.</p><p><strong>Salida:</strong> el promedio entero.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n10\n20\n30\n41</code></pre><p>Salida:</p><pre><code>25</code></pre>",
+		"hint_html": "<p><code>sum(lista) // len(lista)</code>.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    print(sum(lista) // len(lista))\n\n\nmain()</code></pre><p>Antes: acumulador, contador y un for. Ahora: una línea.</p>",
+		"starter_code": "# L5.1 — Promedio en una línea\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n10\n20\n30\n41\n",
+				"expected_output": "25"
+			},
+			{
+				"stdin": "3\n5\n5\n5\n",
+				"expected_output": "5"
+			},
+			{
+				"stdin": "2\n1\n2\n",
+				"expected_output": "1"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "L5.2 — Los primeros 3",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números (<code>N &gt;= 3</code>) e imprime una lista con los primeros 3 usando slicing.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n9\n8\n7\n6\n5</code></pre><p>Salida:</p><pre><code>[9, 8, 7]</code></pre>",
+		"hint_html": "<p><code>lista[:3]</code> va desde el inicio hasta antes de la posición 3.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    print(lista[:3])\n\n\nmain()</code></pre><p>El final del slicing NO se incluye: <code>[:3]</code> son las posiciones 0, 1 y 2.</p>",
+		"starter_code": "# L5.2 — Los primeros 3\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n9\n8\n7\n6\n5\n",
+				"expected_output": "[9, 8, 7]"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "[1, 2, 3]"
+			},
+			{
+				"stdin": "4\n0\n-1\n-2\n-3\n",
+				"expected_output": "[0, -1, -2]"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "L5.3 — Los últimos 5",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números (<code>N &gt;= 5</code>) e imprime los últimos 5 en una lista.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>7\n1\n2\n3\n4\n5\n6\n7</code></pre><p>Salida:</p><pre><code>[3, 4, 5, 6, 7]</code></pre>",
+		"hint_html": "<p>Con negativos: <code>lista[-5:]</code> arranca 5 desde el final y va hasta el último.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    print(lista[-5:])\n\n\nmain()</code></pre><p><code>[a:]</code> sin final significa \"hasta el último\".</p>",
+		"starter_code": "# L5.3 — Los últimos 5\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "7\n1\n2\n3\n4\n5\n6\n7\n",
+				"expected_output": "[3, 4, 5, 6, 7]"
+			},
+			{
+				"stdin": "5\n9\n9\n9\n9\n9\n",
+				"expected_output": "[9, 9, 9, 9, 9]"
+			},
+			{
+				"stdin": "6\n10\n20\n30\n40\n50\n60\n",
+				"expected_output": "[20, 30, 40, 50, 60]"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "L5.4 — Las posiciones pares",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números e imprime una lista con los que están en las posiciones pares (0, 2, 4…), usando slicing con paso.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n10\n11\n12\n13\n14\n15</code></pre><p>Salida:</p><pre><code>[10, 12, 14]</code></pre>",
+		"hint_html": "<p><code>[::2]</code>: desde el inicio, hasta el final, de 2 en 2.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    print(lista[::2])\n\n\nmain()</code></pre><p>El tercer número del slicing es el paso.</p>",
+		"starter_code": "# L5.4 — Las posiciones pares\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n10\n11\n12\n13\n14\n15\n",
+				"expected_output": "[10, 12, 14]"
+			},
+			{
+				"stdin": "3\n7\n8\n9\n",
+				"expected_output": "[7, 9]"
+			},
+			{
+				"stdin": "1\n4\n",
+				"expected_output": "[4]"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "L5.5 — Al revés en un golpe",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números e imprime la lista invertida usando <code>[::-1]</code>, y después la original para mostrar que no cambió.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> dos líneas: la invertida y la original.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n1\n2\n3\n4</code></pre><p>Salida:</p><pre><code>[4, 3, 2, 1]\n[1, 2, 3, 4]</code></pre>",
+		"hint_html": "<p><code>[::-1]</code> camina con paso -1: del final al inicio.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    print(lista[::-1])\n    print(lista)\n\n\nmain()</code></pre><p>A diferencia de <code>.reverse()</code>, el slicing crea una lista <strong>nueva</strong>.</p>",
+		"starter_code": "# L5.5 — Al revés en un golpe\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n1\n2\n3\n4\n",
+				"expected_output": "[4, 3, 2, 1]\n[1, 2, 3, 4]"
+			},
+			{
+				"stdin": "2\n9\n0\n",
+				"expected_output": "[0, 9]\n[9, 0]"
+			},
+			{
+				"stdin": "3\n5\n5\n6\n",
+				"expected_output": "[6, 5, 5]\n[5, 5, 6]"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "L5.6 — Partir en dos mitades",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Parte la lista en dos: la primera mitad tiene <code>N // 2</code> elementos y la segunda el resto. Imprime cada mitad en su línea.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> dos líneas con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>6\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>[1, 2, 3]\n[4, 5, 6]</code></pre>",
+		"hint_html": "<p>Calcula <code>mitad = len(lista) // 2</code> y usa <code>[:mitad]</code> y <code>[mitad:]</code>.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    mitad = len(lista) // 2\n    print(lista[:mitad])\n    print(lista[mitad:])\n\n\nmain()</code></pre><p>Como el final no se incluye, <code>[:mitad]</code> y <code>[mitad:]</code> no se pisan ni dejan huecos.</p>",
+		"starter_code": "# L5.6 — Partir en dos mitades\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "6\n1\n2\n3\n4\n5\n6\n",
+				"expected_output": "[1, 2, 3]\n[4, 5, 6]"
+			},
+			{
+				"stdin": "5\n1\n2\n3\n4\n5\n",
+				"expected_output": "[1, 2]\n[3, 4, 5]"
+			},
+			{
+				"stdin": "1\n8\n",
+				"expected_output": "[]\n[8]"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "L5.7 — Sin los extremos",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números (<code>N &gt;= 2</code>) e imprime la lista sin el primero y sin el último.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n9\n1\n2\n3\n9</code></pre><p>Salida:</p><pre><code>[1, 2, 3]</code></pre>",
+		"hint_html": "<p><code>[1:-1]</code>: desde la posición 1 hasta antes del último.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    print(lista[1:-1])\n\n\nmain()</code></pre><p>Con dos elementos el resultado es <code>[]</code>: no queda nada en el medio.</p>",
+		"starter_code": "# L5.7 — Sin los extremos\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n9\n1\n2\n3\n9\n",
+				"expected_output": "[1, 2, 3]"
+			},
+			{
+				"stdin": "2\n4\n5\n",
+				"expected_output": "[]"
+			},
+			{
+				"stdin": "4\n0\n7\n8\n0\n",
+				"expected_output": "[7, 8]"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "L5.8 — Resumen estadístico",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números e imprime el resumen con este formato exacto:</p><pre><code>Minimo: x\nMaximo: y\nPromedio: z</code></pre><p>El promedio es entero (<code>//</code>).</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea. <code>N &gt;= 1</code>.</p><p><strong>Salida:</strong> las tres líneas.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n4\n9\n1\n7\n3</code></pre><p>Salida:</p><pre><code>Minimo: 1\nMaximo: 9\nPromedio: 4</code></pre>",
+		"hint_html": "<p><code>min</code>, <code>max</code>, <code>sum</code> y <code>len</code> reciben la lista entera.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef resumen(datos):\n    print(\"Minimo: \" + str(min(datos)))\n    print(\"Maximo: \" + str(max(datos)))\n    print(\"Promedio: \" + str(sum(datos) // len(datos)))\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    resumen(lista)\n\n\nmain()</code></pre><p>Cuatro funciones built-in reemplazan tres recorridos del Nivel 0.</p>",
+		"starter_code": "# L5.8 — Resumen estadístico\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n4\n9\n1\n7\n3\n",
+				"expected_output": "Minimo: 1\nMaximo: 9\nPromedio: 4"
+			},
+			{
+				"stdin": "1\n6\n",
+				"expected_output": "Minimo: 6\nMaximo: 6\nPromedio: 6"
+			},
+			{
+				"stdin": "3\n-2\n-8\n5\n",
+				"expected_output": "Minimo: -8\nMaximo: 5\nPromedio: -2"
+			}
+		]
+	}
+]

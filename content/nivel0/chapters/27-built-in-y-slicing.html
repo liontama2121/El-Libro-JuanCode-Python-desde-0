@@ -1,0 +1,77 @@
+<div class="jc-desbloqueo" role="note">
+  <strong>✅ Se vale:</strong> métodos de listas, <code>sum</code>/<code>min</code>/<code>max</code>/<code>len</code>, slicing y <code>for dato in lista</code>. <strong>❌ Sigue prohibido:</strong> f-strings y comprensiones.
+</div>
+
+<p>Herramientas de Python que hacen en 1 línea lo que te tomaba 10.</p>
+
+<h3>1. Las cuatro funciones built-in</h3>
+
+<table>
+  <thead>
+    <tr><th>Función</th><th>Con <code>lista = [4, 9, 1, 6]</code></th><th>Reemplaza a…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>len(lista)</code></td><td><code>4</code></td><td>llevar <code>n</code> por todos lados</td></tr>
+    <tr><td><code>sum(lista)</code></td><td><code>20</code></td><td>el acumulador (patrón III)</td></tr>
+    <tr><td><code>min(lista)</code></td><td><code>1</code></td><td>buscar el menor (patrón IV)</td></tr>
+    <tr><td><code>max(lista)</code></td><td><code>9</code></td><td>buscar el mayor (patrón IV)</td></tr>
+  </tbody>
+</table>
+
+<pre><code>promedio = sum(lista) // len(lista)   # 5</code></pre>
+
+<h3>2. Slicing: cortar un pedazo</h3>
+
+<p><code>lista[a:b]</code> devuelve una lista <strong>nueva</strong> desde la posición <code>a</code> hasta <strong>antes</strong> de <code>b</code>.</p>
+
+<div class="jc-vec" aria-label="lista: 10, 20, 30, 40, 50, 60">
+  <span class="jc-celda" data-i="0">10</span><span class="jc-celda" data-i="1">20</span><span class="jc-celda" data-i="2">30</span><span class="jc-celda" data-i="3">40</span><span class="jc-celda" data-i="4">50</span><span class="jc-celda" data-i="5">60</span>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Escribes</th><th>Significa</th><th>Resultado</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>lista[1:4]</code></td><td>de 1 hasta antes de 4</td><td><code>[20, 30, 40]</code></td></tr>
+    <tr><td><code>lista[:3]</code></td><td>los primeros 3</td><td><code>[10, 20, 30]</code></td></tr>
+    <tr><td><code>lista[3:]</code></td><td>de 3 hasta el final</td><td><code>[40, 50, 60]</code></td></tr>
+    <tr><td><code>lista[-2:]</code></td><td>los últimos 2</td><td><code>[50, 60]</code></td></tr>
+    <tr><td><code>lista[1:-1]</code></td><td>sin el primero ni el último</td><td><code>[20, 30, 40, 50]</code></td></tr>
+    <tr><td><code>lista[::2]</code></td><td>de 2 en 2</td><td><code>[10, 30, 50]</code></td></tr>
+    <tr><td><code>lista[::-1]</code></td><td>al revés</td><td><code>[60, 50, 40, 30, 20, 10]</code></td></tr>
+  </tbody>
+</table>
+
+<p class="jc-frase">El inicio entra, el final no. [a:b] tiene b − a elementos.</p>
+
+<h3>3. Partir en dos mitades</h3>
+
+<pre><code>mitad = len(lista) // 2
+primera = lista[:mitad]
+segunda = lista[mitad:]</code></pre>
+
+<p>Como el final no se incluye, las dos mitades no se pisan ni dejan huecos.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto L5 · escríbelo 3 veces</p>
+<pre><code>def leer_lista(n):
+    lista = []
+    for i in range(n):
+        lista.append(int(input()))
+    return lista
+
+
+def main():
+    lista = leer_lista(int(input()))
+    print(min(lista))
+    print(max(lista))
+    print(sum(lista) // len(lista))
+    print(lista[:3])
+    print(lista[::-1])
+
+
+main()</code></pre>
+</div>
+
+<p>Ejercicios: <strong>L5.1 a L5.8</strong>.</p>

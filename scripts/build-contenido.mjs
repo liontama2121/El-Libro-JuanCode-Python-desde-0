@@ -183,6 +183,30 @@ sql.push("--  Solo toca las filas con source = 'seed'.");
 sql.push("-- ============================================================================");
 sql.push("");
 
+/*
+ * Renumeración (opcional, libro.json → "renumerar").
+ * Cuando se inserta un bloque de capítulos en medio, los que ya existían se
+ * corren de número ANTES de los upserts. Así conservan su id y, con él, los
+ * unlocks, los intentos de quiz y las preguntas que escribió el profe.
+ * Van en el orden del archivo (del más alto al más bajo, para no chocar con
+ * el índice único track+number) y cada paso exige el título viejo: repetir
+ * el seed no mueve nada.
+ */
+const renumerar = libro.renumerar ?? {};
+for (const r of renumerar.capitulos ?? []) {
+	revisar(
+		Number.isInteger(r.de) && Number.isInteger(r.a) && Boolean(r.title),
+		`renumerar: paso inválido ${JSON.stringify(r)}.`,
+	);
+	sql.push(
+		`UPDATE chapters SET number = ${r.a} WHERE track = ${txt(TRACK)} AND number = ${r.de} AND title = ${txt(r.title)}`,
+	);
+	sql.push(
+		`  AND NOT EXISTS (SELECT 1 FROM chapters WHERE track = ${txt(TRACK)} AND number = ${r.a});`,
+	);
+}
+if ((renumerar.capitulos ?? []).length > 0) sql.push("");
+
 /* Partes */
 for (const p of libro.partes) {
 	sql.push(
@@ -279,6 +303,32 @@ for (const cap of libro.capitulos) {
 		sql.push(`    FROM chapters WHERE number = ${n} AND track = ${txt(TRACK)};`);
 	});
 
+	sql.push("");
+}
+
+/*
+ * Quien ya tenía abierto el capítulo `de` (que antes venía justo después del
+ * bloque nuevo) también abre el primer capítulo del bloque, `a`. Sin esto
+ * quedaría con matrices abiertas y el bloque nuevo bloqueado.
+ */
+const herencia = renumerar.heredar_desbloqueo;
+if (herencia) {
+	revisar(
+		Number.isInteger(herencia.de) && Number.isInteger(herencia.a),
+		"renumerar.heredar_desbloqueo necesita de y a.",
+	);
+	sql.push(`-- ── Desbloqueo heredado: cap. ${herencia.de} → cap. ${herencia.a}`);
+	sql.push(`INSERT OR IGNORE INTO unlocks (user_id, chapter_id, source)`);
+	sql.push(
+		`  SELECT u.user_id, (SELECT id FROM chapters WHERE track = ${txt(TRACK)} AND number = ${herencia.a}), u.source`,
+	);
+	sql.push(`    FROM unlocks u`);
+	sql.push(
+		`   WHERE u.chapter_id = (SELECT id FROM chapters WHERE track = ${txt(TRACK)} AND number = ${herencia.de})`,
+	);
+	sql.push(
+		`     AND EXISTS (SELECT 1 FROM chapters WHERE track = ${txt(TRACK)} AND number = ${herencia.a});`,
+	);
 	sql.push("");
 }
 

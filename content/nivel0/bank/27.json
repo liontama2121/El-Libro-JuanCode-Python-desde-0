@@ -1,0 +1,182 @@
+[
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [10, 20, 30, 40, 50]\nprint(lista[1:3])",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[20, 30]"
+				},
+				{
+					"id": "b",
+					"text": "[20, 30, 40]"
+				},
+				{
+					"id": "c",
+					"text": "[10, 20, 30]"
+				},
+				{
+					"id": "d",
+					"text": "[30, 40]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "El final del slicing NO se incluye: [1:3] son las posiciones 1 y 2."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [1, 2, 3, 4, 5]\nprint(lista[::-1])",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[5, 4, 3, 2, 1]"
+				},
+				{
+					"id": "b",
+					"text": "[1, 2, 3, 4, 5]"
+				},
+				{
+					"id": "c",
+					"text": "[5]"
+				},
+				{
+					"id": "d",
+					"text": "Da error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Paso -1 recorre del final al inicio."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [0, 1, 2, 3, 4, 5]\nprint(lista[::2])",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[0, 2, 4]"
+				},
+				{
+					"id": "b",
+					"text": "[0, 1, 2]"
+				},
+				{
+					"id": "c",
+					"text": "[2, 4]"
+				},
+				{
+					"id": "d",
+					"text": "[1, 3, 5]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "[::2] toma desde la posición 0 de 2 en 2."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe imprimir el promedio entero de la lista. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def main():",
+				"    notas = [30, 40, 50]",
+				"    promedio = sum(notas) // max(notas)",
+				"    print(promedio)",
+				"main()"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "Para el promedio se divide entre la cantidad: len(notas), no max(notas)."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "medio",
+		"prompt": "Completa para imprimir los últimos 2 elementos.",
+		"data": {
+			"code": "lista = [3, 6, 9, 12]\nprint(lista[___1___:])",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "un número negativo"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"-2"
+				]
+			}
+		},
+		"explanation": "[-2:] arranca 2 desde el final y va hasta el último: [9, 12]."
+	},
+	{
+		"type": "parsons",
+		"difficulty": "facil",
+		"prompt": "Arma la función que imprime el mínimo y el máximo",
+		"data": {
+			"lines": [
+				{
+					"id": "l1",
+					"text": "def extremos(datos):",
+					"indent": 0
+				},
+				{
+					"id": "l2",
+					"text": "print(min(datos))",
+					"indent": 1
+				},
+				{
+					"id": "l3",
+					"text": "print(max(datos))",
+					"indent": 1
+				},
+				{
+					"id": "l4",
+					"text": "def main():",
+					"indent": 0
+				},
+				{
+					"id": "l5",
+					"text": "extremos([4, 1, 7])",
+					"indent": 1
+				},
+				{
+					"id": "l6",
+					"text": "main()",
+					"indent": 0
+				}
+			]
+		},
+		"correct": {
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4",
+				"l5",
+				"l6"
+			]
+		},
+		"explanation": "Primero se define la función, después main la llama y la última línea llama a main."
+	}
+]

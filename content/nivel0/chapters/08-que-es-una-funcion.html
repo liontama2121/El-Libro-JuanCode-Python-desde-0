@@ -1,0 +1,113 @@
+<h2>Nivel 0.4 — Planas de Funciones</h2>
+
+<p class="jc-plana-sub">Ya sabes llenar y recorrer vectores. Ahora vas a meter ese código en cajas con nombre.</p>
+
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code>, comprensiones ni <code>global</code>. Vectores con <code>[0] * n</code>. Siempre <code>def</code> + <code>main()</code> + última línea <code>main()</code>.
+</div>
+
+<div class="jc-plana-intro">
+  <p>Casi todos los que se traban con funciones se traban en <strong>el mismo punto</strong>: creen que la variable de adentro de la función y la de afuera tienen que llamarse igual. No es así. En esta parte, a propósito, los nombres de afuera y de adentro van a ser <strong>distintos</strong> en todos los ejercicios, hasta que eso te parezca lo más normal del mundo.</p>
+</div>
+
+<h2>🧠 Qué es una función (la caja negra)</h2>
+
+<p class="jc-plana-sub">La idea más simple del curso: una caja con entrada y salida.</p>
+
+<h3>1. La licuadora</h3>
+
+<p>Una licuadora no sabe qué fruta le vas a echar. Solo sabe <strong>qué hacer</strong> con lo que le eches:</p>
+
+<table>
+  <thead>
+    <tr><th>Entrada</th><th>Proceso</th><th>Salida</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>🍓 fresas</td><td>licuar</td><td>jugo de fresa</td></tr>
+    <tr><td>🥭 mango</td><td>licuar</td><td>jugo de mango</td></tr>
+    <tr><td>lo que sea</td><td>licuar</td><td>jugo de lo que sea</td></tr>
+  </tbody>
+</table>
+
+<pre><code>def licuar(fruta):            # entrada: fruta
+    jugo = "jugo de " + fruta # proceso
+    return jugo               # salida</code></pre>
+
+<p class="jc-frase">Una función es una licuadora: le das algo, hace su trabajo y te devuelve algo.</p>
+
+<h3>2. Las 3 piezas</h3>
+
+<table>
+  <thead>
+    <tr><th>Pieza</th><th>Qué es</th><th>¿Obligatoria?</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>def nombre(parámetros):</code></td><td>La etiqueta de la caja y lo que recibe</td><td>Sí</td></tr>
+    <tr><td>El cuerpo (con sangría)</td><td>El trabajo que hace</td><td>Sí</td></tr>
+    <tr><td><code>return valor</code></td><td>Lo que entrega de vuelta</td><td>No: hay funciones que solo imprimen</td></tr>
+  </tbody>
+</table>
+
+<h3>3. Definir no es llamar</h3>
+
+<p>Escribir una receta no es cocinar. Con <code>def</code> solo <strong>escribes la receta</strong>; la comida aparece cuando la <strong>llamas</strong> por su nombre con paréntesis.</p>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Definir · la receta</p>
+<pre><code>def saludar():
+    print("Hola mundo")</code></pre>
+    <p>No imprime nada todavía. Python solo aprende la receta.</p>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Llamar · cocinar</p>
+<pre><code>saludar()
+saludar()</code></pre>
+    <p>Ahora sí: imprime <code>Hola mundo</code> dos veces. Cada llamada cocina otra vez.</p>
+  </div>
+</div>
+
+<h3>4. El molde de todo el curso</h3>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto · escríbelo 3 veces</p>
+<pre><code>def saludar():
+    print("Hola mundo")
+
+
+def main():
+    saludar()
+
+
+main()</code></pre>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Regla</th><th>Por qué</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Las funciones se definen <strong>arriba</strong></td><td>Python lee de arriba a abajo: primero aprende las recetas</td></tr>
+    <tr><td><code>main()</code> es la que orquesta</td><td>Ahí se lee, se llama a las demás y se imprime</td></tr>
+    <tr><td>La última línea es <code>main()</code>, sin sangría</td><td>Sin ella nada se ejecuta y el juez ve salida vacía</td></tr>
+  </tbody>
+</table>
+
+<h3>5. Pop quiz</h3>
+
+<details class="jc-popquiz">
+  <summary>1. Escribí <code>def saludar(): print("hola")</code> y nada más. ¿Qué imprime el programa?</summary>
+  <p><strong>Nada.</strong> Definiste la receta pero nunca la llamaste. Falta <code>saludar()</code>.</p>
+</details>
+
+<details class="jc-popquiz">
+  <summary>2. ¿Toda función necesita <code>return</code>?</summary>
+  <p><strong>No.</strong> El <code>return</code> es la pieza opcional. Una función que solo imprime un menú no necesita devolver nada.</p>
+</details>
+
+<details class="jc-popquiz">
+  <summary>3. ¿Qué pasa si borras la última línea <code>main()</code>?</summary>
+  <p><strong>El programa no hace nada.</strong> <code>main</code> queda definida pero nadie la llama, y como ella es la que llama a las demás, nada corre.</p>
+</details>
+
+<p>Ejercicios: <strong>F0.1 a F0.3</strong>.</p>

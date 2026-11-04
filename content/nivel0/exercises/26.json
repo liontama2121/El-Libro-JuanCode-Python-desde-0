@@ -1,0 +1,140 @@
+[
+	{
+		"orden": 1,
+		"title": "L4.1 — Notas de menor a mayor",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> notas y ordénalas de menor a mayor con <code>.sort()</code>. Imprime la lista.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> la lista ordenada con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n35\n12\n48\n30\n25</code></pre><p>Salida:</p><pre><code>[12, 25, 30, 35, 48]</code></pre>",
+		"hint_html": "<p><code>notas.sort()</code> ordena la misma lista. No la asignes: <code>notas = notas.sort()</code> deja <code>None</code>.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    notas = leer_lista(int(input()))\n    notas.sort()\n    print(notas)\n\n\nmain()</code></pre><p>Cero burbuja: <code>.sort()</code> hace todo el algoritmo.</p>",
+		"starter_code": "# L4.1 — Notas de menor a mayor\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n35\n12\n48\n30\n25\n",
+				"expected_output": "[12, 25, 30, 35, 48]"
+			},
+			{
+				"stdin": "3\n5\n5\n1\n",
+				"expected_output": "[1, 5, 5]"
+			},
+			{
+				"stdin": "1\n40\n",
+				"expected_output": "[40]"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "L4.2 — De mayor a menor",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> números y ordénalos de mayor a menor usando <code>.sort()</code> y después <code>.reverse()</code>. Imprime la lista.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> la lista con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n3\n9\n1\n7\n5</code></pre><p>Salida:</p><pre><code>[9, 7, 5, 3, 1]</code></pre>",
+		"hint_html": "<p>Primero de menor a mayor, después darle la vuelta.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    lista.sort()\n    lista.reverse()\n    print(lista)\n\n\nmain()</code></pre><p>También existe <code>lista.sort(reverse=True)</code>, que hace lo mismo en un paso.</p>",
+		"starter_code": "# L4.2 — De mayor a menor\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n3\n9\n1\n7\n5\n",
+				"expected_output": "[9, 7, 5, 3, 1]"
+			},
+			{
+				"stdin": "4\n-2\n0\n-8\n4\n",
+				"expected_output": "[4, 0, -2, -8]"
+			},
+			{
+				"stdin": "2\n1\n1\n",
+				"expected_output": "[1, 1]"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "L4.3 — Palabras al revés",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code> palabras. Invierte el orden de la lista con <code>.reverse()</code> e imprime cada palabra en su línea.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> palabras, una por línea.</p><p><strong>Salida:</strong> las palabras en orden inverso, una por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\nuno\ndos\ntres\ncuatro</code></pre><p>Salida:</p><pre><code>cuatro\ntres\ndos\nuno</code></pre>",
+		"hint_html": "<p><code>.reverse()</code> no ordena: solo le da la vuelta al orden actual.</p>",
+		"solution_html": "<pre><code>def leer_palabras(n):\n    lista = []\n    for i in range(n):\n        lista.append(input())\n    return lista\n\n\ndef main():\n    palabras = leer_palabras(int(input()))\n    palabras.reverse()\n    for palabra in palabras:\n        print(palabra)\n\n\nmain()</code></pre><p>Ojo con el tercer caso: <code>reverse</code> no es <code>sort</code>.</p>",
+		"starter_code": "# L4.3 — Palabras al revés\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\nuno\ndos\ntres\ncuatro\n",
+				"expected_output": "cuatro\ntres\ndos\nuno"
+			},
+			{
+				"stdin": "2\nhola\nmundo\n",
+				"expected_output": "mundo\nhola"
+			},
+			{
+				"stdin": "3\nc\na\nb\n",
+				"expected_output": "b\na\nc"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "L4.4 — La copia que no daña",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números en la lista <code>original</code>. Haz una copia con <code>.copy()</code> y multiplica cada valor de la <strong>copia</strong> por 10. Imprime la original y después la copia: la original no debe cambiar.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> dos líneas: la original y la copia, con <code>print()</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3</code></pre><p>Salida:</p><pre><code>[1, 2, 3]\n[10, 20, 30]</code></pre>",
+		"hint_html": "<p><code>copia = original</code> NO copia: es la misma lista con otro nombre. Usa <code>original.copy()</code>.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    original = leer_lista(int(input()))\n    copia = original.copy()\n    for i in range(len(copia)):\n        copia[i] = copia[i] * 10\n    print(original)\n    print(copia)\n\n\nmain()</code></pre><p>Prueba cambiar <code>.copy()</code> por <code>copia = original</code> y mira cómo se daña la original.</p>",
+		"starter_code": "# L4.4 — La copia que no daña\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "[1, 2, 3]\n[10, 20, 30]"
+			},
+			{
+				"stdin": "2\n-4\n5\n",
+				"expected_output": "[-4, 5]\n[-40, 50]"
+			},
+			{
+				"stdin": "4\n0\n9\n9\n1\n",
+				"expected_output": "[0, 9, 9, 1]\n[0, 90, 90, 10]"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "L4.5 — Ranking de puntajes",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> puntajes. Ordénalos de mayor a menor e imprime el ranking con el formato <code>1. puntaje</code>, <code>2. puntaje</code>…</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> una línea por puesto.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n80\n95\n60\n88</code></pre><p>Salida:</p><pre><code>1. 95\n2. 88\n3. 80\n4. 60</code></pre>",
+		"hint_html": "<p>Ordena descendente y lleva un contador <code>puesto</code> que arranca en 1.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    puntajes = leer_lista(int(input()))\n    puntajes.sort()\n    puntajes.reverse()\n    puesto = 1\n    for puntaje in puntajes:\n        print(str(puesto) + \". \" + str(puntaje))\n        puesto = puesto + 1\n\n\nmain()</code></pre><p>El ordenamiento lo hace Python; el formato lo pones tú con <code>str()</code> y <code>+</code>.</p>",
+		"starter_code": "# L4.5 — Ranking de puntajes\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n80\n95\n60\n88\n",
+				"expected_output": "1. 95\n2. 88\n3. 80\n4. 60"
+			},
+			{
+				"stdin": "3\n10\n10\n30\n",
+				"expected_output": "1. 30\n2. 10\n3. 10"
+			},
+			{
+				"stdin": "1\n7\n",
+				"expected_output": "1. 7"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "L4.6 — Original y ordenada",
+		"difficulty": "medio",
+		"statement_html": "<p>Lee <code>N</code> números. Crea una versión ordenada con <code>sorted()</code> <strong>sin tocar</strong> la original. Imprime la original y luego la ordenada.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Salida:</strong> dos líneas con <code>print()</code>: la original y la ordenada.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n7\n2\n9\n1</code></pre><p>Salida:</p><pre><code>[7, 2, 9, 1]\n[1, 2, 7, 9]</code></pre>",
+		"hint_html": "<p><code>sorted(lista)</code> devuelve una lista <strong>nueva</strong>; <code>lista.sort()</code> cambia la misma.</p>",
+		"solution_html": "<pre><code>def leer_lista(n):\n    lista = []\n    for i in range(n):\n        lista.append(int(input()))\n    return lista\n\n\ndef main():\n    lista = leer_lista(int(input()))\n    ordenada = sorted(lista)\n    print(lista)\n    print(ordenada)\n\n\nmain()</code></pre><p>¿Necesitas conservar el orden original? <code>sorted</code>. ¿No importa? <code>.sort()</code>.</p>",
+		"starter_code": "# L4.6 — Original y ordenada\n# def + main(). Métodos de listas permitidos. Sin f-strings ni comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n7\n2\n9\n1\n",
+				"expected_output": "[7, 2, 9, 1]\n[1, 2, 7, 9]"
+			},
+			{
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "[1, 2, 3]\n[1, 2, 3]"
+			},
+			{
+				"stdin": "2\n0\n-5\n",
+				"expected_output": "[0, -5]\n[-5, 0]"
+			}
+		]
+	}
+]

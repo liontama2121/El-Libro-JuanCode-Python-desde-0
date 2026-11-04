@@ -1,12 +1,104 @@
 [
 	{
 		"orden": 1,
-		"title": "M6.1 — El doble",
+		"title": "M1.1 — Tabla de multiplicar",
 		"difficulty": "facil",
-		"statement_html": "<p>Crea una matriz <strong>nueva</strong> con el doble de cada elemento e imprímela.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>2 4 6\n8 10 12</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>nueva = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        nueva[i][j] = (algo con matriz[i][j])\nimprimir_matriz(nueva, n, m)</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    nueva = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            nueva[i][j] = matriz[i][j] * 2\n    imprimir_matriz(nueva, n, m)\n\nmain()</code></pre><p>La nueva nace con <code>crear_matriz</code>: nunca con <code>.append</code>.</p>",
-		"starter_code": "# M6.1 — El doble\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Crea una matriz de <code>N × M</code> donde cada casilla vale <code>(i + 1) * (j + 1)</code>. Imprímela.</p><p><strong>Entrada:</strong> <code>N</code> (filas) y <code>M</code> (columnas), uno por línea.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4</code></pre><p>Salida:</p><pre><code>1 2 3 4\n2 4 6 8\n3 6 9 12</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = (valor)\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = (i + 1) * (j + 1)\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre><p>El esqueleto no cambia: solo cambia lo que va a la derecha del <code>=</code>.</p>",
+		"starter_code": "# M1.1 — Tabla de multiplicar\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n4\n",
+				"expected_output": "1 2 3 4\n2 4 6 8\n3 6 9 12"
+			},
+			{
+				"stdin": "1\n5\n",
+				"expected_output": "1 2 3 4 5"
+			},
+			{
+				"stdin": "2\n2\n",
+				"expected_output": "1 2\n2 4"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "M1.2 — Suma de índices",
+		"difficulty": "facil",
+		"statement_html": "<p>Crea una matriz de <code>N × M</code> donde cada casilla vale <code>i + j</code>. Imprímela.</p><p><strong>Entrada:</strong> <code>N</code> (filas) y <code>M</code> (columnas), uno por línea.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n3</code></pre><p>Salida:</p><pre><code>0 1 2\n1 2 3\n2 3 4</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = (valor)\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = i + j\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre><p>Mira la salida: cada fila arranca en su número de fila. Así se ve el doble índice.</p>",
+		"starter_code": "# M1.2 — Suma de índices\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n3\n",
+				"expected_output": "0 1 2\n1 2 3\n2 3 4"
+			},
+			{
+				"stdin": "2\n4\n",
+				"expected_output": "0 1 2 3\n1 2 3 4"
+			},
+			{
+				"stdin": "1\n1\n",
+				"expected_output": "0"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "M1.3 — Matriz identidad",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code>. Crea una matriz cuadrada de <code>N × N</code> con 1 en la diagonal (<code>i == j</code>) y 0 en el resto. Imprímela.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3</code></pre><p>Salida:</p><pre><code>1 0 0\n0 1 0\n0 0 1</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = (valor)\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    matriz = crear_matriz(n, n)\n    for i in range(n):\n        for j in range(n):\n            if i == j:\n                matriz[i][j] = 1\n    imprimir_matriz(matriz, n, n)\n\nmain()</code></pre><p>No hace falta el <code>else</code>: <code>crear_matriz</code> ya dejó todo en 0.</p>",
+		"starter_code": "# M1.3 — Matriz identidad\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "3\n",
+				"expected_output": "1 0 0\n0 1 0\n0 0 1"
+			},
+			{
+				"stdin": "1\n",
+				"expected_output": "1"
+			},
+			{
+				"stdin": "4\n",
+				"expected_output": "1 0 0 0\n0 1 0 0\n0 0 1 0\n0 0 0 1"
+			}
+		]
+	},
+	{
+		"orden": 4,
+		"title": "M1.4 — Numerar en orden",
+		"difficulty": "facil",
+		"statement_html": "<p>Crea una matriz de <code>N × M</code> numerada de 1 en adelante, fila por fila. Imprímela.</p><p><strong>Entrada:</strong> <code>N</code> (filas) y <code>M</code> (columnas), uno por línea.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3</code></pre><p>Salida:</p><pre><code>1 2 3\n4 5 6</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = (valor)\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    valor = 1\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = valor\n            valor = valor + 1\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre><p><code>valor</code> nace afuera y avanza en cada casilla. Es el mismo contador manual que <code>k</code>.</p>",
+		"starter_code": "# M1.4 — Numerar en orden\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "2\n3\n",
+				"expected_output": "1 2 3\n4 5 6"
+			},
+			{
+				"stdin": "3\n2\n",
+				"expected_output": "1 2\n3 4\n5 6"
+			},
+			{
+				"stdin": "1\n4\n",
+				"expected_output": "1 2 3 4"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "M1.5 — Leer y guardar el doble",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee una matriz, pero guarda en cada casilla el <strong>doble</strong> del número leído. Imprímela.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>2 4 6\n8 10 12</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = (valor)\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input()) * 2\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre><p>Leer es lo mismo que llenar: el valor viene de <code>input()</code> en vez de una fórmula.</p>",
+		"starter_code": "# M1.5 — Leer y guardar el doble\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
 		"tests": [
 			{
 				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
@@ -23,163 +115,25 @@
 		]
 	},
 	{
-		"orden": 2,
-		"title": "M6.2 — La transpuesta",
-		"difficulty": "medio",
-		"statement_html": "<p>Imprime la transpuesta: las filas pasan a ser columnas. Si la original es <code>N × M</code>, la transpuesta es <code>M × N</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>1 4\n2 5\n3 6</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>nueva = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        nueva[i][j] = (algo con matriz[i][j])\nimprimir_matriz(nueva, n, m)</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    t = crear_matriz(m, n)\n    for i in range(n):\n        for j in range(m):\n            t[j][i] = matriz[i][j]\n    imprimir_matriz(t, m, n)\n\nmain()</code></pre><p>Se crea al revés (<code>m, n</code>), se escribe al revés (<code>[j][i]</code>) y se imprime al revés.</p>",
-		"starter_code": "# M6.2 — La transpuesta\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "1 4\n2 5\n3 6"
-			},
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "7 5 -6\n-3 8 1\n0 -1 9\n2 4 3"
-			},
-			{
-				"stdin": "1\n2\n1\n2\n",
-				"expected_output": "1\n2"
-			}
-		]
-	},
-	{
-		"orden": 3,
-		"title": "M6.3 — Suma de dos matrices",
-		"difficulty": "medio",
-		"statement_html": "<p>Lee <code>N</code>, <code>M</code>, luego la matriz A y luego la matriz B (ambas <code>N × M</code>, uno por línea). Imprime A + B, casilla por casilla.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6\n6\n5\n4\n3\n2\n1</code></pre><p>Salida:</p><pre><code>7 7 7\n7 7 7</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>nueva = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        nueva[i][j] = (algo con matriz[i][j])\nimprimir_matriz(nueva, n, m)</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    a = leer_matriz(n, m)\n    b = leer_matriz(n, m)\n    s = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            s[i][j] = a[i][j] + b[i][j]\n    imprimir_matriz(s, n, m)\n\nmain()</code></pre><p><code>leer_matriz</code> se llama dos veces. Si no tuvieras la función, escribirías el doble <code>for</code> dos veces.</p>",
-		"starter_code": "# M6.3 — Suma de dos matrices\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n6\n5\n4\n3\n2\n1\n",
-				"expected_output": "7 7 7\n7 7 7"
-			},
-			{
-				"stdin": "1\n2\n-1\n4\n1\n-4\n",
-				"expected_output": "0 0"
-			},
-			{
-				"stdin": "2\n2\n0\n0\n0\n0\n7\n8\n9\n10\n",
-				"expected_output": "7 8\n9 10"
-			}
-		]
-	},
-	{
-		"orden": 4,
-		"title": "M6.4 — Negativos a cero",
-		"difficulty": "facil",
-		"statement_html": "<p>Crea una matriz nueva igual a la original pero con los negativos cambiados por 0. Imprímela.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3</code></pre><p>Salida:</p><pre><code>7 0 0 2\n5 8 0 4\n0 1 9 3</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>nueva = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        nueva[i][j] = (algo con matriz[i][j])\nimprimir_matriz(nueva, n, m)</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    nueva = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; 0:\n                nueva[i][j] = matriz[i][j]\n    imprimir_matriz(nueva, n, m)\n\nmain()</code></pre><p>Solo se copian los positivos: el resto ya es 0 porque la nueva nació en ceros.</p>",
-		"starter_code": "# M6.4 — Negativos a cero\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "7 0 0 2\n5 8 0 4\n0 1 9 3"
-			},
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "3 0 0\n8 0 0\n2 6 0"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "1 2 3\n4 5 6"
-			}
-		]
-	},
-	{
-		"orden": 5,
-		"title": "M6.5 — Por un escalar",
-		"difficulty": "facil",
-		"statement_html": "<p>Lee una matriz y un número <code>K</code>. Imprime una matriz nueva con cada elemento multiplicado por <code>K</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>K</code>.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6\n3</code></pre><p>Salida:</p><pre><code>3 6 9\n12 15 18</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>nueva = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        nueva[i][j] = (algo con matriz[i][j])\nimprimir_matriz(nueva, n, m)</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    k = int(input())\n    nueva = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            nueva[i][j] = matriz[i][j] * k\n    imprimir_matriz(nueva, n, m)\n\nmain()</code></pre><p>El esqueleto de M6.1 con <code>* k</code> en vez de <code>* 2</code>.</p>",
-		"starter_code": "# M6.5 — Por un escalar\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n3\n",
-				"expected_output": "3 6 9\n12 15 18"
-			},
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n-1\n",
-				"expected_output": "-7 3 0 -2\n-5 -8 1 -4\n6 -1 -9 -3"
-			},
-			{
-				"stdin": "1\n1\n10\n0\n",
-				"expected_output": "0"
-			}
-		]
-	},
-	{
 		"orden": 6,
-		"title": "M6.6 — Espejo",
+		"title": "M1.6 — Tablero de ajedrez",
 		"difficulty": "medio",
-		"statement_html": "<p>Imprime una matriz nueva donde cada fila queda al revés (espejo horizontal).</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>3 2 1\n6 5 4</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>nueva = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        nueva[i][j] = (algo con matriz[i][j])\nimprimir_matriz(nueva, n, m)</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    nueva = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            nueva[i][j] = matriz[i][m - 1 - j]\n    imprimir_matriz(nueva, n, m)\n\nmain()</code></pre><p>La fila se queda, la columna se voltea: <code>m - 1 - j</code>.</p>",
-		"starter_code": "# M6.6 — Espejo\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Crea una matriz de <code>N × M</code> con 1 cuando <code>i + j</code> es par y 0 cuando es impar. Imprímela.</p><p><strong>Entrada:</strong> <code>N</code> (filas) y <code>M</code> (columnas), uno por línea.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n4</code></pre><p>Salida:</p><pre><code>1 0 1 0\n0 1 0 1\n1 0 1 0\n0 1 0 1</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = (valor)\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            if (i + j) % 2 == 0:\n                matriz[i][j] = 1\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre><p>Condición dentro del doble <code>for</code>: igual que en vectores, pero con dos índices.</p>",
+		"starter_code": "# M1.6 — Tablero de ajedrez\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
 		"tests": [
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "3 2 1\n6 5 4"
+				"stdin": "4\n4\n",
+				"expected_output": "1 0 1 0\n0 1 0 1\n1 0 1 0\n0 1 0 1"
 			},
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "2 0 -3 7\n4 -1 8 5\n3 9 1 -6"
+				"stdin": "2\n5\n",
+				"expected_output": "1 0 1 0 1\n0 1 0 1 0"
 			},
 			{
-				"stdin": "1\n1\n10\n",
-				"expected_output": "10"
-			}
-		]
-	},
-	{
-		"orden": 7,
-		"title": "M6.7 — Mapa de pares",
-		"difficulty": "facil",
-		"statement_html": "<p>Imprime una matriz nueva con 1 donde el original es par y 0 donde es impar.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>0 1 0\n1 0 1</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>nueva = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        nueva[i][j] = (algo con matriz[i][j])\nimprimir_matriz(nueva, n, m)</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    nueva = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] % 2 == 0:\n                nueva[i][j] = 1\n    imprimir_matriz(nueva, n, m)\n\nmain()</code></pre><p>Igual que el tablero de ajedrez de M1.6, pero la condición mira la matriz leída.</p>",
-		"starter_code": "# M6.7 — Mapa de pares\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "0 1 0\n1 0 1"
-			},
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "0 0 1 1\n0 1 0 1\n1 0 0 0"
-			},
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "0 0 1\n1 1 0\n1 1 1"
-			}
-		]
-	},
-	{
-		"orden": 8,
-		"title": "M6.8 — De matriz a vector con k",
-		"difficulty": "dificil",
-		"statement_html": "<p>Copia los positivos de la matriz a un <strong>vector</strong> nuevo, en el orden en que aparecen (fila por fila). Imprime primero cuántos son y luego cada uno en su línea.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3</code></pre><p>Salida:</p><pre><code>8\n7\n2\n5\n8\n4\n1\n9\n3</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>nueva = crear_matriz(n, m)\nfor i in range(n):\n    for j in range(m):\n        nueva[i][j] = (algo con matriz[i][j])\nimprimir_matriz(nueva, n, m)</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    positivos = [0] * (n * m)\n    k = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; 0:\n                positivos[k] = matriz[i][j]\n                k = k + 1\n    print(k)\n    for i in range(k):\n        print(positivos[i])\n\nmain()</code></pre><p>El contador <code>k</code> del Nivel 0 vuelve: <code>i</code> y <code>j</code> recorren la matriz; <code>k</code> solo avanza al copiar. El vector puede tener hasta <code>n * m</code> casillas.</p>",
-		"starter_code": "# M6.8 — De matriz a vector con k\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "8\n7\n2\n5\n8\n4\n1\n9\n3"
-			},
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "4\n3\n8\n2\n6"
-			},
-			{
-				"stdin": "1\n2\n-1\n-2\n",
-				"expected_output": "0"
+				"stdin": "1\n1\n",
+				"expected_output": "1"
 			}
 		]
 	}

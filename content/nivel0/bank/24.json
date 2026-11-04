@@ -1,0 +1,194 @@
+[
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [1, 2, 3]\nlista.append([4, 5])\nprint(lista)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[1, 2, 3, [4, 5]]"
+				},
+				{
+					"id": "b",
+					"text": "[1, 2, 3, 4, 5]"
+				},
+				{
+					"id": "c",
+					"text": "[4, 5, 1, 2, 3]"
+				},
+				{
+					"id": "d",
+					"text": "Da error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "append mete el argumento como UNA sola casilla. Para pegar elemento por elemento se usa extend."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "Tienes fila = [\"Ana\", \"Luis\", \"Sara\"]. ¿Qué saca fila.pop()?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "\"Ana\""
+				},
+				{
+					"id": "b",
+					"text": "\"Sara\""
+				},
+				{
+					"id": "c",
+					"text": "\"Luis\""
+				},
+				{
+					"id": "d",
+					"text": "Nada: pop necesita un índice"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "Sin argumento, pop saca el ÚLTIMO. Para el primero: pop(0)."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [2, 1, 3, 2]\nlista.remove(2)\nprint(lista)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[1, 3, 2]"
+				},
+				{
+					"id": "b",
+					"text": "[3, 2]"
+				},
+				{
+					"id": "c",
+					"text": "[1, 3, 2, 3]"
+				},
+				{
+					"id": "d",
+					"text": "[1, 2, 2]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "remove quita solo la PRIMERA aparición del valor."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe agregar 5 al inicio de la lista. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def main():",
+				"    lista = [8, 9]",
+				"    lista.insert(5, 0)",
+				"    print(lista)",
+				"main()"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "insert recibe primero la POSICIÓN y después el dato: lista.insert(0, 5)."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "medio",
+		"prompt": "Completa para atender al primer cliente y guardar su nombre.",
+		"data": {
+			"code": "fila = [\"Ana\", \"Luis\"]\ncliente = fila.___1___(___2___)",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "método que saca"
+				},
+				{
+					"id": "2",
+					"pista": "posición del primero"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"pop"
+				],
+				"2": [
+					"0"
+				]
+			}
+		},
+		"explanation": "pop(0) saca el de la posición 0 y lo devuelve."
+	},
+	{
+		"type": "parsons",
+		"difficulty": "medio",
+		"prompt": "Arma el programa que lee N números con append y los imprime",
+		"data": {
+			"lines": [
+				{
+					"id": "l1",
+					"text": "def main():",
+					"indent": 0
+				},
+				{
+					"id": "l2",
+					"text": "n = int(input())",
+					"indent": 1
+				},
+				{
+					"id": "l3",
+					"text": "lista = []",
+					"indent": 1
+				},
+				{
+					"id": "l4",
+					"text": "for i in range(n):",
+					"indent": 1
+				},
+				{
+					"id": "l5",
+					"text": "lista.append(int(input()))",
+					"indent": 2
+				},
+				{
+					"id": "l6",
+					"text": "print(lista)",
+					"indent": 1
+				},
+				{
+					"id": "l7",
+					"text": "main()",
+					"indent": 0
+				}
+			]
+		},
+		"correct": {
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4",
+				"l5",
+				"l6",
+				"l7"
+			]
+		},
+		"explanation": "La lista arranca vacía ANTES del for; append va dentro; se imprime afuera."
+	}
+]

@@ -17,7 +17,7 @@ export const TRACK_INFO = {
 		corto: "Nivel 0",
 		emoji: "✍️",
 		descripcion:
-			"Los patrones de vectores y matrices del examen, repetidos hasta que salgan solos. Para aprobar los parciales.",
+			"Vectores, funciones, matrices y los métodos de listas: los patrones del examen, repetidos hasta que salgan solos. Para aprobar los parciales.",
 		color: "var(--color-verde)",
 	},
 	basico: {

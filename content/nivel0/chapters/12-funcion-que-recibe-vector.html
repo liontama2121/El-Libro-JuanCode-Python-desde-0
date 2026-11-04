@@ -1,0 +1,53 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code>, comprensiones ni <code>global</code>. Vectores con <code>[0] * n</code>. Siempre <code>def</code> + <code>main()</code> + última línea <code>main()</code>.
+</div>
+
+<p class="jc-plana-sub">La función recibe un vector completo. Adentro se puede llamar distinto que afuera.</p>
+
+<p>Un vector entra a la función igual que un número: por un parámetro. Junto con él va su <strong>tamaño</strong>, porque la función no adivina cuántas casillas tiene.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto F4 · escríbelo 3 veces</p>
+<pre><code>def imprimir_vector(v, tam):
+    for i in range(tam):
+        print(v[i])
+
+
+def main():
+    n = int(input())
+    vector = [0] * n
+    for i in range(n):
+        vector[i] = int(input())
+    imprimir_vector(vector, n)
+
+
+main()</code></pre>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Afuera (main)</th><th></th><th>Adentro (la función)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>vector</code></td><td>→</td><td><code>v</code></td></tr>
+    <tr><td><code>n</code></td><td>→</td><td><code>tam</code></td></tr>
+  </tbody>
+</table>
+
+<p class="jc-frase">Es el mismo vector con otro nombre. Afuera es vector, adentro es v.</p>
+
+<p>Lo de adentro es <strong>lo que ya sabes</strong> de las planas de vectores: contar, acumular, buscar máximo, filtrar con <code>k</code>. Lo único nuevo es que vive dentro de un <code>def</code> y termina en <code>return</code>.</p>
+
+<h3>Devolver un vector nuevo</h3>
+
+<p>Una función también puede <strong>crear</strong> un vector y devolverlo. Se crea con <code>[0] * tam</code>, se llena por índice y se retorna:</p>
+
+<pre><code>def invertir_vector(v, tam):
+    nuevo = [0] * tam
+    for i in range(tam):
+        nuevo[i] = v[tam - 1 - i]
+    return nuevo</code></pre>
+
+<p>Para filtrar, primero se cuenta cuántos cumplen (eso es el tamaño del vector nuevo) y después se copian con el contador <code>k</code>, como en la Parte II.</p>
+
+<p>Todos los ejercicios leen como el juez: primero <code>N</code> y luego los <code>N</code> números, <strong>uno por línea</strong>. Ejercicios: <strong>F4.1 a F4.10</strong>.</p>

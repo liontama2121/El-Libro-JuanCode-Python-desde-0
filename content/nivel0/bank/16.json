@@ -1,176 +1,202 @@
 [
 	{
-		"type": "mcq",
+		"type": "predict_output",
 		"difficulty": "facil",
-		"prompt": "\"¿Cuántas sillas libres hay en toda la sala?\" ¿Qué patrón es?",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "matriz = [[1, 2], [3, 4], [6, 5]]\ncuenta = 0\nfor i in range(3):\n    for j in range(2):\n        if matriz[i][j] % 2 == 0:\n            cuenta = cuenta + 1\nprint(cuenta)",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "M3 · fila congelada"
+					"text": "6"
 				},
 				{
 					"id": "b",
-					"text": "M5 · posición del máximo"
+					"text": "12"
 				},
 				{
 					"id": "c",
-					"text": "M6 · matriz nueva"
+					"text": "3"
 				},
 				{
 					"id": "d",
-					"text": "M2 · contar recorriendo toda la matriz"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "d"
-		},
-		"explanation": "\"Cuántas\" + \"toda\" = contar con doble for."
-	},
-	{
-		"type": "mcq",
-		"difficulty": "facil",
-		"prompt": "Filas = tiendas, columnas = días. \"Ventas totales del día 3\". ¿Qué patrón es?",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "M2 · suma total"
-				},
-				{
-					"id": "b",
-					"text": "Diagonal principal"
-				},
-				{
-					"id": "c",
-					"text": "M4 · columna congelada en c = 2"
-				},
-				{
-					"id": "d",
-					"text": "M3 · fila congelada en f = 2"
+					"text": "2"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "c"
 		},
-		"explanation": "Un día es una columna. El día 3 (contando desde 1) es la columna 2."
+		"explanation": "Los pares son 2, 4 y 6."
 	},
 	{
 		"type": "mcq",
-		"difficulty": "medio",
-		"prompt": "Filas = estudiantes. \"¿Qué estudiante tuvo el mejor promedio?\" ¿Qué patrón es?",
+		"difficulty": "facil",
+		"prompt": "Al contar en toda la matriz, ¿dónde va cuenta = 0?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "M6 (transpuesta)"
+					"text": "Después de los dos for"
 				},
 				{
 					"id": "b",
-					"text": "M3 (suma de cada fila) + posición del máximo"
+					"text": "Antes de los dos for"
 				},
 				{
 					"id": "c",
-					"text": "M4 (suma de cada columna)"
+					"text": "Entre el for de i y el for de j"
 				},
 				{
 					"id": "d",
-					"text": "M2 (suma total) y dividir"
+					"text": "Dentro del if"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "b"
 		},
-		"explanation": "Cada estudiante es una fila: se compara suma_fila de cada uno y se guarda la posición."
+		"explanation": "Entre los dos for se reiniciaría en cada fila y solo quedaría la cuenta de la última."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe contar los positivos de toda la matriz. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def contar_positivos(matriz, n, m):",
+				"    cuenta = 0",
+				"    for i in range(n):",
+				"        for j in range(m):",
+				"            if matriz[i][j] > 0:",
+				"                cuenta = cuenta + 1",
+				"        return cuenta"
+			]
+		},
+		"correct": {
+			"line_number": 7
+		},
+		"explanation": "El return está dentro del for de i: devuelve la cuenta de la primera fila nada más."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "facil",
+		"prompt": "Completa la función suma_total.",
+		"data": {
+			"code": "def suma_total(matriz, n, m):\n    total = ___1___\n    for i in range(n):\n        for j in range(m):\n            total = ___2___ + matriz[i][j]\n    return ___3___",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "valor inicial"
+				},
+				{
+					"id": "2",
+					"pista": "acumular"
+				},
+				{
+					"id": "3",
+					"pista": "lo que se devuelve"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"0"
+				],
+				"2": [
+					"total"
+				],
+				"3": [
+					"total"
+				]
+			}
+		},
+		"explanation": "Acumulador en 0, se suma cada casilla, se retorna al final."
 	},
 	{
 		"type": "mcq",
 		"difficulty": "medio",
-		"prompt": "\"Imprime en qué fila y columna está el valor más alto\". ¿Qué patrón es?",
+		"prompt": "Para el promedio de TODA una matriz de n × m, ¿entre qué se divide la suma?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "M5 · máximo con pf y pc"
+					"text": "n * m"
 				},
 				{
 					"id": "b",
-					"text": "M2 · contar"
+					"text": "n"
 				},
 				{
 					"id": "c",
-					"text": "M4 · columna congelada"
+					"text": "m"
 				},
 				{
 					"id": "d",
-					"text": "M6 · matriz nueva"
+					"text": "n + m"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "a"
 		},
-		"explanation": "Dónde = posición. En matriz son dos variables."
+		"explanation": "La matriz tiene n * m elementos."
 	},
 	{
-		"type": "mcq",
+		"type": "parsons",
 		"difficulty": "medio",
-		"prompt": "\"Muestra la lista de los valores negativos de la matriz\". ¿Qué patrón es?",
+		"prompt": "Arma la función que cuenta los ceros de la matriz",
 		"data": {
-			"options": [
+			"lines": [
 				{
-					"id": "a",
-					"text": "M3 · fila congelada"
+					"id": "l1",
+					"text": "def contar_ceros(matriz, n, m):",
+					"indent": 0
 				},
 				{
-					"id": "b",
-					"text": "Matriz nueva del mismo tamaño"
+					"id": "l2",
+					"text": "cuenta = 0",
+					"indent": 1
 				},
 				{
-					"id": "c",
-					"text": "M5 · mínimo"
+					"id": "l3",
+					"text": "for i in range(n):",
+					"indent": 1
 				},
 				{
-					"id": "d",
-					"text": "Vector nuevo de n * m con el contador k"
+					"id": "l4",
+					"text": "for j in range(m):",
+					"indent": 2
+				},
+				{
+					"id": "l5",
+					"text": "if matriz[i][j] == 0:",
+					"indent": 3
+				},
+				{
+					"id": "l6",
+					"text": "cuenta = cuenta + 1",
+					"indent": 4
+				},
+				{
+					"id": "l7",
+					"text": "return cuenta",
+					"indent": 1
 				}
 			]
 		},
 		"correct": {
-			"option_id": "d"
-		},
-		"explanation": "Lista = vector con k, como en el Nivel 0. Doble for para recorrer, k para guardar."
-	},
-	{
-		"type": "mcq",
-		"difficulty": "facil",
-		"prompt": "\"Imprime la matriz con cada valor al cuadrado\". ¿Qué patrón es?",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "M4 · columna congelada"
-				},
-				{
-					"id": "b",
-					"text": "Diagonal"
-				},
-				{
-					"id": "c",
-					"text": "M6 · matriz nueva con crear_matriz"
-				},
-				{
-					"id": "d",
-					"text": "M2 · acumular"
-				}
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4",
+				"l5",
+				"l6",
+				"l7"
 			]
 		},
-		"correct": {
-			"option_id": "c"
-		},
-		"explanation": "Se transforma casilla por casilla en una matriz nueva y se imprime con imprimir_matriz."
+		"explanation": "El mismo esqueleto de contar, con la condición == 0."
 	}
 ]

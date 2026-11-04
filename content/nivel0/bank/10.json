@@ -1,202 +1,172 @@
 [
 	{
-		"type": "predict_output",
-		"difficulty": "facil",
-		"prompt": "¿Qué imprime este programa?",
-		"code_snippet": "matriz = [[1, 2], [3, 4], [6, 5]]\ncuenta = 0\nfor i in range(3):\n    for j in range(2):\n        if matriz[i][j] % 2 == 0:\n            cuenta = cuenta + 1\nprint(cuenta)",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "6"
-				},
-				{
-					"id": "b",
-					"text": "12"
-				},
-				{
-					"id": "c",
-					"text": "3"
-				},
-				{
-					"id": "d",
-					"text": "2"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "c"
-		},
-		"explanation": "Los pares son 2, 4 y 6."
-	},
-	{
 		"type": "mcq",
 		"difficulty": "facil",
-		"prompt": "Al contar en toda la matriz, ¿dónde va cuenta = 0?",
+		"prompt": "def imprimir_doble(x): y en main: num = 7; imprimir_doble(num). Adentro de la función, ¿cuánto vale x?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "Después de los dos for"
+					"text": "num"
 				},
 				{
 					"id": "b",
-					"text": "Antes de los dos for"
+					"text": "7"
 				},
 				{
 					"id": "c",
-					"text": "Entre el for de i y el for de j"
+					"text": "No existe, porque afuera se llama num"
 				},
 				{
 					"id": "d",
-					"text": "Dentro del if"
+					"text": "0"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "b"
 		},
-		"explanation": "Entre los dos for se reiniciaría en cada fila y solo quedaría la cuenta de la última."
+		"explanation": "Viaja el VALOR. El 7 entra por num y adentro se llama x."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "¿Por qué funciona llamar saludar_a(n) si la función es def saludar_a(persona): ?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "No funciona: los nombres deben ser iguales"
+				},
+				{
+					"id": "b",
+					"text": "Porque el parámetro es una casilla que recibe el valor, se llame como se llame afuera"
+				},
+				{
+					"id": "c",
+					"text": "Porque Python renombra n a persona para siempre"
+				},
+				{
+					"id": "d",
+					"text": "Porque n es una palabra reservada"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "Como el formulario del banco: la casilla dice Titular y tú escribes tu propio nombre."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "def rango(inicio, fin):\n    for i in range(inicio, fin + 1):\n        print(i)\n\n\ndef main():\n    a = 2\n    b = 4\n    rango(a, b)\n\n\nmain()",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "2\n3"
+				},
+				{
+					"id": "b",
+					"text": "2\n3\n4"
+				},
+				{
+					"id": "c",
+					"text": "4\n3\n2"
+				},
+				{
+					"id": "d",
+					"text": "a\nb"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "a entra a inicio y b a fin, por posición. El + 1 incluye el 4."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "def resta(mayor, menor):\n    print(mayor - menor)\n\n\ndef main():\n    x = 3\n    y = 10\n    resta(y, x)\n\n\nmain()",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "-7"
+				},
+				{
+					"id": "b",
+					"text": "7"
+				},
+				{
+					"id": "c",
+					"text": "13"
+				},
+				{
+					"id": "d",
+					"text": "Error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "Se reparte por posición: y (10) entra a mayor y x (3) a menor. 10 - 3 = 7."
 	},
 	{
 		"type": "find_bug",
 		"difficulty": "medio",
-		"prompt": "Debe contar los positivos de toda la matriz. ¿En qué línea está el error?",
+		"prompt": "Debería imprimir el doble del número leído. ¿En qué línea está el error?",
 		"data": {
 			"lines": [
-				"def contar_positivos(matriz, n, m):",
-				"    cuenta = 0",
-				"    for i in range(n):",
-				"        for j in range(m):",
-				"            if matriz[i][j] > 0:",
-				"                cuenta = cuenta + 1",
-				"        return cuenta"
+				"def imprimir_doble(x):",
+				"    print(x * 2)",
+				"",
+				"",
+				"def main():",
+				"    numero = int(input())",
+				"    imprimir_doble(x)",
+				"",
+				"",
+				"main()"
 			]
 		},
 		"correct": {
 			"line_number": 7
 		},
-		"explanation": "El return está dentro del for de i: devuelve la cuenta de la primera fila nada más."
+		"explanation": "En main no existe ninguna x: x solo vive adentro de la función. Afuera hay que pasar numero."
 	},
 	{
 		"type": "fill_blank",
 		"difficulty": "facil",
-		"prompt": "Completa la función suma_total.",
+		"prompt": "Completa: afuera se llama valor, adentro t.",
 		"data": {
-			"code": "def suma_total(matriz, n, m):\n    total = ___1___\n    for i in range(n):\n        for j in range(m):\n            total = ___2___ + matriz[i][j]\n    return ___3___",
+			"code": "def tabla(___1___):\n    for i in range(1, 11):\n        print(t * i)\n\n\ndef main():\n    valor = int(input())\n    tabla(___2___)\n\n\nmain()",
 			"blanks": [
 				{
 					"id": "1",
-					"pista": "valor inicial"
+					"pista": "nombre de adentro"
 				},
 				{
 					"id": "2",
-					"pista": "acumular"
-				},
-				{
-					"id": "3",
-					"pista": "lo que se devuelve"
+					"pista": "nombre de afuera"
 				}
 			]
 		},
 		"correct": {
 			"answers": {
 				"1": [
-					"0"
+					"t"
 				],
 				"2": [
-					"total"
-				],
-				"3": [
-					"total"
+					"valor"
 				]
 			}
 		},
-		"explanation": "Acumulador en 0, se suma cada casilla, se retorna al final."
-	},
-	{
-		"type": "mcq",
-		"difficulty": "medio",
-		"prompt": "Para el promedio de TODA una matriz de n × m, ¿entre qué se divide la suma?",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "n * m"
-				},
-				{
-					"id": "b",
-					"text": "n"
-				},
-				{
-					"id": "c",
-					"text": "m"
-				},
-				{
-					"id": "d",
-					"text": "n + m"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "a"
-		},
-		"explanation": "La matriz tiene n * m elementos."
-	},
-	{
-		"type": "parsons",
-		"difficulty": "medio",
-		"prompt": "Arma la función que cuenta los ceros de la matriz",
-		"data": {
-			"lines": [
-				{
-					"id": "l1",
-					"text": "def contar_ceros(matriz, n, m):",
-					"indent": 0
-				},
-				{
-					"id": "l2",
-					"text": "cuenta = 0",
-					"indent": 1
-				},
-				{
-					"id": "l3",
-					"text": "for i in range(n):",
-					"indent": 1
-				},
-				{
-					"id": "l4",
-					"text": "for j in range(m):",
-					"indent": 2
-				},
-				{
-					"id": "l5",
-					"text": "if matriz[i][j] == 0:",
-					"indent": 3
-				},
-				{
-					"id": "l6",
-					"text": "cuenta = cuenta + 1",
-					"indent": 4
-				},
-				{
-					"id": "l7",
-					"text": "return cuenta",
-					"indent": 1
-				}
-			]
-		},
-		"correct": {
-			"order": [
-				"l1",
-				"l2",
-				"l3",
-				"l4",
-				"l5",
-				"l6",
-				"l7"
-			]
-		},
-		"explanation": "El mismo esqueleto de contar, con la condición == 0."
+		"explanation": "En el def va el nombre de adentro; en la llamada, la variable de afuera."
 	}
 ]

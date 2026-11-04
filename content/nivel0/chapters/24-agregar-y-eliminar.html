@@ -1,0 +1,92 @@
+<div class="jc-desbloqueo" role="note">
+  <strong>✅ Se vale:</strong> métodos de listas, <code>sum</code>/<code>min</code>/<code>max</code>/<code>len</code>, slicing y <code>for dato in lista</code>. <strong>❌ Sigue prohibido:</strong> f-strings y comprensiones.
+</div>
+
+<p>Ya no necesitas crear otro vector para agregar. La lista crece y se encoge sola.</p>
+
+<h3>Los seis métodos</h3>
+
+<table>
+  <thead>
+    <tr><th>Método</th><th>Qué hace</th><th>Ejemplo con <code>lista = [1, 2, 3]</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>.append(dato)</code></td><td>agrega al <strong>final</strong></td><td><code>lista.append(4)</code> → <code>[1, 2, 3, 4]</code></td></tr>
+    <tr><td><code>.insert(pos, dato)</code></td><td>agrega en la posición <code>pos</code></td><td><code>lista.insert(0, 9)</code> → <code>[9, 1, 2, 3]</code></td></tr>
+    <tr><td><code>.extend(otra)</code></td><td>pega cada elemento de otra lista</td><td><code>lista.extend([4, 5])</code> → <code>[1, 2, 3, 4, 5]</code></td></tr>
+    <tr><td><code>.remove(dato)</code></td><td>quita la <strong>primera</strong> aparición del valor</td><td><code>lista.remove(2)</code> → <code>[1, 3]</code></td></tr>
+    <tr><td><code>.pop()</code></td><td>saca el <strong>último</strong> y lo devuelve</td><td><code>x = lista.pop()</code> → <code>x = 3</code>, <code>[1, 2]</code></td></tr>
+    <tr><td><code>.pop(i)</code></td><td>saca el de la posición <code>i</code> y lo devuelve</td><td><code>x = lista.pop(0)</code> → <code>x = 1</code>, <code>[2, 3]</code></td></tr>
+    <tr><td><code>.clear()</code></td><td>la deja vacía</td><td><code>lista.clear()</code> → <code>[]</code></td></tr>
+  </tbody>
+</table>
+
+<h3>Leer N datos: el nuevo patrón</h3>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Antes · Nivel 0</p>
+<pre><code>vector = [0] * n
+for i in range(n):
+    vector[i] = int(input())</code></pre>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Ahora · con append</p>
+<pre><code>lista = []
+for i in range(n):
+    lista.append(int(input()))</code></pre>
+  </div>
+</div>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto L2 · escríbelo 3 veces</p>
+<pre><code>def leer_lista(n):
+    lista = []
+    for i in range(n):
+        lista.append(int(input()))
+    return lista
+
+
+def main():
+    n = int(input())
+    numeros = leer_lista(n)
+    # aquí van los métodos que pide el enunciado
+    print(numeros)
+
+
+main()</code></pre>
+</div>
+
+<h3>Fila contra pila</h3>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Fila (cola) · el primero sale</p>
+<pre><code>fila = ["Ana", "Luis", "Sara"]
+atendido = fila.pop(0)   # "Ana"</code></pre>
+    <p>Como la fila del banco: atienden al que llegó primero.</p>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Pila · el último sale</p>
+<pre><code>pila = ["rojo", "azul", "verde"]
+plato = pila.pop()       # "verde"</code></pre>
+    <p>Como una pila de platos: se toma el de arriba.</p>
+  </div>
+</div>
+
+<h3>Tres trampas</h3>
+
+<table>
+  <thead>
+    <tr><th>Trampa</th><th>Qué pasa</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>a.append([4, 5])</code></td><td>Mete la lista como <strong>una</strong> casilla: <code>[1, 2, 3, [4, 5]]</code>. Para pegar: <code>.extend</code>.</td></tr>
+    <tr><td><code>lista.remove(x)</code> con <code>x</code> repetido</td><td>Solo quita el <strong>primero</strong>. Y si <code>x</code> no está, da error.</td></tr>
+    <tr><td><code>lista.pop()</code> con la lista vacía</td><td>Da error. Revisa antes con <code>if len(lista) &gt; 0</code>.</td></tr>
+  </tbody>
+</table>
+
+<p class="jc-frase">append al final, insert donde digas, pop saca y devuelve.</p>
+
+<p>Ejercicios: <strong>L2.1 a L2.8</strong>.</p>

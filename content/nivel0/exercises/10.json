@@ -1,185 +1,127 @@
 [
 	{
 		"orden": 1,
-		"title": "M2.1 — Suma total",
+		"title": "F2.1 — Saludar a alguien",
 		"difficulty": "facil",
-		"statement_html": "<p>Lee una matriz e imprime la suma de todos sus elementos. Usa una función <code>suma_total(matriz, n, m)</code> que <strong>retorne</strong> la suma.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>21</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def contar(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] (condición):\n                cuenta = cuenta + 1\n    return cuenta</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_total(matriz, n, m):\n    total = 0\n    for i in range(n):\n        for j in range(m):\n            total = total + matriz[i][j]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    print(suma_total(matriz, n, m))\n\nmain()</code></pre><p><code>total = 0</code> antes de los dos <code>for</code>; el <code>return</code> afuera de los dos.</p>",
-		"starter_code": "# M2.1 — Suma total\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>saludar_a(persona)</code> que imprima <code>Hola, </code> + el nombre + <code>!</code>. En <code>main()</code> lee el nombre en la variable <code>n</code> y llama <code>saludar_a(n)</code>.</p><p><strong>Entrada:</strong> un nombre.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>Ana</code></pre><p>Salida:</p><pre><code>Hola, Ana!</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def imprimir_doble(x):     # ← adentro x\n    print(x * 2)\n\n\ndef main():\n    numero = int(input())   # ← afuera numero\n    imprimir_doble(numero)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def saludar_a(persona):\n    print(\"Hola, \" + persona + \"!\")\n\n\ndef main():\n    n = input()\n    saludar_a(n)\n\n\nmain()</code></pre><p>Afuera <code>n</code>, adentro <code>persona</code>. El valor viaja; el nombre no.</p>",
+		"starter_code": "# F2.1 — Saludar a alguien\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "21"
+				"stdin": "Ana\n",
+				"expected_output": "Hola, Ana!"
 			},
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "29"
-			},
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "13"
+				"stdin": "Pedro\n",
+				"expected_output": "Hola, Pedro!"
 			}
 		]
 	},
 	{
 		"orden": 2,
-		"title": "M2.2 — Contar positivos",
+		"title": "F2.2 — Imprimir el doble",
 		"difficulty": "facil",
-		"statement_html": "<p>Imprime cuántos elementos de la matriz son mayores a 0. Usa una función que retorne la cuenta.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0</code></pre><p>Salida:</p><pre><code>4</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def contar(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] (condición):\n                cuenta = cuenta + 1\n    return cuenta</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef contar_positivos(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; 0:\n                cuenta = cuenta + 1\n    return cuenta\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    print(contar_positivos(matriz, n, m))\n\nmain()</code></pre><p>Es el patrón II del Nivel 0 metido en un doble <code>for</code>.</p>",
-		"starter_code": "# M2.2 — Contar positivos\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>imprimir_doble(x)</code> que imprima <code>x * 2</code>. En <code>main()</code> lee el número en <code>num</code>.</p><p><strong>Entrada:</strong> un número entero.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>7</code></pre><p>Salida:</p><pre><code>14</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def imprimir_doble(x):     # ← adentro x\n    print(x * 2)\n\n\ndef main():\n    numero = int(input())   # ← afuera numero\n    imprimir_doble(numero)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def imprimir_doble(x):\n    print(x * 2)\n\n\ndef main():\n    num = int(input())\n    imprimir_doble(num)\n\n\nmain()</code></pre><p>El 7 entra por <code>num</code> y adentro se llama <code>x</code>.</p>",
+		"starter_code": "# F2.2 — Imprimir el doble\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "4"
+				"stdin": "7\n",
+				"expected_output": "14"
 			},
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "8"
+				"stdin": "-4\n",
+				"expected_output": "-8"
 			},
 			{
-				"stdin": "1\n2\n-1\n-2\n",
+				"stdin": "0\n",
 				"expected_output": "0"
 			}
 		]
 	},
 	{
 		"orden": 3,
-		"title": "M2.3 — Contar pares",
+		"title": "F2.3 — Tabla de multiplicar",
 		"difficulty": "facil",
-		"statement_html": "<p>Imprime cuántos elementos de la matriz son pares.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>3</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def contar(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] (condición):\n                cuenta = cuenta + 1\n    return cuenta</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef contar_pares(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] % 2 == 0:\n                cuenta = cuenta + 1\n    return cuenta\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    print(contar_pares(matriz, n, m))\n\nmain()</code></pre><p>Solo cambia la condición. El esqueleto es el mismo de M2.2.</p>",
-		"starter_code": "# M2.3 — Contar pares\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>tabla(t)</code> que imprima la tabla del <code>t</code> del 1 al 10 con el formato <code>t x i = resultado</code>. En <code>main()</code> el número se lee en <code>valor</code>.</p><p><strong>Entrada:</strong> un número entero.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3</code></pre><p>Salida:</p><pre><code>3 x 1 = 3\n3 x 2 = 6\n3 x 3 = 9\n3 x 4 = 12\n3 x 5 = 15\n3 x 6 = 18\n3 x 7 = 21\n3 x 8 = 24\n3 x 9 = 27\n3 x 10 = 30</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def imprimir_doble(x):     # ← adentro x\n    print(x * 2)\n\n\ndef main():\n    numero = int(input())   # ← afuera numero\n    imprimir_doble(numero)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def tabla(t):\n    for i in range(1, 11):\n        print(str(t) + \" x \" + str(i) + \" = \" + str(t * i))\n\n\ndef main():\n    valor = int(input())\n    tabla(valor)\n\n\nmain()</code></pre><p>El <code>for</code> vive dentro de la función. <code>main()</code> solo lee y llama.</p>",
+		"starter_code": "# F2.3 — Tabla de multiplicar\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "3"
+				"stdin": "3\n",
+				"expected_output": "3 x 1 = 3\n3 x 2 = 6\n3 x 3 = 9\n3 x 4 = 12\n3 x 5 = 15\n3 x 6 = 18\n3 x 7 = 21\n3 x 8 = 24\n3 x 9 = 27\n3 x 10 = 30"
 			},
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "5"
-			},
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "6"
+				"stdin": "7\n",
+				"expected_output": "7 x 1 = 7\n7 x 2 = 14\n7 x 3 = 21\n7 x 4 = 28\n7 x 5 = 35\n7 x 6 = 42\n7 x 7 = 49\n7 x 8 = 56\n7 x 9 = 63\n7 x 10 = 70"
 			}
 		]
 	},
 	{
 		"orden": 4,
-		"title": "M2.4 — Contar ceros",
-		"difficulty": "facil",
-		"statement_html": "<p>Imprime cuántos ceros tiene la matriz.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0</code></pre><p>Salida:</p><pre><code>3</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def contar(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] (condición):\n                cuenta = cuenta + 1\n    return cuenta</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef contar_ceros(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] == 0:\n                cuenta = cuenta + 1\n    return cuenta\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    print(contar_ceros(matriz, n, m))\n\nmain()</code></pre><p>Doble igual <code>==</code> para comparar. Un solo <code>=</code> es para guardar.</p>",
-		"starter_code": "# M2.4 — Contar ceros\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"title": "F2.4 — Repetir un mensaje",
+		"difficulty": "medio",
+		"statement_html": "<p>Escribe <code>imprimir_n_veces(mensaje, veces)</code> que imprima <code>mensaje</code> tantas veces como diga <code>veces</code>. En <code>main()</code> lee el texto en <code>texto</code> y la cantidad en <code>cantidad</code>.</p><p><strong>Entrada:</strong> un texto y luego un número entero.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>hola\n3</code></pre><p>Salida:</p><pre><code>hola\nhola\nhola</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def imprimir_doble(x):     # ← adentro x\n    print(x * 2)\n\n\ndef main():\n    numero = int(input())   # ← afuera numero\n    imprimir_doble(numero)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def imprimir_n_veces(mensaje, veces):\n    for i in range(veces):\n        print(mensaje)\n\n\ndef main():\n    texto = input()\n    cantidad = int(input())\n    imprimir_n_veces(texto, cantidad)\n\n\nmain()</code></pre><p>Dos parámetros, dos valores, en el mismo orden: <code>texto</code> va a <code>mensaje</code> y <code>cantidad</code> a <code>veces</code>.</p>",
+		"starter_code": "# F2.4 — Repetir un mensaje\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "3"
+				"stdin": "hola\n3\n",
+				"expected_output": "hola\nhola\nhola"
 			},
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "0"
-			},
-			{
-				"stdin": "2\n2\n0\n0\n0\n0\n",
-				"expected_output": "4"
+				"stdin": "Python\n1\n",
+				"expected_output": "Python"
 			}
 		]
 	},
 	{
 		"orden": 5,
-		"title": "M2.5 — Promedio",
-		"difficulty": "medio",
-		"statement_html": "<p>Imprime el promedio de todos los elementos con el formato <code>Promedio: X</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>Promedio: 3.5</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def contar(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] (condición):\n                cuenta = cuenta + 1\n    return cuenta</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_total(matriz, n, m):\n    total = 0\n    for i in range(n):\n        for j in range(m):\n            total = total + matriz[i][j]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    promedio = suma_total(matriz, n, m) / (n * m)\n    print(\"Promedio: \" + str(promedio))\n\nmain()</code></pre><p>La cantidad de elementos es <code>n * m</code>, no <code>n</code>. La función de suma se reutiliza tal cual.</p>",
-		"starter_code": "# M2.5 — Promedio\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"title": "F2.5 — ¿Par o impar?",
+		"difficulty": "facil",
+		"statement_html": "<p>Escribe <code>es_par(numero)</code> que imprima <code>par</code> si el número es par o <code>impar</code> si no. En <code>main()</code> el número se lee en <code>n</code>.</p><p><strong>Entrada:</strong> un número entero.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>8</code></pre><p>Salida:</p><pre><code>par</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def imprimir_doble(x):     # ← adentro x\n    print(x * 2)\n\n\ndef main():\n    numero = int(input())   # ← afuera numero\n    imprimir_doble(numero)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def es_par(numero):\n    if numero % 2 == 0:\n        print(\"par\")\n    else:\n        print(\"impar\")\n\n\ndef main():\n    n = int(input())\n    es_par(n)\n\n\nmain()</code></pre><p>El <code>if</code> trabaja con <code>numero</code>, el nombre de adentro.</p>",
+		"starter_code": "# F2.5 — ¿Par o impar?\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "Promedio: 3.5"
+				"stdin": "8\n",
+				"expected_output": "par"
 			},
 			{
-				"stdin": "2\n2\n2\n4\n6\n8\n",
-				"expected_output": "Promedio: 5.0"
+				"stdin": "7\n",
+				"expected_output": "impar"
 			},
 			{
-				"stdin": "1\n1\n10\n",
-				"expected_output": "Promedio: 10.0"
+				"stdin": "0\n",
+				"expected_output": "par"
 			}
 		]
 	},
 	{
 		"orden": 6,
-		"title": "M2.6 — Mayores a X",
+		"title": "F2.6 — Imprimir un rango",
 		"difficulty": "medio",
-		"statement_html": "<p>Lee una matriz y después un número <code>X</code>. Imprime cuántos elementos son mayores a <code>X</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n3</code></pre><p>Salida:</p><pre><code>5</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def contar(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] (condición):\n                cuenta = cuenta + 1\n    return cuenta</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef contar_mayores(matriz, n, m, x):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; x:\n                cuenta = cuenta + 1\n    return cuenta\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    x = int(input())\n    print(contar_mayores(matriz, n, m, x))\n\nmain()</code></pre><p>X se lee <strong>después</strong> de la matriz, y entra a la función como un parámetro más.</p>",
-		"starter_code": "# M2.6 — Mayores a X\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>rango(inicio, fin)</code> que imprima todos los enteros desde <code>inicio</code> hasta <code>fin</code>, ambos incluidos, uno por línea. En <code>main()</code> los dos números se leen en <code>a</code> y <code>b</code>.</p><p><strong>Entrada:</strong> dos números enteros, uno por línea (el primero es menor o igual que el segundo).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n7</code></pre><p>Salida:</p><pre><code>3\n4\n5\n6\n7</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def imprimir_doble(x):     # ← adentro x\n    print(x * 2)\n\n\ndef main():\n    numero = int(input())   # ← afuera numero\n    imprimir_doble(numero)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def rango(inicio, fin):\n    for i in range(inicio, fin + 1):\n        print(i)\n\n\ndef main():\n    a = int(input())\n    b = int(input())\n    rango(a, b)\n\n\nmain()</code></pre><p>Por posición: <code>a</code> entra a <code>inicio</code> y <code>b</code> a <code>fin</code>. El <code>+ 1</code> es para que <code>fin</code> se incluya.</p>",
+		"starter_code": "# F2.6 — Imprimir un rango\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n3\n",
+				"stdin": "3\n7\n",
+				"expected_output": "3\n4\n5\n6\n7"
+			},
+			{
+				"stdin": "-2\n1\n",
+				"expected_output": "-2\n-1\n0\n1"
+			},
+			{
+				"stdin": "5\n5\n",
 				"expected_output": "5"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n0\n",
-				"expected_output": "6"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n6\n",
-				"expected_output": "0"
-			}
-		]
-	},
-	{
-		"orden": 7,
-		"title": "M2.7 — Positivos y negativos",
-		"difficulty": "medio",
-		"statement_html": "<p>Imprime la suma de los positivos y la suma de los negativos, con este formato:</p><pre><code>Positivos: X\nNegativos: Y</code></pre><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3</code></pre><p>Salida:</p><pre><code>Positivos: 39\nNegativos: -10</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def contar(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] (condición):\n                cuenta = cuenta + 1\n    return cuenta</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    pos = 0\n    neg = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; 0:\n                pos = pos + matriz[i][j]\n            if matriz[i][j] &lt; 0:\n                neg = neg + matriz[i][j]\n    print(\"Positivos: \" + str(pos))\n    print(\"Negativos: \" + str(neg))\n\nmain()</code></pre><p>Dos acumuladores en el mismo recorrido. Los ceros no van a ninguno.</p>",
-		"starter_code": "# M2.7 — Positivos y negativos\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "Positivos: 39\nNegativos: -10"
-			},
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "Positivos: 19\nNegativos: -6"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "Positivos: 21\nNegativos: 0"
-			}
-		]
-	},
-	{
-		"orden": 8,
-		"title": "M2.8 — Cuántas veces aparece X",
-		"difficulty": "medio",
-		"statement_html": "<p>Lee una matriz y un número <code>X</code>. Imprime cuántas veces aparece <code>X</code> en la matriz.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n0</code></pre><p>Salida:</p><pre><code>3</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def contar(matriz, n, m):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] (condición):\n                cuenta = cuenta + 1\n    return cuenta</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef contar_x(matriz, n, m, x):\n    cuenta = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] == x:\n                cuenta = cuenta + 1\n    return cuenta\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    x = int(input())\n    print(contar_x(matriz, n, m, x))\n\nmain()</code></pre><p>Contar con condición <code>== x</code>. El mismo esqueleto por octava vez: esa es la plana.</p>",
-		"starter_code": "# M2.8 — Cuántas veces aparece X\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n0\n",
-				"expected_output": "3"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n9\n",
-				"expected_output": "0"
-			},
-			{
-				"stdin": "2\n2\n5\n5\n1\n5\n5\n",
-				"expected_output": "3"
 			}
 		]
 	}

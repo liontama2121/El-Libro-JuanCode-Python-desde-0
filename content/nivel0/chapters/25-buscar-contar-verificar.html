@@ -1,0 +1,77 @@
+<div class="jc-desbloqueo" role="note">
+  <strong>✅ Se vale:</strong> métodos de listas, <code>sum</code>/<code>min</code>/<code>max</code>/<code>len</code>, slicing y <code>for dato in lista</code>. <strong>❌ Sigue prohibido:</strong> f-strings y comprensiones.
+</div>
+
+<p>Cómo preguntarle a una lista qué contiene, sin recorrerla a mano.</p>
+
+<h3>Las tres preguntas</h3>
+
+<table>
+  <thead>
+    <tr><th>Pregunta</th><th>Escribes</th><th>Devuelve</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>¿Está?</td><td><code>x in lista</code></td><td><code>True</code> / <code>False</code></td></tr>
+    <tr><td>¿No está?</td><td><code>x not in lista</code></td><td><code>True</code> / <code>False</code></td></tr>
+    <tr><td>¿Cuántas veces?</td><td><code>lista.count(x)</code></td><td>un entero (0 si no está)</td></tr>
+    <tr><td>¿Dónde está?</td><td><code>lista.index(x)</code></td><td>la <strong>primera</strong> posición · <strong>error</strong> si no está</td></tr>
+  </tbody>
+</table>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Antes · bandera a mano</p>
+<pre><code>esta = False
+for i in range(n):
+    if vector[i] == x:
+        esta = True</code></pre>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Ahora · in</p>
+<pre><code>esta = x in lista</code></pre>
+  </div>
+</div>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Antes · contador</p>
+<pre><code>cuenta = 0
+for i in range(n):
+    if vector[i] == x:
+        cuenta = cuenta + 1</code></pre>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Ahora · count</p>
+<pre><code>cuenta = lista.count(x)</code></pre>
+  </div>
+</div>
+
+<h3>El patrón seguro de .index</h3>
+
+<p><code>.index</code> se cae con <code>ValueError</code> si el valor no está. Por eso <strong>siempre</strong> se pregunta primero:</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto L3 · escríbelo 3 veces</p>
+<pre><code>def posicion(lista, x):
+    if x in lista:
+        return lista.index(x)
+    return -1
+
+
+def main():
+    n = int(input())
+    numeros = []
+    for i in range(n):
+        numeros.append(int(input()))
+    x = int(input())
+    print(posicion(numeros, x))
+
+
+main()</code></pre>
+</div>
+
+<p class="jc-frase">Primero in, después index. Nunca al revés.</p>
+
+<p>Todo esto funciona igual con textos: <code>"ana" in usuarios</code>. Ojo: distingue mayúsculas, <code>"Ana"</code> no es <code>"ana"</code>.</p>
+
+<p>Ejercicios: <strong>L3.1 a L3.6</strong>.</p>

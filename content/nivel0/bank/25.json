@@ -1,0 +1,161 @@
+[
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [3, 5, 7]\nprint(5 in lista)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "True"
+				},
+				{
+					"id": "b",
+					"text": "False"
+				},
+				{
+					"id": "c",
+					"text": "1"
+				},
+				{
+					"id": "d",
+					"text": "Da error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "in pregunta si el valor está en la lista y devuelve un booleano."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "votos = [\"si\", \"no\", \"si\", \"si\"]\nprint(votos.count(\"si\"))",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "3"
+				},
+				{
+					"id": "b",
+					"text": "1"
+				},
+				{
+					"id": "c",
+					"text": "2"
+				},
+				{
+					"id": "d",
+					"text": "4"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "count cuenta TODAS las apariciones."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "¿Qué pasa con lista = [1, 2, 3] y lista.index(9)?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "Da error (ValueError)"
+				},
+				{
+					"id": "b",
+					"text": "Devuelve -1"
+				},
+				{
+					"id": "c",
+					"text": "Devuelve 0"
+				},
+				{
+					"id": "d",
+					"text": "Devuelve None"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "index falla si el valor no está. Por eso se pregunta antes con in."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe imprimir la posición de x o -1 si no está. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def posicion(lista, x):",
+				"    p = lista.index(x)",
+				"    if x in lista:",
+				"        return p",
+				"    return -1"
+			]
+		},
+		"correct": {
+			"line_number": 2
+		},
+		"explanation": "index se llama antes de verificar: si x no está, el programa se cae en la línea 2. Primero el if x in lista, y adentro el index."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "facil",
+		"prompt": "Completa para imprimir NO si el usuario no está registrado.",
+		"data": {
+			"code": "if usuario ___1___ usuarios:\n    print(\"NO\")",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "operador de dos palabras"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"not in"
+				]
+			}
+		},
+		"explanation": "not in es la versión negada de in."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [4, 8, 4, 8]\nprint(lista.index(8))",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "1"
+				},
+				{
+					"id": "b",
+					"text": "3"
+				},
+				{
+					"id": "c",
+					"text": "0"
+				},
+				{
+					"id": "d",
+					"text": "2"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "index devuelve la PRIMERA posición donde está el valor."
+	}
+]

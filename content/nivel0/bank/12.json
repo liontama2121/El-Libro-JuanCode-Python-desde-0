@@ -2,46 +2,75 @@
 	{
 		"type": "mcq",
 		"difficulty": "facil",
-		"prompt": "Al recorrer la columna c, ¿hasta dónde va el for?",
+		"prompt": "def suma_vector(v, tam): y en main: suma_vector(vector, n). ¿Qué es v adentro?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "range(n): una columna tiene una casilla por fila"
+					"text": "Una copia vacía"
 				},
 				{
 					"id": "b",
-					"text": "range(m): una columna tiene m casillas"
+					"text": "El mismo vector que afuera se llama vector"
 				},
 				{
 					"id": "c",
-					"text": "range(c)"
+					"text": "El tamaño"
 				},
 				{
 					"id": "d",
-					"text": "range(n * m)"
+					"text": "Un error: debe llamarse vector"
 				}
 			]
 		},
 		"correct": {
-			"option_id": "a"
+			"option_id": "b"
 		},
-		"explanation": "La columna baja por las filas: i va de 0 a n - 1. Confundir n con m es el error número 1."
+		"explanation": "Es el mismo vector con otro nombre. Afuera vector, adentro v."
 	},
 	{
-		"type": "predict_output",
-		"difficulty": "facil",
-		"prompt": "¿Qué imprime este programa?",
-		"code_snippet": "matriz = [[4, 7, 1], [2, 9, 5]]\nc = 2\ntotal = 0\nfor i in range(2):\n    total = total + matriz[i][c]\nprint(total)",
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "¿Por qué a la función se le pasa también tam?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "16"
+					"text": "Por costumbre"
 				},
 				{
 					"id": "b",
-					"text": "11"
+					"text": "Porque la función no adivina cuántas casillas tiene el vector"
+				},
+				{
+					"id": "c",
+					"text": "Porque v no puede usarse sin tam"
+				},
+				{
+					"id": "d",
+					"text": "Para que el vector no cambie"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "La función solo conoce lo que le pasan. El tamaño viaja como un parámetro más."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "def contar_positivos(v, tam):\n    cuenta = 0\n    for i in range(tam):\n        if v[i] > 0:\n            cuenta = cuenta + 1\n    return cuenta\n\n\ndef main():\n    numeros = [3, 0, -1, 5]\n    print(contar_positivos(numeros, 4))\n\n\nmain()",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "1"
+				},
+				{
+					"id": "b",
+					"text": "2"
 				},
 				{
 					"id": "c",
@@ -49,120 +78,94 @@
 				},
 				{
 					"id": "d",
-					"text": "6"
+					"text": "4"
 				}
 			]
 		},
 		"correct": {
-			"option_id": "d"
+			"option_id": "b"
 		},
-		"explanation": "La columna 2 tiene 1 y 5."
+		"explanation": "Solo 3 y 5 son mayores que 0. El 0 no cuenta."
 	},
 	{
 		"type": "find_bug",
 		"difficulty": "medio",
-		"prompt": "Debe sumar la columna c. ¿En qué línea está el error?",
+		"prompt": "Debería devolver el mayor del vector. ¿En qué línea está el error?",
 		"data": {
 			"lines": [
-				"def suma_columna(matriz, c, n):",
-				"    total = 0",
-				"    for i in range(m):",
-				"        total = total + matriz[i][c]",
-				"    return total"
+				"def mayor_del_vector(v, tam):",
+				"    mayor = v[0]",
+				"    for i in range(1, n):",
+				"        if v[i] > mayor:",
+				"            mayor = v[i]",
+				"    return mayor"
 			]
 		},
 		"correct": {
 			"line_number": 3
 		},
-		"explanation": "La columna tiene n casillas, no m (y m ni siquiera es parámetro de la función)."
+		"explanation": "Adentro el tamaño se llama tam, no n. n es de main() y aquí no existe."
 	},
 	{
 		"type": "fill_blank",
-		"difficulty": "facil",
-		"prompt": "Completa la línea que suma la columna c.",
+		"difficulty": "dificil",
+		"prompt": "Completa invertir_vector sin .append.",
 		"data": {
-			"code": "total = 0\nfor i in range(n):\n    total = total + matriz[___1___][___2___]",
+			"code": "def invertir_vector(v, tam):\n    nuevo = ___1___\n    for i in range(tam):\n        nuevo[i] = v[___2___]\n    return nuevo",
 			"blanks": [
 				{
 					"id": "1",
-					"pista": "el índice que camina"
+					"pista": "vector de tam ceros"
 				},
 				{
 					"id": "2",
-					"pista": "la columna congelada"
+					"pista": "índice desde el final"
 				}
 			]
 		},
 		"correct": {
 			"answers": {
 				"1": [
-					"i"
+					"[0] * tam",
+					"[0]*tam"
 				],
 				"2": [
-					"c"
+					"tam - 1 - i",
+					"tam-1-i"
 				]
 			}
 		},
-		"explanation": "Fila primero (i camina), columna después (c quieta)."
-	},
-	{
-		"type": "mcq",
-		"difficulty": "facil",
-		"prompt": "En una matriz de 3 filas × 5 columnas, ¿cuántos elementos tiene una columna?",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "15"
-				},
-				{
-					"id": "b",
-					"text": "8"
-				},
-				{
-					"id": "c",
-					"text": "3"
-				},
-				{
-					"id": "d",
-					"text": "5"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "c"
-		},
-		"explanation": "Una columna tiene una casilla por fila: 3."
+		"explanation": "El nuevo se crea con [0] * tam y la casilla i recibe la del espejo: tam - 1 - i."
 	},
 	{
 		"type": "parsons",
 		"difficulty": "medio",
-		"prompt": "Arma la función suma_columna",
+		"prompt": "Arma buscar_valor",
 		"data": {
 			"lines": [
 				{
 					"id": "l1",
-					"text": "def suma_columna(matriz, c, n):",
+					"text": "def buscar_valor(v, tam, buscado):",
 					"indent": 0
 				},
 				{
 					"id": "l2",
-					"text": "total = 0",
+					"text": "for i in range(tam):",
 					"indent": 1
 				},
 				{
 					"id": "l3",
-					"text": "for i in range(n):",
-					"indent": 1
-				},
-				{
-					"id": "l4",
-					"text": "total = total + matriz[i][c]",
+					"text": "if v[i] == buscado:",
 					"indent": 2
 				},
 				{
+					"id": "l4",
+					"text": "return True",
+					"indent": 3
+				},
+				{
 					"id": "l5",
-					"text": "return total",
+					"text": "return False",
 					"indent": 1
 				}
 			]
@@ -176,6 +179,6 @@
 				"l5"
 			]
 		},
-		"explanation": "Un solo for, con i. La columna c no se mueve."
+		"explanation": "return True apenas lo encuentra; return False afuera del for, cuando ya revisó todo."
 	}
 ]

@@ -1,139 +1,177 @@
 [
 	{
 		"orden": 1,
-		"title": "M3.1 — Imprimir la fila F",
+		"title": "F3.1 — Suma",
 		"difficulty": "facil",
-		"statement_html": "<p>Lee una matriz y una fila <code>F</code>. Imprime la fila <code>F</code> en una línea, con los valores separados por un espacio.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>F</code>, el número de fila (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n1</code></pre><p>Salida:</p><pre><code>5 8 -1 4</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    f = int(input())\n    linea = \"\"\n    for j in range(m):\n        if j &gt; 0:\n            linea = linea + \" \"\n        linea = linea + str(matriz[f][j])\n    print(linea)\n\nmain()</code></pre><p>Un solo <code>for</code>, con <code>j</code>. La fila queda <strong>congelada</strong> en <code>f</code>.</p>",
-		"starter_code": "# M3.1 — Imprimir la fila F\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>suma(a, b)</code> que <strong>devuelva</strong> la suma. En <code>main()</code> lee los números en <code>primero</code> y <code>segundo</code>, guarda el resultado e imprímelo.</p><p><strong>Entrada:</strong> dos números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4</code></pre><p>Salida:</p><pre><code>7</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = int(input())\n    resultado = doble(numero)\n    print(resultado)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def suma(a, b):\n    return a + b\n\n\ndef main():\n    primero = int(input())\n    segundo = int(input())\n    resultado = suma(primero, segundo)\n    print(resultado)\n\n\nmain()</code></pre><p>La función no imprime: devuelve. <code>main()</code> guarda y muestra.</p>",
+		"starter_code": "# F3.1 — Suma\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n1\n",
-				"expected_output": "5 8 -1 4"
+				"stdin": "3\n4\n",
+				"expected_output": "7"
 			},
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n0\n",
-				"expected_output": "1 2 3"
-			},
-			{
-				"stdin": "1\n1\n10\n0\n",
-				"expected_output": "10"
+				"stdin": "-5\n10\n",
+				"expected_output": "5"
 			}
 		]
 	},
 	{
 		"orden": 2,
-		"title": "M3.2 — Suma de la fila F",
+		"title": "F3.2 — Cuadrado",
 		"difficulty": "facil",
-		"statement_html": "<p>Imprime la suma de la fila <code>F</code>. Usa <code>suma_fila(matriz, f, m)</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>F</code>, el número de fila (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n2</code></pre><p>Salida:</p><pre><code>7</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    f = int(input())\n    print(suma_fila(matriz, f, m))\n\nmain()</code></pre><p>La fila recorre columnas, por eso el tope es <code>m</code>.</p>",
-		"starter_code": "# M3.2 — Suma de la fila F\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>cuadrado(n)</code> que devuelva <code>n * n</code>. En <code>main()</code> el número se lee en <code>numero</code>.</p><p><strong>Entrada:</strong> un número entero.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5</code></pre><p>Salida:</p><pre><code>25</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = int(input())\n    resultado = doble(numero)\n    print(resultado)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def cuadrado(n):\n    return n * n\n\n\ndef main():\n    numero = int(input())\n    print(cuadrado(numero))\n\n\nmain()</code></pre><p>El resultado se puede usar directo dentro del <code>print</code>, sin guardarlo.</p>",
+		"starter_code": "# F3.2 — Cuadrado\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n2\n",
-				"expected_output": "7"
+				"stdin": "5\n",
+				"expected_output": "25"
 			},
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n1\n",
-				"expected_output": "15"
+				"stdin": "-3\n",
+				"expected_output": "9"
 			},
 			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n0\n",
-				"expected_output": "2"
+				"stdin": "0\n",
+				"expected_output": "0"
 			}
 		]
 	},
 	{
 		"orden": 3,
-		"title": "M3.3 — Mayor de la fila F",
+		"title": "F3.3 — ¿Mayor de edad?",
 		"difficulty": "facil",
-		"statement_html": "<p>Imprime el mayor valor de la fila <code>F</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>F</code>, el número de fila (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n0</code></pre><p>Salida:</p><pre><code>7</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef mayor_fila(matriz, f, m):\n    mayor = matriz[f][0]\n    for j in range(1, m):\n        if matriz[f][j] &gt; mayor:\n            mayor = matriz[f][j]\n    return mayor\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    f = int(input())\n    print(mayor_fila(matriz, f, m))\n\nmain()</code></pre><p>Se arranca con el primero de <strong>esa fila</strong>, <code>matriz[f][0]</code>, no con 0.</p>",
-		"starter_code": "# M3.3 — Mayor de la fila F\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>es_mayor_edad(edad)</code> que devuelva <code>True</code> si la edad es 18 o más y <code>False</code> si no. En <code>main()</code> lee la edad en <code>anios</code> e imprime <code>Mayor de edad</code> o <code>Menor de edad</code> usando un <code>if</code> con lo que devuelve la función.</p><p><strong>Entrada:</strong> una edad.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>20</code></pre><p>Salida:</p><pre><code>Mayor de edad</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = int(input())\n    resultado = doble(numero)\n    print(resultado)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def es_mayor_edad(edad):\n    if edad &gt;= 18:\n        return True\n    return False\n\n\ndef main():\n    anios = int(input())\n    if es_mayor_edad(anios):\n        print(\"Mayor de edad\")\n    else:\n        print(\"Menor de edad\")\n\n\nmain()</code></pre><p>Una función que devuelve <code>True</code>/<code>False</code> se usa directo como condición del <code>if</code>.</p>",
+		"starter_code": "# F3.3 — ¿Mayor de edad?\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n0\n",
-				"expected_output": "7"
+				"stdin": "20\n",
+				"expected_output": "Mayor de edad"
 			},
 			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n1\n",
-				"expected_output": "8"
+				"stdin": "17\n",
+				"expected_output": "Menor de edad"
 			},
 			{
-				"stdin": "1\n3\n-4\n-9\n-2\n0\n",
-				"expected_output": "-2"
+				"stdin": "18\n",
+				"expected_output": "Mayor de edad"
 			}
 		]
 	},
 	{
 		"orden": 4,
-		"title": "M3.4 — Pares en la fila F",
+		"title": "F3.4 — El mayor de dos",
 		"difficulty": "facil",
-		"statement_html": "<p>Imprime cuántos números pares hay en la fila <code>F</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final viene <code>F</code>, el número de fila (desde 0).</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n1</code></pre><p>Salida:</p><pre><code>2</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef pares_fila(matriz, f, m):\n    cuenta = 0\n    for j in range(m):\n        if matriz[f][j] % 2 == 0:\n            cuenta = cuenta + 1\n    return cuenta\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    f = int(input())\n    print(pares_fila(matriz, f, m))\n\nmain()</code></pre><p>Contar (patrón II) sobre una sola fila.</p>",
-		"starter_code": "# M3.4 — Pares en la fila F\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>mayor(a, b)</code> que devuelva el mayor de los dos. En <code>main()</code> los números se leen en <code>num1</code> y <code>num2</code>.</p><p><strong>Entrada:</strong> dos números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n9</code></pre><p>Salida:</p><pre><code>9</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = int(input())\n    resultado = doble(numero)\n    print(resultado)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def mayor(a, b):\n    if a &gt; b:\n        return a\n    return b\n\n\ndef main():\n    num1 = int(input())\n    num2 = int(input())\n    print(mayor(num1, num2))\n\n\nmain()</code></pre><p>Si <code>a &gt; b</code> el primer <code>return</code> termina la función; si no, llega al segundo.</p>",
+		"starter_code": "# F3.4 — El mayor de dos\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n1\n",
-				"expected_output": "2"
+				"stdin": "3\n9\n",
+				"expected_output": "9"
 			},
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n0\n",
-				"expected_output": "1"
+				"stdin": "12\n-1\n",
+				"expected_output": "12"
 			},
 			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n2\n",
-				"expected_output": "3"
+				"stdin": "4\n4\n",
+				"expected_output": "4"
 			}
 		]
 	},
 	{
 		"orden": 5,
-		"title": "M3.5 — Suma de cada fila",
-		"difficulty": "medio",
-		"statement_html": "<p>Lee una matriz e imprime la suma de cada fila, una por línea.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>6\n15</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    for i in range(n):\n        print(suma_fila(matriz, i, m))\n\nmain()</code></pre><p>La misma función de M3.2, llamada una vez por fila. Para eso sirven las funciones: se escriben una vez y se usan muchas.</p>",
-		"starter_code": "# M3.5 — Suma de cada fila\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"title": "F3.5 — Promedio de tres",
+		"difficulty": "facil",
+		"statement_html": "<p>Escribe <code>promedio(a, b, c)</code> que devuelva el promedio entero (con <code>//</code>). En <code>main()</code> lee las tres notas en <code>n1</code>, <code>n2</code> y <code>n3</code>.</p><p><strong>Entrada:</strong> tres números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>10\n20\n30</code></pre><p>Salida:</p><pre><code>20</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = int(input())\n    resultado = doble(numero)\n    print(resultado)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def promedio(a, b, c):\n    return (a + b + c) // 3\n\n\ndef main():\n    n1 = int(input())\n    n2 = int(input())\n    n3 = int(input())\n    print(promedio(n1, n2, n3))\n\n\nmain()</code></pre><p>Los paréntesis importan: primero se suma, después se divide.</p>",
+		"starter_code": "# F3.5 — Promedio de tres\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "6\n15"
+				"stdin": "10\n20\n30\n",
+				"expected_output": "20"
 			},
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "6\n16\n7"
-			},
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "2\n3\n8"
+				"stdin": "7\n8\n10\n",
+				"expected_output": "8"
 			}
 		]
 	},
 	{
 		"orden": 6,
-		"title": "M3.6 — La fila que más suma",
+		"title": "F3.6 — Potencia con for",
 		"difficulty": "medio",
-		"statement_html": "<p>Imprime el número de la fila (desde 0) cuya suma es la mayor. Si hay empate, la primera.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>1</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    mejor = 0\n    for i in range(1, n):\n        if suma_fila(matriz, i, m) &gt; suma_fila(matriz, mejor, m):\n            mejor = i\n    print(mejor)\n\nmain()</code></pre><p>Patrón IV (posición del máximo), pero lo que se compara es <code>suma_fila(...)</code>.</p>",
-		"starter_code": "# M3.6 — La fila que más suma\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>potencia(base, exponente)</code> que calcule <code>base</code> elevado a <code>exponente</code> multiplicando en un <code>for</code> (sin <code>**</code>). En <code>main()</code> lee los números en <code>numero</code> y <code>veces</code>.</p><p><strong>Entrada:</strong> la base y el exponente (mayor o igual a 0), uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n10</code></pre><p>Salida:</p><pre><code>1024</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = int(input())\n    resultado = doble(numero)\n    print(resultado)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def potencia(base, exponente):\n    resultado = 1\n    for i in range(exponente):\n        resultado = resultado * base\n    return resultado\n\n\ndef main():\n    numero = int(input())\n    veces = int(input())\n    print(potencia(numero, veces))\n\n\nmain()</code></pre><p>El acumulador de multiplicar arranca en 1, no en 0. Con exponente 0 el <code>for</code> no da vueltas y devuelve 1.</p>",
+		"starter_code": "# F3.6 — Potencia con for\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
+				"stdin": "2\n10\n",
+				"expected_output": "1024"
+			},
+			{
+				"stdin": "3\n4\n",
+				"expected_output": "81"
+			},
+			{
+				"stdin": "5\n0\n",
+				"expected_output": "1"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "F3.7 — Factorial",
+		"difficulty": "medio",
+		"statement_html": "<p>Escribe <code>factorial(n)</code> que devuelva <code>1 × 2 × … × n</code> usando un <code>for</code>. En <code>main()</code> el número se lee en <code>numero</code>.</p><p><strong>Entrada:</strong> un número entero mayor o igual a 0.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5</code></pre><p>Salida:</p><pre><code>120</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = int(input())\n    resultado = doble(numero)\n    print(resultado)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def factorial(n):\n    resultado = 1\n    for i in range(1, n + 1):\n        resultado = resultado * i\n    return resultado\n\n\ndef main():\n    numero = int(input())\n    print(factorial(numero))\n\n\nmain()</code></pre><p>Mismo patrón que la potencia, pero se multiplica por <code>i</code>. El <code>return</code> va afuera del <code>for</code>.</p>",
+		"starter_code": "# F3.7 — Factorial\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n",
+				"expected_output": "120"
+			},
+			{
+				"stdin": "0\n",
 				"expected_output": "1"
 			},
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
+				"stdin": "10\n",
+				"expected_output": "3628800"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "F3.8 — Contar dígitos",
+		"difficulty": "medio",
+		"statement_html": "<p>Escribe <code>contar_digitos(num)</code> que devuelva cuántos dígitos tiene un entero positivo, usando <code>while</code> y <code>// 10</code>. En <code>main()</code> el número se lee en <code>valor</code>.</p><p><strong>Entrada:</strong> un número entero positivo.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>12345</code></pre><p>Salida:</p><pre><code>5</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = int(input())\n    resultado = doble(numero)\n    print(resultado)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def contar_digitos(num):\n    cantidad = 0\n    while num &gt; 0:\n        num = num // 10\n        cantidad = cantidad + 1\n    return cantidad\n\n\ndef main():\n    valor = int(input())\n    print(contar_digitos(valor))\n\n\nmain()</code></pre><p>Cada <code>// 10</code> le quita el último dígito. Cambiar <code>num</code> adentro no cambia <code>valor</code> afuera.</p>",
+		"starter_code": "# F3.8 — Contar dígitos\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
+		"tests": [
+			{
+				"stdin": "12345\n",
+				"expected_output": "5"
+			},
+			{
+				"stdin": "7\n",
 				"expected_output": "1"
 			},
 			{
-				"stdin": "3\n2\n5\n5\n1\n9\n2\n3\n",
-				"expected_output": "0"
+				"stdin": "1000\n",
+				"expected_output": "4"
 			}
 		]
 	}

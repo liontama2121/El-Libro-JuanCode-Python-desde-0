@@ -1,0 +1,56 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code>, comprensiones ni <code>global</code>. Vectores con <code>[0] * n</code>. Siempre <code>def</code> + <code>main()</code> + última línea <code>main()</code>.
+</div>
+
+<p class="jc-plana-sub">La función calcula y devuelve. El resultado se puede guardar o usar directo.</p>
+
+<p>Hasta ahora las funciones imprimían. Desde aquí <strong>devuelven</strong>: hacen la cuenta, la entregan con <code>return</code>, y es <code>main()</code> quien decide qué hacer con ella.</p>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto F3 · escríbelo 3 veces</p>
+<pre><code>def doble(x):
+    return x * 2
+
+
+def main():
+    numero = int(input())
+    resultado = doble(numero)
+    print(resultado)
+
+
+main()</code></pre>
+</div>
+
+<h3>print contra return</h3>
+
+<table>
+  <thead>
+    <tr><th></th><th><code>print(x * 2)</code></th><th><code>return x * 2</code></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>¿Quién ve el valor?</td><td>La pantalla</td><td>Quien llamó a la función</td></tr>
+    <tr><td>¿Se puede guardar?</td><td>No</td><td>Sí: <code>resultado = doble(numero)</code></td></tr>
+    <tr><td>¿Se puede seguir usando?</td><td>No</td><td>Sí: <code>doble(numero) + 1</code>, <code>if doble(n) &gt; 10:</code></td></tr>
+  </tbody>
+</table>
+
+<p class="jc-frase">return no imprime. return entrega. Imprimir es trabajo de main().</p>
+
+<h3>Lo que va después del return</h3>
+
+<table>
+  <thead>
+    <tr><th>La función…</th><th>devuelve…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>suma(a, b)</code></td><td><code>a + b</code></td></tr>
+    <tr><td><code>es_mayor_edad(edad)</code></td><td><code>True</code> o <code>False</code></td></tr>
+    <tr><td><code>mayor(a, b)</code></td><td>un <code>if</code> con dos <code>return</code></td></tr>
+    <tr><td><code>potencia(base, exponente)</code></td><td>un acumulador que arranca en <code>1</code> y se multiplica en un <code>for</code></td></tr>
+    <tr><td><code>contar_digitos(num)</code></td><td>un contador con <code>while num &gt; 0:</code> y <code>num = num // 10</code></td></tr>
+  </tbody>
+</table>
+
+<p>Dos reglas: el <code>return</code> <strong>termina</strong> la función en el acto (lo que hay debajo ya no corre), y cuando hay un ciclo el <code>return</code> va <strong>afuera</strong> del ciclo, con la sangría del <code>for</code>, no adentro.</p>
+
+<p>Ejercicios: <strong>F3.1 a F3.8</strong>.</p>

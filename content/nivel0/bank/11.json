@@ -2,178 +2,180 @@
 	{
 		"type": "mcq",
 		"difficulty": "facil",
-		"prompt": "Para recorrer solo la fila f, ¿qué índice cambia?",
+		"prompt": "¿Cuál es la diferencia entre print(x * 2) y return x * 2 dentro de una función?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "i, de 0 a n - 1"
+					"text": "Ninguna"
 				},
 				{
 					"id": "b",
-					"text": "f, de 0 a m - 1"
+					"text": "print lo muestra en pantalla; return se lo entrega a quien llamó y se puede guardar"
 				},
 				{
 					"id": "c",
-					"text": "Los dos, con doble for"
+					"text": "return también imprime"
 				},
 				{
 					"id": "d",
-					"text": "j, de 0 a m - 1"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "d"
-		},
-		"explanation": "La fila queda congelada en f; j camina por sus columnas: matriz[f][j]."
-	},
-	{
-		"type": "predict_output",
-		"difficulty": "facil",
-		"prompt": "¿Qué imprime este programa?",
-		"code_snippet": "matriz = [[4, 7, 1], [2, 9, 5]]\nf = 1\ntotal = 0\nfor j in range(3):\n    total = total + matriz[f][j]\nprint(total)",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "11"
-				},
-				{
-					"id": "b",
-					"text": "28"
-				},
-				{
-					"id": "c",
-					"text": "16"
-				},
-				{
-					"id": "d",
-					"text": "12"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "c"
-		},
-		"explanation": "La fila 1 es [2, 9, 5]: suma 16."
-	},
-	{
-		"type": "find_bug",
-		"difficulty": "medio",
-		"prompt": "Debe sumar la fila f. ¿En qué línea está el error?",
-		"data": {
-			"lines": [
-				"def suma_fila(matriz, f, m):",
-				"    total = 0",
-				"    for j in range(m):",
-				"        total = total + matriz[j][f]"
-			]
-		},
-		"correct": {
-			"line_number": 4
-		},
-		"explanation": "Los corchetes están al revés: matriz[j][f] recorre una columna. Fila primero: matriz[f][j]."
-	},
-	{
-		"type": "fill_blank",
-		"difficulty": "facil",
-		"prompt": "Completa suma_fila.",
-		"data": {
-			"code": "def suma_fila(matriz, f, m):\n    total = 0\n    for j in range(___1___):\n        total = total + matriz[___2___][___3___]\n    return total",
-			"blanks": [
-				{
-					"id": "1",
-					"pista": "cuántas columnas"
-				},
-				{
-					"id": "2",
-					"pista": "la fila congelada"
-				},
-				{
-					"id": "3",
-					"pista": "el índice que camina"
-				}
-			]
-		},
-		"correct": {
-			"answers": {
-				"1": [
-					"m"
-				],
-				"2": [
-					"f"
-				],
-				"3": [
-					"j"
-				]
-			}
-		},
-		"explanation": "Una fila tiene m casillas; f no se mueve y j recorre."
-	},
-	{
-		"type": "mcq",
-		"difficulty": "medio",
-		"prompt": "Ya tienes suma_fila(matriz, f, m). ¿Cómo imprimes la suma de cada fila?",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "for i in range(n): print(suma_fila(matriz, 0, m))"
-				},
-				{
-					"id": "b",
-					"text": "for i in range(n): print(suma_fila(matriz, i, m))"
-				},
-				{
-					"id": "c",
-					"text": "for j in range(m): print(suma_fila(matriz, j, m))"
-				},
-				{
-					"id": "d",
-					"text": "print(suma_fila(matriz, n, m))"
+					"text": "print es más rápido"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "b"
 		},
-		"explanation": "Se llama una vez por fila, pasando i como la fila. Hay n filas."
+		"explanation": "return no imprime: entrega. Imprimir es trabajo de main()."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "def doble(x):\n    return x * 2\n\n\ndef main():\n    numero = 4\n    doble(numero)\n\n\nmain()",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "8"
+				},
+				{
+					"id": "b",
+					"text": "4"
+				},
+				{
+					"id": "c",
+					"text": "Nada"
+				},
+				{
+					"id": "d",
+					"text": "Error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "c"
+		},
+		"explanation": "La función devuelve 8 pero main no lo guarda ni lo imprime. Hacía falta print(doble(numero))."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "def mayor(a, b):\n    if a > b:\n        return a\n    return b\n\n\ndef main():\n    print(mayor(3, 9) + 1)\n\n\nmain()",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "4"
+				},
+				{
+					"id": "b",
+					"text": "9"
+				},
+				{
+					"id": "c",
+					"text": "10"
+				},
+				{
+					"id": "d",
+					"text": "Error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "c"
+		},
+		"explanation": "mayor(3, 9) devuelve 9 y ese valor se usa directo en la cuenta: 9 + 1 = 10."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debería devolver el factorial. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def factorial(n):",
+				"    resultado = 1",
+				"    for i in range(1, n + 1):",
+				"        resultado = resultado * i",
+				"        return resultado"
+			]
+		},
+		"correct": {
+			"line_number": 5
+		},
+		"explanation": "El return quedó dentro del for: sale en la primera vuelta. Va con la sangría del for."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "medio",
+		"prompt": "Completa la potencia con for.",
+		"data": {
+			"code": "def potencia(base, exponente):\n    resultado = ___1___\n    for i in range(___2___):\n        resultado = resultado * base\n    ___3___ resultado",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "valor inicial al multiplicar"
+				},
+				{
+					"id": "2",
+					"pista": "cuántas veces"
+				},
+				{
+					"id": "3",
+					"pista": "entregar"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"1"
+				],
+				"2": [
+					"exponente"
+				],
+				"3": [
+					"return"
+				]
+			}
+		},
+		"explanation": "El acumulador de multiplicar arranca en 1, se multiplica exponente veces y se retorna afuera del for."
 	},
 	{
 		"type": "parsons",
 		"difficulty": "medio",
-		"prompt": "Arma la función que retorna el mayor de la fila f",
+		"prompt": "Arma contar_digitos con while",
 		"data": {
 			"lines": [
 				{
 					"id": "l1",
-					"text": "def mayor_fila(matriz, f, m):",
+					"text": "def contar_digitos(num):",
 					"indent": 0
 				},
 				{
 					"id": "l2",
-					"text": "mayor = matriz[f][0]",
+					"text": "cantidad = 0",
 					"indent": 1
 				},
 				{
 					"id": "l3",
-					"text": "for j in range(1, m):",
+					"text": "while num > 0:",
 					"indent": 1
 				},
 				{
 					"id": "l4",
-					"text": "if matriz[f][j] > mayor:",
+					"text": "num = num // 10",
 					"indent": 2
 				},
 				{
 					"id": "l5",
-					"text": "mayor = matriz[f][j]",
-					"indent": 3
+					"text": "cantidad = cantidad + 1",
+					"indent": 2
 				},
 				{
 					"id": "l6",
-					"text": "return mayor",
+					"text": "return cantidad",
 					"indent": 1
 				}
 			]
@@ -188,6 +190,6 @@
 				"l6"
 			]
 		},
-		"explanation": "Arranca con la primera casilla de esa fila y compara el resto."
+		"explanation": "Contador en 0, el while quita un dígito por vuelta con // 10 y el return va afuera del while."
 	}
 ]

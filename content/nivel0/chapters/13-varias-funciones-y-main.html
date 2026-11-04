@@ -1,0 +1,115 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code>, comprensiones ni <code>global</code>. Vectores con <code>[0] * n</code>. Siempre <code>def</code> + <code>main()</code> + última línea <code>main()</code>.
+</div>
+
+<p class="jc-plana-sub">Muchas funciones pequeñas y main() orquesta. Así se ve el código en el mundo real.</p>
+
+<h2>🔑 Scope: las variables de adentro son otras</h2>
+
+<p class="jc-plana-sub">Cada función es una casa con sus propias cosas adentro.</p>
+
+<h3>1. Qué es el scope</h3>
+
+<p>El <strong>scope</strong> es el lugar donde vive una variable. Una variable creada dentro de una función <strong>nace</strong> cuando la función empieza y <strong>muere</strong> cuando la función termina. Afuera nadie la ve.</p>
+
+<blockquote>Tu cuarto y el de tu hermano tienen cada uno una "cama". Son dos camas distintas aunque se llamen igual. Tú no puedes dormir en la de él desde tu cuarto.</blockquote>
+
+<p>Por eso en el esqueleto hay un <code>total</code> dentro de <code>suma_vector</code> y otro <code>total</code> en <code>main()</code>: son <strong>dos variables distintas</strong>. La de adentro se pierde; lo único que sobrevive es el <strong>valor</strong> que sale por el <code>return</code>.</p>
+
+<h3>2. El error clásico</h3>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">❌ Así no</p>
+<pre><code>def leer_vector(tam):
+    v = [0] * tam
+    for i in range(tam):
+        v[i] = int(input())
+
+
+def main():
+    n = int(input())
+    leer_vector(n)
+    print(v[0])    # NameError: v</code></pre>
+    <p><code>v</code> murió al terminar <code>leer_vector</code>. En <code>main()</code> no existe.</p>
+  </div>
+  <div>
+    <p class="jc-vs-tit">✅ Así sí</p>
+<pre><code>def leer_vector(tam):
+    v = [0] * tam
+    for i in range(tam):
+        v[i] = int(input())
+    return v
+
+
+def main():
+    n = int(input())
+    numeros = leer_vector(n)
+    print(numeros[0])</code></pre>
+    <p>La función <strong>retorna</strong> el vector y <code>main()</code> lo <strong>guarda</strong> con su propio nombre.</p>
+  </div>
+</div>
+
+<h3>3. Las 3 reglas del scope</h3>
+
+<table>
+  <thead>
+    <tr><th>Regla</th><th>Consecuencia</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>1. Lo que se crea adentro, se queda adentro</strong></td><td>Para sacar algo, <code>return</code>. Para guardarlo, <code>variable = funcion(...)</code></td></tr>
+    <tr><td><strong>2. Lo que una función necesita, se le pasa</strong></td><td>Por parámetro. Nunca con <code>global</code></td></tr>
+    <tr><td><strong>3. El mismo nombre en dos funciones son dos variables</strong></td><td>El <code>i</code> de <code>leer_vector</code> y el <code>i</code> de <code>suma_vector</code> no se pisan</td></tr>
+  </tbody>
+</table>
+
+<h3>4. Pop quiz</h3>
+
+<details class="jc-popquiz">
+  <summary>1. <code>suma_vector</code> crea <code>total</code> pero en <code>main()</code> no la guardo: <code>suma_vector(numeros, n)</code> y luego <code>print(total)</code>. ¿Qué pasa?</summary>
+  <p><strong>NameError.</strong> El <code>total</code> de adentro murió. Hay que guardar el retorno: <code>total = suma_vector(numeros, n)</code>.</p>
+</details>
+
+<details class="jc-popquiz">
+  <summary>2. Dentro de <code>mayor(v, tam)</code> uso <code>n</code>, que existe en <code>main()</code>. ¿Funciona?</summary>
+  <p><strong>No.</strong> <code>n</code> es de <code>main()</code>. Adentro el tamaño se llama <code>tam</code>, que es justo para eso: se lo pasaste por parámetro.</p>
+</details>
+
+<details class="jc-popquiz">
+  <summary>3. Dos funciones tienen cada una un <code>for i in range(...)</code>. ¿Se dañan entre sí?</summary>
+  <p><strong>No.</strong> Cada una tiene su propio <code>i</code>. Viven en casas distintas.</p>
+</details>
+
+<h2>La plana</h2>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto F5 · escríbelo 3 veces</p>
+<pre><code>def leer_vector(tam):
+    v = [0] * tam
+    for i in range(tam):
+        v[i] = int(input())
+    return v
+
+
+def suma_vector(v, tam):
+    total = 0
+    for i in range(tam):
+        total = total + v[i]
+    return total
+
+
+def main():
+    n = int(input())
+    numeros = leer_vector(n)
+    total = suma_vector(numeros, n)
+    print(total)
+
+
+main()</code></pre>
+</div>
+
+<p>Cada función hace <strong>una sola cosa</strong>. <code>main()</code> no recorre ni cuenta: lee <code>n</code>, llama, guarda lo que le devuelven e imprime.</p>
+
+<p class="jc-frase">main() es el director de orquesta: no toca ningún instrumento, solo dice quién suena y cuándo.</p>
+
+<p>Ejercicios: <strong>F5.1 a F5.8</strong>.</p>

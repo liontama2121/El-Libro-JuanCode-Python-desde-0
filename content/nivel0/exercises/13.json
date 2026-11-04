@@ -1,93 +1,153 @@
 [
 	{
 		"orden": 1,
-		"title": "K.1 — La diagonal principal",
+		"title": "F5.1 — Leer y sumar",
 		"difficulty": "facil",
-		"statement_html": "<p>Lee una matriz cuadrada e imprime su diagonal principal, un valor por línea.</p><p><strong>Entrada:</strong> <code>N</code> y luego los <code>N × N</code> enteros de una matriz cuadrada, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3\n4\n5\n6\n7\n8\n9</code></pre><p>Salida:</p><pre><code>1\n5\n9</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>for i in range(n):\n    print(matriz[i][i])        # diagonal: i hace de fila Y de columna</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    matriz = leer_matriz(n, n)\n    for i in range(n):\n        print(matriz[i][i])\n\nmain()</code></pre><p>En la diagonal fila y columna son iguales: un solo índice hace de los dos.</p>",
-		"starter_code": "# K.1 — La diagonal principal\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>leer_vector(tam)</code>, <code>suma(v, tam)</code> y <code>main()</code>. Imprime la suma.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n5\n-2\n0\n8</code></pre><p>Salida:</p><pre><code>11</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma_vector(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    total = suma_vector(numeros, n)\n    print(total)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    print(suma(numeros, n))\n\n\nmain()</code></pre><p><code>leer_vector</code> crea <code>v</code> y lo retorna; <code>main()</code> lo guarda como <code>numeros</code>.</p>",
+		"starter_code": "# F5.1 — Leer y sumar\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
-				"expected_output": "1\n5\n9"
+				"stdin": "4\n5\n-2\n0\n8\n",
+				"expected_output": "11"
 			},
 			{
-				"stdin": "4\n2\n0\n0\n1\n0\n3\n1\n0\n0\n1\n4\n0\n1\n0\n0\n5\n",
-				"expected_output": "2\n3\n4\n5"
-			},
-			{
-				"stdin": "1\n10\n",
-				"expected_output": "10"
+				"stdin": "3\n10\n20\n30\n",
+				"expected_output": "60"
 			}
 		]
 	},
 	{
 		"orden": 2,
-		"title": "K.2 — Suma de la diagonal",
+		"title": "F5.2 — Leer y buscar el mayor",
 		"difficulty": "facil",
-		"statement_html": "<p>Imprime la suma de la diagonal principal.</p><p><strong>Entrada:</strong> <code>N</code> y luego los <code>N × N</code> enteros de una matriz cuadrada, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3\n4\n5\n6\n7\n8\n9</code></pre><p>Salida:</p><pre><code>15</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>for i in range(n):\n    print(matriz[i][i])        # diagonal: i hace de fila Y de columna</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_diagonal(matriz, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][i]\n    return total\n\ndef main():\n    n = int(input())\n    matriz = leer_matriz(n, n)\n    print(suma_diagonal(matriz, n))\n\nmain()</code></pre><p>Un <code>for</code>, no dos: recorrer la diagonal con doble <code>for</code> e <code>if i == j</code> funciona, pero da n × n vueltas para usar n.</p>",
-		"starter_code": "# K.2 — Suma de la diagonal\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>leer_vector(tam)</code>, <code>mayor(v, tam)</code> y <code>main()</code>. Imprime el mayor.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n-2\n0\n8\n3</code></pre><p>Salida:</p><pre><code>8</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma_vector(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    total = suma_vector(numeros, n)\n    print(total)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef mayor(v, tam):\n    maximo = v[0]\n    for i in range(1, tam):\n        if v[i] &gt; maximo:\n            maximo = v[i]\n    return maximo\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    print(mayor(numeros, n))\n\n\nmain()</code></pre><p>Dentro de <code>mayor</code> la variable se llama <code>maximo</code> para no chocar con el nombre de la función.</p>",
+		"starter_code": "# F5.2 — Leer y buscar el mayor\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
-				"expected_output": "15"
+				"stdin": "5\n5\n-2\n0\n8\n3\n",
+				"expected_output": "8"
 			},
 			{
-				"stdin": "4\n2\n0\n0\n1\n0\n3\n1\n0\n0\n1\n4\n0\n1\n0\n0\n5\n",
-				"expected_output": "14"
-			},
-			{
-				"stdin": "1\n10\n",
-				"expected_output": "10"
+				"stdin": "3\n-7\n-2\n-9\n",
+				"expected_output": "-2"
 			}
 		]
 	},
 	{
 		"orden": 3,
-		"title": "K.3 — La diagonal secundaria",
-		"difficulty": "medio",
-		"statement_html": "<p>Imprime la diagonal secundaria (de arriba-derecha a abajo-izquierda), un valor por línea.</p><p><strong>Entrada:</strong> <code>N</code> y luego los <code>N × N</code> enteros de una matriz cuadrada, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n1\n2\n3\n4\n5\n6\n7\n8\n9</code></pre><p>Salida:</p><pre><code>3\n5\n7</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>for i in range(n):\n    print(matriz[i][i])        # diagonal: i hace de fila Y de columna</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    matriz = leer_matriz(n, n)\n    for i in range(n):\n        print(matriz[i][n - 1 - i])\n\nmain()</code></pre><p>Cuando <code>i</code> sube, la columna baja: <code>n - 1 - i</code>.</p>",
-		"starter_code": "# K.3 — La diagonal secundaria\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"title": "F5.3 — Pares e impares",
+		"difficulty": "facil",
+		"statement_html": "<p>Escribe <code>leer_vector</code>, <code>contar_pares(v, tam)</code>, <code>contar_impares(v, tam)</code> y <code>main()</code>. Imprime <code>Pares: </code> y la cantidad, y en otra línea <code>Impares: </code> y la cantidad.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n-2\n0\n8\n3</code></pre><p>Salida:</p><pre><code>Pares: 3\nImpares: 2</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma_vector(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    total = suma_vector(numeros, n)\n    print(total)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef contar_pares(v, tam):\n    cuenta = 0\n    for i in range(tam):\n        if v[i] % 2 == 0:\n            cuenta = cuenta + 1\n    return cuenta\n\n\ndef contar_impares(v, tam):\n    cuenta = 0\n    for i in range(tam):\n        if v[i] % 2 != 0:\n            cuenta = cuenta + 1\n    return cuenta\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    pares = contar_pares(numeros, n)\n    impares = contar_impares(numeros, n)\n    print(\"Pares: \" + str(pares))\n    print(\"Impares: \" + str(impares))\n\n\nmain()</code></pre><p>Las dos funciones tienen su propio <code>cuenta</code> y su propio <code>i</code>: no se pisan (scope).</p>",
+		"starter_code": "# F5.3 — Pares e impares\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
-				"expected_output": "3\n5\n7"
+				"stdin": "5\n5\n-2\n0\n8\n3\n",
+				"expected_output": "Pares: 3\nImpares: 2"
 			},
 			{
-				"stdin": "4\n2\n0\n0\n1\n0\n3\n1\n0\n0\n1\n4\n0\n1\n0\n0\n5\n",
-				"expected_output": "1\n1\n1\n1"
-			},
-			{
-				"stdin": "1\n10\n",
-				"expected_output": "10"
+				"stdin": "2\n1\n3\n",
+				"expected_output": "Pares: 0\nImpares: 2"
 			}
 		]
 	},
 	{
 		"orden": 4,
-		"title": "K.4 — La cruz",
+		"title": "F5.4 — Mayores al promedio",
 		"difficulty": "medio",
-		"statement_html": "<p>Lee una matriz, una fila <code>F</code> y una columna <code>C</code>. Imprime la suma de la fila <code>F</code> más la columna <code>C</code>, contando <strong>una sola vez</strong> la casilla del cruce.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Al final vienen <code>F</code> y <code>C</code>.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n1\n1</code></pre><p>Salida:</p><pre><code>25</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>for i in range(n):\n    print(matriz[i][i])        # diagonal: i hace de fila Y de columna</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef suma_fila(matriz, f, m):\n    total = 0\n    for j in range(m):\n        total = total + matriz[f][j]\n    return total\n\ndef suma_columna(matriz, c, n):\n    total = 0\n    for i in range(n):\n        total = total + matriz[i][c]\n    return total\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    f = int(input())\n    c = int(input())\n    total = suma_fila(matriz, f, m) + suma_columna(matriz, c, n) - matriz[f][c]\n    print(total)\n\nmain()</code></pre><p>Las dos funciones congeladas juntas. El cruce <code>matriz[f][c]</code> está en las dos sumas: se resta una vez.</p>",
-		"starter_code": "# K.4 — La cruz\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Escribe <code>leer_vector</code>, <code>promedio(v, tam)</code> (entero, con <code>//</code>), <code>contar_mayores_al_promedio(v, tam, prom)</code> y <code>main()</code>. Imprime el promedio y en la línea siguiente cuántos son mayores que él.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n10\n20\n30\n40</code></pre><p>Salida:</p><pre><code>25\n2</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma_vector(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    total = suma_vector(numeros, n)\n    print(total)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef promedio(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total // tam\n\n\ndef contar_mayores_al_promedio(v, tam, prom):\n    cuenta = 0\n    for i in range(tam):\n        if v[i] &gt; prom:\n            cuenta = cuenta + 1\n    return cuenta\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    media = promedio(numeros, n)\n    print(media)\n    print(contar_mayores_al_promedio(numeros, n, media))\n\n\nmain()</code></pre><p>El resultado de una función (<code>media</code>) se le pasa como entrada a otra. Así se encadenan.</p>",
+		"starter_code": "# F5.4 — Mayores al promedio\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n3\n1\n2\n3\n4\n5\n6\n7\n8\n9\n1\n1\n",
-				"expected_output": "25"
+				"stdin": "4\n10\n20\n30\n40\n",
+				"expected_output": "25\n2"
 			},
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n0\n3\n",
-				"expected_output": "13"
+				"stdin": "5\n1\n1\n1\n1\n6\n",
+				"expected_output": "2\n1"
+			}
+		]
+	},
+	{
+		"orden": 5,
+		"title": "F5.5 — ¿Hay negativos?",
+		"difficulty": "medio",
+		"statement_html": "<p>Escribe <code>leer_vector</code>, <code>tiene_negativos(v, tam)</code> (devuelve <code>True</code>/<code>False</code>), <code>suma_positivos(v, tam)</code> y <code>main()</code>. Si hay negativos imprime <code>Hay negativos</code>; si no, <code>Todo positivo</code>. Después imprime <code>Suma positivos: </code> y la suma.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n-2\n0\n8\n3</code></pre><p>Salida:</p><pre><code>Hay negativos\nSuma positivos: 16</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma_vector(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    total = suma_vector(numeros, n)\n    print(total)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef tiene_negativos(v, tam):\n    for i in range(tam):\n        if v[i] &lt; 0:\n            return True\n    return False\n\n\ndef suma_positivos(v, tam):\n    total = 0\n    for i in range(tam):\n        if v[i] &gt; 0:\n            total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    if tiene_negativos(numeros, n):\n        print(\"Hay negativos\")\n    else:\n        print(\"Todo positivo\")\n    print(\"Suma positivos: \" + str(suma_positivos(numeros, n)))\n\n\nmain()</code></pre><p>La función booleana va directo en el <code>if</code> de <code>main()</code>.</p>",
+		"starter_code": "# F5.5 — ¿Hay negativos?\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n5\n-2\n0\n8\n3\n",
+				"expected_output": "Hay negativos\nSuma positivos: 16"
 			},
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n1\n0\n",
-				"expected_output": "16"
+				"stdin": "3\n1\n2\n3\n",
+				"expected_output": "Todo positivo\nSuma positivos: 6"
+			}
+		]
+	},
+	{
+		"orden": 6,
+		"title": "F5.6 — Leer, invertir e imprimir",
+		"difficulty": "medio",
+		"statement_html": "<p>Escribe <code>leer_vector</code>, <code>invertir(v, tam)</code> (devuelve un vector nuevo al revés), <code>imprimir_vector(v, tam)</code> y <code>main()</code>. Imprime el vector invertido, un elemento por línea.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>4\n5\n-2\n0\n8</code></pre><p>Salida:</p><pre><code>8\n0\n-2\n5</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma_vector(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    total = suma_vector(numeros, n)\n    print(total)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef invertir(v, tam):\n    nuevo = [0] * tam\n    for i in range(tam):\n        nuevo[i] = v[tam - 1 - i]\n    return nuevo\n\n\ndef imprimir_vector(v, tam):\n    for i in range(tam):\n        print(v[i])\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    al_reves = invertir(numeros, n)\n    imprimir_vector(al_reves, n)\n\n\nmain()</code></pre><p><code>main()</code> queda de tres líneas: leer, transformar, imprimir. Cada tarea en su función.</p>",
+		"starter_code": "# F5.6 — Leer, invertir e imprimir\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
+		"tests": [
+			{
+				"stdin": "4\n5\n-2\n0\n8\n",
+				"expected_output": "8\n0\n-2\n5"
+			},
+			{
+				"stdin": "2\n1\n2\n",
+				"expected_output": "2\n1"
+			}
+		]
+	},
+	{
+		"orden": 7,
+		"title": "F5.7 — Diferencia entre extremos",
+		"difficulty": "medio",
+		"statement_html": "<p>Escribe <code>leer_vector</code>, <code>mayor(v, tam)</code>, <code>menor(v, tam)</code>, <code>diferencia(a, b)</code> y <code>main()</code>. Imprime la diferencia entre el mayor y el menor.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> números enteros, uno por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n5\n-2\n0\n8\n3</code></pre><p>Salida:</p><pre><code>10</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma_vector(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    total = suma_vector(numeros, n)\n    print(total)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef mayor(v, tam):\n    maximo = v[0]\n    for i in range(1, tam):\n        if v[i] &gt; maximo:\n            maximo = v[i]\n    return maximo\n\n\ndef menor(v, tam):\n    minimo = v[0]\n    for i in range(1, tam):\n        if v[i] &lt; minimo:\n            minimo = v[i]\n    return minimo\n\n\ndef diferencia(a, b):\n    return a - b\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    alto = mayor(numeros, n)\n    bajo = menor(numeros, n)\n    print(diferencia(alto, bajo))\n\n\nmain()</code></pre><p>Afuera <code>alto</code> y <code>bajo</code>, adentro de <code>diferencia</code> son <code>a</code> y <code>b</code>.</p>",
+		"starter_code": "# F5.7 — Diferencia entre extremos\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n5\n-2\n0\n8\n3\n",
+				"expected_output": "10"
+			},
+			{
+				"stdin": "1\n4\n",
+				"expected_output": "0"
+			}
+		]
+	},
+	{
+		"orden": 8,
+		"title": "F5.8 — Sistema de calificaciones",
+		"difficulty": "dificil",
+		"statement_html": "<p>Lee <code>N</code> notas de 0 a 100. Se aprueba con 60 o más. Escribe <code>leer_notas(tam)</code>, <code>contar_aprobados(v, tam)</code>, <code>contar_reprobados(v, tam)</code>, <code>nota_mas_alta(v, tam)</code>, <code>nota_mas_baja(v, tam)</code> y <code>main()</code>. Imprime, cada uno en su línea: <code>Aprobados: </code>, <code>Reprobados: </code>, <code>Mejor nota: </code> y <code>Peor nota: </code> con su valor.</p><p><strong>Entrada:</strong> <code>N</code> y luego <code>N</code> notas, una por línea.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>5\n80\n45\n60\n92\n30</code></pre><p>Salida:</p><pre><code>Aprobados: 3\nReprobados: 2\nMejor nota: 92\nPeor nota: 30</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def leer_vector(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef suma_vector(v, tam):\n    total = 0\n    for i in range(tam):\n        total = total + v[i]\n    return total\n\n\ndef main():\n    n = int(input())\n    numeros = leer_vector(n)\n    total = suma_vector(numeros, n)\n    print(total)\n\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def leer_notas(tam):\n    v = [0] * tam\n    for i in range(tam):\n        v[i] = int(input())\n    return v\n\n\ndef contar_aprobados(v, tam):\n    cuenta = 0\n    for i in range(tam):\n        if v[i] &gt;= 60:\n            cuenta = cuenta + 1\n    return cuenta\n\n\ndef contar_reprobados(v, tam):\n    cuenta = 0\n    for i in range(tam):\n        if v[i] &lt; 60:\n            cuenta = cuenta + 1\n    return cuenta\n\n\ndef nota_mas_alta(v, tam):\n    maximo = v[0]\n    for i in range(1, tam):\n        if v[i] &gt; maximo:\n            maximo = v[i]\n    return maximo\n\n\ndef nota_mas_baja(v, tam):\n    minimo = v[0]\n    for i in range(1, tam):\n        if v[i] &lt; minimo:\n            minimo = v[i]\n    return minimo\n\n\ndef main():\n    n = int(input())\n    notas = leer_notas(n)\n    print(\"Aprobados: \" + str(contar_aprobados(notas, n)))\n    print(\"Reprobados: \" + str(contar_reprobados(notas, n)))\n    print(\"Mejor nota: \" + str(nota_mas_alta(notas, n)))\n    print(\"Peor nota: \" + str(nota_mas_baja(notas, n)))\n\n\nmain()</code></pre><p>Cinco funciones de una sola tarea y un <code>main()</code> que solo lee, llama e imprime. Así se ve un programa de verdad.</p>",
+		"starter_code": "# F5.8 — Sistema de calificaciones\n# def + main(). Sin append, sin f-strings, sin comprensiones, sin global.\n\n",
+		"tests": [
+			{
+				"stdin": "5\n80\n45\n60\n92\n30\n",
+				"expected_output": "Aprobados: 3\nReprobados: 2\nMejor nota: 92\nPeor nota: 30"
+			},
+			{
+				"stdin": "3\n100\n70\n65\n",
+				"expected_output": "Aprobados: 3\nReprobados: 0\nMejor nota: 100\nPeor nota: 65"
 			}
 		]
 	}

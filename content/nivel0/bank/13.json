@@ -2,159 +2,187 @@
 	{
 		"type": "mcq",
 		"difficulty": "facil",
-		"prompt": "¿Qué significa \"congelar la fila\"?",
+		"prompt": "Una variable creada dentro de una función…",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "Se copia la fila a un vector"
+					"text": "Existe en todo el programa"
 				},
 				{
 					"id": "b",
-					"text": "f no cambia y solo j recorre las columnas"
+					"text": "Nace y muere dentro de esa función"
 				},
 				{
 					"id": "c",
-					"text": "La fila se borra"
+					"text": "Se puede usar en main si tiene el mismo nombre"
 				},
 				{
 					"id": "d",
-					"text": "i y j avanzan juntos"
+					"text": "Se vuelve global sola"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "b"
 		},
-		"explanation": "Un índice fijo, el otro camina. Por eso basta un solo for."
-	},
-	{
-		"type": "mcq",
-		"difficulty": "facil",
-		"prompt": "¿Qué casillas forman la diagonal principal?",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "matriz[i][i]"
-				},
-				{
-					"id": "b",
-					"text": "matriz[i][n - 1 - i]"
-				},
-				{
-					"id": "c",
-					"text": "matriz[0][j]"
-				},
-				{
-					"id": "d",
-					"text": "matriz[i][0]"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "a"
-		},
-		"explanation": "En la diagonal fila y columna valen lo mismo."
+		"explanation": "Ese es el scope: lo que se crea adentro se queda adentro. Para sacarlo, return."
 	},
 	{
 		"type": "predict_output",
 		"difficulty": "medio",
 		"prompt": "¿Qué imprime este programa?",
-		"code_snippet": "matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\nfor i in range(3):\n    print(matriz[i][2 - i])",
+		"code_snippet": "def leer():\n    v = [0] * 2\n    v[0] = 5\n    v[1] = 6\n\n\ndef main():\n    leer()\n    print(v[0])\n\n\nmain()",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "1\n5\n9"
+					"text": "5"
 				},
 				{
 					"id": "b",
-					"text": "7\n5\n3"
+					"text": "0"
 				},
 				{
 					"id": "c",
-					"text": "3\n6\n9"
+					"text": "[5, 6]"
 				},
 				{
 					"id": "d",
-					"text": "3\n5\n7"
+					"text": "NameError"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "d"
 		},
-		"explanation": "Diagonal secundaria: [0][2], [1][1], [2][0]."
+		"explanation": "v murió al terminar leer(), que además no la retorna. En main no existe ninguna v."
 	},
 	{
-		"type": "find_bug",
+		"type": "predict_output",
 		"difficulty": "medio",
-		"prompt": "Debe sumar la diagonal principal. ¿En qué línea está el error?",
-		"data": {
-			"lines": [
-				"total = 0",
-				"for i in range(n):",
-				"    total = total + matriz[i][j]"
-			]
-		},
-		"correct": {
-			"line_number": 3
-		},
-		"explanation": "No hay for de j: en la diagonal el mismo i sirve de fila y de columna, matriz[i][i]."
-	},
-	{
-		"type": "fill_blank",
-		"difficulty": "medio",
-		"prompt": "Completa la diagonal secundaria de una matriz de n × n.",
-		"data": {
-			"code": "for i in range(n):\n    print(matriz[i][___1___])",
-			"blanks": [
-				{
-					"id": "1",
-					"pista": "la columna baja cuando i sube"
-				}
-			]
-		},
-		"correct": {
-			"answers": {
-				"1": [
-					"n - 1 - i",
-					"n-1-i",
-					"n - i - 1",
-					"n-i-1"
-				]
-			}
-		},
-		"explanation": "Para i = 0 la columna es n - 1; para i = n - 1 es 0."
-	},
-	{
-		"type": "mcq",
-		"difficulty": "medio",
-		"prompt": "Al sumar la fila f más la columna c, ¿por qué se resta matriz[f][c]?",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "def cambiar(x):\n    x = 100\n    return x\n\n\ndef main():\n    x = 1\n    cambiar(x)\n    print(x)\n\n\nmain()",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "Para no salirse de la matriz"
+					"text": "1"
 				},
 				{
 					"id": "b",
-					"text": "Porque la columna empieza en 1"
+					"text": "100"
 				},
 				{
 					"id": "c",
-					"text": "Porque la casilla del cruce quedó sumada dos veces"
+					"text": "Error"
 				},
 				{
 					"id": "d",
-					"text": "Porque es negativa"
+					"text": "Nada"
 				}
 			]
 		},
 		"correct": {
-			"option_id": "c"
+			"option_id": "a"
 		},
-		"explanation": "El cruce pertenece a la fila y a la columna a la vez."
+		"explanation": "La x de cambiar y la x de main son dos variables distintas. Y el 100 devuelto nunca se guardó."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debería imprimir la suma. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def main():",
+				"    n = int(input())",
+				"    numeros = leer_vector(n)",
+				"    suma_vector(numeros, n)",
+				"    print(total)"
+			]
+		},
+		"correct": {
+			"line_number": 5
+		},
+		"explanation": "total vive dentro de suma_vector. Hay que guardar el retorno: total = suma_vector(numeros, n)."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "¿Qué hace main() en un programa bien dividido en funciones?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "Recorre los vectores y cuenta"
+				},
+				{
+					"id": "b",
+					"text": "Lee, llama a las funciones, guarda lo que devuelven e imprime"
+				},
+				{
+					"id": "c",
+					"text": "Nada: es opcional"
+				},
+				{
+					"id": "d",
+					"text": "Define variables globales para las demás"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "main() orquesta: no toca ningún instrumento, solo dice quién suena y cuándo."
+	},
+	{
+		"type": "parsons",
+		"difficulty": "medio",
+		"prompt": "Arma el main que lee el vector, calcula el mayor y lo imprime",
+		"data": {
+			"lines": [
+				{
+					"id": "l1",
+					"text": "def main():",
+					"indent": 0
+				},
+				{
+					"id": "l2",
+					"text": "n = int(input())",
+					"indent": 1
+				},
+				{
+					"id": "l3",
+					"text": "numeros = leer_vector(n)",
+					"indent": 1
+				},
+				{
+					"id": "l4",
+					"text": "alto = mayor(numeros, n)",
+					"indent": 1
+				},
+				{
+					"id": "l5",
+					"text": "print(alto)",
+					"indent": 1
+				},
+				{
+					"id": "l6",
+					"text": "main()",
+					"indent": 0
+				}
+			]
+		},
+		"correct": {
+			"order": [
+				"l1",
+				"l2",
+				"l3",
+				"l4",
+				"l5",
+				"l6"
+			]
+		},
+		"explanation": "Leer n, leer el vector, guardar lo que devuelve mayor, imprimir y la última línea main()."
 	}
 ]

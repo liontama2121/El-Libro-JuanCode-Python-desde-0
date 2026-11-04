@@ -1,0 +1,111 @@
+<div class="jc-desbloqueo" role="note">
+  <strong>✅ Se vale:</strong> métodos de listas, <code>sum</code>/<code>min</code>/<code>max</code>/<code>len</code>, slicing y <code>for dato in lista</code>. <strong>❌ Sigue prohibido:</strong> f-strings y comprensiones.
+</div>
+
+<p>El cierre del Nivel 0. El mismo ejercicio resuelto de las dos formas, para que veas cuánto camino recorriste.</p>
+
+<h3>El ejercicio</h3>
+
+<p><strong>Leer N números, filtrar los positivos, ordenarlos e imprimirlos.</strong></p>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Antes · Nivel 0, reglas estrictas</p>
+<pre><code>n = int(input())
+vector = [0] * n
+for i in range(n):
+    vector[i] = int(input())
+
+# Contar positivos
+cuenta = 0
+for i in range(n):
+    if vector[i] &gt; 0:
+        cuenta = cuenta + 1
+
+# Crear vector filtrado
+positivos = [0] * cuenta
+k = 0
+for i in range(n):
+    if vector[i] &gt; 0:
+        positivos[k] = vector[i]
+        k = k + 1
+
+# Ordenar (burbuja)
+for i in range(cuenta - 1):
+    for j in range(cuenta - 1 - i):
+        if positivos[j] &gt; positivos[j + 1]:
+            aux = positivos[j]
+            positivos[j] = positivos[j + 1]
+            positivos[j + 1] = aux
+
+# Imprimir
+for i in range(cuenta):
+    print(positivos[i])</code></pre>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Ahora · Nivel 0.6, con métodos</p>
+<pre><code>n = int(input())
+positivos = []
+for i in range(n):
+    dato = int(input())
+    if dato &gt; 0:
+        positivos.append(dato)
+
+positivos.sort()
+
+for dato in positivos:
+    print(dato)</code></pre>
+    <p>Sin contar antes, sin <code>k</code>, sin burbuja. Nueve líneas contra treinta.</p>
+  </div>
+</div>
+
+<p class="jc-frase">Lo que antes era un algoritmo ahora es un método. Pero entiendes qué hace el método porque ya lo escribiste a mano.</p>
+
+<h3>Más pares antes / ahora</h3>
+
+<table>
+  <thead>
+    <tr><th>Tarea</th><th>Antes</th><th>Ahora</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Suma y promedio</td><td><code>total = 0</code> + <code>for</code> acumulando + <code>total // n</code></td><td><code>sum(lista) // len(lista)</code></td></tr>
+    <tr><td>El mayor</td><td><code>mayor = vector[0]</code> + <code>for</code> con <code>if vector[i] &gt; mayor</code></td><td><code>max(lista)</code></td></tr>
+    <tr><td>Invertir</td><td><code>nuevo = [0] * n</code> + <code>nuevo[i] = vector[n - 1 - i]</code></td><td><code>lista[::-1]</code></td></tr>
+    <tr><td>¿Está x?</td><td>bandera <code>esta = False</code> + <code>for</code></td><td><code>x in lista</code></td></tr>
+    <tr><td>Separar en dos</td><td>contar los dos grupos, crear dos vectores y dos contadores <code>k</code></td><td>dos listas vacías y <code>.append</code> en cada rama</td></tr>
+  </tbody>
+</table>
+
+<h3>¿Y entonces para qué sirvió el Nivel 0?</h3>
+
+<ul>
+  <li>Cuando un método falle (<code>.index</code> que no encuentra, <code>.pop</code> en lista vacía), vas a saber <strong>por qué</strong>.</li>
+  <li>En algunos parciales y jueces siguen pidiendo las reglas estrictas: ya las tienes de memoria.</li>
+  <li>En el curso avanzado (ordenamientos, búsqueda binaria) vas a volver a escribir estos algoritmos a mano.</li>
+</ul>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto L6 · la versión con funciones</p>
+<pre><code>def filtrar_positivos(datos):
+    positivos = []
+    for dato in datos:
+        if dato &gt; 0:
+            positivos.append(dato)
+    return positivos
+
+
+def main():
+    n = int(input())
+    numeros = []
+    for i in range(n):
+        numeros.append(int(input()))
+    positivos = filtrar_positivos(numeros)
+    positivos.sort()
+    for dato in positivos:
+        print(dato)
+
+
+main()</code></pre>
+</div>
+
+<p>Ejercicios: <strong>L6.1 a L6.6</strong>. Son problemas clásicos del Nivel 0, resueltos a la manera nueva.</p>

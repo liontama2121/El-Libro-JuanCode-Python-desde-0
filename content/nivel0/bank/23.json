@@ -1,0 +1,166 @@
+[
+	{
+		"type": "mcq",
+		"difficulty": "facil",
+		"prompt": "¿Qué vale lista[-1] si lista = [4, 8, 15, 16]?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "4"
+				},
+				{
+					"id": "b",
+					"text": "15"
+				},
+				{
+					"id": "c",
+					"text": "16"
+				},
+				{
+					"id": "d",
+					"text": "Da error: no hay índice -1"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "c"
+		},
+		"explanation": "Los índices negativos cuentan desde el final: -1 es el último."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [1, 2, 3]\nlista[1] = 9\nprint(lista)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[1, 9, 3]"
+				},
+				{
+					"id": "b",
+					"text": "[9, 2, 3]"
+				},
+				{
+					"id": "c",
+					"text": "[1, 2, 9]"
+				},
+				{
+					"id": "d",
+					"text": "[1, 2, 3, 9]"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "lista[1] es la segunda casilla; se reemplaza el 2 por 9."
+	},
+	{
+		"type": "mcq",
+		"difficulty": "medio",
+		"prompt": "¿Cuál de estas listas es válida en Python?",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "[1, \"hola\", True]"
+				},
+				{
+					"id": "b",
+					"text": "Solo [1, 2, 3]: no se mezclan tipos"
+				},
+				{
+					"id": "c",
+					"text": "Solo [\"a\", \"b\"]"
+				},
+				{
+					"id": "d",
+					"text": "Ninguna: las listas se crean con [0] * n"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "Una lista de Python puede guardar tipos distintos en cada casilla."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "medio",
+		"prompt": "Debe imprimir el último elemento. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def main():",
+				"    lista = [3, 6, 9]",
+				"    print(lista[3])",
+				"main()"
+			]
+		},
+		"correct": {
+			"line_number": 3
+		},
+		"explanation": "La lista tiene 3 casillas: 0, 1 y 2. lista[3] da IndexError. El último es lista[-1] o lista[2]."
+	},
+	{
+		"type": "fill_blank",
+		"difficulty": "facil",
+		"prompt": "Completa para crear una lista vacía y después imprimir cuántos elementos tiene.",
+		"data": {
+			"code": "datos = ___1___\nprint(___2___(datos))",
+			"blanks": [
+				{
+					"id": "1",
+					"pista": "lista vacía"
+				},
+				{
+					"id": "2",
+					"pista": "función de tamaño"
+				}
+			]
+		},
+		"correct": {
+			"answers": {
+				"1": [
+					"[]"
+				],
+				"2": [
+					"len"
+				]
+			}
+		},
+		"explanation": "[] crea una lista vacía y len() cuenta sus elementos: 0."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "lista = [2, 4, 6]\nfor dato in lista:\n    print(dato)",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "2 4 6 (cada uno en su línea)"
+				},
+				{
+					"id": "b",
+					"text": "0 1 2 (cada uno en su línea)"
+				},
+				{
+					"id": "c",
+					"text": "[2, 4, 6]"
+				},
+				{
+					"id": "d",
+					"text": "Da error"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "a"
+		},
+		"explanation": "for dato in lista entrega los valores, no las posiciones."
+	}
+]

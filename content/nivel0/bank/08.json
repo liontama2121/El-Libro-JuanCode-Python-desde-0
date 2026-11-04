@@ -2,171 +2,173 @@
 	{
 		"type": "mcq",
 		"difficulty": "facil",
-		"prompt": "En matriz[2][3], ¿qué representa el 2?",
+		"prompt": "En la analogía de la licuadora, ¿qué es el parámetro de la función?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "La fila"
+					"text": "Lo que sale: el jugo"
 				},
 				{
 					"id": "b",
-					"text": "La columna"
+					"text": "Lo que entra: la fruta"
 				},
 				{
 					"id": "c",
-					"text": "La cantidad de filas"
+					"text": "El botón de encender"
 				},
 				{
 					"id": "d",
-					"text": "El valor guardado"
+					"text": "El nombre de la licuadora"
 				}
 			]
 		},
 		"correct": {
-			"option_id": "a"
+			"option_id": "b"
 		},
-		"explanation": "Siempre matriz[fila][columna]: el primer corchete escoge el vector (la fila) y el segundo la casilla dentro de él."
+		"explanation": "El parámetro es la entrada. El cuerpo es el proceso y el return es la salida."
 	},
 	{
 		"type": "mcq",
-		"difficulty": "medio",
-		"prompt": "¿Cuál crea una matriz de 3 × 4 respetando las reglas del curso?",
-		"data": {
-			"options": [
-				{
-					"id": "a",
-					"text": "matriz = [[0] * 4 for _ in range(3)]"
-				},
-				{
-					"id": "b",
-					"text": "matriz = [] y luego matriz.append([0] * 4) tres veces"
-				},
-				{
-					"id": "c",
-					"text": "matriz = [[0] * 4] * 3"
-				},
-				{
-					"id": "d",
-					"text": "matriz = [0] * 3 y luego for i in range(3): matriz[i] = [0] * 4"
-				}
-			]
-		},
-		"correct": {
-			"option_id": "d"
-		},
-		"explanation": "La comprensión y el .append están prohibidos. [[0] * 4] * 3 es peor: las 3 filas son la MISMA lista y cambiar una cambia todas."
-	},
-	{
-		"type": "predict_output",
 		"difficulty": "facil",
-		"prompt": "¿Qué imprime este programa?",
-		"code_snippet": "matriz = [0] * 2\nfor i in range(2):\n    matriz[i] = [0] * 3\nmatriz[1][2] = 9\nprint(matriz)",
+		"prompt": "¿Cuál de estas piezas de una función es OPCIONAL?",
 		"data": {
 			"options": [
 				{
 					"id": "a",
-					"text": "[[0, 0], [0, 0], [0, 9]]"
+					"text": "def nombre():"
 				},
 				{
 					"id": "b",
-					"text": "[[0, 9, 0], [0, 0, 0]]"
+					"text": "El cuerpo con sangría"
 				},
 				{
 					"id": "c",
-					"text": "[[0, 0, 0], [0, 0, 9]]"
+					"text": "return"
 				},
 				{
 					"id": "d",
-					"text": "[[0, 0, 9], [0, 0, 0]]"
+					"text": "Los dos puntos después de los paréntesis"
 				}
 			]
 		},
 		"correct": {
 			"option_id": "c"
 		},
-		"explanation": "2 filas de 3 columnas. [1][2] es la segunda fila, tercera columna."
+		"explanation": "Hay funciones que solo imprimen y no devuelven nada. def, el cuerpo y los dos puntos siempre van."
 	},
 	{
-		"type": "fill_blank",
-		"difficulty": "medio",
-		"prompt": "Completa de memoria la función crear_matriz.",
+		"type": "predict_output",
+		"difficulty": "facil",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "def saludar():\n    print(\"Hola\")\n\n\ndef main():\n    print(\"Inicio\")\n\n\nmain()",
 		"data": {
-			"code": "def crear_matriz(n, m):\n    matriz = ___1___\n    for i in range(___2___):\n        matriz[i] = ___3___\n    return ___4___",
-			"blanks": [
+			"options": [
 				{
-					"id": "1",
-					"pista": "un vector de n casillas"
+					"id": "a",
+					"text": "Inicio"
 				},
 				{
-					"id": "2",
-					"pista": "cuántas filas"
+					"id": "b",
+					"text": "Hola\nInicio"
 				},
 				{
-					"id": "3",
-					"pista": "cada fila: m ceros"
+					"id": "c",
+					"text": "Inicio\nHola"
 				},
 				{
-					"id": "4",
-					"pista": "lo que se devuelve"
+					"id": "d",
+					"text": "Nada"
 				}
 			]
 		},
 		"correct": {
-			"answers": {
-				"1": [
-					"[0] * n",
-					"[0]*n"
-				],
-				"2": [
-					"n"
-				],
-				"3": [
-					"[0] * m",
-					"[0]*m"
-				],
-				"4": [
-					"matriz"
-				]
-			}
+			"option_id": "a"
 		},
-		"explanation": "Primero el vector de filas, después cada fila con m ceros, y se retorna la matriz."
+		"explanation": "saludar está definida pero nadie la llama. Definir no es llamar."
+	},
+	{
+		"type": "predict_output",
+		"difficulty": "medio",
+		"prompt": "¿Qué imprime este programa?",
+		"code_snippet": "def aplaudir():\n    print(\"clap\")\n\n\ndef main():\n    aplaudir()\n    aplaudir()\n    aplaudir()\n\n\nmain()",
+		"data": {
+			"options": [
+				{
+					"id": "a",
+					"text": "clap"
+				},
+				{
+					"id": "b",
+					"text": "clap\nclap\nclap"
+				},
+				{
+					"id": "c",
+					"text": "aplaudir\naplaudir\naplaudir"
+				},
+				{
+					"id": "d",
+					"text": "Nada"
+				}
+			]
+		},
+		"correct": {
+			"option_id": "b"
+		},
+		"explanation": "Cada llamada vuelve a correr el cuerpo de la función: tres llamadas, tres prints."
+	},
+	{
+		"type": "find_bug",
+		"difficulty": "facil",
+		"prompt": "Debería imprimir Hola mundo. ¿En qué línea está el error?",
+		"data": {
+			"lines": [
+				"def saludar():",
+				"    print(\"Hola mundo\")",
+				"",
+				"",
+				"def main():",
+				"    saludar",
+				"",
+				"",
+				"main()"
+			]
+		},
+		"correct": {
+			"line_number": 6
+		},
+		"explanation": "Sin paréntesis no se llama la función: saludar solo nombra la receta. Debe ser saludar()."
 	},
 	{
 		"type": "parsons",
-		"difficulty": "medio",
-		"prompt": "Arma la función leer_matriz",
+		"difficulty": "facil",
+		"prompt": "Arma el programa que define saludar y la llama desde main",
 		"data": {
 			"lines": [
 				{
 					"id": "l1",
-					"text": "def leer_matriz(n, m):",
+					"text": "def saludar():",
 					"indent": 0
 				},
 				{
 					"id": "l2",
-					"text": "matriz = crear_matriz(n, m)",
+					"text": "print(\"Hola mundo\")",
 					"indent": 1
 				},
 				{
 					"id": "l3",
-					"text": "for i in range(n):",
-					"indent": 1
+					"text": "def main():",
+					"indent": 0
 				},
 				{
 					"id": "l4",
-					"text": "for j in range(m):",
-					"indent": 2
+					"text": "saludar()",
+					"indent": 1
 				},
 				{
 					"id": "l5",
-					"text": "matriz[i][j] = int(input())",
-					"indent": 3
-				},
-				{
-					"id": "l6",
-					"text": "return matriz",
-					"indent": 1
+					"text": "main()",
+					"indent": 0
 				}
 			]
 		},
@@ -176,29 +178,9 @@
 				"l2",
 				"l3",
 				"l4",
-				"l5",
-				"l6"
+				"l5"
 			]
 		},
-		"explanation": "Crear, recorrer con doble for, guardar por [i][j] y retornar AFUERA de los dos ciclos."
-	},
-	{
-		"type": "find_bug",
-		"difficulty": "medio",
-		"prompt": "Debe leer toda la matriz. ¿En qué línea está el error?",
-		"data": {
-			"lines": [
-				"def leer_matriz(n, m):",
-				"    matriz = crear_matriz(n, m)",
-				"    for i in range(n):",
-				"        for j in range(m):",
-				"            matriz[i][j] = int(input())",
-				"        return matriz"
-			]
-		},
-		"correct": {
-			"line_number": 6
-		},
-		"explanation": "El return quedó dentro del for de i: la función sale después de leer la primera fila. Va al nivel del for, no adentro."
+		"explanation": "Primero se definen las funciones, después main y al final la llamada main() sin sangría."
 	}
 ]

@@ -1,0 +1,97 @@
+<div class="jc-reglas" role="note">
+  <strong>⚠️ Reglas del curso:</strong> no uses <code>.append()</code>, f-strings, <code>.map()</code>, comprensiones ni <code>global</code>. Vectores con <code>[0] * n</code>. Siempre <code>def</code> + <code>main()</code> + última línea <code>main()</code>.
+</div>
+
+<p class="jc-plana-sub">La función recibe datos. CLAVE: los nombres de adentro y de afuera pueden ser distintos.</p>
+
+<h2>🧠 El nombre de adentro NO es el de afuera</h2>
+
+<p class="jc-plana-sub">El error mental número uno con funciones. Desarmémoslo.</p>
+
+<h3>1. El formulario del banco</h3>
+
+<p>En el banco te dan un formulario que dice <strong>"Titular: ______"</strong>. Tú no te llamas "Titular": te llamas Ana, o Pedro. Escribes <em>tu</em> nombre en la casilla que se llama "Titular", y el banco trabaja con esa casilla.</p>
+
+<p>Un parámetro es esa casilla. La función solo conoce el nombre de la casilla (<code>x</code>). Quien la llama pone ahí <strong>lo que quiera</strong>, con el nombre que tenga afuera (<code>numero</code>, <code>edad</code>, <code>5</code>…).</p>
+
+<blockquote>El formulario dice "Titular". Tú escribes "Ana". Nadie te obliga a cambiarte el nombre a "Titular".</blockquote>
+
+<h3>2. Cómo viaja el dato</h3>
+
+<div class="jc-vs">
+  <div>
+    <p class="jc-vs-tit">Afuera · en main()</p>
+<pre><code>numero = int(input())   # numero vale 7
+imprimir_doble(numero)  # mando el 7</code></pre>
+    <p>Afuera la caja se llama <code>numero</code>.</p>
+  </div>
+  <div>
+    <p class="jc-vs-tit">Adentro · en la función</p>
+<pre><code>def imprimir_doble(x):  # x recibe el 7
+    print(x * 2)        # imprime 14</code></pre>
+    <p>Adentro el <strong>mismo valor</strong> se llama <code>x</code>.</p>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Paso</th><th>Afuera</th><th></th><th>Adentro</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1. Se lee</td><td><code>numero = 7</code></td><td></td><td>—</td></tr>
+    <tr><td>2. Se llama</td><td><code>imprimir_doble(numero)</code></td><td>→ copia el 7 →</td><td><code>x = 7</code></td></tr>
+    <tr><td>3. Se trabaja</td><td>—</td><td></td><td><code>print(x * 2)</code> → 14</td></tr>
+  </tbody>
+</table>
+
+<p class="jc-frase">Lo que viaja es el VALOR, no el nombre. El 7 entra por la puerta y adentro se llama x.</p>
+
+<h3>3. Las 3 reglas de los parámetros</h3>
+
+<table>
+  <thead>
+    <tr><th>Regla</th><th>Ejemplo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>1. Se emparejan por posición</strong>, no por nombre</td><td><code>rango(a, b)</code> → <code>a</code> entra a <code>inicio</code>, <code>b</code> entra a <code>fin</code></td></tr>
+    <tr><td><strong>2. Tantos valores como parámetros</strong></td><td><code>def tabla(t)</code> se llama con uno: <code>tabla(valor)</code>, no <code>tabla()</code></td></tr>
+    <tr><td><strong>3. El parámetro solo existe adentro</strong></td><td>En <code>main()</code> no hay ninguna <code>x</code>: <code>print(x)</code> ahí da error</td></tr>
+  </tbody>
+</table>
+
+<h3>4. Pop quiz</h3>
+
+<details class="jc-popquiz">
+  <summary>1. Con <code>def saludar_a(persona)</code> y en main <code>n = "Ana"</code>, ¿cómo la llamo?</summary>
+  <p><code>saludar_a(n)</code>. Afuera se llama <code>n</code>, adentro <code>persona</code>. No hace falta renombrar nada.</p>
+</details>
+
+<details class="jc-popquiz">
+  <summary>2. <code>def rango(inicio, fin)</code> llamada como <code>rango(9, 2)</code>. ¿Cuánto vale <code>inicio</code>?</summary>
+  <p><strong>9.</strong> Los valores se reparten por posición: el primero al primer parámetro, el segundo al segundo.</p>
+</details>
+
+<details class="jc-popquiz">
+  <summary>3. ¿Puedo llamar <code>imprimir_doble(5)</code>, sin ninguna variable?</summary>
+  <p><strong>Sí.</strong> El parámetro recibe un valor; da igual si viene de una variable, de un número escrito o de una cuenta como <code>imprimir_doble(a + 1)</code>.</p>
+</details>
+
+<h2>La plana</h2>
+
+<div class="jc-esqueleto">
+  <p class="jc-esqueleto-tit">Esqueleto F2 · escríbelo 3 veces</p>
+<pre><code>def imprimir_doble(x):     # ← adentro x
+    print(x * 2)
+
+
+def main():
+    numero = int(input())   # ← afuera numero
+    imprimir_doble(numero)
+
+
+main()</code></pre>
+</div>
+
+<p>En todos los ejercicios de este capítulo el nombre de afuera y el de adentro son <strong>distintos</strong>. Es a propósito: respétalo aunque te provoque usar el mismo.</p>
+
+<p>Ejercicios: <strong>F2.1 a F2.6</strong>.</p>

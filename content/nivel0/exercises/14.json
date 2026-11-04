@@ -1,20 +1,66 @@
 [
 	{
 		"orden": 1,
-		"title": "M5.1 — El mayor",
+		"title": "F.1 — Una casilla",
 		"difficulty": "facil",
-		"statement_html": "<p>Imprime el mayor valor de la matriz.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3</code></pre><p>Salida:</p><pre><code>9</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def buscar_mayor(matriz, n, m):\n    mayor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; mayor:\n                mayor = matriz[i][j]\n    return mayor</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef buscar_mayor(matriz, n, m):\n    mayor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; mayor:\n                mayor = matriz[i][j]\n    return mayor\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    print(buscar_mayor(matriz, n, m))\n\nmain()</code></pre><p>Se arranca con <code>matriz[0][0]</code>, nunca con 0: si todos son negativos, 0 daría mal.</p>",
-		"starter_code": "# M5.1 — El mayor\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"statement_html": "<p>Lee una matriz. Después lee <code>F</code> y <code>C</code>. Imprime el valor de la casilla <code>[F][C]</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6\n1\n2</code></pre><p>Salida:</p><pre><code>6</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    # lo que pide el enunciado\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    f = int(input())\n    c = int(input())\n    print(matriz[f][c])\n\nmain()</code></pre><p>Primer corchete = fila, segundo = columna. Siempre en ese orden: <code>matriz[fila][columna]</code>.</p>",
+		"starter_code": "# F.1 — Una casilla\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "9"
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n1\n2\n",
+				"expected_output": "6"
 			},
 			{
-				"stdin": "2\n2\n-5\n-2\n-9\n-7\n",
-				"expected_output": "-2"
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n2\n0\n",
+				"expected_output": "-6"
+			},
+			{
+				"stdin": "1\n1\n10\n0\n0\n",
+				"expected_output": "10"
+			}
+		]
+	},
+	{
+		"orden": 2,
+		"title": "F.2 — Las cuatro esquinas",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee una matriz e imprime sus cuatro esquinas, una por línea: arriba-izquierda, arriba-derecha, abajo-izquierda, abajo-derecha.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>1\n3\n4\n6</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    # lo que pide el enunciado\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    print(matriz[0][0])\n    print(matriz[0][m - 1])\n    print(matriz[n - 1][0])\n    print(matriz[n - 1][m - 1])\n\nmain()</code></pre><p>La última fila es <code>n - 1</code> y la última columna es <code>m - 1</code>. Igual que en vectores: se cuenta desde 0.</p>",
+		"starter_code": "# F.2 — Las cuatro esquinas\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
+				"expected_output": "1\n3\n4\n6"
+			},
+			{
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
+				"expected_output": "7\n2\n-6\n3"
+			},
+			{
+				"stdin": "2\n2\n4\n9\n1\n7\n",
+				"expected_output": "4\n9\n1\n7"
+			}
+		]
+	},
+	{
+		"orden": 3,
+		"title": "F.3 — Leer e imprimir con funciones",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee una matriz y vuelve a imprimirla igual. Escribe las tres funciones: <code>crear_matriz</code>, <code>leer_matriz</code> e <code>imprimir_matriz</code>, y un <code>main()</code> que las llame.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n1\n2\n3\n4\n5\n6</code></pre><p>Salida:</p><pre><code>1 2 3\n4 5 6</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    # lo que pide el enunciado\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre><p>Estas tres funciones son la plana del Nivel 0.5: van al principio de <strong>todos</strong> los ejercicios. Escríbelas hasta que salgan solas.</p>",
+		"starter_code": "# F.3 — Leer e imprimir con funciones\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"tests": [
+			{
+				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
+				"expected_output": "1 2 3\n4 5 6"
+			},
+			{
+				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
+				"expected_output": "7 -3 0 2\n5 8 -1 4\n-6 1 9 3"
 			},
 			{
 				"stdin": "1\n1\n10\n",
@@ -23,117 +69,25 @@
 		]
 	},
 	{
-		"orden": 2,
-		"title": "M5.2 — El menor",
-		"difficulty": "facil",
-		"statement_html": "<p>Imprime el menor valor de la matriz.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3</code></pre><p>Salida:</p><pre><code>-6</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def buscar_mayor(matriz, n, m):\n    mayor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; mayor:\n                mayor = matriz[i][j]\n    return mayor</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef buscar_menor(matriz, n, m):\n    menor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &lt; menor:\n                menor = matriz[i][j]\n    return menor\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    print(buscar_menor(matriz, n, m))\n\nmain()</code></pre><p>Mismo esqueleto, con <code>&lt;</code>.</p>",
-		"starter_code": "# M5.2 — El menor\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "-6"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "1"
-			},
-			{
-				"stdin": "2\n2\n4\n8\n6\n9\n",
-				"expected_output": "4"
-			}
-		]
-	},
-	{
-		"orden": 3,
-		"title": "M5.3 — Dónde está el mayor",
-		"difficulty": "medio",
-		"statement_html": "<p>Imprime la posición del mayor (la primera vez que aparece, recorriendo fila por fila):</p><pre><code>Fila: X\nColumna: Y</code></pre><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3</code></pre><p>Salida:</p><pre><code>Fila: 2\nColumna: 2</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def buscar_mayor(matriz, n, m):\n    mayor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; mayor:\n                mayor = matriz[i][j]\n    return mayor</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    pf = 0\n    pc = 0\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; matriz[pf][pc]:\n                pf = i\n                pc = j\n    print(\"Fila: \" + str(pf))\n    print(\"Columna: \" + str(pc))\n\nmain()</code></pre><p>En matriz la posición son <strong>dos</strong> variables: <code>pf</code> y <code>pc</code>. Se guardan juntas, en el mismo <code>if</code>.</p>",
-		"starter_code": "# M5.3 — Dónde está el mayor\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "Fila: 2\nColumna: 2"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "Fila: 1\nColumna: 2"
-			},
-			{
-				"stdin": "2\n2\n9\n1\n9\n9\n",
-				"expected_output": "Fila: 0\nColumna: 0"
-			}
-		]
-	},
-	{
 		"orden": 4,
-		"title": "M5.4 — Buscar X",
-		"difficulty": "medio",
-		"statement_html": "<p>Lee una matriz y un número <code>X</code>. Si aparece, imprime la posición de la primera aparición (<code>Fila: X</code> y <code>Columna: Y</code>). Si no aparece, imprime <code>No esta</code>.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n9</code></pre><p>Salida:</p><pre><code>Fila: 2\nColumna: 2</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def buscar_mayor(matriz, n, m):\n    mayor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; mayor:\n                mayor = matriz[i][j]\n    return mayor</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    x = int(input())\n    pf = -1\n    pc = -1\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] == x and pf == -1:\n                pf = i\n                pc = j\n    if pf == -1:\n        print(\"No esta\")\n    else:\n        print(\"Fila: \" + str(pf))\n        print(\"Columna: \" + str(pc))\n\nmain()</code></pre><p><code>-1</code> significa \"todavía no lo encontré\". La condición <code>pf == -1</code> hace que solo se guarde la primera.</p>",
-		"starter_code": "# M5.4 — Buscar X\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
+		"title": "F.4 — Matriz llena de un valor",
+		"difficulty": "facil",
+		"statement_html": "<p>Lee <code>N</code>, <code>M</code> y un valor <code>V</code>. Crea una matriz de <code>N × M</code> donde todas las casillas valen <code>V</code> e imprímela.</p><p>Cada fila de la matriz se imprime en <strong>una línea</strong>, con los valores separados por un espacio.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>2\n3\n7</code></pre><p>Salida:</p><pre><code>7 7 7\n7 7 7</code></pre>",
+		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    # lo que pide el enunciado\n\nmain()</code></pre>",
+		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef imprimir_matriz(matriz, n, m):\n    for i in range(n):\n        linea = \"\"\n        for j in range(m):\n            if j &gt; 0:\n                linea = linea + \" \"\n            linea = linea + str(matriz[i][j])\n        print(linea)\n\ndef main():\n    n = int(input())\n    m = int(input())\n    v = int(input())\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = v\n    imprimir_matriz(matriz, n, m)\n\nmain()</code></pre><p><code>crear_matriz</code> la deja en ceros; el doble <code>for</code> la llena. Primero se crea, después se llena.</p>",
+		"starter_code": "# F.4 — Matriz llena de un valor\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
 		"tests": [
 			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n9\n",
-				"expected_output": "Fila: 2\nColumna: 2"
+				"stdin": "2\n3\n7\n",
+				"expected_output": "7 7 7\n7 7 7"
 			},
 			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n10\n",
-				"expected_output": "No esta"
+				"stdin": "1\n1\n0\n",
+				"expected_output": "0"
 			},
 			{
-				"stdin": "2\n2\n3\n1\n1\n3\n1\n",
-				"expected_output": "Fila: 0\nColumna: 1"
-			}
-		]
-	},
-	{
-		"orden": 5,
-		"title": "M5.5 — El mayor de cada fila",
-		"difficulty": "medio",
-		"statement_html": "<p>Imprime el mayor de cada fila, uno por línea.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3</code></pre><p>Salida:</p><pre><code>7\n8\n9</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def buscar_mayor(matriz, n, m):\n    mayor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; mayor:\n                mayor = matriz[i][j]\n    return mayor</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef mayor_fila(matriz, f, m):\n    mayor = matriz[f][0]\n    for j in range(1, m):\n        if matriz[f][j] &gt; mayor:\n            mayor = matriz[f][j]\n    return mayor\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    for i in range(n):\n        print(mayor_fila(matriz, i, m))\n\nmain()</code></pre><p><code>mayor_fila</code> de M3.3, llamada una vez por fila.</p>",
-		"starter_code": "# M5.5 — El mayor de cada fila\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "7\n8\n9"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "3\n6"
-			},
-			{
-				"stdin": "3\n3\n3\n-1\n0\n8\n0\n-5\n2\n6\n0\n",
-				"expected_output": "3\n8\n6"
-			}
-		]
-	},
-	{
-		"orden": 6,
-		"title": "M5.6 — Rango",
-		"difficulty": "medio",
-		"statement_html": "<p>Imprime <code>Rango: X</code>, donde X es el mayor menos el menor de la matriz.</p><p><strong>Entrada:</strong> <code>N</code> (filas), <code>M</code> (columnas) y luego los <code>N × M</code> enteros, <strong>uno por línea</strong>, fila por fila.</p><p><strong>Ejemplo</strong></p><p>Entrada:</p><pre><code>3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3</code></pre><p>Salida:</p><pre><code>Rango: 15</code></pre>",
-		"hint_html": "<p>Esqueleto del patrón — escríbelo de memoria y cambia solo lo necesario:</p><pre><code>def buscar_mayor(matriz, n, m):\n    mayor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; mayor:\n                mayor = matriz[i][j]\n    return mayor</code></pre>",
-		"solution_html": "<pre><code>def crear_matriz(n, m):\n    matriz = [0] * n\n    for i in range(n):\n        matriz[i] = [0] * m\n    return matriz\n\ndef leer_matriz(n, m):\n    matriz = crear_matriz(n, m)\n    for i in range(n):\n        for j in range(m):\n            matriz[i][j] = int(input())\n    return matriz\n\ndef buscar_mayor(matriz, n, m):\n    mayor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &gt; mayor:\n                mayor = matriz[i][j]\n    return mayor\n\ndef buscar_menor(matriz, n, m):\n    menor = matriz[0][0]\n    for i in range(n):\n        for j in range(m):\n            if matriz[i][j] &lt; menor:\n                menor = matriz[i][j]\n    return menor\n\ndef main():\n    n = int(input())\n    m = int(input())\n    matriz = leer_matriz(n, m)\n    rango = buscar_mayor(matriz, n, m) - buscar_menor(matriz, n, m)\n    print(\"Rango: \" + str(rango))\n\nmain()</code></pre><p>Dos funciones, dos recorridos. Separado es más fácil de leer y de corregir.</p>",
-		"starter_code": "# M5.6 — Rango\n# Funciones + main(). Sin append, sin f-strings, sin comprensiones.\n\n",
-		"tests": [
-			{
-				"stdin": "3\n4\n7\n-3\n0\n2\n5\n8\n-1\n4\n-6\n1\n9\n3\n",
-				"expected_output": "Rango: 15"
-			},
-			{
-				"stdin": "2\n3\n1\n2\n3\n4\n5\n6\n",
-				"expected_output": "Rango: 5"
-			},
-			{
-				"stdin": "1\n1\n10\n",
-				"expected_output": "Rango: 0"
+				"stdin": "3\n2\n-4\n",
+				"expected_output": "-4 -4\n-4 -4\n-4 -4"
 			}
 		]
 	}
