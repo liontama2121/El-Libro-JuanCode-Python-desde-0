@@ -49,7 +49,7 @@ Arquitecto de software que trabaja directo con el dueño del negocio: "cimientos
 
 ## Evidence on Hand
 
-- Portafolio real en línea: Sharick Platform, Inalper Photography, Mr. Capacho Coffee, ADS Pharma, El Armario de Lina, La Caleñita (URLs en `landing/public/web/index.html`).
+- Portafolio real en línea: Sharick Platform, Inalper Photography, ADS Pharma, El Armario de Lina, La Caleñita, Feria 4 Vientos, MAYA Pets, Blado, AmiZoo (URLs en `landing/public/web/index.html`).
 - Precios reales: Esencial desde $1.000.000 COP, Pro desde $2.500.000, Custom desde $3.000.000; 6 meses de mantenimiento incluidos.
 - Credenciales: Ing. de Sistemas, AWS Certified, arquitecto de software, +5 años en la web, @juancode.
 - Libro: 24 capítulos, 96 ejercicios, quiz por capítulo.

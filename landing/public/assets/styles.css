@@ -458,11 +458,13 @@ p { text-wrap: pretty; }
 .obra-propia figure span { font-family: var(--mono); font-size: clamp(15px, 1.4vw, 18px); line-height: 1.7; padding: 28px; }
 .obra-propia figure b { color: #f0b48f; font-weight: 600; }
 
-/* La captura vertical del segundo proyecto se encuadra en su titular */
-.obra:nth-child(2) img { object-position: 6% top; }
+/* El segundo proyecto usa una captura vertical en escritorio */
+.obra picture { display: contents; }
 
 /* El Libro cierra la grilla a lo ancho: banda de código con el texto al lado */
 @media (min-width: 1081px) {
+  /* Del sexto al noveno van en dos filas de a dos, sin hueco */
+  .obra:nth-child(n+6):nth-child(-n+9) { grid-column: span 3; }
   .obra.obra-propia { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: clamp(24px, 3vw, 44px); row-gap: 14px; }
   .obra-propia figure { grid-row: 1 / -1; aspect-ratio: 21 / 8; }
   .obra-propia h3 { align-self: end; }
@@ -625,7 +627,7 @@ p { text-wrap: pretty; }
   .faq-bloque h2, .horario { position: static; }
   .obras { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .obra, .obra:nth-child(n) { grid-column: span 1; }
-  .obra:nth-child(1) { grid-column: 1 / -1; }
+  .obra:nth-child(1), .obra.obra-propia:last-child { grid-column: 1 / -1; }
   .obra:nth-child(2) { display: flex; }
   .obra:nth-child(2) figure { aspect-ratio: 16 / 10; height: auto; }
   .etapas { grid-template-columns: 1fr 1fr; gap: 40px 28px; }
